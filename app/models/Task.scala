@@ -1,39 +1,32 @@
 package models
 
-import anorm._
-import anorm.SqlParser._
-import play.api.db._
 import play.api.Play.current
+import play.api.db.slick.DB
+import play.api.db.slick.Config.driver.simple._
 
 case class Task(id: Long, label: String)
 
-object Task {
+object Tasks extends Table[Task]("TASKS") {
+  def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+  def label = column[String]("label", O.NotNull)
+  def * = id ~ label <> (Task.apply _, Task.unapply _)
+  def ins = label
   
-  val task = {
-    get[Long]("id") ~ 
-    get[String]("label") map {
-      case id~label => Task(id, label)
+  def insert(label: String) = {
+    DB.withSession{ implicit session =>
+      Tasks.ins.insert(label)
     }
   }
   
-  def all(): List[Task] = DB.withConnection { implicit c =>
-    SQL("select * from task").as(task *)
-  }
-  
-  def create(label: String) {
-    DB.withConnection { implicit c =>
-      SQL("insert into task (label) values ({label})").on(
-        'label -> label
-      ).executeUpdate()
-    }
-  }
-
-  def delete(id: Long) {
-    DB.withConnection { implicit c =>
-      SQL("delete from task where id = {id}").on(
-        'id -> id
-      ).executeUpdate()
+  def delete(id: Long) = {
+    DB.withSession { implicit session =>
+      Tasks.where(_.id === id).delete
     }
   }
   
+  def all = {
+    DB.withSession { implicit session =>
+      Query(Tasks).list
+    }
+  }
 }
