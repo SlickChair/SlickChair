@@ -12,7 +12,6 @@ object ApplicationBuild extends Build {
     jdbc,
     "com.typesafe.play" %% "play-slick" % "0.3.2",
     "postgresql" % "postgresql" % "9.1-901-1.jdbc4"
-
   )
 
 
