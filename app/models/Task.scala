@@ -17,7 +17,7 @@ object Tasks extends Table[Task]("TASKS") {
       Tasks.ins.insert(label)
     }
   }
-  
+    
   def delete(id: Long) = {
     DB.withSession { implicit session =>
       Tasks.where(_.id === id).delete
