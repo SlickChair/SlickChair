@@ -1,10 +1,9 @@
 package models
 
-import play.api.libs.Codecs
 import play.api.db.slick.DB
 import play.api.db.slick.Config.driver.simple._
-import securesocial.core._
 import play.api.Play.current
+import securesocial.core._
 
 case class User(
     uId: String,
@@ -13,7 +12,6 @@ case class User(
     firstName: String,
     lastName: String,
     authMethod: String,
-    avatarUrl: Option[String],
     hasher: Option[String],
     password: Option[String],
     salt: Option[String]
@@ -26,7 +24,7 @@ case class User(
     firstName = this.firstName,
     lastName = this.lastName,
     fullName = this.fullName,
-    avatarUrl = this.avatarUrl,
+    avatarUrl = None,
     authMethod = AuthenticationMethod(this.authMethod),
     oAuth1Info = None,
     oAuth2Info = None,
@@ -43,54 +41,51 @@ object User {
     firstName = if (!iden.firstName.isEmpty) iden.firstName else iden.fullName.split(' ').head,
     lastName = if (!iden.lastName.isEmpty) iden.lastName else iden.fullName.split(' ').tail.head,
     authMethod = iden.authMethod.method,
-    avatarUrl = iden.avatarUrl,
     hasher = iden.passwordInfo.map(_.hasher),
     password = iden.passwordInfo.map(_.password),
     salt = iden.passwordInfo.map(_.salt).getOrElse(None)
   )
 }
 
-object SocialUsers extends Table[User]("SOCIAL_USERS") {
+object SecureSocialUsers extends Table[User]("SECURE_SOCIAL_USERS") {
   def uId = column[String]("U_ID")
   def providerId = column[String]("PROVIDER_ID")
   def email = column[Option[String]]("EMAIL")
   def firstName = column[String]("FIRST_NAME")
   def lastName = column[String]("LAST_NAME")
   def authMethod = column[String]("AUTH_METHOD")
-  def avatarUrl = column[Option[String]]("AVATAR_URL")
   def hasher = column[Option[String]]("HASHER")
   def password = column[Option[String]]("PASSWORD")
   def salt = column[Option[String]]("SALT")
   // def pk = primaryKey("PK_USERS", (k1, k2))
-
-  def * = uId ~ providerId ~ email ~ firstName ~ lastName ~ authMethod ~ avatarUrl ~ hasher ~ password ~ salt <> (User.apply _, User.unapply _)
-
-  def save(identity: Identity): Identity = DB.withTransaction { implicit session =>
-    val user = User.fromIdentity(identity)
-    findByUserId(user.id) match {
-      case None =>
-        SocialUsers.insert(user)
-      case Some(u) =>
-        userByUserId(u.id).update(user)
-    }
-    identity
-  }
+  def * = uId ~ providerId ~ email ~ firstName ~ lastName ~ authMethod ~ hasher ~ password ~ salt <> (User.apply _, User.unapply _)
 
   def userByUserId(userId: UserId) = 
-    Query(SocialUsers).filter( user =>
+    Query(SecureSocialUsers).filter( user =>
       (user.uId is userId.id) && (user.providerId is userId.providerId) )
   
   def userByEmailAndProvider(email: String, providerId: String) = 
-    Query(SocialUsers).filter( user =>
+    Query(SecureSocialUsers).filter( user =>
       (user.email is email) && (user.providerId is providerId) )
   
-  def findByUserId(userId: UserId): Option[Identity] = DB.withSession { implicit session =>
-    userByUserId(userId).firstOption.map(_.toIdentity)
-  }
-  
-  def find(userId: UserId) = findByUserId(userId)
-  
-  def findByEmailAndProvider(email: String, providerId: String): Option[Identity] = DB.withSession { implicit session =>
-    userByEmailAndProvider(email, providerId).firstOption.map(_.toIdentity)
+  trait Queries {
+    def save(identity: Identity): Identity = DB.withTransaction { implicit session =>
+      val user = User.fromIdentity(identity)
+      find(user.id) match {
+        case None =>
+          SecureSocialUsers.insert(user)
+        case Some(u) =>
+          userByUserId(u.id).update(user)
+      }
+      identity
+    }
+    
+    def find(userId: UserId): Option[Identity] = DB.withSession { implicit session =>
+      userByUserId(userId).firstOption.map(_.toIdentity)
+    }
+    
+    def findByEmailAndProvider(email: String, providerId: String): Option[Identity] = DB.withSession { implicit session =>
+      userByEmailAndProvider(email, providerId).firstOption.map(_.toIdentity)
+    }
   }
 }
