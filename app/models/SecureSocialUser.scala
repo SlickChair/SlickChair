@@ -17,13 +17,12 @@ case class User(
     salt: Option[String]
     ) {
   def id: UserId = UserId(uId, providerId)
-  def fullName: String = firstName + " " + lastName
   def toIdentity: Identity = SocialUser(
     id = UserId(this.uId, this.providerId),
     email = this.email,
     firstName = this.firstName,
     lastName = this.lastName,
-    fullName = this.fullName,
+    fullName = firstName + " " + lastName,
     avatarUrl = None,
     authMethod = AuthenticationMethod(this.authMethod),
     oAuth1Info = None,
@@ -48,15 +47,15 @@ object User {
 }
 
 object SecureSocialUsers extends Table[User]("SECURE_SOCIAL_USERS") {
-  def uId = column[String]("U_ID")
-  def providerId = column[String]("PROVIDER_ID")
-  def email = column[Option[String]]("EMAIL")
-  def firstName = column[String]("FIRST_NAME")
-  def lastName = column[String]("LAST_NAME")
-  def authMethod = column[String]("AUTH_METHOD")
-  def hasher = column[Option[String]]("HASHER")
-  def password = column[Option[String]]("PASSWORD")
-  def salt = column[Option[String]]("SALT")
+  def uId = column[String]("uid")
+  def providerId = column[String]("providerid")
+  def email = column[Option[String]]("email")
+  def firstName = column[String]("firstname")
+  def lastName = column[String]("lastname")
+  def authMethod = column[String]("authmethod")
+  def hasher = column[Option[String]]("hasher")
+  def password = column[Option[String]]("password")
+  def salt = column[Option[String]]("salt")
   // def pk = primaryKey("PK_USERS", (k1, k2))
   def * = uId ~ providerId ~ email ~ firstName ~ lastName ~ authMethod ~ hasher ~ password ~ salt <> (User.apply _, User.unapply _)
 

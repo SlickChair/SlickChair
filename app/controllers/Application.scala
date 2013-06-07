@@ -19,7 +19,7 @@ object Application extends Controller with SecureSocial {
   }
   
   def echo = Action {
-    Ok("vide")
+  Ok("vide")
   }
   
   // TODO: add authorization http://securesocial.ws/guide/authorization.html

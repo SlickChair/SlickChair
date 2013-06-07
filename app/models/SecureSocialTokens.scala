@@ -3,11 +3,11 @@ package models
 import play.api.db.slick.DB
 import play.api.db.slick.Config.driver.simple._
 import play.api.Play.current
-import securesocial.core._
-import securesocial.core.providers.Token
 import com.github.tototoshi.slick.JodaSupport._
 import _root_.java.sql.Date
 import org.joda.time.DateTime
+import securesocial.core._
+import securesocial.core.providers.Token
 
 // case class securesocial.core.providers.Token(
 //   uuid: String,
@@ -18,11 +18,11 @@ import org.joda.time.DateTime
 // )
 
 object SecureSocialTokens extends Table[Token]("SECURE_SOCIAL_TOKENS") {
-  def uuid = column[String]("UUID", O.PrimaryKey)
-  def email = column[String]("EMAIL")
-  def creationTime = column[DateTime]("CREATION_TIME")
-  def expirationTime = column[DateTime]("EXPIRATION_TIME")
-  def isSignUp = column[Boolean]("IS_SIGN_UP")
+  def uuid = column[String]("uuid", O.PrimaryKey)
+  def email = column[String]("email")
+  def creationTime = column[DateTime]("creationtime")
+  def expirationTime = column[DateTime]("expirationtime")
+  def isSignUp = column[Boolean]("issignup")
   def * = uuid ~ email ~ creationTime ~ expirationTime ~ isSignUp <> (Token.apply _, Token.unapply _)
 
   trait Queries {
