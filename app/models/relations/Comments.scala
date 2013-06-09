@@ -8,27 +8,26 @@ import _root_.java.sql.Date
 import org.joda.time.DateTime
 import models.entities._
 
-// Reviewers comments on submissions
+// Members comments on submissions
 case class Comment(
   id: Int,
   paperid: Int,
-  reviewerid: Int,
+  memberid: Int,
   submissiondate: DateTime,
   lastupdate: DateTime,
   content: String
 )
 
-object Comments extends Table[Comment]("COMMENTS"){
-  def id = column[Int]("id", O.AutoInc)
+object Comments extends Table[Comment]("COMMENTS") {
+  def id = column[Int]("id", O.AutoInc, O.PrimaryKey)
   def paperid = column[Int]("paperid")
-  def reviewerid = column[Int]("reviewerid")
+  def memberid = column[Int]("memberid")
   def submissiondate = column[DateTime]("submissiondate")
   def lastupdate = column[DateTime]("lastupdate")
   def content = column[String]("content")
 
-  def pk = primaryKey("comments_pk", id)
-  def paper = foreignKey("paperid_fk", paperid, Papers)(_.id)
-  def reviewer = foreignKey("reviewerid_fk", reviewerid, Reviewers)(_.id)
+  def paper = foreignKey("comments_paperid_fk", paperid, Papers)(_.id)
+  def member = foreignKey("comments_memberid_fk", memberid, Members)(_.id)
 
-  def * = id ~ paperid ~ reviewerid ~ submissiondate ~ lastupdate ~ content <> (Comment.apply _, Comment.unapply _)
+  def * = id ~ paperid ~ memberid ~ submissiondate ~ lastupdate ~ content <> (Comment.apply _, Comment.unapply _)
 }

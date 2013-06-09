@@ -15,7 +15,7 @@ case class Author(
   email: String
 )
 
-object Authors extends Table[Author]("AUTHORS"){
+object Authors extends Table[Author]("AUTHORS") {
   def paperid = column[Int]("paperid")
   def position = column[Int]("position")
   def firstname = column[String]("firstname")
@@ -24,8 +24,8 @@ object Authors extends Table[Author]("AUTHORS"){
   def positiontitle = column[String]("positiontitle")
   def email = column[String]("email")
   
-  def pk = primaryKey("author_pk", (paperid, position))
-  def paper = foreignKey("paperid_fk", paperid, Papers)(_.id)
+  def pk = primaryKey("authors_pk", paperid ~ position)
+  def paper = foreignKey("authors_paperid_fk", paperid, Papers)(_.id)
   
   def * = paperid ~ position ~ firstname ~ lastname ~ organization ~ positiontitle ~ email <> (Author.apply _, Author.unapply _)
 }

@@ -1,4 +1,4 @@
-package models
+package models.secureSocial
 
 import play.api.db.slick.DB
 import play.api.db.slick.Config.driver.simple._
@@ -28,10 +28,8 @@ object SecureSocialTokens extends Table[Token]("SECURE_SOCIAL_TOKENS") {
   trait Queries {
     def save(token: Token): Unit = DB.withTransaction { implicit session =>
       findToken(token.uuid) match {
-        case None =>
-          SecureSocialTokens.insert(token)
-        case Some(t) =>
-          SecureSocialTokens.filter(_.uuid is t.uuid).update(token)
+        case None => SecureSocialTokens.insert(token)
+        case Some(t) => SecureSocialTokens.filter(_.uuid is t.uuid).update(token)
       }
     }
 

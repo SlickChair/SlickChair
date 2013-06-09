@@ -21,10 +21,10 @@ object ReviewEvaluation extends Enumeration with BitmaskedEnumeration {
 }
 import ReviewEvaluation._
 
-// Submission/Reviewer assignments and review data
+// Submission/Member assignments and review data
 case class Review(
   paperid: Int,
-  reviewerid: Int,
+  memberid: Int,
   submissiondate: Option[DateTime],
   lastupdate: Option[DateTime],
   confidence: ReviewConfidence,
@@ -32,18 +32,18 @@ case class Review(
   content: String
 )
 
-object Reviews extends Table[Review]("REVIEWS"){
+object Reviews extends Table[Review]("REVIEWS") {
   def paperid = column[Int]("paperid")
-  def reviewerid = column[Int]("reviewerid")
+  def memberid = column[Int]("memberid")
   def submissiondate = column[Option[DateTime]]("submissiondate")
   def lastupdate = column[Option[DateTime]]("lastupdate")
   def confidence = column[ReviewConfidence]("confidence")
   def evaluation = column[ReviewEvaluation]("evaluation")
-  def content = column[String]("content")
+  def content = column[String]("content", O.DBType("text"))
   
-  def pk = primaryKey("reviewers_pk", (paperid, reviewerid))
-  def reviewer = foreignKey("reviewerid_fk", reviewerid, Reviewers)(_.id)
-  def paper = foreignKey("paperid_fk", paperid, Papers)(_.id)
+  def pk = primaryKey("members_pk", paperid ~ memberid)
+  def member = foreignKey("members_memberid_fk", memberid, Members)(_.id)
+  def paper = foreignKey("members_paperid_fk", paperid, Papers)(_.id)
 
-  def * = paperid ~ reviewerid ~ submissiondate ~ lastupdate ~ confidence ~ evaluation ~ content <> (Review.apply _, Review.unapply _)
+  def * = paperid ~ memberid ~ submissiondate ~ lastupdate ~ confidence ~ evaluation ~ content <> (Review.apply _, Review.unapply _)
 }

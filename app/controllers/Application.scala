@@ -11,15 +11,10 @@ import securesocial.core.SecureSocial
 object Application extends Controller with SecureSocial {
   def index = Action {
     Redirect(routes.Application.tasks)
-    // Ok("supson") 
   }
   
   def tasks = Action {
     Ok(views.html.index(Tasks.all, taskForm))
-  }
-  
-  def echo = Action {
-  Ok("vide")
   }
   
   // TODO: add authorization http://securesocial.ws/guide/authorization.html

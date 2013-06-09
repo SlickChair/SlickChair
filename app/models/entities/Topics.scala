@@ -11,12 +11,10 @@ case class Topic(
   description: Option[String]
 )
 
-object Topics extends Table[Topic]("TOPICS"){
-  def id = column[Int]("id", O.AutoInc)
+object Topics extends Table[Topic]("TOPICS") {
+  def id = column[Int]("id", O.AutoInc, O.PrimaryKey)
   def name = column[String]("name")
   def description = column[Option[String]]("description")
   
-  def pk = primaryKey("topics_pk", id)
-  
   def * = id ~ name ~ description <> (Topic.apply _, Topic.unapply _)
-}
+} 

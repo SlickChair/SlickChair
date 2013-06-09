@@ -11,13 +11,13 @@ case class PaperTopic(
   topicid: Int
 )
 
-object PaperTopics extends Table[PaperTopic]("PAPER_TOPICS"){
+object PaperTopics extends Table[PaperTopic]("PAPER_TOPICS") {
   def paperid = column[Int]("paperid")
   def topicid = column[Int]("topicid")
   
-  def pk = primaryKey("papertopics_pk", (paperid, topicid))
-  def paper = foreignKey("paperid_fk", paperid, Papers)(_.id)
-  def topic = foreignKey("topicid_fk", topicid, Topics)(_.id)
+  def pk = primaryKey("papertopics_pk", paperid ~ topicid)
+  def paper = foreignKey("papertopics_paperid_fk", paperid, Papers)(_.id)
+  def topic = foreignKey("papertopics_topicid_fk", topicid, Topics)(_.id)
 
   def * = paperid ~ topicid <> (PaperTopic.apply _, PaperTopic.unapply _)
 }
