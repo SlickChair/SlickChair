@@ -15,8 +15,8 @@ POST    /tasks/:id/delete controllers.Application.deleteTask(id: Long)
 
 
 # Submitters
-GET     /new-submission      controllers.Submission.form
-POST    /new-submission      controllers.Submission.make
+GET     /submit              controllers.Submission.form
+POST    /submit              controllers.Submission.make
 GET     /submission/:id/info controllers.Submission.info(id: Int)
 POST    /submission/:id/info controllers.Submission.edit(id: Int)
 
@@ -29,8 +29,8 @@ POST    /submission/:id/comment            controllers.Review.makeComment(id: In
 POST    /submission/:sid/comment/:cid/edit controllers.Review.editComment(sid: Int, cid: Int)
 
 # Chair
-GET     /SQL controllers.Chair.sql
-POST    /SQL controllers.Chair.runQuery
+GET     /sql controllers.Chair.sql
+POST    /sql controllers.Chair.runQuery
 
 
 # SecureSocial

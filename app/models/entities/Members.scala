@@ -18,22 +18,18 @@ import MemberRole._
 // Members account info
 case class Member(
   id: Int,
-  securesocialuserid: String,
-  securesocialproviderid: String,
+  email: String,
   firstlogindate: DateTime,
   lastlogindate: DateTime,
   role: MemberRole,
   firstname: String,
   lastname: String,
   organization: Option[String],
-  positiontitle: Option[String],
-  email: String
+  positiontitle: Option[String]
 )
 
 object Members extends Table[Member]("MEMBERS") {
   def id = column[Int]("id", O.AutoInc, O.PrimaryKey)
-  def securesocialuserid = column[String]("securesocialuserid")
-  def securesocialproviderid = column[String]("securesocialproviderid")
   def firstlogindate = column [DateTime]("firstlogindate")
   def lastlogindate = column [DateTime]("lastlogindate")
   def role = column[MemberRole]("role")
@@ -43,7 +39,5 @@ object Members extends Table[Member]("MEMBERS") {
   def positiontitle = column[Option[String]]("positiontitle")
   def email = column[String]("email")
   
-  def securesocialuser = foreignKey("members_secur  esocialuser_fk", (securesocialuserid, securesocialproviderid), SecureSocialUsers)(u => u.uid ~ u.pid)
-  
-  def * = id ~ securesocialuserid ~ securesocialproviderid ~ firstlogindate ~ lastlogindate ~ role ~ firstname ~ lastname ~ organization ~ positiontitle ~ email <> (Member.apply _, Member.unapply _)
+  def * = id ~ email ~ firstlogindate ~ lastlogindate ~ role ~ firstname ~ lastname ~ organization ~ positiontitle <> (Member.apply _, Member.unapply _)
 } 

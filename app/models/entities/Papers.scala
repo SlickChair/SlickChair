@@ -18,8 +18,7 @@ import PaperFormat._
 // Submission data
 case class Paper(
   id: Int,
-  securesocialuserid: String,
-  securesocialproviderid: String,
+  contactemail: String,
   submissiondate: DateTime,
   lastupdate: DateTime,
   accepted: Option[Boolean],
@@ -33,8 +32,7 @@ case class Paper(
 
 object Papers extends Table[Paper]("PAPERS") {
   def id = column[Int]("id", O.AutoInc, O.PrimaryKey)
-  def securesocialuserid = column[String]("securesocialuserid")
-  def securesocialproviderid = column[String]("securesocialproviderid")
+  def contactemail = column[String]("contactemail")
   def submissiondate = column[DateTime]("submissiondate")
   def lastupdate = column[DateTime]("lastupdate")
   def accepted = column[Option[Boolean]]("accepted")
@@ -45,7 +43,5 @@ object Papers extends Table[Paper]("PAPERS") {
   def abstrct = column[String]("abstrct")
   def data = column[Option[Array[Byte]]]("data")
 
-  def securesocialuser = foreignKey("papers_securesocialuser_fk", (securesocialuserid, securesocialproviderid), SecureSocialUsers)(u => u.uid ~ u.pid)
-
-  def * = id ~ securesocialuserid ~ securesocialproviderid ~ submissiondate ~ lastupdate ~ accepted ~ title ~ format ~ student ~ keywords ~ abstrct ~ data <> (Paper.apply _, Paper.unapply _)
+  def * = id ~ contactemail ~ submissiondate ~ lastupdate ~ accepted ~ title ~ format ~ student ~ keywords ~ abstrct ~ data <> (Paper.apply _, Paper.unapply _)
 }

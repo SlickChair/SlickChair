@@ -38,7 +38,7 @@ object User {
   def fromIdentity(i: Identity) = User(
     uid = i.id.id,
     pid = i.id.providerId,
-    email = i.email.get,
+    email = i.email.get, // TODO: might fail, throw login error
     firstName = if (!i.firstName.isEmpty) i.firstName else i.fullName.split(' ').head,
     lastName = if (!i.lastName.isEmpty) i.lastName else i.fullName.split(' ').tail.head,
     avatarUrl = i.avatarUrl,
