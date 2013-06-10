@@ -16,3 +16,6 @@ dist
 /RUNNING_PID
 /.settings
 .cache
+Gemfile.lock
+Gemfile
+Guardfile

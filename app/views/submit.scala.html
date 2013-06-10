@@ -1,0 +1,15 @@
+@(paperForm: Form[models.entities.Paper])
+
+@import helper._
+
+@main("SQL Form") {
+    <h1>Paper Submission:</h1>
+    @helper.form(action = routes.Chair.runQuery) {
+      
+      PDF:<br>
+      <input type="file" name="picture"><br>
+      <br>
+      <input type="submit">
+    }
+    
+}
