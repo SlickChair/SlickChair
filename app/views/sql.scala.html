@@ -5,9 +5,16 @@
 @main("SQL Form") {
     <h1>Query:</h1>
     @form(action = routes.Chair.runQuery) {
-      <textarea id="query" name="query" rows="5" cols="50">SELECT * FROM SECURE_SOCIAL_USERS</textarea><br>
+      @textarea(
+        queryForm("query"),
+        'placeholder -> "SELECT * FROM SECURE_SOCIAL_USERS",
+        '_label -> "",
+        '_help -> "",
+        'rows -> 5,
+        'cols -> 50)
       <input type="submit" value="Run">
     }
+    
     @result.map { output =>
       <h1>Results:</h1>
       <pre>@output</pre>

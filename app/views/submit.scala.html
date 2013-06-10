@@ -1,15 +1,39 @@
 @(paperForm: Form[models.entities.Paper])
 
 @import helper._
+@import models.entities._
 
-@main("SQL Form") {
-    <h1>Paper Submission:</h1>
-    @helper.form(action = routes.Chair.runQuery) {
+@main("New submission") {
+    <h1>New submission</h1>
+    @helper.form(action = routes.Submission.make) {
+      @inputText(
+        paperForm("title"),
+        '_label -> "Paper title:",
+        '_help -> "")
       
+      @inputRadioGroup(
+        paperForm("format"), 
+        PaperFormat.values.toSeq.map(f => f.toString -> f.toString), 
+        '_label -> "Format:",
+        '_help -> "")
+      
+      @textarea(
+        paperForm("keywords"),
+        '_label -> "Keywords:",
+        '_help -> "",
+        'rows -> 5,
+        'cols -> 50)
+
+      @textarea(
+        paperForm("abstrct"),
+        '_label -> "Abstract:",
+        '_help -> "",
+        'rows -> 5,
+        'cols -> 50)
+
       PDF:<br>
-      <input type="file" name="picture"><br>
+      <dd><input type="file" name="picture"></dd><br>
       <br>
       <input type="submit">
     }
-    
 }

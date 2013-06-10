@@ -24,7 +24,6 @@ case class Paper(
   accepted: Option[Boolean],
   title: String,
   format: PaperFormat,
-  student: Boolean,
   keywords: String,
   abstrct: String,
   data: Option[Array[Byte]]
@@ -38,10 +37,9 @@ object Papers extends Table[Paper]("PAPERS") {
   def accepted = column[Option[Boolean]]("accepted")
   def title = column[String]("title")
   def format = column[PaperFormat]("format")
-  def student = column[Boolean]("student")
   def keywords = column[String]("keywords")
   def abstrct = column[String]("abstrct")
   def data = column[Option[Array[Byte]]]("data")
 
-  def * = id ~ contactemail ~ submissiondate ~ lastupdate ~ accepted ~ title ~ format ~ student ~ keywords ~ abstrct ~ data <> (Paper.apply _, Paper.unapply _)
+  def * = id ~ contactemail ~ submissiondate ~ lastupdate ~ accepted ~ title ~ format ~ keywords ~ abstrct ~ data <> (Paper.apply _, Paper.unapply _)
 }

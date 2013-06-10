@@ -8,9 +8,10 @@ import play.api.Play.current
 import models._
 import securesocial.core.SecureSocial
 import play.api.data.format.Formats._
+import org.joda.time.DateTime
 
 import models.entities._
-// case class Paper(
+// case class models.entities.Paper(
 //   id: Int,
 //   contactemail: String,
 //   submissiondate: DateTime,
@@ -18,7 +19,6 @@ import models.entities._
 //   accepted: Option[Boolean],
 //   title: String,
 //   format: PaperFormat,
-//   student: Boolean,
 //   keywords: String,
 //   abstrct: String,
 //   data: Option[Array[Byte]]
@@ -30,32 +30,28 @@ object Submission extends Controller with SecureSocial {
   // to understand how From objects work in Play2.
   val paperForm = Form(
     mapping(
-      "contactemail" -> nonEmptyText,
       "title" -> nonEmptyText,
       "format" -> nonEmptyText,
-      "student" -> boolean,
       "keywords" -> nonEmptyText,
       "abstrct" -> nonEmptyText
-    )((contactemail, title, format, student, keywords, abstrct) =>
-        Paper(0, contactemail, null, null, None, title, PaperFormat.withName(format), student, keywords, abstrct, None))
+    )((title, format, keywords, abstrct) =>
+        Paper(-1, "TOTO_FROM_SECURESOCIAL@gmail.com", DateTime.now, DateTime.now, None, title, PaperFormat.withName(format), keywords, abstrct, None))
      ((paper: Paper) =>
-        Some((paper.contactemail, paper.title, paper.format.toString, paper.student, paper.keywords, paper.abstrct)))
+        Some((paper.title, paper.format.toString, paper.keywords, paper.abstrct)))
   )
   
-  def form = Action(Ok(views.html.submit(null)))
+  def form = Action(Ok(views.html.submit(paperForm)))
 
-  def make = TODO
+  def make = Action { implicit request =>
+    paperForm.bindFromRequest.fold(
+      // Form has errors, redisplay it
+      errors => Ok(views.html.submit(errors)),
+      
+      paper => Ok(paper.toString)
+    )
+  }
 
   def info(id: Int) = TODO
 
   def edit(id: Int) = TODO
-  
-  // val submitForm = Form(
-  //   "title" -> String,
-  //   "format" -> PaperFormat,
-  //   "student" -> Boolean,
-  //   "keywords" -> String,
-  //   "abstrct" -> String,
-  //   "data" -> Option[Array[Byte]]
-  // )
 }
