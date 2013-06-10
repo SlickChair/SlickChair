@@ -3,32 +3,52 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
+GET     /                 controllers.Application.index
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file     controllers.Assets.at(path="/public", file)
 
 # Tasks          
-GET     /tasks                      controllers.Application.tasks
-POST    /tasks                      controllers.Application.newTask
-POST    /tasks/:id/delete           controllers.Application.deleteTask(id: Long)
+GET     /tasks            controllers.Application.tasks
+POST    /tasks            controllers.Application.newTask
+POST    /tasks/:id/delete controllers.Application.deleteTask(id: Long)
 
-### SecureSocial
+
+# Submitters
+GET     /new-submission      controllers.Submission.form
+POST    /new-submission      controllers.Submission.make
+GET     /submission/:id/info controllers.Submission.info(id: Int)
+POST    /submission/:id/info controllers.Submission.edit(id: Int)
+
+# Reviewers
+GET     /submissions                       controllers.Review.list
+GET     /submission/:id                    controllers.Review.view(id: Int)
+POST    /submission/:id/review             controllers.Review.make(id: Int)
+POST    /submission/:id/review/edit        controllers.Review.edit(id: Int)
+POST    /submission/:id/comment            controllers.Review.makeComment(id: Int)
+POST    /submission/:sid/comment/:cid/edit controllers.Review.editComment(sid: Int, cid: Int)
+
+# Chair
+GET     /SQL controllers.Chair.sql
+POST    /SQL controllers.Chair.runQuery
+
+
+# SecureSocial
 # Login page
-GET     /login                      securesocial.controllers.LoginPage.login
-GET     /logout                     securesocial.controllers.LoginPage.logout
+GET     /login                  securesocial.controllers.LoginPage.login
+GET     /logout                 securesocial.controllers.LoginPage.logout
 # User Registration and password handling 
-GET     /signup                     securesocial.controllers.Registration.startSignUp
-POST    /signup                     securesocial.controllers.Registration.handleStartSignUp
-GET     /signup/:token              securesocial.controllers.Registration.signUp(token)
-POST    /signup/:token              securesocial.controllers.Registration.handleSignUp(token)
-GET     /reset                      securesocial.controllers.Registration.startResetPassword
-POST    /reset                      securesocial.controllers.Registration.handleStartResetPassword
-GET     /reset/:token               securesocial.controllers.Registration.resetPassword(token)
-POST    /reset/:token               securesocial.controllers.Registration.handleResetPassword(token)
-GET     /password                   securesocial.controllers.PasswordChange.page
-POST    /password                   securesocial.controllers.PasswordChange.handlePasswordChange
+GET     /signup                 securesocial.controllers.Registration.startSignUp
+POST    /signup                 securesocial.controllers.Registration.handleStartSignUp
+GET     /signup/:token          securesocial.controllers.Registration.signUp(token)
+POST    /signup/:token          securesocial.controllers.Registration.handleSignUp(token)
+GET     /reset                  securesocial.controllers.Registration.startResetPassword
+POST    /reset                  securesocial.controllers.Registration.handleStartResetPassword
+GET     /reset/:token           securesocial.controllers.Registration.resetPassword(token)
+POST    /reset/:token           securesocial.controllers.Registration.handleResetPassword(token)
+GET     /password               securesocial.controllers.PasswordChange.page
+POST    /password               securesocial.controllers.PasswordChange.handlePasswordChange
 # Providers entry points
-GET     /authenticate/:provider     securesocial.controllers.ProviderController.authenticate(provider)
-POST    /authenticate/:provider     securesocial.controllers.ProviderController.authenticateByPost(provider)
-GET     /not-authorized             securesocial.controllers.ProviderController.notAuthorized
+GET     /authenticate/:provider securesocial.controllers.ProviderController.authenticate(provider)
+POST    /authenticate/:provider securesocial.controllers.ProviderController.authenticateByPost(provider)
+GET     /not-authorized         securesocial.controllers.ProviderController.notAuthorized
