@@ -42,4 +42,9 @@ object Papers extends Table[Paper]("PAPERS") {
   def data = column[Option[Array[Byte]]]("data")
 
   def * = id ~ contactemail ~ submissiondate ~ lastupdate ~ accepted ~ title ~ format ~ keywords ~ abstrct ~ data <> (Paper.apply _, Paper.unapply _)
+  def autoInc = * returning id
+  
+  def insert(paper: Paper) = DB.withSession { implicit session =>
+    Papers.autoInc.insert(paper)
+  }
 }

@@ -1,37 +1,64 @@
-@(paperForm: Form[models.entities.Paper])
+@(submissionForm: Form[SubmissionForm])
 
 @import helper._
 @import models.entities._
 
-@main("New submission") {
+@submissionForm
+<br>
+<br>
+@submissionForm.errors
+
+@defining(1 to 3) { authors =>
+  @main("New submission") {
     <h1>New submission</h1>
     @helper.form(action = routes.Submission.make, 'enctype -> "multipart/form-data") {
-      @inputText(
-        paperForm("title"),
-        '_label -> "Paper title:",
-        '_help -> "")
-      
+      <fieldset><legend>Submission</legend>
+      @inputText(submissionForm("paper.title"), '_label -> "Paper title:", '_help -> "")
       @inputRadioGroup(
-        paperForm("format"), 
+        submissionForm("paper.format.value"), 
         PaperFormat.values.toSeq.map(f => f.toString -> f.toString), 
         '_label -> "Format:",
         '_help -> "")
-      
-      @inputText(
-        paperForm("keywords"),
-        '_label -> "Keywords:",
-        '_help -> "")
-
+      @inputText(submissionForm("paper.keywords"), '_label -> "Keywords:", '_help -> "")
       @textarea(
-        paperForm("abstrct"),
+        submissionForm("paper.abstrct"),
         '_label -> "Abstract:",
         '_help -> "",
         'rows -> 5,
         'cols -> 50)
+      File:<br><dd><input type="file" name="data"></dd><br>
+      </fieldset><br>
+      
+      <fieldset><legend>Topics</legend>
+      @for(Topic(id, name, description) <- Topics.all) {
+        @checkbox(
+          submissionForm(s"topics[$id]"),
+          '_label -> (name + ":").capitalize,
+          '_help -> "", // description
+          'value -> id.toString
+        )
+      }
+      </fieldset><br>
 
-      PDF:<br>
-      <dd><input type="file" name="data"></dd><br>
+      <fieldset><legend>Authors</legend>
+      @select(
+        submissionForm("nauthors"),
+        authors.map(i => (i.toString, i.toString)),
+        '_label -> "Number of authors:",
+        '_help -> ""
+      )
+      @authors.map { i =>
+        <fieldset><legend>Author @i</legend>
+        @inputText(submissionForm(s"authors[$i].firstname"), '_label -> "First Name:")
+        @inputText(submissionForm(s"authors[$i].lastname"), '_label -> "Last Name:")
+        @inputText(submissionForm(s"authors[$i].organization"), '_label -> "Organization:")
+        @inputText(submissionForm(s"authors[$i].email"), '_label -> "Email:")
+        </fieldset><br>
+      }
+      </fieldset>
+
       <br>
       <input type="submit">
     }
+  }
 }

@@ -8,13 +8,17 @@ import play.api.Play.current
 case class Topic(
   id: Int,
   name: String,
-  description: Option[String]
+  description: String
 )
 
 object Topics extends Table[Topic]("TOPICS") {
-  def id = column[Int]("id", O.AutoInc, O.PrimaryKey)
-  def name = column[String]("name")
-  def description = column[Option[String]]("description")
+  def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
+  def name = column[String]("NAME")
+  def description = column[String]("DESCRIPTION")
   
   def * = id ~ name ~ description <> (Topic.apply _, Topic.unapply _)
-} 
+  
+  def all = DB.withSession { implicit session =>
+    Query(Topics).list
+  }
+}

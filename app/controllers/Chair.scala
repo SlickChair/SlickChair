@@ -18,6 +18,7 @@ object Chair extends Controller with SecureSocial {
   def runQuery = Action { implicit request =>
     val filledForm = queryForm.bindFromRequest
     DB.withConnection { implicit session =>
+      //       val result = SQL(filledForm.get).executeInsert().toString
       val result = SQL(filledForm.get).apply().map(_.asList).toList.mkString("\n")
       Ok(views.html.sql(Some(result), filledForm))
     }
