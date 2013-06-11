@@ -5,7 +5,7 @@
 
 @main("New submission") {
     <h1>New submission</h1>
-    @helper.form(action = routes.Submission.make) {
+    @helper.form(action = routes.Submission.make, 'enctype -> "multipart/form-data") {
       @inputText(
         paperForm("title"),
         '_label -> "Paper title:",
@@ -17,12 +17,10 @@
         '_label -> "Format:",
         '_help -> "")
       
-      @textarea(
+      @inputText(
         paperForm("keywords"),
         '_label -> "Keywords:",
-        '_help -> "",
-        'rows -> 5,
-        'cols -> 50)
+        '_help -> "")
 
       @textarea(
         paperForm("abstrct"),
@@ -32,7 +30,7 @@
         'cols -> 50)
 
       PDF:<br>
-      <dd><input type="file" name="picture"></dd><br>
+      <dd><input type="file" name="data"></dd><br>
       <br>
       <input type="submit">
     }

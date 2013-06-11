@@ -16,10 +16,10 @@ import anorm.SqlParser._
 object Chair extends Controller with SecureSocial {
   def sql = Action(Ok(views.html.sql(None, queryForm)))
   def runQuery = Action { implicit request =>
-    val query: String = queryForm.bindFromRequest.get
+    val filledForm = queryForm.bindFromRequest
     DB.withConnection { implicit session =>
-      val result = SQL(query).apply().map(_.asList).toList.mkString("\n")
-      Ok(views.html.sql(Some(result), queryForm))
+      val result = SQL(filledForm.get).apply().map(_.asList).toList.mkString("\n")
+      Ok(views.html.sql(Some(result), filledForm))
     }
   }
   

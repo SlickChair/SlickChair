@@ -9,6 +9,7 @@ import models._
 import securesocial.core.SecureSocial
 import play.api.data.format.Formats._
 import org.joda.time.DateTime
+import java.io._
 
 import models.entities._
 // case class models.entities.Paper(
@@ -35,14 +36,17 @@ object Submission extends Controller with SecureSocial {
       "keywords" -> nonEmptyText,
       "abstrct" -> nonEmptyText
     )((title, format, keywords, abstrct) =>
-        Paper(-1, "TOTO_FROM_SECURESOCIAL@gmail.com", DateTime.now, DateTime.now, None, title, PaperFormat.withName(format), keywords, abstrct, None))
+        Paper(-1, "TODO_FROM_SECURESOCIAL@gmail.com", DateTime.now, DateTime.now, None, title, PaperFormat.withName(format), keywords, abstrct, None))
      ((paper: Paper) =>
-        Some((paper.title, paper.format.toString, paper.keywords, paper.abstrct)))
+        Some(paper.title, paper.format.toString, paper.keywords, paper.abstrct))
   )
   
   def form = Action(Ok(views.html.submit(paperForm)))
 
-  def make = Action { implicit request =>
+  def make = Action(parse.multipartFormData) { implicit request =>
+    val tmpFile = request.body.file("data").map(_.ref.file)
+    val blob = tmpFile.map(scalax.io.Resource.fromFile(_).byteArray)
+    
     paperForm.bindFromRequest.fold(
       // Form has errors, redisplay it
       errors => Ok(views.html.submit(errors)),
