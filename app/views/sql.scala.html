@@ -1,4 +1,4 @@
-@(result: Option[String], queryForm: Form[String])
+@(result: Option[String], queryForm: Form[(String, controllers.SqlMethod.Value)])
 
 @import helper._
 
@@ -12,6 +12,13 @@
         '_help -> "",
         'rows -> 5,
         'cols -> 50)
+      
+      @inputRadioGroup(
+        queryForm("method.m"), 
+        controllers.SqlMethod.values.toSeq.map(f => f.toString -> f.toString), 
+        '_label -> "",
+        '_help -> "")
+      
       <input type="submit" value="Run">
     }
     

@@ -33,17 +33,17 @@ case class Review(
 )
 
 object Reviews extends Table[Review]("REVIEWS") {
-  def paperid = column[Int]("paperid")
-  def memberid = column[Int]("memberid")
-  def submissiondate = column[Option[DateTime]]("submissiondate")
-  def lastupdate = column[Option[DateTime]]("lastupdate")
-  def confidence = column[ReviewConfidence]("confidence")
-  def evaluation = column[ReviewEvaluation]("evaluation")
-  def content = column[String]("content", O.DBType("text"))
+  def paperid = column[Int]("PAPERID")
+  def memberid = column[Int]("MEMBERID")
+  def submissiondate = column[Option[DateTime]]("SUBMISSIONDATE")
+  def lastupdate = column[Option[DateTime]]("LASTUPDATE")
+  def confidence = column[ReviewConfidence]("CONFIDENCE")
+  def evaluation = column[ReviewEvaluation]("EVALUATION")
+  def content = column[String]("CONTENT", O.DBType("TEXT"))
   
-  def pk = primaryKey("members_pk", paperid ~ memberid)
-  def member = foreignKey("members_memberid_fk", memberid, Members)(_.id)
-  def paper = foreignKey("members_paperid_fk", paperid, Papers)(_.id)
+  def pk = primaryKey("MEMBERS_PK", paperid ~ memberid)
+  def member = foreignKey("MEMBERS_MEMBERID_FK", memberid, Members)(_.id)
+  def paper = foreignKey("MEMBERS_PAPERID_FK", paperid, Papers)(_.id)
 
   def * = paperid ~ memberid ~ submissiondate ~ lastupdate ~ confidence ~ evaluation ~ content <> (Review.apply _, Review.unapply _)
 }

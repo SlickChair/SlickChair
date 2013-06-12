@@ -19,15 +19,15 @@ case class Comment(
 )
 
 object Comments extends Table[Comment]("COMMENTS") {
-  def id = column[Int]("id", O.AutoInc, O.PrimaryKey)
-  def paperid = column[Int]("paperid")
-  def memberid = column[Int]("memberid")
-  def submissiondate = column[DateTime]("submissiondate")
-  def lastupdate = column[DateTime]("lastupdate")
-  def content = column[String]("content")
+  def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
+  def paperid = column[Int]("PAPERID")
+  def memberid = column[Int]("MEMBERID")
+  def submissiondate = column[DateTime]("SUBMISSIONDATE")
+  def lastupdate = column[DateTime]("LASTUPDATE")
+  def content = column[String]("CONTENT")
 
-  def paper = foreignKey("comments_paperid_fk", paperid, Papers)(_.id)
-  def member = foreignKey("comments_memberid_fk", memberid, Members)(_.id)
+  def paper = foreignKey("COMMENTS_PAPERID_FK", paperid, Papers)(_.id)
+  def member = foreignKey("COMMENTS_MEMBERID_FK", memberid, Members)(_.id)
 
   def * = id ~ paperid ~ memberid ~ submissiondate ~ lastupdate ~ content <> (Comment.apply _, Comment.unapply _)
 }

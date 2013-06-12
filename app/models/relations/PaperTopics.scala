@@ -12,12 +12,12 @@ case class PaperTopic(
 )
 
 object PaperTopics extends Table[PaperTopic]("PAPER_TOPICS") {
-  def paperid = column[Int]("paperid")
-  def topicid = column[Int]("topicid")
+  def paperid = column[Int]("PAPERID")
+  def topicid = column[Int]("TOPICID")
   
-  def pk = primaryKey("papertopics_pk", paperid ~ topicid)
-  def paper = foreignKey("papertopics_paperid_fk", paperid, Papers)(_.id)
-  def topic = foreignKey("papertopics_topicid_fk", topicid, Topics)(_.id)
+  def pk = primaryKey("PAPERTOPICS_PK", paperid ~ topicid)
+  def paper = foreignKey("PAPERTOPICS_PAPERID_FK", paperid, Papers)(_.id)
+  def topic = foreignKey("PAPERTOPICS_TOPICID_FK", topicid, Topics)(_.id)
 
   def * = paperid ~ topicid <> (PaperTopic.apply _, PaperTopic.unapply _)
 }

@@ -12,12 +12,12 @@ case class MemberTopic(
 )
 
 object MemberTopics extends Table[MemberTopic]("MEMBER_TOPICS") {
-  def memberid = column[Int]("memberid")
-  def topicid = column[Int]("topicid")
+  def memberid = column[Int]("MEMBERID")
+  def topicid = column[Int]("TOPICID")
 
-  def pk = primaryKey("membertopics_pk", memberid ~ topicid)
-  def member = foreignKey("membertopics_memberid_fk", memberid, Members)(_.id)
-  def topic = foreignKey("membertopics_topic_fk", topicid, Topics)(_.id)
+  def pk = primaryKey("MEMBERTOPICS_PK", memberid ~ topicid)
+  def member = foreignKey("MEMBERTOPICS_MEMBERID_FK", memberid, Members)(_.id)
+  def topic = foreignKey("MEMBERTOPICS_TOPIC_FK", topicid, Topics)(_.id)
 
   def * = memberid ~ topicid <> (MemberTopic.apply _, MemberTopic.unapply _)
 }

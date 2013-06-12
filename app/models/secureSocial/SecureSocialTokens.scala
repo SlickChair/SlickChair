@@ -18,11 +18,11 @@ import securesocial.core.providers.Token
 // )
 
 object SecureSocialTokens extends Table[Token]("SECURE_SOCIAL_TOKENS") {
-  def uuid = column[String]("uuid", O.PrimaryKey)
-  def email = column[String]("email")
-  def creationTime = column[DateTime]("creationtime")
-  def expirationTime = column[DateTime]("expirationtime")
-  def isSignUp = column[Boolean]("issignup")
+  def uuid = column[String]("UUID", O.PrimaryKey)
+  def email = column[String]("EMAIL")
+  def creationTime = column[DateTime]("CREATIONTIME")
+  def expirationTime = column[DateTime]("EXPIRATIONTIME")
+  def isSignUp = column[Boolean]("ISSIGNUP")
   def * = uuid ~ email ~ creationTime ~ expirationTime ~ isSignUp <> (Token.apply _, Token.unapply _)
 
   trait Queries {

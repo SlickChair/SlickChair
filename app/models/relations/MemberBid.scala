@@ -20,13 +20,13 @@ case class MemberBid(
 )
 
 object MemberBids extends Table[MemberBid]("MEMBER_BIDS") {
-  def paperid = column[Int]("paperid")
-  def memberid = column[Int]("memberid")
-  def bid = column[Bid]("bid")
+  def paperid = column[Int]("PAPERID")
+  def memberid = column[Int]("MEMBERID")
+  def bid = column[Bid]("BID")
   
-  def pk = primaryKey("memberbids_pk", paperid ~ memberid)
-  def member = foreignKey("memberbids_memberid_fk", memberid, Members)(_.id)
-  def paper = foreignKey("memberbids_paperid_fk", paperid, Papers)(_.id)
+  def pk = primaryKey("MEMBERBIDS_PK", paperid ~ memberid)
+  def member = foreignKey("MEMBERBIDS_MEMBERID_FK", memberid, Members)(_.id)
+  def paper = foreignKey("MEMBERBIDS_PAPERID_FK", paperid, Papers)(_.id)
   
   def * = paperid ~ memberid ~ bid <> (MemberBid.apply _, MemberBid.unapply _)
 }

@@ -50,18 +50,18 @@ object User {
 }
 
 object SecureSocialUsers extends Table[User]("SECURE_SOCIAL_USERS") {
-  def uid = column[String]("uid")
-  def pid = column[String]("pid")
-  def email = column[String]("email")
-  def firstName = column[String]("firstname")
-  def lastName = column[String]("lastname")
-  def avatarurl = column[Option[String]]("avatarurl")
-  def authMethod = column[String]("authmethod")
-  def hasher = column[Option[String]]("hasher")
-  def password = column[Option[String]]("password")
-  def salt = column[Option[String]]("salt")
+  def uid = column[String]("UID")
+  def pid = column[String]("PID")
+  def email = column[String]("EMAIL")
+  def firstName = column[String]("FIRSTNAME")
+  def lastName = column[String]("LASTNAME")
+  def avatarurl = column[Option[String]]("AVATARURL")
+  def authMethod = column[String]("AUTHMETHOD")
+  def hasher = column[Option[String]]("HASHER")
+  def password = column[Option[String]]("PASSWORD")
+  def salt = column[Option[String]]("SALT")
   
-  def pk = primaryKey("securesocialusers_pk", uid ~ pid)
+  def pk = primaryKey("SECURESOCIALUSERS_PK", uid ~ pid)
   
   def * = uid ~ pid ~ email ~ firstName ~ lastName ~ avatarurl ~ authMethod ~ hasher ~ password ~ salt <> (User.apply _, User.unapply _)
 

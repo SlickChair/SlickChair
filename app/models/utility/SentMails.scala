@@ -17,11 +17,11 @@ case class SentMail(
 )
 
 object SentMails extends Table[SentMail]("SENTMAILS") {
-  def id = column[Int]("id", O.AutoInc, O.PrimaryKey)
-  def sent = column[DateTime]("sent")
-  def to = column[String]("to")
-  def subject = column[String]("subject")
-  def body = column[String]("body")
+  def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
+  def sent = column[DateTime]("SENT")
+  def to = column[String]("TO")
+  def subject = column[String]("SUBJECT")
+  def body = column[String]("BODY")
     
   def * = id ~ sent ~ to ~ subject ~ body <> (SentMail.apply _, SentMail.unapply _)
 }

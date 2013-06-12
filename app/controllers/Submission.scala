@@ -37,7 +37,7 @@ object Submission extends Controller with SecureSocial {
     "format" -> paperFormatMapping,
     "keywords" -> nonEmptyText,
     "abstrct" -> nonEmptyText,
-    "data" -> ignored(Option.empty[Array[Byte]])
+    "paperid" -> ignored(Option.empty[Int])
   )(Paper.apply _)(Paper.unapply _)
   
   val authorMapping: Mapping[Author] = mapping(
@@ -69,8 +69,9 @@ object Submission extends Controller with SecureSocial {
     
     submissionForm.bindFromRequest.fold(
       errors => Ok(views.html.submit(errors)),
-      filled => { case SubmissionForm(paper, authors, topics) => 
-        Ok(filled.toString)
+      filled => filled match {
+        case SubmissionForm(paper, authors, topics) => 
+          Ok(filled.toString)
       }
     )
   }

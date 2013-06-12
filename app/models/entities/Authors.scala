@@ -15,15 +15,15 @@ case class Author(
 )
 
 object Authors extends Table[Author]("AUTHORS") {
-  def paperid = column[Int]("paperid")
-  def position = column[Int]("position")
-  def firstname = column[String]("firstname")
-  def lastname = column[String]("lastname")
-  def organization = column[String]("organization")
-  def email = column[String]("email")
+  def paperid = column[Int]("PAPERID")
+  def position = column[Int]("POSITION")
+  def firstname = column[String]("FIRSTNAME")
+  def lastname = column[String]("LASTNAME")
+  def organization = column[String]("ORGANIZATION")
+  def email = column[String]("EMAIL")
   
-  def pk = primaryKey("authors_pk", paperid ~ position)
-  def paper = foreignKey("authors_paperid_fk", paperid, Papers)(_.id)
+  def pk = primaryKey("AUTHORS_PK", paperid ~ position)
+  def paper = foreignKey("AUTHORS_PAPERID_FK", paperid, Papers)(_.id)
   
   def * = paperid ~ position ~ firstname ~ lastname ~ organization ~ email <> (Author.apply _, Author.unapply _)
 }

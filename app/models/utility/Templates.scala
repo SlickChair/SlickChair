@@ -13,10 +13,10 @@ case class Template(
 )
 
 object Templates extends Table[Template]("TEMPLATES") {
-  def id = column[Int]("id", O.AutoInc, O.PrimaryKey)
-  def name = column[String]("name")
-  def subject = column[String]("subject")
-  def body = column[String]("body")
+  def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
+  def name = column[String]("NAME")
+  def subject = column[String]("SUBJECT")
+  def body = column[String]("BODY")
   
   def * = id ~ name ~ subject ~ body <> (Template.apply _, Template.unapply _)
 }
