@@ -12,7 +12,6 @@ case class User(
     email: String,
     firstName: String,
     lastName: String,
-    avatarUrl: Option[String],
     authMethod: String,
     hasher: Option[String],
     password: Option[String],
@@ -20,32 +19,14 @@ case class User(
     ) {
   def id: UserId = UserId(uid, pid)
   def toIdentity: Identity = SocialUser(
-    id = UserId(this.uid, this.pid),
-    email = Some(this.email),
-    firstName = this.firstName,
-    lastName = this.lastName,
-    fullName = this.firstName + " " + this.lastName,
-    avatarUrl = this.avatarUrl,
-    authMethod = AuthenticationMethod(this.authMethod),
-    oAuth1Info = None,
-    oAuth2Info = None,
-    passwordInfo = this.password.map( p =>
-      Some(PasswordInfo(this.hasher.getOrElse(""), p, this.salt))
-    ).getOrElse(None)
+    UserId(uid, pid), Some(email), firstName, lastName, s"$firstName $lastName", None, AuthenticationMethod(authMethod),
+    None, None, password.map(p => Some(PasswordInfo(hasher.getOrElse(""), p, salt)))
   )
 }
 object User {
-  def fromIdentity(i: Identity) = User(
-    uid = i.id.id,
-    pid = i.id.providerId,
-    email = i.email.get, // TODO: might fail, throw login error
-    firstName = if (!i.firstName.isEmpty) i.firstName else i.fullName.split(' ').head,
-    lastName = if (!i.lastName.isEmpty) i.lastName else i.fullName.split(' ').tail.head,
-    avatarUrl = i.avatarUrl,
-    authMethod = i.authMethod.method,
-    hasher = i.passwordInfo.map(_.hasher),
-    password = i.passwordInfo.map(_.password),
-    salt = i.passwordInfo.map(_.salt).getOrElse(None)
+  def fromIdentity(i: Identity) = User( // email.get will fail for some providers, eg twitter
+    i.id.id, i.id.providerId, i.email.get, firstName = i.firstName, i.lastName, i.authMethod.method,
+    i.passwordInfo.map(_.hasher), i.passwordInfo.map(_.password), i.passwordInfo.map(_.salt)
   )
 }
 
@@ -55,15 +36,13 @@ object SecureSocialUsers extends Table[User]("SECURE_SOCIAL_USERS") {
   def email = column[String]("EMAIL")
   def firstName = column[String]("FIRSTNAME")
   def lastName = column[String]("LASTNAME")
-  def avatarurl = column[Option[String]]("AVATARURL")
   def authMethod = column[String]("AUTHMETHOD")
   def hasher = column[Option[String]]("HASHER")
   def password = column[Option[String]]("PASSWORD")
   def salt = column[Option[String]]("SALT")
   
   def pk = primaryKey("SECURESOCIALUSERS_PK", uid ~ pid)
-  
-  def * = uid ~ pid ~ email ~ firstName ~ lastName ~ avatarurl ~ authMethod ~ hasher ~ password ~ salt <> (User.apply _, User.unapply _)
+  def * = uid ~ pid ~ email ~ firstName ~ lastName ~ authMethod ~ hasher ~ password ~ salt <> (User.apply _, User.unapply _)
 
   def userByUserId(userId: UserId) = 
     Query(SecureSocialUsers).filter( user =>
