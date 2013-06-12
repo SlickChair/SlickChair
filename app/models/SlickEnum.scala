@@ -1,6 +1,10 @@
 package models
 
-// From: https://github.com/nafg/slick-additions
+/**
+ * The BitmaskedEnumeration trait can be mixed into a subclass of Enumeration in
+ * to have is usable as a column type in a Slick Table.
+ * source: https://github.com/nafg/slick-additions
+ */
 import scala.slick.lifted.{ BaseTypeMapper, MappedTypeMapper }
 import scala.slick.jdbc.GetResult
 
@@ -21,7 +25,6 @@ trait Bitmasked {
   implicit lazy val getSetResult: GetResult[Set[Value]] = GetResult(r => longToSet(r.nextLong))
 }
 
-// Mix this in to a subclass of Enumeration to get an implicit BaseTypeMapper and GetResult for V and Set[V].
 trait BitmaskedEnumeration extends Bitmasked { this: Enumeration =>
   def bitFor = _.id
   def forBit = apply(_)
