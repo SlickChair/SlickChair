@@ -4,6 +4,9 @@ import org.joda.time.DateTime
 import models.entities.PaperFormat._
 import models.relations._
 
+/**
+ * Populates the database with fake data for testing. Global.onStart() is called when the application starts.
+ */
 object Global extends GlobalSettings {
   override def onStart(app: Application) {
     if(Topics.all.isEmpty) {
