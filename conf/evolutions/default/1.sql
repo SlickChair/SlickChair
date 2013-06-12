@@ -34,8 +34,8 @@ alter table "MEMBER_BIDS" add constraint "MEMBERBIDS_PAPERID_FK" foreign key("PA
 alter table "MEMBER_BIDS" add constraint "MEMBERBIDS_MEMBERID_FK" foreign key("MEMBERID") references "MEMBERS"("id") on update NO ACTION on delete NO ACTION;
 alter table "MEMBER_TOPICS" add constraint "MEMBERTOPICS_TOPIC_FK" foreign key("TOPICID") references "TOPICS"("ID") on update NO ACTION on delete NO ACTION;
 alter table "MEMBER_TOPICS" add constraint "MEMBERTOPICS_MEMBERID_FK" foreign key("MEMBERID") references "MEMBERS"("id") on update NO ACTION on delete NO ACTION;
-alter table "PAPER_TOPICS" add constraint "PAPERTOPICS_TOPICID_FK" foreign key("TOPICID") references "TOPICS"("ID") on update NO ACTION on delete NO ACTION;
 alter table "PAPER_TOPICS" add constraint "PAPERTOPICS_PAPERID_FK" foreign key("PAPERID") references "PAPERS"("ID") on update NO ACTION on delete NO ACTION;
+alter table "PAPER_TOPICS" add constraint "PAPERTOPICS_TOPICID_FK" foreign key("TOPICID") references "TOPICS"("ID") on update NO ACTION on delete NO ACTION;
 alter table "REVIEWS" add constraint "MEMBERS_PAPERID_FK" foreign key("PAPERID") references "PAPERS"("ID") on update NO ACTION on delete NO ACTION;
 alter table "REVIEWS" add constraint "MEMBERS_MEMBERID_FK" foreign key("MEMBERID") references "MEMBERS"("id") on update NO ACTION on delete NO ACTION;
 
@@ -49,8 +49,8 @@ alter table "MEMBER_BIDS" drop constraint "MEMBERBIDS_PAPERID_FK";
 alter table "MEMBER_BIDS" drop constraint "MEMBERBIDS_MEMBERID_FK";
 alter table "MEMBER_TOPICS" drop constraint "MEMBERTOPICS_TOPIC_FK";
 alter table "MEMBER_TOPICS" drop constraint "MEMBERTOPICS_MEMBERID_FK";
-alter table "PAPER_TOPICS" drop constraint "PAPERTOPICS_TOPICID_FK";
 alter table "PAPER_TOPICS" drop constraint "PAPERTOPICS_PAPERID_FK";
+alter table "PAPER_TOPICS" drop constraint "PAPERTOPICS_TOPICID_FK";
 alter table "REVIEWS" drop constraint "MEMBERS_PAPERID_FK";
 alter table "REVIEWS" drop constraint "MEMBERS_MEMBERID_FK";
 drop table "TASKS";

@@ -17,8 +17,9 @@ POST    /tasks/:id/delete controllers.Application.deleteTask(id: Long)
 # Submitters
 GET     /submit              controllers.Submission.form
 POST    /submit              controllers.Submission.make
+GET     /submission/:id/edit controllers.Submission.edit(id: Int)
+POST    /submission/:id/edit controllers.Submission.makeEdit(id: Int)
 GET     /submission/:id/info controllers.Submission.info(id: Int)
-POST    /submission/:id/info controllers.Submission.edit(id: Int)
 
 # Reviewers
 GET     /submissions                       controllers.Review.list

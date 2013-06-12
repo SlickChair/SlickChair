@@ -18,6 +18,14 @@ object PaperTopics extends Table[PaperTopic]("PAPER_TOPICS") {
   def pk = primaryKey("PAPERTOPICS_PK", paperid ~ topicid)
   def paper = foreignKey("PAPERTOPICS_PAPERID_FK", paperid, Papers)(_.id)
   def topic = foreignKey("PAPERTOPICS_TOPICID_FK", topicid, Topics)(_.id)
-
   def * = paperid ~ topicid <> (PaperTopic.apply _, PaperTopic.unapply _)
+
+  def all = DB.withSession(implicit session =>
+    Query(PaperTopics).list)
+
+  def ins(pt: PaperTopic) = DB.withSession(implicit session =>
+    PaperTopics.insert(pt))
+  
+  def of(id: Int) = DB.withSession(implicit session =>
+    Query(PaperTopics).filter(_.paperid is id).map(_.topicid).list)
 }

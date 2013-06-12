@@ -24,6 +24,14 @@ object Authors extends Table[Author]("AUTHORS") {
   
   def pk = primaryKey("AUTHORS_PK", paperid ~ position)
   def paper = foreignKey("AUTHORS_PAPERID_FK", paperid, Papers)(_.id)
-  
   def * = paperid ~ position ~ firstname ~ lastname ~ organization ~ email <> (Author.apply _, Author.unapply _)
+
+  def all = DB.withSession(implicit session =>
+    Query(Authors).list)
+  
+  def ins(author: Author) = DB.withSession(implicit session =>
+    Authors.insert(author))
+  
+  def of(id: Int) = DB.withSession(implicit session =>
+    Query(Authors).filter(_.paperid is id).list)
 }

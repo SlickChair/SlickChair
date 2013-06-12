@@ -19,11 +19,19 @@
         '_label -> "",
         '_help -> "")
       
-      <input type="submit" value="Run">
+      <input type="submit" id="submit" value="Run (Ctrl+Enter)">
     }
     
     @result.map { output =>
       <h1>Results:</h1>
       <pre>@output</pre>
     }
+    <script>
+    window.onload = function () {
+      document.getElementById('query').select();
+      document.body.onkeydown = function (e) {
+        if (e.keyCode == 13 && e.ctrlKey) {
+          document.getElementById('submit').click();
+          return false; }}}
+    </script>
 }

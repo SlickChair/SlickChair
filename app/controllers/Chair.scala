@@ -42,7 +42,6 @@ object Chair extends Controller with SecureSocial {
       } catch {
         case e: Exception => e.toString.replaceFirst(": ", ":\n")
       }
-        
       Ok(views.html.sql(Some(result), filledForm))
     }
   }

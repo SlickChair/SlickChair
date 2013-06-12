@@ -1,17 +1,12 @@
-@(submissionForm: Form[SubmissionForm])
+@(message: String, call: Call, submissionForm: Form[SubmissionForm])
 
 @import helper._
 @import models.entities._
 
-@submissionForm
-<br>
-<br>
-@submissionForm.errors
-
-@defining(1 to 3) { authors =>
-  @main("New submission") {
-    <h1>New submission</h1>
-    @helper.form(action = routes.Submission.make, 'enctype -> "multipart/form-data") {
+@defining(0 to 2) { authors =>
+  @main(message) {
+    <h1>@message</h1>
+    @helper.form(call, 'enctype -> "multipart/form-data") {
       <fieldset><legend>Submission</legend>
       @inputText(submissionForm("paper.title"), '_label -> "Paper title:", '_help -> "")
       @inputRadioGroup(
@@ -30,12 +25,11 @@
       </fieldset><br>
       
       <fieldset><legend>Topics</legend>
-      @for(Topic(id, name, description) <- Topics.all) {
+      @for(Topic(Some(id), name, description) <- Topics.all) {
         @checkbox(
           submissionForm(s"topics[$id]"),
           '_label -> (name + ":").capitalize,
-          '_help -> "", // description
-          'value -> id
+          'value -> id.toString
         )
       }
       </fieldset><br>
@@ -43,12 +37,12 @@
       <fieldset><legend>Authors</legend>
       @select(
         submissionForm("nauthors"),
-        authors.map(i => (i.toString, i.toString)),
+        authors.map(i => ((i+1).toString, (i+1).toString)),
         '_label -> "Number of authors:",
         '_help -> ""
       )
       @authors.map { i =>
-        <fieldset><legend>Author @i</legend>
+        <fieldset><legend>Author @(i+1)</legend>
         @inputText(submissionForm(s"authors[$i].firstname"), '_label -> "First Name:")
         @inputText(submissionForm(s"authors[$i].lastname"), '_label -> "Last Name:")
         @inputText(submissionForm(s"authors[$i].organization"), '_label -> "Organization:")

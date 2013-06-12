@@ -22,6 +22,6 @@ object Topics extends Table[Topic]("TOPICS") {
   def all = DB.withSession(implicit session =>
     Query(Topics).list)
   
-  def insert(topic: Topic) = DB.withSession(implicit session =>
+  def ins(topic: Topic) = DB.withSession(implicit session =>
     Topics.autoInc.insert(topic))
 }
