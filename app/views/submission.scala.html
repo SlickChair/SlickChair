@@ -1,4 +1,4 @@
-@(message: String, call: Call, submissionForm: Form[SubmissionForm])
+@(message: String, submissionForm: Form[SubmissionForm])
 
 @import helper._
 @import models.entities._
@@ -6,7 +6,7 @@
 @defining(0 to 2) { authors =>
   @main(message) {
     <h1>@message</h1>
-    @helper.form(call, 'enctype -> "multipart/form-data") {
+    @helper.form(routes.Submission.make, 'enctype -> "multipart/form-data") {
       <fieldset><legend>Submission</legend>
       @inputText(submissionForm("paper.title"), '_label -> "Paper title:", '_help -> "")
       @inputRadioGroup(

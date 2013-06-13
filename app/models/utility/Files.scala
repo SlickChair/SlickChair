@@ -27,9 +27,12 @@ object Files extends Table[File]("Files") {
   def autoInc = * returning id
 
   def all = DB.withSession(implicit session =>
-    Query(Files).list)
+    Query(Files).list )
   
   def ins(file: File) = DB.withSession(implicit session =>
-    Files.autoInc.insert(file))
+    Files.autoInc.insert(file) )
+  
+  def del(id: Int) = DB.withSession(implicit session =>
+    Files.filter(_.id is id).mutate(_.delete) )
 }
 

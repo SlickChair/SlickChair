@@ -19,9 +19,9 @@ object Global extends GlobalSettings {
       Topic(None, "Case studies, experience reports, and pearls.", "empty")
       ).foreach(Topics.ins)
       
-      val paperId = Papers.ins(Paper(None,"TODO_FROM_SECURESOCIAL@gmail.com",DateTime.now,DateTime.now,None,"Scala Macros: Let Our Powers Combine!",Standard,"Macro, Compilation","Compile-time metaprogramming has been proven immensely useful",None))
-      Authors.ins(Author(paperId,0,"Eugene","Burmako","EPFL","eugene.burmako@epﬂ"))
-      List(1, 2, 6).foreach(topicId => PaperTopics.ins(PaperTopic(paperId, topicId)))
+      // val paperId = Papers.ins(Paper(None,"TODO_FROM_SECURESOCIAL@gmail.com",DateTime.now,DateTime.now,None,"Scala Macros: Let Our Powers Combine!",Standard,"Macro, Compilation","Compile-time metaprogramming has been proven immensely useful",None))
+      // Authors.ins(Author(paperId, 0,"Eugene","Burmako","EPFL","eugene.burmako@epﬂ"))
+      // List(1, 2, 6).foreach(topicId => PaperTopics.ins(PaperTopic(paperId, topicId)))
     }
   }
 }

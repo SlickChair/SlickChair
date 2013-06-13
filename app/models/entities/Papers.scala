@@ -45,12 +45,18 @@ object Papers extends Table[Paper]("PAPERS") {
   def * = id.? ~ contactemail ~ submissiondate ~ lastupdate ~ accepted ~ title ~ format ~ keywords ~ abstrct ~ fileid <> (Paper.apply _, Paper.unapply _)
   def autoInc = * returning id
 
-  def all = DB.withSession(implicit session =>
-    Query(Papers).list)
+  def all: List[Paper] = DB.withSession(implicit session =>
+    Query(Papers).list )
   
-  def ins(paper: Paper) = DB.withSession(implicit session =>
-    Papers.autoInc.insert(paper))
+  def ins(paper: Paper): Int = DB.withSession(implicit session =>
+    Papers.autoInc.insert(paper) )
   
-  def withId(paperId: Int) = DB.withSession(implicit session =>
-    Query(Papers).filter(_.id is paperId).list.headOption)
+  def updt(paper: Paper) = DB.withSession(implicit session =>
+    Papers.filter(_.id is paper.id).update(paper) )
+  
+  def withId(paperId: Int): Option[Paper] = DB.withSession(implicit session =>
+    Query(Papers).filter(_.id is paperId).list.headOption )
+
+  def withEmail(email: String): Option[Paper] = DB.withSession(implicit session =>
+    Query(Papers).filter(_.contactemail is email).list.headOption )
 }

@@ -21,11 +21,15 @@ object PaperTopics extends Table[PaperTopic]("PAPER_TOPICS") {
   def * = paperid ~ topicid <> (PaperTopic.apply _, PaperTopic.unapply _)
 
   def all = DB.withSession(implicit session =>
-    Query(PaperTopics).list)
-
-  def ins(pt: PaperTopic) = DB.withSession(implicit session =>
-    PaperTopics.insert(pt))
+    Query(PaperTopics).list )
   
   def of(id: Int) = DB.withSession(implicit session =>
-    Query(PaperTopics).filter(_.paperid is id).map(_.topicid).list)
+    Query(PaperTopics).filter(_.paperid is id).map(_.topicid).list )
+
+  def ins(pt: PaperTopic) = DB.withSession(implicit session =>
+    PaperTopics.insert(pt) )
+  
+  def del(id: Int) = DB.withSession(implicit session =>
+    PaperTopics.filter(_.paperid is id).mutate(_.delete) )
+  
 }

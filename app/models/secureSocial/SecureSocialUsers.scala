@@ -19,14 +19,14 @@ case class User(
     ) {
   def id: UserId = UserId(uid, pid)
   def toIdentity: Identity = SocialUser(
-    UserId(uid, pid), Some(email), firstName, lastName, s"$firstName $lastName", None, AuthenticationMethod(authMethod),
-    None, None, password.map(p => Some(PasswordInfo(hasher.getOrElse(""), p, salt)))
+    UserId(uid, pid), s"$firstName $lastName", firstName, lastName, Some(email), None, AuthenticationMethod(authMethod),
+    None, None, password.map(p => PasswordInfo(hasher.getOrElse(""), p, salt))
   )
 }
 object User {
   def fromIdentity(i: Identity) = User( // email.get will fail for some providers, eg twitter
     i.id.id, i.id.providerId, i.email.get, firstName = i.firstName, i.lastName, i.authMethod.method,
-    i.passwordInfo.map(_.hasher), i.passwordInfo.map(_.password), i.passwordInfo.map(_.salt)
+    i.passwordInfo.map(_.hasher), i.passwordInfo.map(_.password), i.passwordInfo.map(_.salt).getOrElse(None)
   )
 }
 
