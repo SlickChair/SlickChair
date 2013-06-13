@@ -20,16 +20,22 @@ object PaperTopics extends Table[PaperTopic]("PAPER_TOPICS") {
   def topic = foreignKey("PAPERTOPICS_TOPICID_FK", topicid, Topics)(_.id)
   def * = paperid ~ topicid <> (PaperTopic.apply _, PaperTopic.unapply _)
 
-  def all = DB.withSession(implicit session =>
-    Query(PaperTopics).list )
+  def all = DB.withSession { implicit session =>
+    Query(PaperTopics).list }
   
-  def of(id: Int) = DB.withSession(implicit session =>
-    Query(PaperTopics).filter(_.paperid is id).map(_.topicid).list )
+  def of(id: Int) = DB.withSession { implicit session =>
+    Query(PaperTopics).filter(_.paperid is id).list }
 
-  def ins(pt: PaperTopic) = DB.withSession(implicit session =>
-    PaperTopics.insert(pt) )
+  def ins(pt: PaperTopic) = DB.withSession { implicit session =>
+    PaperTopics.insert(pt) }
   
-  def del(id: Int) = DB.withSession(implicit session =>
-    PaperTopics.filter(_.paperid is id).mutate(_.delete) )
+  def deleteFor(paper: Paper) = DB.withSession { implicit session =>
+    PaperTopics.filter(_.paperid is paper.id.get).mutate(_.delete) }
   
+  def createAll(pts: List[PaperTopic]) = DB.withSession { implicit session =>
+    pts.map(pt => PaperTopics.insert(pt)) }
+    
+  def ofPaper(paper: Paper): List[Topic] = DB.withSession { implicit session =>
+    (for(p <- PaperTopics; t <- Topics if t.id is p.topicid) yield t).list }
+    // PaperTopics.flatMap(p => Query(Topics).filter(_.id is p.topicid)).list }
 }

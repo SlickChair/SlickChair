@@ -19,9 +19,12 @@ object Topics extends Table[Topic]("TOPICS") {
   def * = id.? ~ name ~ description <> (Topic.apply _, Topic.unapply _)
   def autoInc = * returning id
 
-  def all = DB.withSession(implicit session =>
-    Query(Topics).list)
+  def all = DB.withSession { implicit session =>
+    Query(Topics).list }
   
-  def ins(topic: Topic) = DB.withSession(implicit session =>
-    Topics.autoInc.insert(topic))
+  def ins(topic: Topic) = DB.withSession { implicit session =>
+    Topics.autoInc.insert(topic) }
+  
+  def withId(topicId: Int) = DB.withSession { implicit session =>
+    Topics.filter(_.id is topicId).list.headOption }
 }

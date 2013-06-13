@@ -32,7 +32,7 @@ object Files extends Table[File]("Files") {
   def ins(file: File) = DB.withSession(implicit session =>
     Files.autoInc.insert(file) )
   
-  def del(id: Int) = DB.withSession(implicit session =>
+  def delete(id: Int) = DB.withSession(implicit session =>
     Files.filter(_.id is id).mutate(_.delete) )
 }
 

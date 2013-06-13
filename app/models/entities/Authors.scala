@@ -26,19 +26,19 @@ object Authors extends Table[Author]("AUTHORS") {
   def paper = foreignKey("AUTHORS_PAPERID_FK", paperid, Papers)(_.id)
   def * = paperid ~ position ~ firstname ~ lastname ~ organization ~ email <> (Author.apply _, Author.unapply _)
 
-  def all = DB.withSession(implicit session =>
-    Query(Authors).list )
+  def all = DB.withSession { implicit session =>
+    Query(Authors).list
+  }
   
-  def of(id: Int) = DB.withSession(implicit session =>
-    Query(Authors).filter(_.paperid is id).list )
+  def of(paper: Paper) = DB.withSession { implicit session =>
+    Query(Authors).filter(_.paperid is paper.id.get).list
+  }
   
-  def ins(author: Author) = DB.withSession{implicit session =>
-    play.api.Logger.info("ins " + author)
-
-    Authors.insert(author) }
+  def createAll(authors: List[Author]) = DB.withSession { implicit session =>
+    authors.foreach(a => Authors.insert(a))
+  }
   
-  def del(id: Int) = DB.withSession{implicit session =>
-    play.api.Logger.info("del " + id)
-
-    Authors.filter(_.paperid is id).delete }
+  def deleteFor(paper: Paper) = DB.withSession { implicit session =>
+    Authors.filter(_.paperid is paper.id.get).delete
+  }
 }

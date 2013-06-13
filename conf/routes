@@ -3,34 +3,28 @@
 # ~~~~
 
 # Home page
-GET     /                 controllers.Application.index
+GET     /                                    controllers.Submission.form
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file     controllers.Assets.at(path="/public", file)
-
-# Tasks          
-GET     /tasks            controllers.Application.tasks
-POST    /tasks            controllers.Application.newTask
-POST    /tasks/:id/delete controllers.Application.deleteTask(id: Long)
-
+GET     /assets/*file                        controllers.Assets.at(path="/public", file)
 
 # Submitters
-GET     /submission          controllers.Submission.form
-GET     /submission/edit     controllers.Submission.form
-POST    /submission/edit     controllers.Submission.make
-GET     /submission/info     controllers.Submission.info
+GET     /submission                          controllers.Submission.form
+GET     /submission/edit                     controllers.Submission.form
+POST    /submission/edit                     controllers.Submission.make
+GET     /submission/info                     controllers.Submission.info
 
 # Reviewers
-GET     /submissions                       controllers.Review.list
-GET     /submission/:id                    controllers.Review.view(id: Int)
-POST    /submission/:id/review             controllers.Review.make(id: Int)
-POST    /submission/:id/review/edit        controllers.Review.edit(id: Int)
-POST    /submission/:id/comment            controllers.Review.makeComment(id: Int)
-POST    /submission/:sid/comment/:cid/edit controllers.Review.editComment(sid: Int, cid: Int)
+GET     /submissions                         controllers.Review.list
+GET     /submission/:id                      controllers.Review.view(id: Int)
+POST    /submission/:id/review               controllers.Review.make(id: Int)
+POST    /submission/:id/review/edit          controllers.Review.edit(id: Int)
+POST    /submission/:id/comment              controllers.Review.makeComment(id: Int)
+POST    /submission/:sid/comment/:cid/edit   controllers.Review.editComment(sid: Int, cid: Int)
 
 # Chair
-GET     /sql controllers.Chair.sql
-POST    /sql controllers.Chair.runQuery
+GET     /sql                                 controllers.Chair.sql
+POST    /sql                                 controllers.Chair.runQuery
 
 
 # SecureSocial

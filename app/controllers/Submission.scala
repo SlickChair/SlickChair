@@ -14,14 +14,11 @@ import securesocial.core.providers.utils._
 
 case class SubmissionForm(
   paper: Paper,
-  authors: Seq[Author],
-  topics: Seq[Int]
+  authors: List[Author],
+  topics: List[Int]
 )
 
 object Submission extends Controller with SecureSocial {
-  // See playframework.com/documentation/2.1.1/ScalaForms (-> Constructing complex objects)
-  // and github.com/playframework/Play20/blob/master/samples/scala/forms/app/controllers/SignUp.scala
-  // to understand how Froms work in Play2.
   val paperFormatMapping: Mapping[PaperFormat] = mapping(
     "value" -> nonEmptyText)(PaperFormat.withName(_))(Some(_).map(_.toString))
   
@@ -53,8 +50,8 @@ object Submission extends Controller with SecureSocial {
     mapping(
       "paper" -> paperMapping,
       "nauthors" -> number,
-      "authors" -> seq(authorMapping),
-      "topics" -> seq(number).verifying("Please select at least one topic.", !_.isEmpty)
+      "authors" -> list(authorMapping),
+      "topics" -> list(number).verifying("Please select at least one topic.", !_.isEmpty)
     )((paper, nauthors, authors, topics) =>
         SubmissionForm(paper, authors.take(nauthors).zipWithIndex.map{case (a, i) => a.copy(position = i)}, topics))
       // After calling this function authors positions are constistant but
@@ -71,21 +68,18 @@ object Submission extends Controller with SecureSocial {
       case None =>
         Ok(views.html.submission(request.user.email + "New Submission", submissionForm))
       case Some(paper) =>
-        // val es = submissionForm.fill(SubmissionForm(paper, Authors.of(paper.id.get), Seq()))
-        val existingSubmission =  incBind(
-          submissionForm.fill(SubmissionForm(paper, Authors.of(paper.id.get), Seq())),
-          PaperTopics.of(paper.id.get).map(i => (s"topics[$i]", i.toString)).toMap
+        val existingSubmissionForm = incBind(
+          submissionForm.fill(SubmissionForm(paper, Authors.of(paper), List())),
+          PaperTopics.of(paper.id.get).map(t => ("topics[%s]".format(t.topicid), t.topicid.toString)).toMap
         )
-        
-        // es.bind(es.data ++ PaperTopics.of(paper.id.get).map(i => (s"topics[$i]", i.toString)))
-        Ok(views.html.submission(request.user.email.get + "Edit Submission", existingSubmission))
+        Ok(views.html.submission(request.user.email.get + "Edit Submission", existingSubmissionForm))
     }
   }
   
   def make = UserAwareAction(parse.multipartFormData) { implicit request =>
     request.user match {
       case None =>
-        Redirect(RoutesHelper.notAuthorized.absoluteURL())
+        Redirect(routes.Submission.form)
       case Some(u) =>
         val email = u.email.get
         submissionForm.bindFromRequest.fold(
@@ -111,10 +105,9 @@ object Submission extends Controller with SecureSocial {
                     fileid = newFileId
                   ))
                 case Some(dbPaper) =>
-                // Paper(Some(id), _, submissiondate, _, accepted, title, format, keywords, abstrct, fileid)
-                  newFileId.map{ _ => dbPaper.fileid.map(i => Files.del(i)) }
-                  Authors.del(dbPaper.id.get)
-                  PaperTopics.del(dbPaper.id.get)
+                  newFileId.map{ _ => dbPaper.fileid.map(i => Files.delete(i)) }
+                  Authors.deleteFor(dbPaper)
+                  PaperTopics.deleteFor(dbPaper)
                   Papers.updt(formPaper.copy(
                     id = dbPaper.id,
                     contactemail = email, // == dbPaper.email by construction
@@ -126,43 +119,24 @@ object Submission extends Controller with SecureSocial {
                   dbPaper.id.get
               }
               
-              formAuthors.foreach(author => Authors.ins(author.copy(paperId)))
-              formTopics.foreach(topic => PaperTopics.ins(PaperTopic(paperId, topic)))
-              Ok(Papers.withEmail(email).toString + "<br>" )
-                // Authors.of(Papers.withEmail(email).map(_.id.get)
-                  // + "<br>" + PaperTopics.of(Papers.withEmail(email).map(_.id.get))))
+              Authors.createAll(formAuthors.map(_.copy(paperId)))
+              PaperTopics.createAll(formTopics.map(PaperTopic(paperId, _)))
+              Redirect(routes.Submission.info)
           }
         )
     }
   }
   
-  def info = TODO
-  
-  // def edit(id: Int) = Action(
-  //   Papers.withId(id) match {
-  //     case None =>
-  //       NotFound
-  //     case Some(paper) =>
-  //       val s = submissionForm.fill(SubmissionForm(paper, Authors.of(id), Seq()))
-  //       val existingSubmission = s.bind(s.data ++ PaperTopics.of(id).map(i => (s"topics[$i]", i.toString)))
-  //       Ok(views.html.submission("Edit Submission", routes.Submission.makeEdit(id), existingSubmission))
-  //   }
-  // )
-  
-  // def makeEdit(id: Int) =  Action(parse.multipartFormData) { implicit request =>
-  //   submissionForm.bindFromRequest.fold(
-  //     errors => Ok(views.html.submission(request.body.file("data").get.filename  + "Edit Submission: Errors found", routes.Submission.makeEdit(id), errors)),
-  //     filled => filled match {
-  //       case SubmissionForm(paper, authors, topics) => 
-  //         val fileId = request.body.file("data").map{ file =>
-  //           val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray
-  //           Files.ins(File(None, file.filename, blob.size, DateTime.now, blob))
-  //         }
-  //         val paperId: Int = Papers.ins(paper.copy(fileId))
-  //         authors.foreach(author => Authors.ins(author.copy(paperId)))
-  //         topics.foreach(topic => PaperTopics.ins(PaperTopic(paperId, topic)))
-  //         Ok(filled.toString)
-  //     }
-  //   )
-  // } 
+  def info = SecuredAction{ implicit request =>
+    Papers.withEmail(request.user.email.get) match {
+      case None =>
+        Redirect(routes.Submission.form)
+      case Some(paper) =>
+        Ok(views.html.submissioninfo(
+          paper,
+          Authors.of(paper),
+          PaperTopics.ofPaper(paper)
+        ))
+    }
+  }
 }
