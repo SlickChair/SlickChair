@@ -16,9 +16,9 @@ GET     /submission/info                     controllers.Submission.info
 
 # Reviewers
 GET     /submissions                         controllers.Review.list
-GET     /submission/:id                      controllers.Review.view(id: Int)
-POST    /submission/:id/review               controllers.Review.make(id: Int)
-POST    /submission/:id/review/edit          controllers.Review.edit(id: Int)
+GET     /submission/:id                      controllers.Review.info(id: Int)
+POST    /submission/:id/review               controllers.Review.makeReview(id: Int)
+POST    /submission/:id/review/edit          controllers.Review.editReview(id: Int)
 POST    /submission/:id/comment              controllers.Review.makeComment(id: Int)
 POST    /submission/:sid/comment/:cid/edit   controllers.Review.editComment(sid: Int, cid: Int)
 

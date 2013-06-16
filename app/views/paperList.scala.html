@@ -1,0 +1,9 @@
+@(list: List[(models.entities.Paper, List[models.entities.Author])])
+
+@main("Paper list") {
+  <h1>Paper List:</h1>
+  @for((paper, authors) <- list) {
+    <a href=@routes.Review.info(paper.id.get)>@paper.title</a>
+    by @authors.map(_.firstname).mkString(", ")<br>
+  }
+}

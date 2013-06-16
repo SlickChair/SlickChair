@@ -5,7 +5,7 @@ Done:
 -----
 
 - Login mechanism with Google/Facebook/email+password
-- New submission page with authors, topics and file upload
+- Page for paper submission with authors, topics and file upload
 - View submitted information and edit submission
 - SQL form
 
@@ -13,15 +13,19 @@ Done:
 Todo:
 -----
 
-- Make a page per paper with possibility to write review
+- Make a page per paper with possibility to write reviews
 - Add edit and comments to the paper pages
 - Email client for the chair with templates
 - Invitation mechanism for chairs, reviewers and subreviewers
-- Write a class for Settings access with default and description
-- Email and events log
+- Write a class for Settings access with default value
+- Paper biding and assignement
 - Good looking interface
-- Setup instructions (requires some testing to port to postgresql)
+- Setup instructions (requires some testing with postgresql)
 
+- Wrap all the chair actions into web pages (instead of manual queries)
+  - Logs for emails and events
+  - Add topics
+  - Delete papers, account, ...
 
 Out of scope:
 -------------
