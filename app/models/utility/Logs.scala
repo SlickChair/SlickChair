@@ -15,9 +15,9 @@ case class Log(
 )
 
 object Logs extends Table[Log]("LOGS") {
-  def id = column[Int ]("ID", O.AutoInc, O.PrimaryKey)
+  def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
   def date = column[DateTime]("DATE")
-  def entry = column[String]("ENTRY")
+  def entry = column[String]("ENTRY", O.DBType("TEXT"))
 
-  def * = id ~ date ~ entry <> (Log.apply _, Log.unapply _)
+  def * = id ~ date ~ entry <> (Log, Log.unapply _)
 }

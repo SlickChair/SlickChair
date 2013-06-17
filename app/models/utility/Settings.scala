@@ -12,7 +12,7 @@ case class Setting(
 
 object Settings extends Table[Setting]("SETTINGS") {
   def name = column[String]("name", O.PrimaryKey)
-  def value = column[String]("value")
+  def value = column[String]("value", O.DBType("TEXT"))
 
-  def * = name ~ value <> (Setting.apply _, Setting.unapply _)
+  def * = name ~ value <> (Setting, Setting.unapply _)
 }

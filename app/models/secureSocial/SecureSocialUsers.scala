@@ -31,12 +31,12 @@ object User {
 }
 
 object SecureSocialUsers extends Table[User]("SECURE_SOCIAL_USERS") {
-  def uid = column[String]("UID")
-  def pid = column[String]("PID")
-  def email = column[String]("EMAIL")
-  def firstName = column[String]("FIRSTNAME")
-  def lastName = column[String]("LASTNAME")
-  def authMethod = column[String]("AUTHMETHOD")
+  def uid = column[String]("UID", O.DBType("TEXT"))
+  def pid = column[String]("PID", O.DBType("TEXT"))
+  def email = column[String]("EMAIL", O.DBType("TEXT"))
+  def firstName = column[String]("FIRSTNAME", O.DBType("TEXT"))
+  def lastName = column[String]("LASTNAME", O.DBType("TEXT"))
+  def authMethod = column[String]("AUTHMETHOD", O.DBType("TEXT"))
   def hasher = column[Option[String]]("HASHER")
   def password = column[Option[String]]("PASSWORD")
   def salt = column[Option[String]]("SALT")

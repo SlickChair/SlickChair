@@ -14,9 +14,9 @@ case class Template(
 
 object Templates extends Table[Template]("TEMPLATES") {
   def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
-  def name = column[String]("NAME")
-  def subject = column[String]("SUBJECT")
-  def body = column[String]("BODY")
+  def name = column[String]("NAME", O.DBType("TEXT"))
+  def subject = column[String]("SUBJECT", O.DBType("TEXT"))
+  def body = column[String]("BODY", O.DBType("TEXT"))
   
-  def * = id ~ name ~ subject ~ body <> (Template.apply _, Template.unapply _)
+  def * = id ~ name ~ subject ~ body <> (Template, Template.unapply _)
 }

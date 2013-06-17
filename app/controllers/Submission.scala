@@ -25,7 +25,7 @@ object Submission extends Controller with SecureSocial {
   val paperMapping: Mapping[Paper] = mapping(
     // Sementicaly values at null.asInstanceOf[] need to be set when handling
     // the POST on a form before storing the Paper in the database.
-    "id" -> ignored(null.asInstanceOf[Option[Int]]),
+    "id" -> ignored(null.asInstanceOf[Int]),
     "contactemail" -> ignored(null.asInstanceOf[String]),
     "submissiondate" -> ignored(null.asInstanceOf[DateTime]),
     "lastupdate" -> ignored(null.asInstanceOf[DateTime]),
@@ -70,7 +70,7 @@ object Submission extends Controller with SecureSocial {
       case Some(paper) =>
         val existingSubmissionForm = incBind(
           submissionForm.fill(SubmissionForm(paper, Authors.of(paper), List())),
-          PaperTopics.of(paper.id.get).map(t => ("topics[%s]".format(t.topicid), t.topicid.toString)).toMap
+          PaperTopics.of(paper.id).map(t => ("topics[%s]".format(t.topicid), t.topicid.toString)).toMap
         )
         Ok(views.html.submission(request.user.email.get + "Edit Submission", existingSubmissionForm))
     }
@@ -96,12 +96,15 @@ object Submission extends Controller with SecureSocial {
               
               val paperId = Papers.withEmail(email) match {
                 case None =>
-                  Papers.ins(formPaper.copy(
-                    id = None, // auto-increment
+                  Papers.ins(NewPaper(
                     contactemail = email,
                     submissiondate = DateTime.now,
                     lastupdate = DateTime.now,
-                    accepted = None, // default
+                    accepted = None,
+                    formPaper.title,
+                    formPaper.format,
+                    formPaper.keywords,
+                    formPaper.abstrct,
                     fileid = newFileId
                   ))
                 case Some(dbPaper) =>
@@ -116,7 +119,7 @@ object Submission extends Controller with SecureSocial {
                     accepted = dbPaper.accepted,
                     fileid = newFileId.orElse(dbPaper.fileid)
                   ))
-                  dbPaper.id.get
+                  dbPaper.id
               }
               
               Authors.createAll(formAuthors.map(_.copy(paperId)))

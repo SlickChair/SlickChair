@@ -17,7 +17,7 @@ import PaperFormat._
 
 // Submission data
 case class Paper(
-  id: Option[Int],
+  id: Int,
   contactemail: String,
   submissiondate: DateTime,
   lastupdate: DateTime,
@@ -28,29 +28,31 @@ case class Paper(
   abstrct: String,
   fileid: Option[Int]
 )
+// Paper without the id field
+case class NewPaper(contactemail: String, submissiondate: DateTime, lastupdate: DateTime, accepted: Option[Boolean], title: String, format: PaperFormat, keywords: String, abstrct: String, fileid: Option[Int])
 
 object Papers extends Table[Paper]("PAPERS") {
   def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
-  def contactemail = column[String]("CONTACTEMAIL")
+  def contactemail = column[String]("CONTACTEMAIL", O.DBType("TEXT"))
   def submissiondate = column[DateTime]("SUBMISSIONDATE")
   def lastupdate = column[DateTime]("LASTUPDATE")
   def accepted = column[Option[Boolean]]("ACCEPTED")
-  def title = column[String]("TITLE")
+  def title = column[String]("TITLE", O.DBType("TEXT"))
   def format = column[PaperFormat]("FORMAT")
-  def keywords = column[String]("KEYWORDS")
-  def abstrct = column[String]("ABSTRCT")
+  def keywords = column[String]("KEYWORDS", O.DBType("TEXT"))
+  def abstrct = column[String]("ABSTRCT", O.DBType("TEXT"))
   def fileid = column[Option[Int]]("FILEID")
   
   def file = foreignKey("PAPERS_FILEID_FK", fileid, Files)(_.id)
-  def * = id.? ~ contactemail ~ submissiondate ~ lastupdate ~ accepted ~ title ~ format ~ keywords ~ abstrct ~ fileid <> (Paper.apply _, Paper.unapply _)
-  def autoInc = * returning id
+  def * = id ~ contactemail ~ submissiondate ~ lastupdate ~ accepted ~ title ~ format ~ keywords ~ abstrct ~ fileid <> (Paper, Paper.unapply _)
+  def autoInc = contactemail ~ submissiondate ~ lastupdate ~ accepted ~ title ~ format ~ keywords ~ abstrct ~ fileid <> (NewPaper, NewPaper.unapply _) returning id
 
   def all: List[Paper] = DB.withSession { implicit session =>
     Query(Papers).list
   }
   
-  def ins(paper: Paper): Int = DB.withSession { implicit session =>
-    Papers.autoInc.insert(paper)
+  def ins(newPaper: NewPaper): Int = DB.withSession { implicit session =>
+    Papers.autoInc.insert(newPaper)
   }
   
   def updt(paper: Paper) = DB.withSession { implicit session =>

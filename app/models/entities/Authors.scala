@@ -17,21 +17,21 @@ case class Author(
 object Authors extends Table[Author]("AUTHORS") {
   def paperid = column[Int]("PAPERID")
   def position = column[Int]("POSITION")
-  def firstname = column[String]("FIRSTNAME")
-  def lastname = column[String]("LASTNAME")
-  def organization = column[String]("ORGANIZATION")
-  def email = column[String]("EMAIL")
+  def firstname = column[String]("FIRSTNAME", O.DBType("TEXT"))
+  def lastname = column[String]("LASTNAME", O.DBType("TEXT"))
+  def organization = column[String]("ORGANIZATION", O.DBType("TEXT"))
+  def email = column[String]("EMAIL", O.DBType("TEXT"))
   
   def pk = primaryKey("AUTHORS_PK", paperid ~ position)
   def paper = foreignKey("AUTHORS_PAPERID_FK", paperid, Papers)(_.id)
-  def * = paperid ~ position ~ firstname ~ lastname ~ organization ~ email <> (Author.apply _, Author.unapply _)
+  def * = paperid ~ position ~ firstname ~ lastname ~ organization ~ email <> (Author, Author.unapply _)
 
   def all = DB.withSession { implicit session =>
     Query(Authors).list
   }
   
   def of(paper: Paper) = DB.withSession { implicit session =>
-    Query(Authors).filter(_.paperid is paper.id.get).list
+    Query(Authors).filter(_.paperid is paper.id).list
   }
   
   def createAll(authors: List[Author]) = DB.withSession { implicit session =>
@@ -39,6 +39,6 @@ object Authors extends Table[Author]("AUTHORS") {
   }
   
   def deleteFor(paper: Paper) = DB.withSession { implicit session =>
-    Authors.filter(_.paperid is paper.id.get).delete
+    Authors.filter(_.paperid is paper.id).delete
   }
 }

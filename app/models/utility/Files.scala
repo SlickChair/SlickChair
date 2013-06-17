@@ -18,12 +18,12 @@ case class File(
 
 object Files extends Table[File]("Files") {
   def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
-  def name = column[String]("NAME")
+  def name = column[String]("NAME", O.DBType("TEXT"))
   def size = column[Long]("SIZE")
   def uploaded = column[DateTime]("UPLOADED")
   def data = column[Array[Byte]]("DATA")
   
-  def * = id.? ~ name ~ size ~ uploaded ~ data <> (File.apply _, File.unapply _)
+  def * = id.? ~ name ~ size ~ uploaded ~ data <> (File, File.unapply _)
   def autoInc = * returning id
 
   def all = DB.withSession(implicit session =>

@@ -19,5 +19,5 @@ object MemberTopics extends Table[MemberTopic]("MEMBER_TOPICS") {
   def member = foreignKey("MEMBERTOPICS_MEMBERID_FK", memberid, Members)(_.id)
   def topic = foreignKey("MEMBERTOPICS_TOPIC_FK", topicid, Topics)(_.id)
 
-  def * = memberid ~ topicid <> (MemberTopic.apply _, MemberTopic.unapply _)
+  def * = memberid ~ topicid <> (MemberTopic, MemberTopic.unapply _)
 }

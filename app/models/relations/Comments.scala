@@ -24,10 +24,10 @@ object Comments extends Table[Comment]("COMMENTS") {
   def memberid = column[Int]("MEMBERID")
   def submissiondate = column[DateTime]("SUBMISSIONDATE")
   def lastupdate = column[DateTime]("LASTUPDATE")
-  def content = column[String]("CONTENT")
+  def content = column[String]("CONTENT", O.DBType("TEXT"))
 
   def paper = foreignKey("COMMENTS_PAPERID_FK", paperid, Papers)(_.id)
   def member = foreignKey("COMMENTS_MEMBERID_FK", memberid, Members)(_.id)
 
-  def * = id ~ paperid ~ memberid ~ submissiondate ~ lastupdate ~ content <> (Comment.apply _, Comment.unapply _)
+  def * = id ~ paperid ~ memberid ~ submissiondate ~ lastupdate ~ content <> (Comment, Comment.unapply _)
 }

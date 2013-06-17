@@ -18,7 +18,7 @@ object PaperTopics extends Table[PaperTopic]("PAPER_TOPICS") {
   def pk = primaryKey("PAPERTOPICS_PK", paperid ~ topicid)
   def paper = foreignKey("PAPERTOPICS_PAPERID_FK", paperid, Papers)(_.id)
   def topic = foreignKey("PAPERTOPICS_TOPICID_FK", topicid, Topics)(_.id)
-  def * = paperid ~ topicid <> (PaperTopic.apply _, PaperTopic.unapply _)
+  def * = paperid ~ topicid <> (PaperTopic, PaperTopic.unapply _)
 
   def all = DB.withSession { implicit session =>
     Query(PaperTopics).list }
@@ -30,7 +30,7 @@ object PaperTopics extends Table[PaperTopic]("PAPER_TOPICS") {
     PaperTopics.insert(pt) }
   
   def deleteFor(paper: Paper) = DB.withSession { implicit session =>
-    PaperTopics.filter(_.paperid is paper.id.get).mutate(_.delete) }
+    PaperTopics.filter(_.paperid is paper.id).mutate(_.delete) }
   
   def createAll(pts: List[PaperTopic]) = DB.withSession { implicit session =>
     pts.map(pt => PaperTopics.insert(pt)) }

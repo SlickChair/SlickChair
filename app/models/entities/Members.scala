@@ -30,14 +30,14 @@ case class Member(
 
 object Members extends Table[Member]("MEMBERS") {
   def id = column[Int]("id", O.AutoInc, O.PrimaryKey)
-  def email = column[String]("email")
+  def email = column[String]("email", O.DBType("TEXT"))
   def firstlogindate = column [DateTime]("firstlogindate")
   def lastlogindate = column [DateTime]("lastlogindate")
   def role = column[MemberRole]("role")
-  def firstname = column[String]("firstname")
-  def lastname = column[String]("lastname")
+  def firstname = column[String]("firstname", O.DBType("TEXT"))
+  def lastname = column[String]("lastname", O.DBType("TEXT"))
   def organization = column[Option[String]]("organization")
   def positiontitle = column[Option[String]]("positiontitle")
   
-  def * = id ~ email ~ firstlogindate ~ lastlogindate ~ role ~ firstname ~ lastname ~ organization ~ positiontitle <> (Member.apply _, Member.unapply _)
+  def * = id ~ email ~ firstlogindate ~ lastlogindate ~ role ~ firstname ~ lastname ~ organization ~ positiontitle <> (Member, Member.unapply _)
 } 

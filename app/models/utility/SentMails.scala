@@ -19,9 +19,9 @@ case class SentMail(
 object SentMails extends Table[SentMail]("SENTMAILS") {
   def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
   def sent = column[DateTime]("SENT")
-  def to = column[String]("TO")
-  def subject = column[String]("SUBJECT")
-  def body = column[String]("BODY")
+  def to = column[String]("TO", O.DBType("TEXT"))
+  def subject = column[String]("SUBJECT", O.DBType("TEXT"))
+  def body = column[String]("BODY", O.DBType("TEXT"))
     
-  def * = id ~ sent ~ to ~ subject ~ body <> (SentMail.apply _, SentMail.unapply _)
+  def * = id ~ sent ~ to ~ subject ~ body <> (SentMail, SentMail.unapply _)
 }

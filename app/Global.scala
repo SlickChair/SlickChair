@@ -12,18 +12,18 @@ object Global extends GlobalSettings {
   override def onStart(app: Application) {
     if(Topics.all.isEmpty) {
       List(
-        Topic(None, "Topic 1", "Description 1"),
-        Topic(None, "Topic 2", "Description 2"),
-        Topic(None, "Topic 3", "Description 3"),
-        Topic(None, "Topic 4", "Description 4"),
-        Topic(None, "Topic 5", "Description 5")
+        NewTopic("Topic 1", "Description 1"),
+        NewTopic("Topic 2", "Description 2"),
+        NewTopic("Topic 3", "Description 3"),
+        NewTopic("Topic 4", "Description 4"),
+        NewTopic("Topic 5", "Description 5")
       ).foreach(Topics.ins)
       
       List(
-        Paper(None, "1@1", DateTime.now, DateTime.now, None, "Paper 1", PaperFormat.Standard, "key words 1", "abstrct 1", None),
-        Paper(None, "2@2", DateTime.now, DateTime.now, None, "Paper 2", PaperFormat.Standard, "key words 2", "abstrct 2", None),
-        Paper(None, "3@3", DateTime.now, DateTime.now, None, "Paper 3", PaperFormat.Standard, "key words 3", "abstrct 3", None),
-        Paper(None, "4@4", DateTime.now, DateTime.now, None, "Paper 4", PaperFormat.Standard, "key words 4", "abstrct 4", None)
+        NewPaper("1@1", DateTime.now, DateTime.now, None, "Paper 1", PaperFormat.Standard, "key words 1", "abstrct 1", None),
+        NewPaper("2@2", DateTime.now, DateTime.now, None, "Paper 2", PaperFormat.Standard, "key words 2", "abstrct 2", None),
+        NewPaper("3@3", DateTime.now, DateTime.now, None, "Paper 3", PaperFormat.Standard, "key words 3", "abstrct 3", None),
+        NewPaper("4@4", DateTime.now, DateTime.now, None, "Paper 4", PaperFormat.Standard, "key words 4", "abstrct 4", None)
       ).foreach(Papers.ins)
       
       List(

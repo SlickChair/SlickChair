@@ -28,5 +28,5 @@ object MemberBids extends Table[MemberBid]("MEMBER_BIDS") {
   def member = foreignKey("MEMBERBIDS_MEMBERID_FK", memberid, Members)(_.id)
   def paper = foreignKey("MEMBERBIDS_PAPERID_FK", paperid, Papers)(_.id)
   
-  def * = paperid ~ memberid ~ bid <> (MemberBid.apply _, MemberBid.unapply _)
+  def * = paperid ~ memberid ~ bid <> (MemberBid, MemberBid.unapply _)
 }
