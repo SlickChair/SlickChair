@@ -4,7 +4,6 @@ import play.api.db.slick.DB
 import play.api.db.slick.Config.driver.simple._
 import play.api.Play.current
 import securesocial.core._
-import play.api.Logger
 
 case class User(
     uid: String,

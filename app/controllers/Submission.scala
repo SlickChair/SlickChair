@@ -63,16 +63,16 @@ object Submission extends Controller with SecureSocial {
   
   private def incBind[T](form: Form[T], data: Map[String, String]) = form.bind(form.data ++ data)
   
-  def form = SecuredAction{ implicit request =>
+  def form = SecuredAction { implicit request =>
     Papers.withEmail(request.user.email.get) match {
       case None =>
-        Ok(views.html.submission(request.user.email + "New Submission", submissionForm))
+        Ok(views.html.submission("New Submission", submissionForm))
       case Some(paper) =>
         val existingSubmissionForm = incBind(
           submissionForm.fill(SubmissionForm(paper, Authors.of(paper), List())),
           PaperTopics.of(paper.id).map(t => ("topics[%s]".format(t.topicid), t.topicid.toString)).toMap
         )
-        Ok(views.html.submission(request.user.email.get + "Edit Submission", existingSubmissionForm))
+        Ok(views.html.submission("Edit Submission", existingSubmissionForm))
     }
   }
   
@@ -91,7 +91,7 @@ object Submission extends Controller with SecureSocial {
               val SubmissionForm(formPaper, formAuthors, formTopics) = form 
               val newFileId: Option[Int] = request.body.file("data").map{ file =>
                 val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray
-                Files.ins(File(None, file.filename, blob.size, DateTime.now, blob))
+                Files.ins(NewFile(file.filename, blob.size, DateTime.now, blob))
               }
               
               val paperId = Papers.withEmail(email) match {
@@ -130,7 +130,7 @@ object Submission extends Controller with SecureSocial {
     }
   }
   
-  def info = SecuredAction{ implicit request =>
+  def info = SecuredAction { implicit request =>
     Papers.withEmail(request.user.email.get) match {
       case None =>
         Redirect(routes.Submission.form)

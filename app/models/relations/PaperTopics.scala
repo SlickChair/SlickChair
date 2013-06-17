@@ -37,5 +37,4 @@ object PaperTopics extends Table[PaperTopic]("PAPER_TOPICS") {
     
   def ofPaper(paper: Paper): List[Topic] = DB.withSession { implicit session =>
     (for(p <- PaperTopics; t <- Topics if t.id is p.topicid) yield t).list }
-    // PaperTopics.flatMap(p => Query(Topics).filter(_.id is p.topicid)).list }
 }

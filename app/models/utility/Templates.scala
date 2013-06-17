@@ -1,3 +1,4 @@
+
 package models.utility
 
 import play.api.db.slick.DB

@@ -1,0 +1,32 @@
+@(isEdit: Boolean, paper: models.entities.Paper, authors: List[models.entities.Author], reviewForm: Form[models.relations.Review])
+
+@import helper._
+@import models.relations._
+
+@main("Review of " + paper.title) {
+  <h1>@if(isEdit) {Edit} Review of @paper.title</h1>
+  <h3>@paper by @authors</h3>
+  
+  @form(action = routes.Reviewing.make(paper.id)) {
+    @inputRadioGroup(
+      reviewForm("evaluation.value"), 
+      ReviewEvaluation.values.toSeq.map(f => f.toString -> f.toString), 
+      '_label -> "Evaluation:",
+      '_help -> "")
+      
+    @inputRadioGroup(
+      reviewForm("confidence.value"), 
+      ReviewConfidence.values.toSeq.map(f => f.toString -> f.toString), 
+      '_label -> "Confidence:",
+      '_help -> "")
+
+    @textarea(
+      reviewForm("content"),
+      '_label -> "Review:",
+      '_help -> "",
+      'rows -> 5,
+      'cols -> 50)
+    
+    <input type="submit" id="submit" value="@if(isEdit) {Save} else {Submit}">
+  }
+}

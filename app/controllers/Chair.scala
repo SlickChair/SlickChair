@@ -10,6 +10,7 @@ import models._
 import securesocial.core.SecureSocial
 import anorm._
 import anorm.SqlParser._
+import controllers._
 
 object SqlMethod extends Enumeration {
   type SqlMethod = Value
@@ -28,8 +29,11 @@ object Chair extends Controller with SecureSocial {
     )
   ).fill(("", Execute))
   
-  def sql = Action(Ok(views.html.sql(None, queryForm)))
-  def runQuery = Action { implicit request =>
+  def sql = SecuredAction(ChairOnly) { implicit request =>
+    Ok(views.html.sql(None, queryForm))
+  }
+  
+  def runQuery = SecuredAction(ChairOnly) { implicit request =>
     val filledForm = queryForm.bindFromRequest
     DB.withConnection { implicit session =>
       val (query, method) = filledForm.get

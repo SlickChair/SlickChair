@@ -18,7 +18,7 @@ import securesocial.core.providers.Token
 // )
 
 object SecureSocialTokens extends Table[Token]("SECURE_SOCIAL_TOKENS") {
-  def uuid = column[String]("UUID", O.PrimaryKey)
+  def uuid = column[String]("UUID", O.DBType("TEXT"), O.PrimaryKey)
   def email = column[String]("EMAIL", O.DBType("TEXT"))
   def creationTime = column[DateTime]("CREATIONTIME")
   def expirationTime = column[DateTime]("EXPIRATIONTIME")

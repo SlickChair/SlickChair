@@ -22,23 +22,20 @@ object Global extends GlobalSettings {
       List(
         NewPaper("1@1", DateTime.now, DateTime.now, None, "Paper 1", PaperFormat.Standard, "key words 1", "abstrct 1", None),
         NewPaper("2@2", DateTime.now, DateTime.now, None, "Paper 2", PaperFormat.Standard, "key words 2", "abstrct 2", None),
-        NewPaper("3@3", DateTime.now, DateTime.now, None, "Paper 3", PaperFormat.Standard, "key words 3", "abstrct 3", None),
-        NewPaper("4@4", DateTime.now, DateTime.now, None, "Paper 4", PaperFormat.Standard, "key words 4", "abstrct 4", None)
+        NewPaper("3@3", DateTime.now, DateTime.now, None, "Paper 3", PaperFormat.Standard, "key words 3", "abstrct 3", None)
       ).foreach(Papers.ins)
       
       List(
         PaperTopic(1, 1),
         PaperTopic(2, 2),
-        PaperTopic(3, 3),
-        PaperTopic(4, 4)
+        PaperTopic(3, 3)
       ).foreach(PaperTopics.ins)
       
       Authors createAll List(
         Author(1, 0, "first name 1", "last name 1", "org 1", "11@11"),
         Author(2, 0, "first name 2", "last name 2", "org 2", "22@22"),
         Author(3, 0, "first name 3", "last name 3", "org 3", "33@33"),
-        Author(4, 0, "first name 4", "last name 4", "org 4", "44@44"),
-        Author(4, 1, "first name 41", "last name 41", "org 41", "44@441")
+        Author(3, 1, "first name 31", "last name 31", "org 31", "33@331")
       )
       
       List(
@@ -47,6 +44,20 @@ object Global extends GlobalSettings {
         User("3@3", "userpass", "3@3", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$lR2Qcz7OolHLXGDgbKurF.n6E9yTFHVHHutrfMeKls.X5y/WbzUWq"), None),
         User("4@4", "userpass", "4@4", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$lR2Qcz7OolHLXGDgbKurF.n6E9yTFHVHHutrfMeKls.X5y/WbzUWq"), None)
       ).foreach(u => new SecureSocialUserService(null).save(u.toIdentity))
+      
+      List(
+        NewMember("4@4", DateTime.now, DateTime.now, MemberRole.Member, "membername", "memberlastname", "org"),
+        NewMember("olivierblanvillain@gmail.com", DateTime.now, DateTime.now, MemberRole.Chair, "membername", "memberlastname", "org")
+      ).foreach(Members.ins)
+      
+      List(
+        Review(1, 1, Some(DateTime.now), Some(DateTime.now), ReviewConfidence.Low, ReviewEvaluation.Neutral, "thisismyreview!")
+      ).foreach(Reviews.ins)
+      
+      List(
+        NewComment(1, 1, DateTime.now, "I had to comment on this."),
+        NewComment(1, 1, DateTime.now, "Twice.")
+      ).foreach(Comments.ins)
     }
   }
 }

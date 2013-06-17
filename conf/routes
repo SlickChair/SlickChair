@@ -15,12 +15,11 @@ POST    /submission/edit                     controllers.Submission.make
 GET     /submission/info                     controllers.Submission.info
 
 # Reviewers
-GET     /submissions                         controllers.Review.list
-GET     /submission/:id                      controllers.Review.info(id: Int)
-POST    /submission/:id/review               controllers.Review.makeReview(id: Int)
-POST    /submission/:id/review/edit          controllers.Review.editReview(id: Int)
-POST    /submission/:id/comment              controllers.Review.makeComment(id: Int)
-POST    /submission/:sid/comment/:cid/edit   controllers.Review.editComment(sid: Int, cid: Int)
+GET     /submissions                         controllers.Reviewing.list
+GET     /submission/:id                      controllers.Reviewing.page(id: Int)
+POST    /submission/:id                      controllers.Reviewing.comment(id: Int)
+GET     /review/:id                          controllers.Reviewing.form(id: Int)
+POST    /review/:id                          controllers.Reviewing.make(id: Int)
 
 # Chair
 GET     /sql                                 controllers.Chair.sql

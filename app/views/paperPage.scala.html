@@ -1,0 +1,36 @@
+@(isEdit: Boolean, paper: models.entities.Paper, authors: List[models.entities.Author], reviews: List[(models.relations.Review, models.entities.Member)], comments: List[(models.relations.Comment, models.entities.Member)], commentForm: Form[models.relations.Comment])
+
+@import helper._
+
+@main(paper.title) {
+  <h1>@paper.title:</h1>
+  @paper
+  <br>
+
+  <h1>Reviews:</h1>
+  @for((review, member) <- reviews) {
+    @review
+    by @member
+    <br><br>
+  }
+  <form action="@routes.Reviewing.form(paper.id)" method="get">
+      <input type="submit" value="@if(isEdit) {Edit my} else {Write a} review">
+  </form>
+
+  <h1>Comments:</h1>
+  @for((comment, member) <- comments) {
+    @comment
+    by @member
+    <br><br>
+  }
+  
+  @form(action = routes.Reviewing.comment(paper.id)) {
+    @textarea(
+      commentForm("content"),
+      '_label -> "",
+      '_help -> "",
+      'rows -> 5,
+      'cols -> 30)
+    <input type="submit" id="submit" value="Add comment">
+  }
+}
