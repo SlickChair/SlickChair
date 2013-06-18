@@ -1,5 +1,3 @@
-Models
-======
 The model package hold all the classes related to the database access. This project makes use of Slick, which to some extents allows to manipulate databases with a syntax similar to the Scala collections. If you don't know Slick and want to learn more about it here are two good staring points:
 - Very good [talk][1] explaining Slick from scratch (1 hour long).
 - The official [documentation][2] with lots of good examples.
