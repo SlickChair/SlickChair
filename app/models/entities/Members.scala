@@ -1,13 +1,14 @@
 package models.entities
 
-import play.api.db.slick.DB
-import play.api.db.slick.Config.driver.simple._
-import play.api.Play.current
-import com.github.tototoshi.slick.JodaSupport._
-import _root_.java.sql.Date
 import org.joda.time.DateTime
+
+import com.github.tototoshi.slick.JodaSupport.dateTimeTypeMapper
+
+import MemberRole.enumTypeMapper
 import models._
-import models.secureSocial._
+import play.api.Play.current
+import play.api.db.slick.Config.driver.simple._
+import play.api.db.slick.DB
 
 object MemberRole extends Enumeration with BitmaskedEnumeration {
   type MemberRole = Value
@@ -49,4 +50,10 @@ object Members extends Table[Member]("MEMBERS") {
 
   def withEmail(memberEmail: String): Option[Member] = DB.withSession { implicit session =>
     Query(Members).filter(_.email is memberEmail).list.headOption }
+    
+  def relevantCategories: List[(String, String)] = DB.withSession { implicit session =>
+    List(
+      ("All Members", Query(Members).map(_.email).list)
+    ).map(c => (c._1, c._2.mkString(", ")))
+  }
 } 

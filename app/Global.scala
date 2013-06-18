@@ -1,9 +1,10 @@
 import play.api._
 import org.joda.time.DateTime
-// import models.entities.PaperFormat._
 import models.entities._
 import models.relations._
 import models.secureSocial._
+import play.api.Logger
+import models.utils._
 
 /**
  * Populates the database with fake data for testing. Global.onStart() is called when the application starts.
@@ -58,6 +59,11 @@ object Global extends GlobalSettings {
         NewComment(1, 1, DateTime.now, "I had to comment on this."),
         NewComment(1, 1, DateTime.now, "Twice.")
       ).foreach(Comments.ins)
+      
+      List(
+        NewTemplate("Msg", "A message to @fullname", "Dear @firstname, \nThis message is about..."),
+        NewTemplate("Warn", "A warrning to @fullname", "Dear @firstname, \nThis writting is about...")
+      ).foreach(Templates.ins)
     }
   }
 }

@@ -3,16 +3,16 @@
 # ~~~~
 
 # Home page
-GET     /                                    controllers.Submission.form
+GET     /                                    controllers.Submitting.TODO
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                        controllers.Assets.at(path="/public", file)
 
 # Submitters
-GET     /submission                          controllers.Submission.form
-GET     /submission/edit                     controllers.Submission.form
-POST    /submission/edit                     controllers.Submission.make
-GET     /submission/info                     controllers.Submission.info
+GET     /submission                          controllers.Submitting.form
+GET     /submission/edit                     controllers.Submitting.form
+POST    /submission/edit                     controllers.Submitting.make
+GET     /submission/info                     controllers.Submitting.info
 
 # Reviewers
 GET     /submissions                         controllers.Reviewing.list
@@ -22,9 +22,16 @@ GET     /review/:id                          controllers.Reviewing.form(id: Int)
 POST    /review/:id                          controllers.Reviewing.make(id: Int)
 
 # Chair
-GET     /sql                                 controllers.Chair.sql
-POST    /sql                                 controllers.Chair.runQuery
-
+GET     /sql                                 controllers.chair.Sql.form
+POST    /sql                                 controllers.chair.Sql.runQuery
+GET     /email                               controllers.chair.Emailing.form
+POST    /email                               controllers.chair.Emailing.send
+GET     /config                              controllers.chair.Chair.config
+GET     /topics                              controllers.chair.Chair.topics
+GET     /members                             controllers.chair.Chair.members
+GET     /auctions                            controllers.chair.Chair.auctions
+GET     /decisions                           controllers.chair.Chair.decisions
+GET     /dashboard                           controllers.chair.Chair.dashboard
 
 # SecureSocial
 # Login page

@@ -1,37 +1,38 @@
-@(result: Option[String], queryForm: Form[(String, controllers.SqlMethod.Value)])
+@(result: Option[String], queryForm: Form[(String, controllers.chair.SqlMethod.Value)])
 
 @import helper._
+@import controllers.chair._
 
 @main("SQL Form") {
-    <h1>Query:</h1>
-    @form(action = routes.Chair.runQuery) {
-      @textarea(
-        queryForm("query"),
-        'placeholder -> "SELECT * FROM SECURE_SOCIAL_USERS",
-        '_label -> "",
-        '_help -> "",
-        'rows -> 5,
-        'cols -> 50)
-      
-      @inputRadioGroup(
-        queryForm("method.m"), 
-        controllers.SqlMethod.values.toSeq.map(f => f.toString -> f.toString), 
-        '_label -> "",
-        '_help -> "")
-      
-      <input type="submit" id="submit" value="Run (Ctrl+Enter)">
-    }
+  <h1>Query:</h1>
+  @form(action = routes.Sql.runQuery) {
+    @textarea(
+      queryForm("query"),
+      'placeholder -> "SELECT * FROM SECURE_SOCIAL_USERS",
+      '_label -> "",
+      '_help -> "",
+      'rows -> 5,
+      'cols -> 50)
     
-    @result.map { output =>
-      <h1>Results:</h1>
-      <pre>@output</pre>
-    }
-    <script>
-    window.onload = function () {
-      document.getElementById('query').select();
-      document.body.onkeydown = function (e) {
-        if (e.keyCode == 13 && e.ctrlKey) {
-          document.getElementById('submit').click();
-          return false; }}}
-    </script>
+    @inputRadioGroup(
+      queryForm("method.m"), 
+      SqlMethod.values.toSeq.map(f => f.toString -> f.toString), 
+      '_label -> "",
+      '_help -> "")
+    
+    <input type="submit" id="submit" value="Run (Ctrl+Enter)">
+  }
+  
+  @result.map { output =>
+    <h1>Results:</h1>
+    <pre>@output</pre>
+  }
+  <script>
+  window.onload = function () {
+    document.getElementById('query').select();
+    document.body.onkeydown = function (e) {
+      if (e.keyCode == 13 && e.ctrlKey) {
+        document.getElementById('submit').click();
+        return false; }}}
+  </script>
 }

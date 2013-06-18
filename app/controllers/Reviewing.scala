@@ -1,18 +1,18 @@
 package controllers
 
-import play.api._
-import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
-import play.api.Play.current
-import models._
-import securesocial.core.SecureSocial
-import models.entities._
-import models.relations._
-import securesocial.core._
 import org.joda.time.DateTime
-import models.relations.ReviewConfidence._
-import models.relations.ReviewEvaluation._
+
+import models.entities.{Authors, Members, Paper, Papers}
+import models.relations.{Comment, Comments, NewComment, Review, ReviewConfidence}
+import models.relations.ReviewConfidence.ReviewConfidence
+import models.relations.ReviewEvaluation
+import models.relations.ReviewEvaluation.ReviewEvaluation
+import models.relations.Reviews
+import play.api.data.Form
+import play.api.data.Forms.{ignored, mapping, nonEmptyText}
+import play.api.data.Mapping
+import play.api.mvc.{Controller, Result}
+import securesocial.core.{SecureSocial, SecuredRequest}
 
 object Reviewing extends Controller with SecureSocial {
   val confidenceMapping: Mapping[ReviewConfidence] = mapping(

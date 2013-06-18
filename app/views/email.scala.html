@@ -1,0 +1,49 @@
+@(recipientsCategories: List[(String, String)], templates: List[models.utils.Template], emailFrom: Form[models.utils.Email])
+
+@import helper._
+@import controllers.chair._
+
+@main("Email") {
+  <h1>Email</h1>
+  <select id="toSelect">
+    <option label="lolol" value="volvo" string="sfj">Volvo</option>
+    <option label="lolol" value="saab" string="sdffj">Saab</option>
+    <option label="lolol" value="mercedes" string="sdffj">Mercedes</option>
+    <option label="lolol" value="audi" string="sdfasdf">Audi</option>
+  </select>
+  <select>
+    <option value="volvo">Volvo</option>
+    <option value="saab">Saab</option>
+    <option value="mercedes">Mercedes</option>
+    <option value="audi">Audi</option>
+  </select>
+  @form(action = routes.Emailing.send) {
+    @textarea(
+      emailFrom("to"),
+      'placeholder -> "Comma separated emails",
+      '_label -> "To:",
+      '_help -> "",
+      'rows -> 2,
+      'cols -> 50)
+    
+    @inputText(
+      emailFrom("subject"),
+      '_label -> "Subject:",
+      '_help -> "")
+    
+    @textarea(
+      emailFrom("body"),
+      'placeholder -> "Dear @fullname,",
+      '_label -> "Body:",
+      '_help -> "",
+      'rows -> 10,
+      'cols -> 50)
+
+    <input type="submit" id="submit" value="Send">
+  }
+  <script>
+    document.getElementById("toSelect").onchange = function() {
+      document.getElementById("to").value = this.options[this.selectedIndex].value;
+    }
+  </script>
+}

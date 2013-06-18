@@ -1,10 +1,10 @@
-package models.utility
+package models.utils
 
 import play.api.db.slick.DB
 import play.api.db.slick.Config.driver.simple._
 import play.api.Play.current
 import com.github.tototoshi.slick.JodaSupport._
-import _root_.java.sql.Date
+import java.sql.Date
 import org.joda.time.DateTime
 
 // Logs of when status changes

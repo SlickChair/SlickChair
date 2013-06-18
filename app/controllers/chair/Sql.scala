@@ -1,4 +1,4 @@
-package controllers
+package controllers.chair
 
 import play.api.db._
 import play.api._
@@ -18,7 +18,7 @@ object SqlMethod extends Enumeration {
 }
 import SqlMethod._
 
-object Chair extends Controller with SecureSocial {
+object Sql extends Controller with SecureSocial {
   val queryForm = Form(
     tuple(
       "query" -> text,
@@ -29,7 +29,7 @@ object Chair extends Controller with SecureSocial {
     )
   ).fill(("", Execute))
   
-  def sql = SecuredAction(ChairOnly) { implicit request =>
+  def form = SecuredAction(ChairOnly) { implicit request =>
     Ok(views.html.sql(None, queryForm))
   }
   
@@ -49,4 +49,12 @@ object Chair extends Controller with SecureSocial {
       Ok(views.html.sql(Some(result), filledForm))
     }
   }
+  
+  def email = TODO
+  def config = TODO
+  def topics = TODO
+  def members = TODO
+  def auctions = TODO
+  def decisions = TODO
+  def dashboard = TODO
 }

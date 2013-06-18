@@ -1,16 +1,16 @@
 package controllers
 
-import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
-import securesocial.core.SecureSocial
 import org.joda.time.DateTime
 
-import models._
 import models.entities._
+import models.entities.PaperFormat.PaperFormat
 import models.relations._
-import models.entities.PaperFormat._
-import securesocial.core.providers.utils._
+import models.utils._
+import play.api.data.Form
+import play.api.data.Forms.{ignored, list, mapping, nonEmptyText, number, text}
+import play.api.data.Mapping
+import play.api.mvc.Controller
+import securesocial.core.SecureSocial
 
 case class SubmissionForm(
   paper: Paper,
@@ -18,7 +18,7 @@ case class SubmissionForm(
   topics: List[Int]
 )
 
-object Submission extends Controller with SecureSocial {
+object Submitting extends Controller with SecureSocial {
   val paperFormatMapping: Mapping[PaperFormat] = mapping(
     "value" -> nonEmptyText)(PaperFormat.withName(_))(Some(_).map(_.toString))
   
@@ -79,7 +79,7 @@ object Submission extends Controller with SecureSocial {
   def make = UserAwareAction(parse.multipartFormData) { implicit request =>
     request.user match {
       case None =>
-        Redirect(routes.Submission.form)
+        Redirect(routes.Submitting.form)
       case Some(u) =>
         val email = u.email.get
         submissionForm.bindFromRequest.fold(
@@ -124,7 +124,7 @@ object Submission extends Controller with SecureSocial {
               
               Authors.createAll(formAuthors.map(_.copy(paperId)))
               PaperTopics.createAll(formTopics.map(PaperTopic(paperId, _)))
-              Redirect(routes.Submission.info)
+              Redirect(routes.Submitting.info)
           }
         )
     }
@@ -133,7 +133,7 @@ object Submission extends Controller with SecureSocial {
   def info = SecuredAction { implicit request =>
     Papers.withEmail(request.user.email.get) match {
       case None =>
-        Redirect(routes.Submission.form)
+        Redirect(routes.Submitting.form)
       case Some(paper) =>
         Ok(views.html.submissioninfo(
           paper,

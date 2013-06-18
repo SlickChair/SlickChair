@@ -1,10 +1,10 @@
-package models.entities
+package models.utils
 
 import play.api.db.slick.DB
 import play.api.db.slick.Config.driver.simple._
 import play.api.Play.current
 import com.github.tototoshi.slick.JodaSupport._
-import _root_.java.sql.Date
+import java.sql.Date
 import org.joda.time.DateTime
 
 // Files
@@ -27,13 +27,13 @@ object Files extends Table[File]("FILES") {
   def * = id ~ name ~ size ~ uploaded ~ data <> (File, File.unapply _)
   def autoInc = name ~ size ~ uploaded ~ data <> (NewFile, NewFile.unapply _) returning id
 
-  def all = DB.withSession(implicit session =>
-    Query(Files).list )
+  def all = DB.withSession { implicit session =>
+    Query(Files).list }
   
-  def ins(newFile: NewFile) = DB.withSession(implicit session =>
-    Files.autoInc.insert(newFile) )
+  def ins(newFile: NewFile) = DB.withSession { implicit session =>
+    Files.autoInc.insert(newFile) }
   
-  def delete(id: Int) = DB.withSession(implicit session =>
-    Files.filter(_.id is id).mutate(_.delete) )
+  def delete(id: Int) = DB.withSession { implicit session =>
+    Files.filter(_.id is id).mutate(_.delete) }
 }
 

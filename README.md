@@ -10,12 +10,12 @@ Done:
 - SQL form
 - Make a page per paper with possibility to write reviews
 - Add edit and comments to the paper pages
+- Write a class for Settings access with default value
 
 Todo:
 -----
 
 - Email client for the chair with templates
-- Write a class for Settings access with default value
 - Invitation mechanism for chairs, reviewers and subreviewers
 - Paper biding and assignement
 - Good looking interface

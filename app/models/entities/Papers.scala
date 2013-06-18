@@ -4,9 +4,10 @@ import play.api.db.slick.DB
 import play.api.db.slick.Config.driver.simple._
 import play.api.Play.current
 import com.github.tototoshi.slick.JodaSupport._
-import _root_.java.sql.Date
+import java.sql.Date
 import org.joda.time.DateTime
 import models._
+import models.utils._
 import models.secureSocial._
 
 object PaperFormat extends Enumeration with BitmaskedEnumeration {
@@ -61,4 +62,10 @@ object Papers extends Table[Paper]("PAPERS") {
 
   def withEmail(email: String): Option[Paper] = DB.withSession { implicit session =>
     Query(Papers).filter(_.contactemail is email).list.headOption }
+  
+  def relevantCategories: List[(String, String)] = DB.withSession { implicit session =>
+    List(
+      ("All Authors", Query(Papers).map(_.contactemail).list)
+    ).map(c => (c._1, c._2.mkString(", ")))
+  }
 }
