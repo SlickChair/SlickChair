@@ -10,29 +10,26 @@ Done:
 - SQL form
 - Make a page per paper with possibility to write reviews
 - Add edit and comments to the paper pages
-- Write a class for Settings access with default value
+- Write a classes for settings with get set and default value
 
 Todo:
 -----
 
 - Email client for the chair with templates
-- Invitation mechanism for chairs, reviewers and subreviewers
+- Manage members (email invitation, delete users, promotion..)
 - Paper biding and assignement
 - Good looking interface
 - Setup instructions (requires some testing with postgresql)
-- Wrap most common chair actions into web pages (instead of manual queries)
-  - Edit settings
-  - Logs for emails and events
-  - Add topics
-  - Delete papers, account, ...
+- Wrap most settings in a config page
 
 Out of scope:
 -------------
 
-- Add and apply extra settings
+- Logs
+- More settings
 - Phases abstraction for settings
 - Internationalisation (should be easy with [Play][1])
-- Client side stuff
+- Client side stuff (starting with validation)
 - Write an out of scope list...
 
 [1]: http://www.playframework.com/documentation/2.0/JavaI18N
