@@ -11,12 +11,12 @@ Done:
 - Make a page per paper with possibility to write reviews
 - Add edit and comments to the paper pages
 - Write a classes for settings with get set and default value
+- Email client for the chair with templates
 
 Todo:
 -----
 
-- Email client for the chair with templates
-- Manage members (email invitation, delete users, promotion..)
+- Manage members (invitations, delete, promotion..)
 - Paper biding and assignement
 - Good looking interface
 - Setup instructions (requires some testing with postgresql)

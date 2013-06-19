@@ -1,10 +1,19 @@
-@(recipientsCategories: List[(String, String)], templates: List[models.utils.Template], emailFrom: Form[models.utils.Email])
+@(message: Option[String],
+  emailForm: Form[models.utils.Email],
+  recipientsCategories: List[(String, String)] =
+      models.entities.Papers.relevantCategories ::: models.entities.Members.relevantCategories,
+  templates: List[models.utils.Template] =
+      models.utils.Templates.all
+)
 
 @import helper._
 @import controllers.chair._
 
 @main("Email") {
   <h1>Email</h1>
+  @message.map { m => 
+    <h2>@m</h2>
+  }
   <select id="recipientSelect">
     <option>-- Receivers --</option>
     @for((name, index) <- recipientsCategories.map(_._1).zipWithIndex) {
@@ -17,9 +26,11 @@
       <option>@name</option>
     }
   </select>
+  <br>
+  From: @MailUtils.fromAddress
   @form(action = routes.Emailing.send) {
     @textarea(
-      emailFrom("to"),
+      emailForm("to"),
       'placeholder -> "Comma separated emails",
       '_label -> "To:",
       '_help -> "",
@@ -27,12 +38,12 @@
       'cols -> 50)
     
     @inputText(
-      emailFrom("subject"),
+      emailForm("subject"),
       '_label -> "Subject:",
       '_help -> "")
     
     @textarea(
-      emailFrom("body"),
+      emailForm("body"),
       'placeholder -> "Dear @fullname,",
       '_label -> "Body:",
       '_help -> "",
@@ -72,11 +83,21 @@
      *@
     var changeTextareaValueById = function(id, text) {
       var element = document.getElementById(id);
-      var event = document.createEvent('TextEvent');
+      var event = document.createEvent("TextEvent");
       element.focus();
       element.select();
-      event.initTextEvent('textInput', true, true, null, text);
+      event.initTextEvent("textInput", true, true, null, text);
       element.dispatchEvent(event);
     }
+    
+    document.getElementById("submit").addEventListener("click",
+      function(e) {
+        var confirmed = confirm("You are about to send "
+          + document.getElementById("to").value.split(",").length
+          + " emails.\nDo you want continue?")
+        if (!confirmed) {
+          e.preventDefault();
+        }
+      }, false);
   </script>
 }

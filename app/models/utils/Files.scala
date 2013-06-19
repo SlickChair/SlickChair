@@ -34,6 +34,6 @@ object Files extends Table[File]("FILES") {
     Files.autoInc.insert(newFile) }
   
   def delete(id: Int) = DB.withSession { implicit session =>
-    Files.filter(_.id is id).mutate(_.delete) }
+    Files.filter(_.id is id).delete }
 }
 

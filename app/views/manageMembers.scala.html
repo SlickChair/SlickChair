@@ -1,0 +1,39 @@
+@(manageMembersForm: Form[controllers.chair.ManageMembersForm],
+  recipientsCategories: List[(String, String)] =
+      models.entities.Papers.relevantCategories ::: models.entities.Members.relevantCategories,
+  templates: List[models.utils.Template] =
+      models.utils.Templates.all
+)
+
+@import helper._
+@import controllers.chair._
+
+@main("Manage Members") {
+  <h1>Manage Members</h1>
+  <h2>Invite new members:</h2>
+  From: @MailUtils.fromAddress
+  @form(action = routes.ManageMembers.invite) {
+    @textarea(
+      manageMembersForm("invite.to"),
+      'placeholder -> "Comma separated emails",
+      '_label -> "To:",
+      '_help -> "",
+      'rows -> 2,
+      'cols -> 50)
+    
+    @inputText(
+      manageMembersForm("invite.subject"),
+      '_label -> "Subject:",
+      '_help -> "")
+    
+    @textarea(
+      manageMembersForm("invite.body"),
+      'placeholder -> "Dear @fullname,",
+      '_label -> "Body:",
+      '_help -> "",
+      'rows -> 10,
+      'cols -> 50)
+
+    <input type="submit" id="submit" value="Invite">
+  }
+}

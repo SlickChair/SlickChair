@@ -12,7 +12,7 @@ import play.api.db.slick.DB
 
 object MemberRole extends Enumeration with BitmaskedEnumeration {
   type MemberRole = Value
-  val Chair, Member = Value
+  val Chair, Member, Deleted = Value
 }
 import MemberRole._
 

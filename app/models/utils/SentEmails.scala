@@ -15,6 +15,7 @@ case class Email(
   body: String,
   sent: DateTime
 )
+case class NewEmail(to: String, subject: String, body: String, sent: DateTime)
 
 object SentEmails extends Table[Email]("SENT_EMAILS") {
   def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
@@ -24,4 +25,8 @@ object SentEmails extends Table[Email]("SENT_EMAILS") {
   def sent = column[DateTime]("SENT")
     
   def * = id ~ to ~ subject ~ body ~ sent <> (Email, Email.unapply _)
+  def autoinc = to ~ subject ~ body ~ sent <> (NewEmail, NewEmail.unapply _) returning id
+  
+  def ins(newEmail: NewEmail) = DB.withSession { implicit session =>
+    SentEmails.autoinc.insert(newEmail) }
 }

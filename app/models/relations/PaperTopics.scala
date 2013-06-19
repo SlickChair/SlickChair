@@ -30,7 +30,7 @@ object PaperTopics extends Table[PaperTopic]("PAPER_TOPICS") {
     PaperTopics.insert(pt) }
   
   def deleteFor(paper: Paper) = DB.withSession { implicit session =>
-    PaperTopics.filter(_.paperid is paper.id).mutate(_.delete) }
+    PaperTopics.filter(_.paperid is paper.id).delete }
   
   def createAll(pts: List[PaperTopic]) = DB.withSession { implicit session =>
     pts.map(pt => PaperTopics.insert(pt)) }

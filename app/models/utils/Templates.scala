@@ -29,5 +29,5 @@ object Templates extends Table[Template]("TEMPLATES") {
     Templates.autoInc.insert(newTemplate) }
 
   // def delete(id: Int) = DB.withSession { implicit session =>
-  //   Templates.filter(_.id is id).mutate(_.delete) }
+  //   Templates.filter(_.id is id).delete }
 }

@@ -6,16 +6,16 @@ import play.api.Play.current
 import securesocial.core._
 
 case class User(
-    uid: String,
-    pid: String,
-    email: String,
-    firstName: String,
-    lastName: String,
-    authMethod: String,
-    hasher: Option[String],
-    password: Option[String],
-    salt: Option[String]
-    ) {
+  uid: String,
+  pid: String,
+  email: String,
+  firstName: String,
+  lastName: String,
+  authMethod: String,
+  hasher: Option[String],
+  password: Option[String],
+  salt: Option[String]
+) {
   def id: UserId = UserId(uid, pid)
   def toIdentity: Identity = SocialUser(
     UserId(uid, pid), s"$firstName $lastName", firstName, lastName, Some(email), None, AuthenticationMethod(authMethod),
@@ -23,9 +23,12 @@ case class User(
   )
 }
 object User {
-  def fromIdentity(i: Identity) = User( // email.get will fail for some providers, eg twitter
-    i.id.id, i.id.providerId, i.email.get, firstName = i.firstName, i.lastName, i.authMethod.method,
-    i.passwordInfo.map(_.hasher), i.passwordInfo.map(_.password), i.passwordInfo.map(_.salt).getOrElse(None)
+  // IMPORTANT NOTE: At this point (i.email.get) we assume that the provider
+  // gives us an email, which is not the case for some of them (eg twitter).
+  def fromIdentity(i: Identity) = User(
+    i.id.id, i.id.providerId, i.email.get, firstName = i.firstName,
+    i.lastName, i.authMethod.method, i.passwordInfo.map(_.hasher),
+    i.passwordInfo.map(_.password), i.passwordInfo.map(_.salt).getOrElse(None)
   )
 }
 
@@ -51,6 +54,10 @@ object SecureSocialUsers extends Table[User]("SECURE_SOCIAL_USERS") {
     Query(SecureSocialUsers).filter( user =>
       (user.email is email) && (user.pid is pid) )
   
+  def withEmail(email: String) = DB.withTransaction { implicit session =>
+    Query(SecureSocialUsers).filter(_.email is email).list.headOption
+  }
+
   trait Queries {
     def save(identity: Identity): Identity = DB.withTransaction { implicit session =>
       val user = User.fromIdentity(identity)

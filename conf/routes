@@ -27,8 +27,12 @@ POST    /sql                                 controllers.chair.Sql.runQuery
 GET     /email                               controllers.chair.Emailing.form
 POST    /email                               controllers.chair.Emailing.send
 GET     /config                              controllers.chair.Chair.config
+GET     /manage-members                      controllers.chair.ManageMembers.page
+POST    /manage-members/invite               controllers.chair.ManageMembers.invite
+POST    /manage-members/invalidate           controllers.chair.ManageMembers.invalidate
+POST    /manage-members/promote              controllers.chair.ManageMembers.promote
+
 GET     /topics                              controllers.chair.Chair.TODO
-GET     /members                             controllers.chair.Chair.TODO
 GET     /auctions                            controllers.chair.Chair.TODO
 GET     /decisions                           controllers.chair.Chair.TODO
 GET     /dashboard                           controllers.chair.Chair.TODO
