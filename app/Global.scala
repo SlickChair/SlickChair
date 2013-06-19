@@ -7,7 +7,8 @@ import play.api.Logger
 import models.utils._
 
 /**
- * Populates the database with fake data for testing. Global.onStart() is called when the application starts.
+ * Populates the database with fake data for testing. Global.onStart() is
+ * called when the application starts.
  */
 object Global extends GlobalSettings {
   override def onStart(app: Application) {

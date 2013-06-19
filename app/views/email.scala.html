@@ -5,17 +5,17 @@
 
 @main("Email") {
   <h1>Email</h1>
-  <select id="toSelect">
-    <option label="lolol" value="volvo" string="sfj">Volvo</option>
-    <option label="lolol" value="saab" string="sdffj">Saab</option>
-    <option label="lolol" value="mercedes" string="sdffj">Mercedes</option>
-    <option label="lolol" value="audi" string="sdfasdf">Audi</option>
+  <select id="recipientSelect">
+    <option>-- Receivers --</option>
+    @for((name, index) <- recipientsCategories.map(_._1).zipWithIndex) {
+      <option>@name</option>
+    }
   </select>
-  <select>
-    <option value="volvo">Volvo</option>
-    <option value="saab">Saab</option>
-    <option value="mercedes">Mercedes</option>
-    <option value="audi">Audi</option>
+  <select id="templateSelect">
+    <option>-- Templates --</option>
+    @for((name, index) <- templates.map(_.name).zipWithIndex) {
+      <option>@name</option>
+    }
   </select>
   @form(action = routes.Emailing.send) {
     @textarea(
@@ -42,8 +42,41 @@
     <input type="submit" id="submit" value="Send">
   }
   <script>
-    document.getElementById("toSelect").onchange = function() {
-      document.getElementById("to").value = this.options[this.selectedIndex].value;
+    var recipients = new Array();
+    @for((emails, index) <- recipientsCategories.map(_._2).zipWithIndex) {
+      recipients[@index] = "@emails.toString";
+    }
+    var subjects = new Array();
+    var bodies = new Array();
+    @for((template, index) <- templates.zipWithIndex) {
+      subjects[@index] = "@template.subject.replaceAll("\n", "\\\\\n")";
+      bodies[@index] = "@template.body.replaceAll("\n", "\\\\\n")";
+    }
+    document.getElementById("recipientSelect").onchange = function() {
+      if(this.selectedIndex !== 0) {
+        changeTextareaValueById("to", recipients[this.selectedIndex - 1]);
+      }
+    }
+    
+    document.getElementById("templateSelect").onchange = function() {
+      if(this.selectedIndex !== 0) {
+        changeTextareaValueById("subject", subjects[this.selectedIndex - 1]);
+        changeTextareaValueById("body", bodies[this.selectedIndex - 1]);
+      }
+    }
+    
+    @**
+     * While a textarea content could be changed in one line with something
+     * like `document.getElementById(id).value = text;` this complex process
+     * preserves the undo stack of the browser.
+     *@
+    var changeTextareaValueById = function(id, text) {
+      var element = document.getElementById(id);
+      var event = document.createEvent('TextEvent');
+      element.focus();
+      element.select();
+      event.initTextEvent('textInput', true, true, null, text);
+      element.dispatchEvent(event);
     }
   </script>
 }
