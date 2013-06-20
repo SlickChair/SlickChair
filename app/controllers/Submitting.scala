@@ -51,7 +51,7 @@ object Submitting extends Controller with SecureSocial {
       "paper" -> paperMapping,
       "nauthors" -> number,
       "authors" -> list(authorMapping),
-      "topics" -> list(number).verifying("Please select at least one topic.", !_.isEmpty)
+      "topics" -> list(number).verifying("Please select at least one topic.", _.nonEmpty)
     )((paper, nauthors, authors, topics) =>
         SubmissionForm(paper, authors.take(nauthors).zipWithIndex.map{case (a, i) => a.copy(position = i)}, topics))
       // After calling this function authors positions are constistant but
@@ -113,7 +113,7 @@ object Submitting extends Controller with SecureSocial {
                   PaperTopics.deleteFor(dbPaper)
                   Papers.updt(formPaper.copy(
                     id = dbPaper.id,
-                    contactemail = email, // == dbPaper.email by construction
+                    contactemail = dbPaper.contactemail, // == email by construction
                     submissiondate = dbPaper.submissiondate,
                     lastupdate = DateTime.now,
                     accepted = dbPaper.accepted,

@@ -15,11 +15,13 @@ POST    /submission/edit                     controllers.Submitting.make
 GET     /submission/info                     controllers.Submitting.info
 
 # Reviewers
-GET     /submissions                         controllers.Reviewing.list
+GET     /dashboard                           controllers.Reviewing.dashboard
+GET     /submissions                         controllers.Reviewing.papers
 GET     /submission/:id                      controllers.Reviewing.page(id: Int)
 POST    /submission/:id                      controllers.Reviewing.comment(id: Int)
 GET     /review/:id                          controllers.Reviewing.form(id: Int)
 POST    /review/:id                          controllers.Reviewing.make(id: Int)
+GET     /invitation/:uuid                    controllers.Reviewing.invite(uuid: String)
 
 # Chair
 GET     /sql                                 controllers.chair.Sql.form
@@ -28,9 +30,7 @@ GET     /email                               controllers.chair.Emailing.form
 POST    /email                               controllers.chair.Emailing.send
 GET     /config                              controllers.chair.Chair.config
 GET     /manage-members                      controllers.chair.ManageMembers.page
-POST    /manage-members/invite               controllers.chair.ManageMembers.invite
-POST    /manage-members/invalidate           controllers.chair.ManageMembers.invalidate
-POST    /manage-members/promote              controllers.chair.ManageMembers.promote
+POST    /manage-members                      controllers.chair.ManageMembers.handle
 
 GET     /topics                              controllers.chair.Chair.TODO
 GET     /auctions                            controllers.chair.Chair.TODO

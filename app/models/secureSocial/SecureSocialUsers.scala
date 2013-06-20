@@ -9,16 +9,16 @@ case class User(
   uid: String,
   pid: String,
   email: String,
-  firstName: String,
-  lastName: String,
-  authMethod: String,
+  firstname: String,
+  lastname: String,
+  authmethod: String,
   hasher: Option[String],
   password: Option[String],
   salt: Option[String]
 ) {
   def id: UserId = UserId(uid, pid)
   def toIdentity: Identity = SocialUser(
-    UserId(uid, pid), s"$firstName $lastName", firstName, lastName, Some(email), None, AuthenticationMethod(authMethod),
+    UserId(uid, pid), s"$firstname $lastname", firstname, lastname, Some(email), None, AuthenticationMethod(authmethod),
     None, None, password.map(p => PasswordInfo(hasher.getOrElse(""), p, salt))
   )
 }
@@ -26,7 +26,7 @@ object User {
   // IMPORTANT NOTE: At this point (i.email.get) we assume that the provider
   // gives us an email, which is not the case for some of them (eg twitter).
   def fromIdentity(i: Identity) = User(
-    i.id.id, i.id.providerId, i.email.get, firstName = i.firstName,
+    i.id.id, i.id.providerId, i.email.get, i.firstName,
     i.lastName, i.authMethod.method, i.passwordInfo.map(_.hasher),
     i.passwordInfo.map(_.password), i.passwordInfo.map(_.salt).getOrElse(None)
   )
@@ -36,15 +36,15 @@ object SecureSocialUsers extends Table[User]("SECURE_SOCIAL_USERS") {
   def uid = column[String]("UID", O.DBType("TEXT"))
   def pid = column[String]("PID", O.DBType("TEXT"))
   def email = column[String]("EMAIL", O.DBType("TEXT"))
-  def firstName = column[String]("FIRSTNAME", O.DBType("TEXT"))
-  def lastName = column[String]("LASTNAME", O.DBType("TEXT"))
-  def authMethod = column[String]("AUTHMETHOD", O.DBType("TEXT"))
-  def hasher = column[Option[String]]("HASHER")
-  def password = column[Option[String]]("PASSWORD")
-  def salt = column[Option[String]]("SALT")
+  def firstname = column[String]("FIRSTNAME", O.DBType("TEXT"))
+  def lastname = column[String]("LASTNAME", O.DBType("TEXT"))
+  def authmethod = column[String]("AUTHMETHOD", O.DBType("TEXT"))
+  def hasher = column[Option[String]]("HASHER", O.DBType("TEXT"))
+  def password = column[Option[String]]("PASSWORD", O.DBType("TEXT"))
+  def salt = column[Option[String]]("SALT", O.DBType("TEXT"))
   
   def pk = primaryKey("SECURESOCIALUSERS_PK", uid ~ pid)
-  def * = uid ~ pid ~ email ~ firstName ~ lastName ~ authMethod ~ hasher ~ password ~ salt <> (User.apply _, User.unapply _)
+  def * = uid ~ pid ~ email ~ firstname ~ lastname ~ authmethod ~ hasher ~ password ~ salt <> (User.apply _, User.unapply _)
 
   def userByUserId(userId: UserId) = 
     Query(SecureSocialUsers).filter( user =>

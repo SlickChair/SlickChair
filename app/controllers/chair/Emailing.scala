@@ -18,30 +18,46 @@ import models.entities._
 import models.secureSocial._
 
 object Emailing extends Controller with SecureSocial {
-  val emailForm = Form[Email] (MailUtils.emailMapping)
+  val fromAddress = current.configuration.getString("smtp.from").get
+
+  val emailMapping: Mapping[Email] = mapping(
+    // TODO: email validation + @firstname validation
+    "id" -> ignored(null.asInstanceOf[Int]),
+    "to" -> nonEmptyText,
+    "subject" -> nonEmptyText,
+    "body" -> nonEmptyText,
+    "sent" -> ignored(null.asInstanceOf[DateTime])
+  )(Email.apply _)(Email.unapply _)
+  
+  def sendEmail(to: String, subject: String, body: String) {
+    Akka.system.scheduler.scheduleOnce(1 seconds) {
+      val mail = use[MailerPlugin].email
+      mail.addRecipient(to)
+      mail.setSubject(subject)
+      mail.addFrom(fromAddress)
+      mail.send(body, "")
+    }
+  }
+  
+  val emailForm = Form[Email] (Emailing.emailMapping)
   
   def form = Action(Ok(views.html.email(None, emailForm)))
   
   def send = Action { implicit request =>
     emailForm.bindFromRequest.fold(
       errors => Ok(views.html.email(None, errors)),
-      filledForm => {
-        filledForm.to.split(",").foreach { email =>
+      { case Email(id, to, subject, body, sent) =>
+        to.split(",").foreach { email =>
           SecureSocialUsers.withEmail(email).getOrElse{ throw new java.lang.UnsupportedOperationException("TODO") }
           // TODO add email variables like 
           // @title
           // @firstname
           // @lastname
         }
-        SentEmails.ins(NewEmail(
-          filledForm.to,
-          filledForm.subject,
-          filledForm.body,
-          DateTime.now
-        ))
-        filledForm.to.split(",").foreach { email =>
+        SentEmails.ins(NewEmail(to, subject, body, DateTime.now))
+        to.split(",").foreach { email =>
           val user = SecureSocialUsers.withEmail(email).get
-          MailUtils.sendEmail(user.email, filledForm.subject, filledForm.body)
+          Emailing.sendEmail(user.email, subject, body)
         }
         Ok(views.html.email(Some("Email sent)."), emailForm))
       }

@@ -12,15 +12,17 @@ Done:
 - Add edit and comments to the paper pages
 - Write a classes for settings with get set and default value
 - Email client for the chair with templates
+- Manage members (invitations, delete, promotion..)
 
 Todo:
 -----
 
-- Manage members (invitations, delete, promotion..)
 - Paper biding and assignement
 - Good looking interface
 - Setup instructions (requires some testing with postgresql)
 - Wrap most settings in a config page
+- Use the [POST-Redirect-GET pattern][1] in all the forms to prevent repost on
+  page reload
 
 Out of scope:
 -------------
@@ -28,8 +30,7 @@ Out of scope:
 - Logs
 - More settings
 - Phases abstraction for settings
-- Internationalisation (should be easy with [Play][1])
-- Client side stuff (starting with validation)
+- Client side stuff (starting with form validation)
 - Write an out of scope list...
 
-[1]: http://www.playframework.com/documentation/2.0/JavaI18N
+[1]: http://www.theserverside.com/news/1365146/Redirect-After-Post

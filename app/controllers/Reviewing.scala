@@ -1,8 +1,8 @@
 package controllers
 
 import org.joda.time.DateTime
-
-import models.entities.{Authors, Members, Paper, Papers}
+import models.secureSocial._
+import models.entities._
 import models.relations.{Comment, Comments, NewComment, Review, ReviewConfidence}
 import models.relations.ReviewConfidence.ReviewConfidence
 import models.relations.ReviewEvaluation
@@ -43,7 +43,7 @@ object Reviewing extends Controller with SecureSocial {
     )(Comment.apply _)(Comment.unapply _)
   )
   
-  def list = SecuredAction(MemberOrChair) { implicit request =>
+  def papers = SecuredAction(MemberOrChair) { implicit request =>
     Ok(views.html.paperList(
       Papers.all.map(p => (p, Authors.of(p)))
     ))
@@ -89,18 +89,19 @@ object Reviewing extends Controller with SecureSocial {
         errors =>
           Ok(views.html.paperReview(Reviews.of(paper, member).nonEmpty, paper, Authors.of(paper), errors)),
         form => {
+          val now = DateTime.now
           Reviews.of(paper, member) match {
             case None => Reviews.ins(form.copy(
               paperid = paper.id,
               memberid = member.id,
-              submissiondate = Some(DateTime.now),
-              lastupdate = Some(DateTime.now)
+              submissiondate = Some(now),
+              lastupdate = Some(now)
             ))
             case Some(dbReview) => Reviews.updt(form.copy(
               paperid = dbReview.paperid,
               memberid = dbReview.memberid,
               submissiondate = dbReview.submissiondate,
-              lastupdate = Some(DateTime.now)
+              lastupdate = Some(now)
             ))
           }
           Redirect(routes.Reviewing.page(paper.id))
@@ -110,10 +111,9 @@ object Reviewing extends Controller with SecureSocial {
   }
   
   def comment(id: Int) = SecuredAction(MemberOrChair) { implicit request =>
-    val member = getMember
     paperOrNotFound(id) { paper =>
       commentForm.bindFromRequest.fold(
-        errors => None,
+        errors => Unit,
         form => {
           Comments.ins(NewComment(
             paper.id,
@@ -126,4 +126,29 @@ object Reviewing extends Controller with SecureSocial {
       Redirect(routes.Reviewing.page(paper.id))
     }
   }
+  
+  def invite(uuid: String) = SecuredAction(Anyone) { implicit request =>
+    SecureSocialTokens.withUUID(uuid) match {
+      case None => BadRequest("Token expired.")
+      case Some(token) => 
+        val user = User.fromIdentity(request.user)
+        Members.withEmail(user.email) match {
+          case Some(_) => BadRequest("Already a member.")
+          case None => 
+            val now = DateTime.now
+            Members.ins(NewMember(
+              user.email,
+              token.email,
+              now,
+              now,
+              MemberRole.Member,
+              user.firstname,
+              user.lastname
+            ))
+            Redirect(routes.Reviewing.dashboard)
+        }
+    }
+  }
+  
+  def dashboard = TODO
 }

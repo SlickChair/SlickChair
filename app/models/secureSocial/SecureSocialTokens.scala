@@ -40,8 +40,14 @@ object SecureSocialTokens extends Table[MyToken]("SECURE_SOCIAL_TOKENS") {
   
   def del(uuid: String) = DB.withTransaction { implicit session =>
     SecureSocialTokens.filter(_.uuid is uuid).delete }
-    
+  
+  def withUUID(uuid: String): Option[MyToken] = DB.withSession { implicit session =>
+    createFinderBy(_.uuid).apply(uuid).firstOption }
+
   trait Queries {
+    def deleteToken(uuid: String): Unit = del(uuid)
+    def findToken(uuid: String): Option[Token] = withUUID(uuid).map(_.toT)
+
     def save(token: Token): Unit = DB.withTransaction { implicit session =>
       findToken(token.uuid) match {
         case None => SecureSocialTokens.insert(MyToken.fromT(token))
@@ -49,13 +55,7 @@ object SecureSocialTokens extends Table[MyToken]("SECURE_SOCIAL_TOKENS") {
       }
     }
 
-    def deleteToken(uuid: String): Unit = DB.withTransaction { implicit session =>
-      SecureSocialTokens.filter(_.uuid is uuid).delete }
-
     def deleteExpiredTokens: Unit = DB.withTransaction { implicit session =>
       SecureSocialTokens.filter(_.expirationTime <= DateTime.now).delete }
-
-    def findToken(uuid: String): Option[Token] = DB.withSession { implicit session =>
-      createFinderBy(_.uuid).apply(uuid).firstOption.map(_.toT) }
   }
 }

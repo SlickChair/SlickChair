@@ -27,7 +27,7 @@
     }
   </select>
   <br>
-  From: @MailUtils.fromAddress
+  From: @Emailing.fromAddress
   @form(action = routes.Emailing.send) {
     @textarea(
       emailForm("to"),

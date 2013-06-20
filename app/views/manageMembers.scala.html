@@ -1,20 +1,24 @@
-@(manageMembersForm: Form[controllers.chair.ManageMembersForm],
-  recipientsCategories: List[(String, String)] =
-      models.entities.Papers.relevantCategories ::: models.entities.Members.relevantCategories,
-  templates: List[models.utils.Template] =
-      models.utils.Templates.all
+@(inviteForm: Form[models.utils.Email],
+  invalidateForm: Form[controllers.chair.InvalidateForm],
+  promoteForm: Form[controllers.chair.PromoteForm],
+  pendingInvitations: List[models.secureSocial.MyToken]
+    = models.secureSocial.SecureSocialTokens.allInvitations,
+  members: List[models.entities.Member]
+    = models.entities.Members.all
 )
 
 @import helper._
 @import controllers.chair._
+@import models.entities._
+@import models.secureSocial._
 
 @main("Manage Members") {
   <h1>Manage Members</h1>
-  <h2>Invite new members:</h2>
-  From: @MailUtils.fromAddress
-  @form(action = routes.ManageMembers.invite) {
+  @form(action = routes.ManageMembers.handle) {
+    <h2>Invite new members:</h2>
+    From: @Emailing.fromAddress
     @textarea(
-      manageMembersForm("invite.to"),
+      inviteForm("to"),
       'placeholder -> "Comma separated emails",
       '_label -> "To:",
       '_help -> "",
@@ -22,18 +26,64 @@
       'cols -> 50)
     
     @inputText(
-      manageMembersForm("invite.subject"),
+      inviteForm("subject"),
       '_label -> "Subject:",
       '_help -> "")
     
     @textarea(
-      manageMembersForm("invite.body"),
+      inviteForm("body"),
       'placeholder -> "Dear @fullname,",
       '_label -> "Body:",
       '_help -> "",
       'rows -> 10,
       'cols -> 50)
-
-    <input type="submit" id="submit" value="Invite">
+    <button name="action" value="invite">Invite</button>
+    
+    <br><h2>Pending invitations:</h2>
+    <table>
+      @for((MyToken(uuid, email, creationTime, expirationTime, _, _), index) <- pendingInvitations.zipWithIndex) {
+        <tr>
+          <td>
+            @checkbox(
+              invalidateForm(s"tokens[$index]"),
+              '_label -> "",
+              'value -> uuid)
+          </td>
+          <td>@email</td>
+          <td>@creationTime</td>
+          <td>@expirationTime</td>
+        </tr>
+      }
+    </table>
+    <button name="action" value="invalidate">Invalidate</button>
+    
+    <br><h2>Members:</h2>
+    <table>
+      @for((Member(id, email, invitedas, firstlogindate, lastlogindate, role, firstname, lastname), index) <- members.zipWithIndex) {
+        <tr>
+          <td>
+            @checkbox(
+              promoteForm(s"members[$index]"),
+              '_label -> "",
+              'value -> id.toString)
+          </td>
+          <td>@email</td> 
+          <td>@invitedas</td> 
+          <td>@firstlogindate</td> 
+          <td>@lastlogindate</td> 
+          <td>@role</td> 
+          <td>@firstname</td> 
+          <td>@lastname</td> 
+        </tr>
+      }
+    </table>
+    
+    @select(
+      promoteForm("newRole.value"),
+      MemberRole.values.toSeq.map(f => f.toString -> f.toString),
+      '_label -> "Change role of selected to:",
+      '_help -> ""
+    )
+    <button name="action" value="promote">Save</button>
   }
 }

@@ -11,5 +11,9 @@ object ChairOnly extends Authorization {
 
 object MemberOrChair extends Authorization {
   def isAuthorized(user: Identity) =
-    Members.withEmail(user.email.get).nonEmpty
+    Members.withEmail(user.email.get).filter(_.role != MemberRole.Disabled).nonEmpty
+}
+
+object Anyone extends Authorization {
+  def isAuthorized(user: Identity) = true
 }

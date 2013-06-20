@@ -18,14 +18,12 @@ import models.entities._
 import models.entities.MemberRole._
 import models.secureSocial._
 import java.util.UUID
+import controllers._
 import controllers.chair._
+import controllers.Reviewing._
 
-case class ManageMembersForm(
-  invite: Email,
-  pendingInvitations: List[Int],
-  promotedMembers: List[Int],
-  newRole: MemberRole
-)
+case class InvalidateForm(candidates: List[String])
+case class PromoteForm(members: List[Int], newRole: MemberRole)
 
 object ManageMembers extends Controller with SecureSocial {
   val urlTemplateVariable = "@invitationURL"
@@ -33,68 +31,82 @@ object ManageMembers extends Controller with SecureSocial {
   val memberRoleMapping: Mapping[MemberRole] = mapping(
     "value" -> nonEmptyText)(MemberRole.withName(_))(Some(_).map(_.toString))
   
-  val emailForm = Form[Email] (
-    MailUtils.emailMapping
+  val inviteForm: Form[Email] = Form (
+    Emailing.emailMapping
   ).fill(Email(
     null.asInstanceOf[Int], "",
     "Invitation",
-    "Hello,\n\nThis is an invitation, check out this link: " + urlTemplateVariable,
+    "Hello,\n\nThis is an invitation, check out this link:\n\n" + urlTemplateVariable,
     null.asInstanceOf[DateTime]
   ))
-  val invalidateForm = Form[List[Int]] (
-    "candidates" -> list(number)
-  )
-  val promoteForm = Form[(List[Int], MemberRole)] (
-    tuple(
-      "promotedMembers" -> list(number),
-      "newRole" -> memberRoleMapping
-    )
-  ).fill(Nil, MemberRole.Chair)
-  
-  
-  val manageMembersForm = Form[ManageMembersForm] (
+  val invalidateForm: Form[InvalidateForm] = Form (
     mapping(
-      "invite" -> MailUtils.emailMapping,
-      "pendingInvitations" -> list(number),
-      "promotedMembers" -> list(number),
+      "tokens" -> list(nonEmptyText).verifying("Please select at least one invitation.", _.nonEmpty)
+    )(InvalidateForm.apply _)(InvalidateForm.unapply _)
+  )
+  val promoteForm: Form[PromoteForm] = Form (
+    mapping(
+      "members" -> list(number).verifying("Please select at least one member.", _.nonEmpty),
       "newRole" -> memberRoleMapping
-    )(ManageMembersForm.apply _)(ManageMembersForm.unapply _)
-  ).fill(ManageMembersForm(
-    Email(
-      null.asInstanceOf[Int], "",
-      "Invitation",
-      "Hello,\n\nThis is an invitation, check out this link: " + urlTemplateVariable,
-      null.asInstanceOf[DateTime]),
-    Nil, Nil, MemberRole.Chair
-  ))
+    )(PromoteForm.apply _)(PromoteForm.unapply _)
+  ).fill(PromoteForm(Nil, MemberRole.Chair))
   
-  private def createToken(email: String, isSignUp: Boolean): (String, MyToken) = {
-    val uuid = UUID.randomUUID().toString
-    val now = DateTime.now
-
-    val token = MyToken(
-      UUID.randomUUID().toString,
-      email,
-      DateTime.now,
-      DateTime.now.plusDays(7),
-      false,
-      true
-    )
-    SecureSocialTokens.ins(token)
-    (uuid, token)
+  def page = Action(Ok(views.html.manageMembers(inviteForm, invalidateForm, promoteForm)))
+  
+  def handle = Action { implicit request => 
+    request.body.asFormUrlEncoded.get("action").headOption match {
+      case Some("invite") => invite
+      case Some("invalidate") => invalidate
+      case Some("promote") => promote
+      case _ => throw new java.lang.UnsupportedOperationException("TODO")
+    }
   }
   
-  // private def okWith(form: Form[ManageMembersForm]) = Ok(views.html.manageMembers(
-  //   SecureSocialTokens.allInvitations,
-    
-  //   Papers.relevantCategories ::: Members.relevantCategories,
-  //   Templates.all,
-  //   form
-  // ))
-  
-  def page = Action(Ok(views.html.manageMembers(manageMembersForm)))
+  def OkBinded[T](emailF: Option[Form[Email]], invalidateF: Option[Form[InvalidateForm]], promoteF: Option[Form[PromoteForm]])(implicit request: Request[T]) =
+    Ok(views.html.manageMembers(
+      emailF getOrElse inviteForm.bindFromRequest.discardingErrors,
+      invalidateF getOrElse invalidateForm.bindFromRequest.discardingErrors, 
+      promoteF getOrElse promoteForm.bindFromRequest.discardingErrors
+    ))
 
-  def invite = TODO
-  def invalidate = TODO
-  def promote = TODO
+  def invite[T](implicit request: Request[T]) = {
+    val newInviteForm = inviteForm.bindFromRequest.fold(
+      errors => errors,
+      { case Email(id, to, subject, body, sent) =>
+        val now = DateTime.now
+        SentEmails.ins(NewEmail(to, subject, body, now))
+        to.split(",").foreach { email =>
+          val uuid = UUID.randomUUID().toString
+          val bodyWithLink = body.replaceAll(urlTemplateVariable, controllers.routes.Reviewing.invite(uuid).absoluteURL())
+          SecureSocialTokens.ins(MyToken(uuid, email, now, now.plusDays(7), false, true))
+          Emailing.sendEmail(email, subject, bodyWithLink)
+        }
+        inviteForm
+      }
+    )
+    OkBinded(Some(newInviteForm), None, None)
+  }
+  
+  def invalidate[T](implicit request: Request[T]) = {
+    val newInvalidateForm = invalidateForm.bindFromRequest.fold(
+      errors => errors,
+      { case InvalidateForm(candidates) =>
+        candidates.foreach(SecureSocialTokens.del)
+        invalidateForm
+      }
+    )
+    OkBinded(None, Some(newInvalidateForm), None)
+  }
+  
+  def promote[T](implicit request: Request[T]) = {
+    val newPromoteForm = promoteForm.bindFromRequest.fold(
+      errors => errors,
+      { case PromoteForm(members, newRole) =>
+        play.api.Logger.info(members + " w " + newRole)
+        members.foreach(Members.promote(_, newRole))
+        promoteForm
+      }
+    )
+    OkBinded(None, None, Some(newPromoteForm))
+  }
 }

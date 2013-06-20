@@ -29,8 +29,7 @@
         @checkbox(
           submissionForm(s"topics[$id]"),
           '_label -> (name + ":").capitalize,
-          'value -> id.toString
-        )
+          'value -> id.toString)
       }
       </fieldset><br>
 
@@ -39,8 +38,7 @@
         submissionForm("nauthors"),
         authors.map(i => ((i+1).toString, (i+1).toString)),
         '_label -> "Number of authors:",
-        '_help -> ""
-      )
+        '_help -> "")
       @authors.map { i =>
         <fieldset><legend>Author @(i+1)</legend>
         @inputText(submissionForm(s"authors[$i].firstname"), '_label -> "First Name:")

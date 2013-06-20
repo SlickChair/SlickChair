@@ -7,9 +7,9 @@ import play.api.Logger
 import models.utils._
 
 /**
- * Populates the database with fake data for testing. Global.onStart() is
- * called when the application starts.
- */
+  * Populates the database with fake data for testing. Global.onStart() is
+  * called when the application starts.
+  */
 object Global extends GlobalSettings {
   override def onStart(app: Application) {
     if(Topics.all.isEmpty) {
@@ -48,8 +48,8 @@ object Global extends GlobalSettings {
       ).foreach(u => new SecureSocialUserService(null).save(u.toIdentity))
       
       List(
-        NewMember("4@4", DateTime.now, DateTime.now, MemberRole.Member, "membername", "memberlastname", "org"),
-        NewMember("olivierblanvillain@gmail.com", DateTime.now, DateTime.now, MemberRole.Chair, "membername", "memberlastname", "org")
+        NewMember("4@4", "4@4.com", DateTime.now, DateTime.now, MemberRole.Member, "membername", "memberlastname"),
+        NewMember("olivierblanvillain@gmail.com", "olivier.blanvillain@epfl.ch", DateTime.now, DateTime.now, MemberRole.Chair, "membername", "memberlastname")
       ).foreach(Members.ins)
       
       List(
@@ -65,6 +65,12 @@ object Global extends GlobalSettings {
         NewTemplate("Msg", "A message to @fullname", "Dear @firstname, \nThis message is about..."),
         NewTemplate("Warn", "A warrning to @fullname", "Dear @firstname, \nThis writting is about...")
       ).foreach(Templates.ins)
+      
+      List(
+        MyToken(java.util.UUID.randomUUID().toString, "1@1", DateTime.now, DateTime.now.plusDays(7), false, true),
+        MyToken(java.util.UUID.randomUUID().toString, "2@2", DateTime.now, DateTime.now.plusDays(7), false, true),
+        MyToken(java.util.UUID.randomUUID().toString, "3@3", DateTime.now, DateTime.now.plusDays(7), false, true)
+      ).foreach(SecureSocialTokens.ins)
     }
   }
 }

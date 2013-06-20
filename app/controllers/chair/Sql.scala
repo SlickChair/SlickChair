@@ -27,7 +27,7 @@ object Sql extends Controller with SecureSocial {
         )(SqlMethod.withName(_))
          (Some(_).map(_.toString))
     )
-  ).fill(("", Execute))
+  ).fill(("SELECT SQL FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = SCHEMA()", Execute))
   
   def form = SecuredAction(ChairOnly) { implicit request =>
     Ok(views.html.sql(None, queryForm))
