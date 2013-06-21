@@ -54,9 +54,9 @@ object SecureSocialUsers extends Table[User]("SECURE_SOCIAL_USERS") {
     Query(SecureSocialUsers).filter( user =>
       (user.email is email) && (user.pid is pid) )
   
-  def withEmail(email: String) = DB.withTransaction { implicit session =>
+  def withEmail(email: String) = DB.withTransaction(implicit session =>
     Query(SecureSocialUsers).filter(_.email is email).list.headOption
-  }
+  )
 
   trait Queries {
     def save(identity: Identity): Identity = DB.withTransaction { implicit session =>
@@ -70,12 +70,12 @@ object SecureSocialUsers extends Table[User]("SECURE_SOCIAL_USERS") {
       identity
     }
     
-    def find(userId: UserId): Option[Identity] = DB.withSession { implicit session =>
+    def find(userId: UserId): Option[Identity] = DB.withSession(implicit session =>
       userByUserId(userId).firstOption.map(_.toIdentity)
-    }
+    )
     
-    def findByEmailAndProvider(email: String, pid: String): Option[Identity] = DB.withSession { implicit session =>
+    def findByEmailAndProvider(email: String, pid: String): Option[Identity] = DB.withSession(implicit session =>
       userByEmailAndProvider(email, pid).firstOption.map(_.toIdentity)
-    }
+    )
   }
 }

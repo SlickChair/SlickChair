@@ -1,4 +1,4 @@
-package controllers
+package controllers.member
 
 import org.joda.time.DateTime
 import models.secureSocial._
@@ -13,6 +13,7 @@ import play.api.data.Forms.{ignored, mapping, nonEmptyText}
 import play.api.data.Mapping
 import play.api.mvc.{Controller, Result}
 import securesocial.core.{SecureSocial, SecuredRequest}
+import controllers._
 
 object Reviewing extends Controller with SecureSocial {
   val confidenceMapping: Mapping[ReviewConfidence] = mapping(
@@ -43,25 +44,15 @@ object Reviewing extends Controller with SecureSocial {
     )(Comment.apply _)(Comment.unapply _)
   )
   
-  def papers = SecuredAction(MemberOrChair) { implicit request =>
-    Ok(views.html.paperList(
-      Papers.all.map(p => (p, Authors.of(p)))
-    ))
-  }
-  
   private def paperOrNotFound(id: Int)(ifFound: Paper => Result) = Papers.withId(id) match {
     case None => NotFound("No paper found with this id")
     case Some(paper) => ifFound(paper)
   }
-  
-  private def getMember[T](implicit request: SecuredRequest[T]) =
-    // The last get won't fail if called after the MemberOrChair authentication succeeded.
-    Members.withEmail(request.user.email.get).get
-  
+    
   def page(id: Int) = SecuredAction(MemberOrChair) { implicit request =>
     paperOrNotFound(id) { paper =>
       Ok(views.html.paperPage(
-        Reviews.of(paper, getMember).nonEmpty,
+        Reviews.of(paper, Members.getFromRequest).nonEmpty,
         paper,
         Authors.of(paper),
         Reviews.ofPaper(paper).map(r => (r, Members.withId(r.memberid).get)),
@@ -73,7 +64,7 @@ object Reviewing extends Controller with SecureSocial {
   
   def form(id: Int) = SecuredAction(MemberOrChair) { implicit request =>
     paperOrNotFound(id) { paper =>
-      Reviews.of(paper, getMember) match {
+      Reviews.of(paper, Members.getFromRequest) match {
         case None =>
           Ok(views.html.paperReview(false, paper, Authors.of(paper), reviewForm))
         case Some(review) => 
@@ -83,7 +74,7 @@ object Reviewing extends Controller with SecureSocial {
   }
   
   def make(id: Int) = SecuredAction(MemberOrChair) { implicit request =>
-    val member = getMember
+    val member = Members.getFromRequest
     paperOrNotFound(id) { paper =>
       reviewForm.bindFromRequest.fold(
         errors =>
@@ -117,7 +108,7 @@ object Reviewing extends Controller with SecureSocial {
         form => {
           Comments.ins(NewComment(
             paper.id,
-            getMember.id,
+            Members.getFromRequest.id,
             DateTime.now,
             form.content
           ))
@@ -126,29 +117,4 @@ object Reviewing extends Controller with SecureSocial {
       Redirect(routes.Reviewing.page(paper.id))
     }
   }
-  
-  def invite(uuid: String) = SecuredAction(Anyone) { implicit request =>
-    SecureSocialTokens.withUUID(uuid) match {
-      case None => BadRequest("Token expired.")
-      case Some(token) => 
-        val user = User.fromIdentity(request.user)
-        Members.withEmail(user.email) match {
-          case Some(_) => BadRequest("Already a member.")
-          case None => 
-            val now = DateTime.now
-            Members.ins(NewMember(
-              user.email,
-              token.email,
-              now,
-              now,
-              MemberRole.Member,
-              user.firstname,
-              user.lastname
-            ))
-            Redirect(routes.Reviewing.dashboard)
-        }
-    }
-  }
-  
-  def dashboard = TODO
 }

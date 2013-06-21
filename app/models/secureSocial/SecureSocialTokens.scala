@@ -32,17 +32,17 @@ object SecureSocialTokens extends Table[MyToken]("SECURE_SOCIAL_TOKENS") {
   def isInvitation = column[Boolean]("ISINVITATION")
   def * = uuid ~ email ~ creationTime ~ expirationTime ~ isSignUp ~ isInvitation <> (MyToken.apply _, MyToken.unapply _)
   
-  def allInvitations = DB.withSession { implicit session =>
-    Query(SecureSocialTokens).filter(_.isInvitation).list }
+  def allInvitations = DB.withSession(implicit session =>
+    Query(SecureSocialTokens).filter(_.isInvitation).list )
   
-  def ins(myToken: MyToken) = DB.withSession { implicit session =>
-    SecureSocialTokens.insert(myToken) }
+  def ins(myToken: MyToken) = DB.withSession(implicit session =>
+    SecureSocialTokens.insert(myToken) )
   
-  def del(uuid: String) = DB.withTransaction { implicit session =>
-    SecureSocialTokens.filter(_.uuid is uuid).delete }
+  def del(uuid: String) = DB.withTransaction(implicit session =>
+    SecureSocialTokens.filter(_.uuid is uuid).delete )
   
-  def withUUID(uuid: String): Option[MyToken] = DB.withSession { implicit session =>
-    createFinderBy(_.uuid).apply(uuid).firstOption }
+  def withUUID(uuid: String): Option[MyToken] = DB.withSession(implicit session =>
+    createFinderBy(_.uuid).apply(uuid).firstOption )
 
   trait Queries {
     def deleteToken(uuid: String): Unit = del(uuid)
@@ -55,7 +55,7 @@ object SecureSocialTokens extends Table[MyToken]("SECURE_SOCIAL_TOKENS") {
       }
     }
 
-    def deleteExpiredTokens: Unit = DB.withTransaction { implicit session =>
-      SecureSocialTokens.filter(_.expirationTime <= DateTime.now).delete }
+    def deleteExpiredTokens: Unit = DB.withTransaction(implicit session =>
+      SecureSocialTokens.filter(_.expirationTime <= DateTime.now).delete )
   }
 }

@@ -2,12 +2,13 @@
 
 @import helper._
 @import models.relations._
+@import controllers.member._
 
 @main("Review of " + paper.title) {
   <h1>@if(isEdit) {Edit} Review of @paper.title</h1>
   <h3>@paper by @authors</h3>
   
-  @form(action = routes.Reviewing.make(paper.id)) {
+  @form(routes.Reviewing.make(paper.id)) {
     @inputRadioGroup(
       reviewForm("evaluation.value"), 
       ReviewEvaluation.values.toSeq.map(f => f.toString -> f.toString), 

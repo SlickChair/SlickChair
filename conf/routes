@@ -15,25 +15,27 @@ POST    /submission/edit                     controllers.Submitting.make
 GET     /submission/info                     controllers.Submitting.info
 
 # Reviewers
-GET     /dashboard                           controllers.Reviewing.dashboard
-GET     /submissions                         controllers.Reviewing.papers
-GET     /submission/:id                      controllers.Reviewing.page(id: Int)
-POST    /submission/:id                      controllers.Reviewing.comment(id: Int)
-GET     /review/:id                          controllers.Reviewing.form(id: Int)
-POST    /review/:id                          controllers.Reviewing.make(id: Int)
-GET     /invitation/:uuid                    controllers.Reviewing.invite(uuid: String)
+GET     /invitation/:token                   controllers.member.Dashboard.invite(token: String)
+GET     /dashboard                           controllers.member.Dashboard.papers
+#GET    /submissions                         controllers.member.Reviewing.papers
+GET     /bid                                 controllers.member.Bidding.form
+POST    /bid                                 controllers.member.Bidding.make
+GET     /submission/:id                      controllers.member.Reviewing.page(id: Int)
+POST    /submission/:id                      controllers.member.Reviewing.comment(id: Int)
+GET     /review/:id                          controllers.member.Reviewing.form(id: Int)
+POST    /review/:id                          controllers.member.Reviewing.make(id: Int)
 
 # Chair
 GET     /sql                                 controllers.chair.Sql.form
 POST    /sql                                 controllers.chair.Sql.runQuery
 GET     /email                               controllers.chair.Emailing.form
 POST    /email                               controllers.chair.Emailing.send
-GET     /config                              controllers.chair.Chair.config
-GET     /manage-members                      controllers.chair.ManageMembers.page
-POST    /manage-members                      controllers.chair.ManageMembers.handle
-
-GET     /topics                              controllers.chair.Chair.TODO
+GET     /manage-members                      controllers.chair.MembersManaging.page
+POST    /manage-members                      controllers.chair.MembersManaging.handle
 GET     /auctions                            controllers.chair.Chair.TODO
+
+GET     /config                              controllers.chair.Chair.TODO
+GET     /topics                              controllers.chair.Chair.TODO
 GET     /decisions                           controllers.chair.Chair.TODO
 GET     /dashboard                           controllers.chair.Chair.TODO
 

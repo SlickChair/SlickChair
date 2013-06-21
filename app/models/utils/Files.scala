@@ -24,16 +24,16 @@ object Files extends Table[File]("FILES") {
   def uploaded = column[DateTime]("UPLOADED")
   def data = column[Array[Byte]]("DATA")
   
-  def * = id ~ name ~ size ~ uploaded ~ data <> (File, File.unapply _)
+  def * =  id ~ name ~ size ~ uploaded ~ data <> (File, File.unapply _)
   def autoInc = name ~ size ~ uploaded ~ data <> (NewFile, NewFile.unapply _) returning id
 
-  def all = DB.withSession { implicit session =>
-    Query(Files).list }
+  def all = DB.withSession(implicit session =>
+    Query(Files).list )
   
-  def ins(newFile: NewFile) = DB.withSession { implicit session =>
-    Files.autoInc.insert(newFile) }
+  def ins(newFile: NewFile) = DB.withSession(implicit session =>
+    Files.autoInc.insert(newFile) )
   
-  def delete(id: Int) = DB.withSession { implicit session =>
-    Files.filter(_.id is id).delete }
+  def delete(id: Int) = DB.withSession(implicit session =>
+    Files.filter(_.id is id).delete )
 }
 

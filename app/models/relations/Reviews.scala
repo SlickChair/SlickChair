@@ -47,15 +47,15 @@ object Reviews extends Table[Review]("REVIEWS") {
 
   def * = paperid ~ memberid ~ submissiondate ~ lastupdate ~ confidence ~ evaluation ~ content <> (Review.apply _, Review.unapply _)
   
-  def ins(review: Review) = DB.withSession { implicit session =>
-    Reviews.insert(review) }
+  def ins(review: Review) = DB.withSession(implicit session =>
+    Reviews.insert(review) )
   
-  def updt(review: Review) = DB.withSession { implicit session =>
-    Reviews.filter(r => r.paperid === review.paperid && r.memberid === review.memberid).update(review) }
+  def updt(review: Review) = DB.withSession(implicit session =>
+    Reviews.filter(r => r.paperid === review.paperid && r.memberid === review.memberid).update(review) )
   
-  def of(paper: Paper, member: Member): Option[Review] = DB.withSession { implicit session =>
-    Query(Reviews).filter(r => r.paperid === paper.id && r.memberid === member.id).list.headOption }
+  def of(paper: Paper, member: Member): Option[Review] = DB.withSession(implicit session =>
+    Query(Reviews).filter(r => r.paperid === paper.id && r.memberid === member.id).list.headOption )
   
-  def ofPaper(paper: Paper): List[Review] = DB.withSession { implicit session =>
-    Query(Reviews).filter(_.paperid is paper.id).list }
+  def ofPaper(paper: Paper): List[Review] = DB.withSession(implicit session =>
+    Query(Reviews).filter(_.paperid is paper.id).list )
 }

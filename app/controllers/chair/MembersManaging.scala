@@ -20,18 +20,18 @@ import models.secureSocial._
 import java.util.UUID
 import controllers._
 import controllers.chair._
-import controllers.Reviewing._
+import controllers.member.Reviewing._
 
 case class InvalidateForm(candidates: List[String])
 case class PromoteForm(members: List[Int], newRole: MemberRole)
 
-object ManageMembers extends Controller with SecureSocial {
+object MembersManaging extends Controller with SecureSocial {
   val urlTemplateVariable = "@invitationURL"
   
   val memberRoleMapping: Mapping[MemberRole] = mapping(
     "value" -> nonEmptyText)(MemberRole.withName(_))(Some(_).map(_.toString))
   
-  val inviteForm: Form[Email] = Form (
+  val inviteForm: Form[Email] = Form(
     Emailing.emailMapping
   ).fill(Email(
     null.asInstanceOf[Int], "",
@@ -39,12 +39,12 @@ object ManageMembers extends Controller with SecureSocial {
     "Hello,\n\nThis is an invitation, check out this link:\n\n" + urlTemplateVariable,
     null.asInstanceOf[DateTime]
   ))
-  val invalidateForm: Form[InvalidateForm] = Form (
+  val invalidateForm: Form[InvalidateForm] = Form(
     mapping(
       "tokens" -> list(nonEmptyText).verifying("Please select at least one invitation.", _.nonEmpty)
     )(InvalidateForm.apply _)(InvalidateForm.unapply _)
   )
-  val promoteForm: Form[PromoteForm] = Form (
+  val promoteForm: Form[PromoteForm] = Form(
     mapping(
       "members" -> list(number).verifying("Please select at least one member.", _.nonEmpty),
       "newRole" -> memberRoleMapping
@@ -77,7 +77,7 @@ object ManageMembers extends Controller with SecureSocial {
         SentEmails.ins(NewEmail(to, subject, body, now))
         to.split(",").foreach { email =>
           val uuid = UUID.randomUUID().toString
-          val bodyWithLink = body.replaceAll(urlTemplateVariable, controllers.routes.Reviewing.invite(uuid).absoluteURL())
+          val bodyWithLink = body.replaceAll(urlTemplateVariable, member.routes.Dashboard.invite(uuid).absoluteURL())
           SecureSocialTokens.ins(MyToken(uuid, email, now, now.plusDays(7), false, true))
           Emailing.sendEmail(email, subject, bodyWithLink)
         }

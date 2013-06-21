@@ -19,15 +19,15 @@ object Templates extends Table[Template]("TEMPLATES") {
   def subject = column[String]("SUBJECT", O.DBType("TEXT"))
   def body = column[String]("BODY", O.DBType("TEXT"))
   
-  def * = id ~ name ~ subject ~ body <> (Template, Template.unapply _)
+  def * =  id ~ name ~ subject ~ body <> (Template, Template.unapply _)
   def autoInc = name ~ subject ~ body <> (NewTemplate, NewTemplate.unapply _) returning id
 
-  def all = DB.withSession { implicit session =>
-    Query(Templates).list }
+  def all = DB.withSession(implicit session =>
+    Query(Templates).list )
 
-  def ins(newTemplate: NewTemplate) = DB.withSession { implicit session =>
-    Templates.autoInc.insert(newTemplate) }
+  def ins(newTemplate: NewTemplate) = DB.withSession(implicit session =>
+    Templates.autoInc.insert(newTemplate) )
 
-  // def delete(id: Int) = DB.withSession { implicit session =>
-  //   Templates.filter(_.id is id).delete }
+  // def delete(id: Int) = DB.withSession(implicit session =>
+  //   Templates.filter(_.id is id).delete )
 }

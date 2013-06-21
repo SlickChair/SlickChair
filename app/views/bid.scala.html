@@ -1,0 +1,47 @@
+@(message: Option[String],
+  bidForm: Form[controllers.member.BidForm],
+  papers: List[models.entities.Paper] = models.entities.Papers.all,
+  topics: List[models.entities.Topic] = models.entities.Topics.all
+)
+
+@import helper._
+@import controllers.member._
+@import models.relations._
+@import models.entities._
+@import models.entities.PaperFormat._
+
+@main("Bid") {
+  <h1>Bid</h1>
+  @message.map{ m =>
+    <h2>@m</h2>
+  }
+  @form(routes.Bidding.make) {
+    <h2>Topics of interest:</h2>
+    @for(Topic(id, name, description) <- topics) {
+      @checkbox(
+        bidForm(s"topics[$id]"),
+        '_label -> (name + ":").capitalize,
+        'value -> id.toString)
+    }
+    <br>
+    <h2>Paper bidding:</h2>
+    
+    <table>
+    @for(Paper(id, _, _, _, _, title, forma, keywords, abstrct, _) <- papers) {
+      <tr>
+        <td>
+        @inputRadioGroup( // or select
+          bidForm(s"memberbids[$id].bid.value"),
+          Bid.values.toSeq.map(b => b.toString -> b.toString),
+          '_label -> "",
+          '_help -> "")
+        <input type="text" id="mb_@{id}__paperid" name="memberbids[@id].paperid" value="@id" style="display: none">
+        </td>
+        <td>@title</td>
+        <td>@keywords</td>
+      </tr>
+    }
+    </table>
+    <input type="submit" id="submit" value="Save">
+  }
+}

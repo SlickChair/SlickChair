@@ -31,9 +31,9 @@ object Comments extends Table[Comment]("COMMENTS") {
   def * = id ~ paperid ~ memberid ~ submissiondate ~ content <> (Comment, Comment.unapply _)
   def autoinc = paperid ~ memberid ~ submissiondate ~ content <> (NewComment, NewComment.unapply _) returning id
   
-  def ins(newComment: NewComment) = DB.withSession { implicit session =>
-    Comments.autoinc.insert(newComment) }
+  def ins(newComment: NewComment) = DB.withSession(implicit session =>
+    Comments.autoinc.insert(newComment) )
   
-  def ofPaper(paper: Paper): List[Comment] = DB.withSession { implicit session =>
-    Query(Comments).filter(_.paperid is paper.id).list }
+  def ofPaper(paper: Paper): List[Comment] = DB.withSession(implicit session =>
+    Query(Comments).filter(_.paperid is paper.id).list )
 }

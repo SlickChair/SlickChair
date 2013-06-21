@@ -5,7 +5,6 @@ import play.api.db.slick.Config.driver.simple._
 import play.api.Play.current
 import models.entities._
 
-// Member topics of interest
 case class MemberTopic(
   memberid: Int,
   topicid: Int
@@ -20,4 +19,16 @@ object MemberTopics extends Table[MemberTopic]("MEMBER_TOPICS") {
   def topic = foreignKey("MEMBERTOPICS_TOPIC_FK", topicid, Topics)(_.id)
 
   def * = memberid ~ topicid <> (MemberTopic, MemberTopic.unapply _)
+  
+  def all = DB.withSession(implicit session =>
+    Query(MemberTopics).list )
+  
+  def ins(mt: MemberTopic) = DB.withSession(implicit session =>
+    MemberTopics.insert(mt) )
+  
+  def deleteFor(member: Member) = DB.withSession(implicit session =>
+    MemberTopics.filter(_.memberid is member.id).delete )
+
+  def insertAll(pts: List[MemberTopic]) = DB.withSession(implicit session =>
+    pts.foreach(pt => MemberTopics.insert(pt)) )
 }

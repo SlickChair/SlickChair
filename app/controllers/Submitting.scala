@@ -61,16 +61,15 @@ object Submitting extends Controller with SecureSocial {
         Some(submissionForm.paper, submissionForm.authors.size, submissionForm.authors, submissionForm.topics))
   )
   
-  private def incBind[T](form: Form[T], data: Map[String, String]) = form.bind(form.data ++ data)
-  
   def form = SecuredAction { implicit request =>
     Papers.withEmail(request.user.email.get) match {
       case None =>
         Ok(views.html.submission("New Submission", submissionForm))
       case Some(paper) =>
+        def incBind[T](form: Form[T], data: Map[String, String]) = form.bind(form.data ++ data)
         val existingSubmissionForm = incBind(
           submissionForm.fill(SubmissionForm(paper, Authors.of(paper), List())),
-          PaperTopics.of(paper.id).map(t => ("topics[%s]".format(t.topicid), t.topicid.toString)).toMap
+          Topics.of(paper).map(topic => ("topics[%s]".format(topic.id), topic.id.toString)).toMap
         )
         Ok(views.html.submission("Edit Submission", existingSubmissionForm))
     }
@@ -88,43 +87,43 @@ object Submitting extends Controller with SecureSocial {
           //       have to select it again.
           errors => Ok(views.html.submission(email + "Submission: Errors found", errors)),
           form => {
-              val SubmissionForm(formPaper, formAuthors, formTopics) = form 
-              val newFileId: Option[Int] = request.body.file("data").map{ file =>
-                val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray
-                Files.ins(NewFile(file.filename, blob.size, DateTime.now, blob))
-              }
-              
-              val paperId = Papers.withEmail(email) match {
-                case None =>
-                  Papers.ins(NewPaper(
-                    contactemail = email,
-                    submissiondate = DateTime.now,
-                    lastupdate = DateTime.now,
-                    accepted = None,
-                    formPaper.title,
-                    formPaper.format,
-                    formPaper.keywords,
-                    formPaper.abstrct,
-                    fileid = newFileId
-                  ))
-                case Some(dbPaper) =>
-                  newFileId.map{ _ => dbPaper.fileid.map(i => Files.delete(i)) }
-                  Authors.deleteFor(dbPaper)
-                  PaperTopics.deleteFor(dbPaper)
-                  Papers.updt(formPaper.copy(
-                    id = dbPaper.id,
-                    contactemail = dbPaper.contactemail, // == email by construction
-                    submissiondate = dbPaper.submissiondate,
-                    lastupdate = DateTime.now,
-                    accepted = dbPaper.accepted,
-                    fileid = newFileId.orElse(dbPaper.fileid)
-                  ))
-                  dbPaper.id
-              }
-              
-              Authors.createAll(formAuthors.map(_.copy(paperId)))
-              PaperTopics.createAll(formTopics.map(PaperTopic(paperId, _)))
-              Redirect(routes.Submitting.info)
+            val SubmissionForm(formPaper, formAuthors, formTopics) = form 
+            val newFileId: Option[Int] = request.body.file("data").map{ file =>
+              val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray
+              Files.ins(NewFile(file.filename, blob.size, DateTime.now, blob))
+            }
+            
+            val paperId = Papers.withEmail(email) match {
+              case None =>
+                Papers.ins(NewPaper(
+                  contactemail = email,
+                  submissiondate = DateTime.now,
+                  lastupdate = DateTime.now,
+                  accepted = None,
+                  formPaper.title,
+                  formPaper.format,
+                  formPaper.keywords,
+                  formPaper.abstrct,
+                  fileid = newFileId
+                ))
+              case Some(dbPaper) =>
+                newFileId.map{ _ => dbPaper.fileid.map(i => Files.delete(i)) }
+                Authors.deleteFor(dbPaper)
+                PaperTopics.deleteFor(dbPaper)
+                Papers.updt(formPaper.copy(
+                  id = dbPaper.id,
+                  contactemail = dbPaper.contactemail, // == email by construction
+                  submissiondate = dbPaper.submissiondate,
+                  lastupdate = DateTime.now,
+                  accepted = dbPaper.accepted,
+                  fileid = newFileId.orElse(dbPaper.fileid)
+                ))
+                dbPaper.id
+            }
+            
+            Authors.insertAll(formAuthors.map(_.copy(paperId)))
+            PaperTopics.insertAll(formTopics.map(PaperTopic(paperId, _)))
+            Redirect(routes.Submitting.info)
           }
         )
     }
@@ -138,7 +137,7 @@ object Submitting extends Controller with SecureSocial {
         Ok(views.html.submissioninfo(
           paper,
           Authors.of(paper),
-          PaperTopics.ofPaper(paper)
+          Topics.of(paper)
         ))
     }
   }

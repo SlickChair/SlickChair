@@ -28,7 +28,7 @@
   </select>
   <br>
   From: @Emailing.fromAddress
-  @form(action = routes.Emailing.send) {
+  @form(routes.Emailing.send) {
     @textarea(
       emailForm("to"),
       'placeholder -> "Comma separated emails",

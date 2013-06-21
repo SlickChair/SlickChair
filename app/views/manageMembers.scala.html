@@ -14,7 +14,7 @@
 
 @main("Manage Members") {
   <h1>Manage Members</h1>
-  @form(action = routes.ManageMembers.handle) {
+  @form(routes.MembersManaging.handle) {
     <h2>Invite new members:</h2>
     From: @Emailing.fromAddress
     @textarea(

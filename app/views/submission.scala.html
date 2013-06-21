@@ -1,4 +1,7 @@
-@(message: String, submissionForm: Form[SubmissionForm])
+@(message: String,
+  submissionForm: Form[SubmissionForm],
+  topics: List[models.entities.Topic] = models.entities.Topics.all
+)
 
 @import helper._
 @import models.entities._
@@ -6,7 +9,7 @@
 @defining(0 to 2) { authors =>
   @main(message) {
     <h1>@message</h1>
-    @helper.form(routes.Submitting.make, 'enctype -> "multipart/form-data") {
+    @form(routes.Submitting.make, 'enctype -> "multipart/form-data") {
       <fieldset><legend>Submission</legend>
       @inputText(submissionForm("paper.title"), '_label -> "Paper title:", '_help -> "")
       @inputRadioGroup(
@@ -25,7 +28,7 @@
       </fieldset><br>
       
       <fieldset><legend>Topics</legend>
-      @for(Topic(id, name, description) <- Topics.all) {
+      @for(Topic(id, name, description) <- topics) {
         @checkbox(
           submissionForm(s"topics[$id]"),
           '_label -> (name + ":").capitalize,

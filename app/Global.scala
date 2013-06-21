@@ -1,9 +1,9 @@
 import play.api._
 import org.joda.time.DateTime
+import play.api.Logger
 import models.entities._
 import models.relations._
 import models.secureSocial._
-import play.api.Logger
 import models.utils._
 
 /**
@@ -33,7 +33,7 @@ object Global extends GlobalSettings {
         PaperTopic(3, 3)
       ).foreach(PaperTopics.ins)
       
-      Authors createAll List(
+      Authors insertAll List(
         Author(1, 0, "first name 1", "last name 1", "org 1", "11@11"),
         Author(2, 0, "first name 2", "last name 2", "org 2", "22@22"),
         Author(3, 0, "first name 3", "last name 3", "org 3", "33@33"),
@@ -71,6 +71,9 @@ object Global extends GlobalSettings {
         MyToken(java.util.UUID.randomUUID().toString, "2@2", DateTime.now, DateTime.now.plusDays(7), false, true),
         MyToken(java.util.UUID.randomUUID().toString, "3@3", DateTime.now, DateTime.now.plusDays(7), false, true)
       ).foreach(SecureSocialTokens.ins)
+      
+      List(MemberTopic(2, 2)).foreach(MemberTopics.ins)
+      List(MemberBid(2, 2, Bid.High)).foreach(MemberBids.ins)
     }
   }
 }

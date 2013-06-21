@@ -5,7 +5,7 @@
 
 @main("SQL Form") {
   <h1>Query:</h1>
-  @form(action = routes.Sql.runQuery) {
+  @form(routes.Sql.runQuery) {
     @textarea(
       queryForm("query"),
       'placeholder -> "SELECT * FROM SECURE_SOCIAL_USERS",

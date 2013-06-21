@@ -27,6 +27,6 @@ object SentEmails extends Table[Email]("SENT_EMAILS") {
   def * = id ~ to ~ subject ~ body ~ sent <> (Email, Email.unapply _)
   def autoinc = to ~ subject ~ body ~ sent <> (NewEmail, NewEmail.unapply _) returning id
   
-  def ins(newEmail: NewEmail) = DB.withSession { implicit session =>
-    SentEmails.autoinc.insert(newEmail) }
+  def ins(newEmail: NewEmail) = DB.withSession(implicit session =>
+    SentEmails.autoinc.insert(newEmail) )
 }

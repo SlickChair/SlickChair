@@ -10,7 +10,7 @@ trait Setting[T] {
   def default: T
   def description: String
   
-  def get: T = DB.withSession { implicit session =>
+  def get: T = DB.withSession{implicit session =>
     Query(Settings).filter(_.name is className).list.headOption match {
       case Some(DBSetting(_, value)) => fromString(value)
       case None => default

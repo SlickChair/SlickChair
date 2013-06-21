@@ -17,8 +17,8 @@ Done:
 Todo:
 -----
 
-- Paper biding and assignement
-- Good looking interface
+[- Paper biding and assignement
+]- Good looking interface
 - Setup instructions (requires some testing with postgresql)
 - Wrap most settings in a config page
 - Use the [POST-Redirect-GET pattern][1] in all the forms to prevent repost on
