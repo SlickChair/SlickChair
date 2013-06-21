@@ -13,12 +13,13 @@ Done:
 - Write a classes for settings with get set and default value
 - Email client for the chair with templates
 - Manage members (invitations, delete, promotion..)
+- Paper biding 
 
 Todo:
 -----
 
-[- Paper biding and assignement
-]- Good looking interface
+- ... and assignement
+- Good looking interface
 - Setup instructions (requires some testing with postgresql)
 - Wrap most settings in a config page
 - Use the [POST-Redirect-GET pattern][1] in all the forms to prevent repost on
