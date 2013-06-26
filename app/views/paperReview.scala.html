@@ -4,7 +4,7 @@
 @import models.relations._
 @import controllers.member._
 
-@main("Review of " + paper.title) {
+@main(if(isEdit) "Edit" else "" + "Review of " + paper.title) {
   <h1>@if(isEdit) {Edit} Review of @paper.title</h1>
   <h3>@paper by @authors</h3>
   

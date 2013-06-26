@@ -32,10 +32,9 @@ GET     /email                               controllers.chair.Emailing.form
 POST    /email                               controllers.chair.Emailing.send
 GET     /manage-members                      controllers.chair.MembersManaging.page
 POST    /manage-members                      controllers.chair.MembersManaging.handle
-GET     /auctions                            controllers.chair.Chair.TODO
 
+GET     /auctions                            controllers.chair.Chair.TODO
 GET     /config                              controllers.chair.Chair.TODO
-GET     /topics                              controllers.chair.Chair.TODO
 GET     /decisions                           controllers.chair.Chair.TODO
 GET     /dashboard                           controllers.chair.Chair.TODO
 

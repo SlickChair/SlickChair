@@ -3,22 +3,30 @@
   topics: List[models.entities.Topic] = models.entities.Topics.all
 )
 
-@import helper._
+@import helper.bootstrap3._
+@import helper.bootstrap3._
+@*implicitField = @{ helper.FieldConstructor(helper.bootstrap3FieldConstructor.f) }*@
+
 @import models.entities._
 
 @defining(0 to 2) { authors =>
   @main(message) {
-    <h1>@message</h1>
-    @form(routes.Submitting.make, 'enctype -> "multipart/form-data") {
-      <fieldset><legend>Submission</legend>
-      @inputText(submissionForm("paper.title"), '_label -> "Paper title:", '_help -> "")
-      @inputRadioGroup(
+    @helper.form(routes.Submitting.make, 'enctype -> "multipart/form-data", 'class -> "form-horizontal") {
+      <fieldset>
+      <div class="col-lg-10 col-offset-2">
+        <h3>Submission</h3>
+      </div>
+      @bootstrap3.inputText(
+        submissionForm("paper.title"),
+        '_label -> "Paper title:",
+        '_help -> "")
+      @helper.inputRadioGroup(
         submissionForm("paper.format.value"), 
         PaperFormat.values.toSeq.map(f => f.toString -> f.toString), 
         '_label -> "Format:",
         '_help -> "")
-      @inputText(submissionForm("paper.keywords"), '_label -> "Keywords:", '_help -> "")
-      @textarea(
+      @bootstrap3.inputText(submissionForm("paper.keywords"), '_label -> "Keywords:", '_help -> "")
+      @helper.textarea(
         submissionForm("paper.abstrct"),
         '_label -> "Abstract:",
         '_help -> "",
@@ -29,7 +37,7 @@
       
       <fieldset><legend>Topics</legend>
       @for(Topic(id, name, description) <- topics) {
-        @checkbox(
+        @helper.checkbox(
           submissionForm(s"topics[$id]"),
           '_label -> (name + ":").capitalize,
           'value -> id.toString)
@@ -37,17 +45,17 @@
       </fieldset><br>
 
       <fieldset><legend>Authors</legend>
-      @select(
+      @helper.select(
         submissionForm("nauthors"),
         authors.map(i => ((i+1).toString, (i+1).toString)),
         '_label -> "Number of authors:",
         '_help -> "")
       @authors.map { i =>
         <fieldset><legend>Author @(i+1)</legend>
-        @inputText(submissionForm(s"authors[$i].firstname"), '_label -> "First Name:")
-        @inputText(submissionForm(s"authors[$i].lastname"), '_label -> "Last Name:")
-        @inputText(submissionForm(s"authors[$i].organization"), '_label -> "Organization:")
-        @inputText(submissionForm(s"authors[$i].email"), '_label -> "Email:")
+        @bootstrap3.inputText(submissionForm(s"authors[$i].firstname"), '_label -> "First Name:")
+        @bootstrap3.inputText(submissionForm(s"authors[$i].lastname"), '_label -> "Last Name:")
+        @bootstrap3.inputText(submissionForm(s"authors[$i].organization"), '_label -> "Organization:")
+        @bootstrap3.inputText(submissionForm(s"authors[$i].email"), '_label -> "Email:")
         </fieldset><br>
       }
       </fieldset>

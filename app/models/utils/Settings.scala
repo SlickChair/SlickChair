@@ -5,22 +5,22 @@ import play.api.db.slick.Config.driver.simple._
 import play.api.Play.current
 
 trait Setting[T] {
-  private def className: String = this.getClass.getName.split("$")(0)
+  private def dbname: String = this.getClass.getName.split("$")(0)
   protected def fromString(s: String): T
   def default: T
   def description: String
   
   def get: T = DB.withSession{implicit session =>
-    Query(Settings).filter(_.name is className).list.headOption match {
+    Query(Settings).filter(_.name is dbname).list.headOption match {
       case Some(DBSetting(_, value)) => fromString(value)
       case None => default
     }
   }
   def set(value: T): Unit = DB.withTransaction { implicit session =>
-    val entry = DBSetting(className, value.toString)
-    Query(Settings).filter(_.name is className).list.headOption match {
+    val entry = DBSetting(dbname, value.toString)
+    Query(Settings).filter(_.name is dbname).list.headOption match {
       // I would have used insert-or-update https://github.com/slick/slick/issues/6.
-      case Some(_) => Settings.filter(_.name is className).update(entry)
+      case Some(_) => Settings.filter(_.name is dbname).update(entry)
       case None => Settings.insert(entry)
     }
   }
@@ -47,6 +47,9 @@ object SubmissionLock extends BooleanSetting(
 // CanBid
 // CanUploadReviewPaper
 // CanUploadFinalPaper
+object ConferenceShortName extends StringSetting(
+  "Acmss Demo", "Short name of the conference (first entry of the menu)."
+)
 
 case class DBSetting (name: String, value: String )
 object Settings extends Table[DBSetting]("SETTINGS") {

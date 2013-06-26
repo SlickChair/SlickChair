@@ -1,15 +1,90 @@
-@(title: String)(content: Html)
+@(title: String,
+  conferenceName: String = models.utils.ConferenceShortName.get
+)(content: Html)
+
+@minified = @{ if (play.Play.isProd()) ".min" else "" }
 
 <!DOCTYPE html>
-
-<html>
-    <head>
-        <title>@title</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
-    </head>
-    <body>
-        @content
-    </body>
+<html><head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@title</title>
+  <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap3.css")">
+  @*<link href="http://rnikitin.github.io/assets/css/bootstrap.css" rel="stylesheet">*@
+  <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")">
+  <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+  <style type="text/css">
+    body {
+      /* Made by http://www.domainsinfo.org/. */
+      background-image:url('@routes.Assets.at("images/wavegrid.png")');
+      background-repeat:;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    
+    <a href="/" class="navbar-brand">@conferenceName</a>
+    
+    <div class="nav-collapse collapse navbar-responsive-collapse">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Random</a></li>
+        <li><a href="#">Menu</a></li>
+        <li><a href="#">Entries</a></li>
+      </ul>
+    <p class="navbar-text pull-right">Logged in as asdddd — <a href="#" class="navbar-link">Disconnect</a></p>
+    </div>
+  </div>
+  </div>
+  
+  <div class="container">
+    <div class="content">
+      <div class="page-header">
+        <h1>@title<small></small></h1>
+      </div>
+      @content
+      
+      <h1>form-horizontal</h1>
+      <form class="form-horizontal">
+        <div class="row">
+          <label for="inputEmail" class="col-lg-2 control-label">Email</label>
+          <div class="col-lg-10">
+            <input type="text" id="inputEmail" placeholder="Email">
+          </div>
+        </div>
+        <div class="row">
+          <label for="inputPassword" class="col-lg-2 control-label">Password</label>
+          <div class="col-lg-10">
+            <input type="password" id="inputPassword" placeholder="Password">
+              <span class="help-block">A password must be at least 6 characters. </span> 
+            <div class="checkbox">
+              <label>
+                <input type="checkbox"> Remember me
+              </label>
+            </div>
+          </div>
+          <div class="col-lg-10 col-offset-2">
+            <button type="submit" class="btn btn-default">Sign in</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <footer>
+      <br><br>
+    </footer>
+  </div>
+  <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+  <script src="@routes.Assets.at("javascripts/bootstrap3.js")" type="text/javascript"></script> 
+  @*<script src="rnikitin.github.io/assets/js/jquery.js"></script>
+  <script src="rnikitin.github.io/assets/js/bootstrap.js"></script>
+  <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+  <script src="rnikitin.github.io/assets/js/holder/holder.js"></script>
+  <script src="rnikitin.github.io/assets/js/application.js"></script>*@
+</body>
 </html>

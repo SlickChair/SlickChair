@@ -1,7 +1,6 @@
 @(list: List[(models.entities.Paper, List[models.entities.Author])])
 
 @main("Paper list") {
-  <h1>Paper List:</h1>
   @for((paper, authors) <- list) {
     <a href=@controllers.member.routes.Reviewing.page(paper.id)>@paper.title</a>
     by @authors.map(_.firstname).mkString(", ")<br>

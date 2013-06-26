@@ -11,6 +11,7 @@ import play.api.data.Forms.{ignored, list, mapping, nonEmptyText, number, text}
 import play.api.data.Mapping
 import play.api.mvc.Controller
 import securesocial.core.SecureSocial
+import play.api.mvc._
 
 case class SubmissionForm(
   paper: Paper,
