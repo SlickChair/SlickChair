@@ -1,15 +1,17 @@
+// Inspired from
+// http://blog.anorgan.com/2012/09/30/pretty-multi-file-upload-bootstrap-jquery-twig-silex/
 if ($('.file-selector').length) {
   $('.file-selector').each(function() {
-    var pF = $(this),
-    fileInput = pF.find('input[type="file"]');
+    var selectorDiv = $(this),
+    fileInput = selectorDiv.find('input[type="file"]');
     fileInput.hide();
     
     fileInput.change(function() {
       fileName = fileInput.val().split('\\').pop();
-      pF.find('input[type="text"]').val(fileName);
+      selectorDiv.find('input[type="text"]').val(fileName);
     });
 
-    pF.find('button').click(function(e) {
+    selectorDiv.find('button').click(function(e) {
       e.preventDefault();
       fileInput.click();
     })
