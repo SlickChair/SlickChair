@@ -29,8 +29,19 @@
         @bootstrap3.textarea(
           submissionForm("paper.abstrct"),
           '_label -> "Abstract",
+          'placeholder -> "Abstract",
           'rows -> 5)
         File:<br><dd><input type="file" name="data"></dd><br>
+        
+        <div class="file-selector">
+          <div class="input-group col-lg-7">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button">Browse</button>
+            </span>
+            <input type="text" disabled>
+          </div>
+          <input type="file" />
+        </div>
       </fieldset><br>
       
       <fieldset><legend>Topics</legend>
@@ -49,10 +60,18 @@
         '_label -> "Number of authors")
       @authors.map { i =>
         <fieldset><legend>Author @(i+1)</legend>
-        @bootstrap3.inputText(submissionForm(s"authors[$i].firstname"), '_label -> "First Name")
-        @bootstrap3.inputText(submissionForm(s"authors[$i].lastname"), '_label -> "Last Name")
-        @bootstrap3.inputText(submissionForm(s"authors[$i].organization"), '_label -> "Organization")
-        @bootstrap3.inputText(submissionForm(s"authors[$i].email"), '_label -> "Email")
+        @bootstrap3.inputText(
+          submissionForm(s"authors[$i].firstname"),
+          '_label -> "First Name")
+        @bootstrap3.inputText(
+          submissionForm(s"authors[$i].lastname"),
+          '_label -> "Last Name")
+        @bootstrap3.inputText(
+          submissionForm(s"authors[$i].organization"), 
+          '_label -> "Organization")
+        @bootstrap3.inputText(
+          submissionForm(s"authors[$i].email"),
+          '_label -> "Email")
         </fieldset><br>
       }
       </fieldset>

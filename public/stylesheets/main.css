@@ -47,3 +47,6 @@ body {
     font-size: 13px;
   }
 }
+.radio-inline {
+  padding-top: 6px;
+}
