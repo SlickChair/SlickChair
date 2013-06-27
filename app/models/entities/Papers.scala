@@ -10,11 +10,11 @@ import models._
 import models.utils._
 import models.secureSocial._
 
-object PaperFormat extends Enumeration with BitmaskedEnumeration {
-  type PaperFormat = Value
-  val Standard, Shorts, ToolDemo, Poster = Value
+object PaperType extends Enumeration with BitmaskedEnumeration {
+  type PaperType = Value
+  val Full_Paper, Short_Paper, Tool_Demo, Presentation = Value
 }
-import PaperFormat._
+import PaperType._
 
 // Submission data
 case class Paper(
@@ -24,13 +24,13 @@ case class Paper(
   lastupdate: DateTime,
   accepted: Option[Boolean],
   title: String,
-  format: PaperFormat,
+  format: PaperType,
   keywords: String,
   abstrct: String,
   fileid: Option[Int]
 )
 // Paper without the id field
-case class NewPaper(contactemail: String, submissiondate: DateTime, lastupdate: DateTime, accepted: Option[Boolean], title: String, format: PaperFormat, keywords: String, abstrct: String, fileid: Option[Int])
+case class NewPaper(contactemail: String, submissiondate: DateTime, lastupdate: DateTime, accepted: Option[Boolean], title: String, format: PaperType, keywords: String, abstrct: String, fileid: Option[Int])
 
 object Papers extends Table[Paper]("PAPERS") {
   def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
@@ -39,7 +39,7 @@ object Papers extends Table[Paper]("PAPERS") {
   def lastupdate = column[DateTime]("LASTUPDATE")
   def accepted = column[Option[Boolean]]("ACCEPTED")
   def title = column[String]("TITLE", O.DBType("TEXT"))
-  def format = column[PaperFormat]("FORMAT")
+  def format = column[PaperType]("FORMAT")
   def keywords = column[String]("KEYWORDS", O.DBType("TEXT"))
   def abstrct = column[String]("ABSTRCT", O.DBType("TEXT"))
   def fileid = column[Option[Int]]("FILEID")

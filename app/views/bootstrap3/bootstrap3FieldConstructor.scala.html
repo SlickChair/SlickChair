@@ -6,14 +6,14 @@
   <label for="@elements.id" class="col-lg-2 control-label">@elements.label(elements.lang)</label>
   <div class="col-lg-10 controls">
     @elements.input
-    @defining(elements.infos(elements.lang)) { infos =>
+    @*defining(elements.infos(elements.lang)) { infos =>
       @if(infos.nonEmpty) {
         <span class="help-block">@infos.mkString(", ")</span>
       }
-    }
+    }*@
     @defining(elements.errors(elements.lang)) { errors =>
       @if(errors.nonEmpty) {
-        <span class="help-inline">@errors.mkString(", ")</span>
+        <span class="help-block">@errors.mkString(", ")</span>@* or help-inline *@
       }
     }
   </div>

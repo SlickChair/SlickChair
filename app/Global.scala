@@ -22,9 +22,9 @@ object Global extends GlobalSettings {
       ).foreach(Topics.ins)
       
       List(
-        NewPaper("1@1", DateTime.now, DateTime.now, None, "Paper 1", PaperFormat.Standard, "key words 1", "abstrct 1", None),
-        NewPaper("2@2", DateTime.now, DateTime.now, None, "Paper 2", PaperFormat.Standard, "key words 2", "abstrct 2", None),
-        NewPaper("3@3", DateTime.now, DateTime.now, None, "Paper 3", PaperFormat.Standard, "key words 3", "abstrct 3", None)
+        NewPaper("1@1", DateTime.now, DateTime.now, None, "Paper 1", PaperType.Full_Paper, "key words 1", "abstrct 1", None),
+        NewPaper("2@2", DateTime.now, DateTime.now, None, "Paper 2", PaperType.Full_Paper, "key words 2", "abstrct 2", None),
+        NewPaper("3@3", DateTime.now, DateTime.now, None, "Paper 3", PaperType.Full_Paper, "key words 3", "abstrct 3", None)
       ).foreach(Papers.ins)
       
       List(

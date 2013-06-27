@@ -4,58 +4,55 @@
 )
 
 @import helper.bootstrap3._
-@import helper.bootstrap3._
-@*implicitField = @{ helper.FieldConstructor(helper.bootstrap3FieldConstructor.f) }*@
-
 @import models.entities._
 
 @defining(0 to 2) { authors =>
   @main(message) {
     @helper.form(routes.Submitting.make, 'enctype -> "multipart/form-data", 'class -> "form-horizontal") {
       <fieldset>
-      <div class="col-lg-10 col-offset-2">
-        <h3>Submission</h3>
-      </div>
-      @bootstrap3.inputText(
-        submissionForm("paper.title"),
-        '_label -> "Paper title:",
-        '_help -> "")
-      @helper.inputRadioGroup(
-        submissionForm("paper.format.value"), 
-        PaperFormat.values.toSeq.map(f => f.toString -> f.toString), 
-        '_label -> "Format:",
-        '_help -> "")
-      @bootstrap3.inputText(submissionForm("paper.keywords"), '_label -> "Keywords:", '_help -> "")
-      @helper.textarea(
-        submissionForm("paper.abstrct"),
-        '_label -> "Abstract:",
-        '_help -> "",
-        'rows -> 5,
-        'cols -> 50)
-      File:<br><dd><input type="file" name="data"></dd><br>
+        <div class="row">
+          <div class="col-lg-10 col-offset-2">
+            <h3>General Information</h3>
+          </div>
+        </div>
+
+        @bootstrap3.inputText(
+          submissionForm("paper.title"),
+          '_label -> "Paper title")
+        @bootstrap3.inputRadioGroup(
+          submissionForm("paper.format.value"), 
+          PaperType.values.toSeq.map(_.toString.replace("_", " ")).map(f => f -> f), 
+          '_label -> "Type")
+        @bootstrap3.inputText(
+          submissionForm("paper.keywords"),
+          '_label -> "Keywords")
+        @bootstrap3.textarea(
+          submissionForm("paper.abstrct"),
+          '_label -> "Abstract",
+          'rows -> 5)
+        File:<br><dd><input type="file" name="data"></dd><br>
       </fieldset><br>
       
       <fieldset><legend>Topics</legend>
       @for(Topic(id, name, description) <- topics) {
-        @helper.checkbox(
+        @bootstrap3.checkbox(
           submissionForm(s"topics[$id]"),
-          '_label -> (name + ":").capitalize,
+          '_label -> (name).capitalize,
           'value -> id.toString)
       }
       </fieldset><br>
 
       <fieldset><legend>Authors</legend>
-      @helper.select(
+      @bootstrap3.select(
         submissionForm("nauthors"),
         authors.map(i => ((i+1).toString, (i+1).toString)),
-        '_label -> "Number of authors:",
-        '_help -> "")
+        '_label -> "Number of authors")
       @authors.map { i =>
         <fieldset><legend>Author @(i+1)</legend>
-        @bootstrap3.inputText(submissionForm(s"authors[$i].firstname"), '_label -> "First Name:")
-        @bootstrap3.inputText(submissionForm(s"authors[$i].lastname"), '_label -> "Last Name:")
-        @bootstrap3.inputText(submissionForm(s"authors[$i].organization"), '_label -> "Organization:")
-        @bootstrap3.inputText(submissionForm(s"authors[$i].email"), '_label -> "Email:")
+        @bootstrap3.inputText(submissionForm(s"authors[$i].firstname"), '_label -> "First Name")
+        @bootstrap3.inputText(submissionForm(s"authors[$i].lastname"), '_label -> "Last Name")
+        @bootstrap3.inputText(submissionForm(s"authors[$i].organization"), '_label -> "Organization")
+        @bootstrap3.inputText(submissionForm(s"authors[$i].email"), '_label -> "Email")
         </fieldset><br>
       }
       </fieldset>

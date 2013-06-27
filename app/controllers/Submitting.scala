@@ -3,7 +3,7 @@ package controllers
 import org.joda.time.DateTime
 
 import models.entities._
-import models.entities.PaperFormat.PaperFormat
+import models.entities.PaperType.PaperType
 import models.relations._
 import models.utils._
 import play.api.data.Form
@@ -20,8 +20,8 @@ case class SubmissionForm(
 )
 
 object Submitting extends Controller with SecureSocial {
-  val paperFormatMapping: Mapping[PaperFormat] = mapping(
-    "value" -> nonEmptyText)(PaperFormat.withName(_))(Some(_).map(_.toString))
+  val PaperTypeMapping: Mapping[PaperType] = mapping(
+    "value" -> nonEmptyText)(PaperType.withName(_))(Some(_).map(_.toString))
   
   val paperMapping: Mapping[Paper] = mapping(
     // Sementicaly values at null.asInstanceOf[] need to be set when handling
@@ -32,7 +32,7 @@ object Submitting extends Controller with SecureSocial {
     "lastupdate" -> ignored(null.asInstanceOf[DateTime]),
     "accepted" -> ignored(null.asInstanceOf[Option[Boolean]]),
     "title" -> nonEmptyText,
-    "format" -> paperFormatMapping,
+    "format" -> PaperTypeMapping,
     "keywords" -> nonEmptyText,
     "abstrct" -> nonEmptyText,
     "fileid" -> ignored(null.asInstanceOf[Option[Int]])
