@@ -6,54 +6,46 @@
 @import helper.bootstrap3._
 @import models.entities._
 
-@defining(0 to 2) { authors =>
-  @main(message) {
-    @helper.form(routes.Submitting.make, 'enctype -> "multipart/form-data", 'class -> "form-horizontal") {
-      <fieldset>
-        <div class="row">
-          <div class="col-lg-10 col-offset-2">
-            <h3>General Information</h3>
-          </div>
-        </div>
+@legend(name: String) = {
+  <div class="row">
+    <div class="col-lg-10 col-offset-2">
+      <h3>@name</h3>
+    </div>
+  </div>
+}
+@authors  = @{(0 to 2)}
 
-        @bootstrap3.inputText(
-          submissionForm("paper.title"),
-          '_label -> "Paper title")
-        @bootstrap3.inputRadioGroup(
-          submissionForm("paper.format.value"), 
-          PaperType.values.toSeq.map(_.toString.replace("_", " ")).map(f => f -> f), 
-          '_label -> "Type")
-        @bootstrap3.inputText(
-          submissionForm("paper.keywords"),
-          '_label -> "Keywords")
-        @bootstrap3.textarea(
-          submissionForm("paper.abstrct"),
-          '_label -> "Abstract",
-          'placeholder -> "Abstract",
-          'rows -> 5)
-        File:<br><dd><input type="file" name="data"></dd><br>
-        
-        <div class="file-selector">
-          <div class="input-group col-lg-7">
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="button">Browse</button>
-            </span>
-            <input type="text" disabled>
-          </div>
-          <input type="file" />
-        </div>
-      </fieldset><br>
-      
-      <fieldset><legend>Topics</legend>
-      @for(Topic(id, name, description) <- topics) {
-        @bootstrap3.checkbox(
-          submissionForm(s"topics[$id]"),
-          '_label -> (name).capitalize,
-          'value -> id.toString)
-      }
-      </fieldset><br>
-
-      <fieldset><legend>Authors</legend>
+@main(message) {
+  @helper.form(routes.Submitting.make, 'enctype -> "multipart/form-data", 'class -> "form-horizontal") {
+    <fieldset>
+      @legend("General Information")
+      @bootstrap3.inputText(
+        submissionForm("paper.title"),
+        '_label -> "Paper title")
+      @bootstrap3.inputRadioGroup(
+        submissionForm("paper.format.value"), 
+        PaperType.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
+        '_label -> "Type")
+      @bootstrap3.inputText(
+        submissionForm("paper.keywords"),
+        '_label -> "Keywords")
+      @bootstrap3.textarea(
+        submissionForm("paper.abstrct"),
+        '_label -> "Abstract",
+        'placeholder -> "Abstract",
+        'rows -> 5)
+      @bootstrap3.inputCheckboxGroup(
+        submissionForm,
+        "topics",
+        topics.toSeq.map( t => (t.id, t.name) ),
+        '_label -> "Topics")
+    </fieldset><br>
+    
+      @bootstrap3.inputFile(
+        submissionForm("data"),
+        '_label -> "File")
+    
+      @legend("Authors")
       @bootstrap3.select(
         submissionForm("nauthors"),
         authors.map(i => ((i+1).toString, (i+1).toString)),
@@ -72,12 +64,11 @@
         @bootstrap3.inputText(
           submissionForm(s"authors[$i].email"),
           '_label -> "Email")
-        </fieldset><br>
-      }
-      </fieldset>
-
-      <br>
-      <input type="submit">
+      </fieldset><br>
     }
+    </fieldset>
+
+    <br>
+    <input type="submit">
   }
 }

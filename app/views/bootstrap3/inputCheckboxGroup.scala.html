@@ -1,0 +1,14 @@
+@**
+  * Generate a Bootstrap 3 checkbox group
+  *@
+@(form: Form[_], field: String, options: Seq[(Int,String)], args: (Symbol,Any)*)(implicit handler: helper.FieldConstructor, lang: play.api.i18n.Lang)
+
+@input(form(field), args:_*) { (id, name, value, htmlArgs) =>
+  @for((id, name) <- options) {
+    @bootstrap3.checkbox(
+      form(s"$field[$id]"),
+      '_text -> name,
+      'value -> id.toString
+    )(new helper.FieldConstructor { def apply(e: helper.FieldElements) = e.input }, null)
+  }
+}

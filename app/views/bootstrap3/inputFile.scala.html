@@ -13,5 +13,13 @@
 @(field: play.api.data.Field, args: (Symbol,Any)*)(implicit handler: helper.FieldConstructor, lang: play.api.i18n.Lang)
 
 @input(field, args:_*) { (id, name, value, htmlArgs) =>
-    <input type="file" id="@id" name="@name" @toHtmlArgs(htmlArgs)>
+  <div class="file-selector">
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button">Browse</button>
+      </span>
+      <input type="text" class="input-with-feedback" id="@id" name="@name" @toHtmlArgs(htmlArgs) disabled>
+    </div>
+    <input type="file">
+  </div>
 }

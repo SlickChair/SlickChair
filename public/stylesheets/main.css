@@ -48,5 +48,8 @@ body {
   }
 }
 .radio-inline {
-  padding-top: 6px;
+  padding-top: 9px;
+}
+.form-horizontal .control-label {
+  padding-top: 9px;
 }

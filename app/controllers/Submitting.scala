@@ -88,7 +88,8 @@ object Submitting extends Controller with SecureSocial {
           //       have to select it again.
           errors => Ok(views.html.submission(email + "Submission: Errors found", errors)),
           form => {
-            val SubmissionForm(formPaper, formAuthors, formTopics) = form 
+            Ok(form.toString)
+            /*val SubmissionForm(formPaper, formAuthors, formTopics) = form 
             val newFileId: Option[Int] = request.body.file("data").map{ file =>
               val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray
               Files.ins(NewFile(file.filename, blob.size, DateTime.now, blob))
@@ -124,7 +125,7 @@ object Submitting extends Controller with SecureSocial {
             
             Authors.insertAll(formAuthors.map(_.copy(paperId)))
             PaperTopics.insertAll(formTopics.map(PaperTopic(paperId, _)))
-            Redirect(routes.Submitting.info)
+            Redirect(routes.Submitting.info)*/
           }
         )
     }

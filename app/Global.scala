@@ -14,11 +14,11 @@ object Global extends GlobalSettings {
   override def onStart(app: Application) {
     if(Topics.all.isEmpty) {
       List(
-        NewTopic("Topic 1", "Description 1"),
-        NewTopic("Topic 2", "Description 2"),
-        NewTopic("Topic 3", "Description 3"),
-        NewTopic("Topic 4", "Description 4"),
-        NewTopic("Topic 5", "Description 5")
+        NewTopic("Language design and implementation", "Language extensions, optimization, and performance evaluation."),
+        NewTopic("Library design and implementation patterns for extending Scala", "Embedded domain-specific languages, combining language features, generic and meta-programming."),
+        NewTopic("Formal techniques for Scala-like programs", "Formalizations of the language, type system, and semantics, formalizing proposed language extensions and variants, dependent object types, type and effect systems."),
+        NewTopic("Concurrent and distributed programming", "Libraries, frameworks, language extensions, programming paradigms: (Actors, STM, ...), performance evaluation, experimental results."),
+        NewTopic("Safety and reliability", "Pluggable type systems, contracts, static analysis and verification, runtime monitoring.")
       ).foreach(Topics.ins)
       
       List(
