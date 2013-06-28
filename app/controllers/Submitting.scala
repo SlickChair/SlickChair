@@ -1,17 +1,14 @@
 package controllers
 
 import org.joda.time.DateTime
-
-import models.entities._
+import models.entities.{Author, Authors, Paper, PaperType}
+import models.entities.{Papers, Topics}
 import models.entities.PaperType.PaperType
-import models.relations._
-import models.utils._
 import play.api.data.Form
 import play.api.data.Forms.{ignored, list, mapping, nonEmptyText, number, text}
 import play.api.data.Mapping
 import play.api.mvc.Controller
 import securesocial.core.SecureSocial
-import play.api.mvc._
 
 case class SubmissionForm(
   paper: Paper,

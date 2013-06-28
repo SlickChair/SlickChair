@@ -1,8 +1,7 @@
 package controllers
 
-import securesocial.core.{Identity, Authorization}
-import models.entities._
-import play.api.Logger
+import models.entities.{MemberRole, Members}
+import securesocial.core.{Authorization, Identity}
 
 object ChairOnly extends Authorization {
   def isAuthorized(user: Identity) =

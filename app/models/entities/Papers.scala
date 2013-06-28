@@ -1,14 +1,15 @@
 package models.entities
 
-import play.api.db.slick.DB
-import play.api.db.slick.Config.driver.simple._
-import play.api.Play.current
-import com.github.tototoshi.slick.JodaSupport._
-import java.sql.Date
 import org.joda.time.DateTime
-import models._
-import models.utils._
-import models.secureSocial._
+
+import com.github.tototoshi.slick.JodaSupport.dateTimeTypeMapper
+
+import PaperType.enumTypeMapper
+import models.BitmaskedEnumeration
+import models.utils.Files
+import play.api.Play.current
+import play.api.db.slick.Config.driver.simple._
+import play.api.db.slick.DB
 
 object PaperType extends Enumeration with BitmaskedEnumeration {
   type PaperType = Value

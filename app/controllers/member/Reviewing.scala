@@ -1,8 +1,8 @@
 package controllers.member
 
 import org.joda.time.DateTime
-import models.secureSocial._
-import models.entities._
+import controllers.MemberOrChair
+import models.entities.{Authors, Members, Paper, Papers}
 import models.relations.{Comment, Comments, NewComment, Review, ReviewConfidence}
 import models.relations.ReviewConfidence.ReviewConfidence
 import models.relations.ReviewEvaluation
@@ -12,8 +12,7 @@ import play.api.data.Form
 import play.api.data.Forms.{ignored, mapping, nonEmptyText}
 import play.api.data.Mapping
 import play.api.mvc.{Controller, Result}
-import securesocial.core.{SecureSocial, SecuredRequest}
-import controllers._
+import securesocial.core.SecureSocial
 
 object Reviewing extends Controller with SecureSocial {
   val confidenceMapping: Mapping[ReviewConfidence] = mapping(

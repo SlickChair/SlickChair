@@ -1,12 +1,11 @@
 package models.relations
 
-import play.api.db.slick.DB
-import play.api.db.slick.Config.driver.simple._
-import play.api.Play.current
-import com.github.tototoshi.slick.JodaSupport._
-import java.sql.Date
 import org.joda.time.DateTime
-import models.entities._
+import com.github.tototoshi.slick.JodaSupport.dateTimeTypeMapper
+import models.entities.{Members, Paper, Papers}
+import play.api.Play.current
+import play.api.db.slick.Config.driver.simple._
+import play.api.db.slick.DB
 
 // Members comments on submissions
 case class Comment(

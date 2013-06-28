@@ -1,19 +1,11 @@
 package controllers.member
 
 import org.joda.time.DateTime
-import models.secureSocial._
-import models.entities._
-import models.relations.{Comment, Comments, NewComment, Review, ReviewConfidence}
-import models.relations.ReviewConfidence.ReviewConfidence
-import models.relations.ReviewEvaluation
-import models.relations.ReviewEvaluation.ReviewEvaluation
-import models.relations.Reviews
-import play.api.data.Form
-import play.api.data.Forms.{ignored, mapping, nonEmptyText}
-import play.api.data.Mapping
-import play.api.mvc.{Controller, Result}
-import securesocial.core.{SecureSocial, SecuredRequest}
-import controllers._
+import controllers.{Anyone, MemberOrChair}
+import models.entities.{Authors, MemberRole, Members, NewMember, Papers}
+import models.secureSocial.{SecureSocialTokens, User}
+import play.api.mvc.Controller
+import securesocial.core.SecureSocial
 
 object Dashboard extends Controller with SecureSocial {
   def papers = SecuredAction(MemberOrChair) { implicit request =>

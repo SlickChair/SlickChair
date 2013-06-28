@@ -1,10 +1,10 @@
-import play.api._
 import org.joda.time.DateTime
-import play.api.Logger
+
 import models.entities._
 import models.relations._
 import models.secureSocial._
-import models.utils._
+import models.utils.{NewTemplate, Templates}
+import play.api.{Application, GlobalSettings}
 
 /**
   * Populates the database with fake data for testing. Global.onStart() is

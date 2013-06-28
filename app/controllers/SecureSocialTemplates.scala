@@ -1,13 +1,13 @@
 package controllers
 
-import play.api.mvc.{RequestHeader, Request}
-import play.api.templates.{Html, Txt}
-import play.api.{Logger, Plugin, Application}
-import securesocial.core.{Identity, SecuredRequest, SocialUser}
+import play.api.Application
 import play.api.data.Form
-import securesocial.controllers.Registration.RegistrationInfo
+import play.api.mvc.{Request, RequestHeader}
+import play.api.templates.{Html, Txt}
 import securesocial.controllers.PasswordChange.ChangeInfo
+import securesocial.controllers.Registration.RegistrationInfo
 import securesocial.controllers.TemplatesPlugin
+import securesocial.core.{Identity, SecuredRequest}
 
 class SecureSocialTemplates(application: Application) extends TemplatesPlugin {
   override def getLoginPage[A](implicit request: Request[A], form: Form[(String, String)], msg: Option[String] = None): Html =

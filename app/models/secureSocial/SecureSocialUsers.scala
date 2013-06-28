@@ -1,9 +1,9 @@
 package models.secureSocial
 
-import play.api.db.slick.DB
-import play.api.db.slick.Config.driver.simple._
 import play.api.Play.current
-import securesocial.core._
+import play.api.db.slick.Config.driver.simple._
+import play.api.db.slick.DB
+import securesocial.core.{AuthenticationMethod, Identity, PasswordInfo, SocialUser, UserId}
 
 case class User(
   uid: String,

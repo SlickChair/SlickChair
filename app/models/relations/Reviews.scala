@@ -1,13 +1,12 @@
 package models.relations
 
-import play.api.db.slick.DB
-import play.api.db.slick.Config.driver.simple._
-import play.api.Play.current
-import com.github.tototoshi.slick.JodaSupport._
-import java.sql.Date
 import org.joda.time.DateTime
-import models._
-import models.entities._
+import com.github.tototoshi.slick.JodaSupport.dateTimeTypeMapper
+import models.BitmaskedEnumeration
+import models.entities.{Member, Members, Paper, Papers}
+import play.api.Play.current
+import play.api.db.slick.Config.driver.simple._
+import play.api.db.slick.DB
 
 object ReviewConfidence extends Enumeration with BitmaskedEnumeration {
   type ReviewConfidence = Value

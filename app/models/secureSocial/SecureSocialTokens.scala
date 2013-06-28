@@ -1,12 +1,10 @@
 package models.secureSocial
 
-import play.api.db.slick.DB
-import play.api.db.slick.Config.driver.simple._
-import play.api.Play.current
-import com.github.tototoshi.slick.JodaSupport._
-import java.sql.Date
 import org.joda.time.DateTime
-import securesocial.core._
+import com.github.tototoshi.slick.JodaSupport.dateTimeTypeMapper
+import play.api.Play.current
+import play.api.db.slick.Config.driver.simple._
+import play.api.db.slick.DB
 import securesocial.core.providers.Token
 
 case class MyToken(

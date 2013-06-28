@@ -1,26 +1,18 @@
 package controllers.chair
 
-import concurrent.duration.DurationInt
-import com.typesafe.plugin.{MailerPlugin, use}
-import play.api.Play.current
-import play.api._
-import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
-import play.api.libs.concurrent.Akka
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import securesocial.core.SecureSocial
-import com.github.tototoshi.slick.JodaSupport._
-import java.sql.Date
-import org.joda.time.DateTime
-import models.utils._
-import models.entities._
-import models.entities.MemberRole._
-import models.secureSocial._
 import java.util.UUID
-import controllers._
-import controllers.chair._
-import controllers.member.Reviewing._
+import org.joda.time.DateTime
+import controllers.member
+import models.entities.MemberRole
+import models.entities.MemberRole.MemberRole
+import models.entities.Members
+import models.secureSocial.{MyToken, SecureSocialTokens}
+import models.utils.{Email, NewEmail, SentEmails}
+import play.api.data.Form
+import play.api.data.Forms.{list, mapping, nonEmptyText, number}
+import play.api.data.Mapping
+import play.api.mvc.{Action, Controller, Request}
+import securesocial.core.SecureSocial
 
 case class InvalidateForm(candidates: List[String])
 case class PromoteForm(members: List[Int], newRole: MemberRole)

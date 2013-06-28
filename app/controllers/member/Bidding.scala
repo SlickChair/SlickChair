@@ -1,25 +1,15 @@
 package controllers.member
 
-import org.joda.time.DateTime
-import models.secureSocial._
-import models.entities._
-import models.relations.{Comment, Comments, NewComment, Review, ReviewConfidence}
-import models.relations.ReviewConfidence.ReviewConfidence
-import models.relations.ReviewEvaluation
-import models.relations.ReviewEvaluation.ReviewEvaluation
-import models.relations.Reviews
-import play.api.Play.current
-import play.api._
-import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
-import play.api.libs.concurrent.Akka
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import securesocial.core.{SecureSocial, SecuredRequest}
-import controllers._
-import models.relations._
-import models.relations.Bid._
-
+import controllers.MemberOrChair
+import models.entities.{Members, Papers, Topics}
+import models.relations.{MemberBid, MemberBids, MemberTopic, MemberTopics}
+import models.relations.Bid
+import models.relations.Bid.Bid
+import play.api.data.Form
+import play.api.data.Forms.{ignored, list, mapping, nonEmptyText, number}
+import play.api.data.Mapping
+import play.api.mvc.Controller
+import securesocial.core.SecureSocial
 
 case class BidForm(
   bids: List[MemberBid],

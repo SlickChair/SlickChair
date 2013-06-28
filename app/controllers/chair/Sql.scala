@@ -1,16 +1,13 @@
 package controllers.chair
 
-import play.api.db._
-import play.api._
-import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
+import anorm.SQL
+import controllers.ChairOnly
 import play.api.Play.current
-import models._
+import play.api.data.Form
+import play.api.data.Forms.{mapping, nonEmptyText, text, tuple}
+import play.api.db.DB
+import play.api.mvc.Controller
 import securesocial.core.SecureSocial
-import anorm._
-import anorm.SqlParser._
-import controllers._
 
 object SqlMethod extends Enumeration {
   type SqlMethod = Value

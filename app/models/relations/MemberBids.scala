@@ -1,10 +1,11 @@
 package models.relations
 
-import play.api.db.slick.DB
-import play.api.db.slick.Config.driver.simple._
+import Bid.enumTypeMapper
+import models.BitmaskedEnumeration
+import models.entities.{Member, Members, Papers}
 import play.api.Play.current
-import models._
-import models.entities._
+import play.api.db.slick.Config.driver.simple._
+import play.api.db.slick.DB
 
 object Bid extends Enumeration with BitmaskedEnumeration {
   type Bid = Value

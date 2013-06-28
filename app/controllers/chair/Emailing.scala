@@ -1,21 +1,18 @@
 package controllers.chair
 
 import concurrent.duration.DurationInt
+import org.joda.time.DateTime
 import com.typesafe.plugin.{MailerPlugin, use}
+import models.secureSocial.SecureSocialUsers
+import models.utils.{Email, NewEmail, SentEmails}
 import play.api.Play.current
-import play.api._
-import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
+import play.api.data.Form
+import play.api.data.Forms.{ignored, mapping, nonEmptyText}
+import play.api.data.Mapping
 import play.api.libs.concurrent.Akka
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.mvc.{Action, Controller}
 import securesocial.core.SecureSocial
-import com.github.tototoshi.slick.JodaSupport._
-import java.sql.Date
-import org.joda.time.DateTime
-import models.utils._
-import models.entities._
-import models.secureSocial._
 
 object Emailing extends Controller with SecureSocial {
   val fromAddress = current.configuration.getString("smtp.from").get
@@ -60,7 +57,6 @@ object Emailing extends Controller with SecureSocial {
           Emailing.sendEmail(user.email, subject, body)
         }
         Ok(views.html.email(Some("Email sent)."), emailForm))
-      }
-    )
+      })
   }
 }

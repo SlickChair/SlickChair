@@ -1,9 +1,11 @@
 package models.entities
 
 import org.joda.time.DateTime
+
 import com.github.tototoshi.slick.JodaSupport.dateTimeTypeMapper
+
 import MemberRole.enumTypeMapper
-import models._
+import models.BitmaskedEnumeration
 import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB

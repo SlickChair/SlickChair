@@ -1,13 +1,13 @@
 package models
 
-/**
-  * The BitmaskedEnumeration trait can be mixed into a subclass of Enumeration
-  * in to have is usable as a column type in a Slick Table. Source:
-  * https://github.com/nafg/slick-additions
-  */
-import scala.slick.lifted.{ BaseTypeMapper, MappedTypeMapper }
-import scala.slick.jdbc.GetResult
+import slick.jdbc.GetResult
+import slick.lifted.{BaseTypeMapper, MappedTypeMapper}
 
+/**
+ * The BitmaskedEnumeration trait can be mixed into a subclass of Enumeration
+ * in to have is usable as a column type in a Slick Table. Source:
+ * https://github.com/nafg/slick-additions
+ */
 trait Bitmasked {
   type Value
   def bitFor: Value => Int

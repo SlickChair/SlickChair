@@ -1,9 +1,9 @@
 package models.entities
 
-import play.api.db.slick.DB
-import play.api.db.slick.Config.driver.simple._
+import models.relations.{MemberTopics, PaperTopics}
 import play.api.Play.current
-import models.relations._
+import play.api.db.slick.Config.driver.simple._
+import play.api.db.slick.DB
 
 case class Topic(
   id: Int,
