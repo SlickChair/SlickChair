@@ -1,3 +1,4 @@
+// TODO rewrite the JSs in coffeescript
 // Inspired from
 // http://blog.anorgan.com/2012/09/30/pretty-multi-file-upload-bootstrap-jquery-twig-silex/
 // and http://jasny.github.io/bootstrap/javascript.html#fileupload

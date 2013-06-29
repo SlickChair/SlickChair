@@ -13,15 +13,17 @@ Done:
 - Write a classes for settings with get set and default value
 - Email client for the chair with templates
 - Manage members (invitations, delete, promotion..)
-- Paper biding 
+- Paper biding
 
 Todo:
 -----
 
-- ... and assignement
-- Good looking interface
-- Setup instructions (requires some testing with postgresql)
-- Wrap most settings in a config page
+- Refine a bit the look of the UI
+- Paper/Reviewer assignement
+- Config page(s)
+- Decision page (accepted/rejected)
+- Getting started instructions
+- Variables for the email client
 - Use the [POST-Redirect-GET pattern][1] in all the forms to prevent repost on
   page reload
 
@@ -29,9 +31,9 @@ Out of scope:
 -------------
 
 - Logs
-- More settings
-- Phases abstraction for settings
+- More detailed settings
+- Phases abstraction for settings (1 Submission, 2 Bidding, 3 Review, ...)
 - Client side stuff (starting with form validation)
-- Write an out of scope list...
+- ...
 
 [1]: http://www.theserverside.com/news/1365146/Redirect-After-Post

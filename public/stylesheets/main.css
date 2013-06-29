@@ -1,3 +1,5 @@
+/* TODO: rewrite in LESS */
+
 body {
   padding-top: 50px;
 }
@@ -47,6 +49,8 @@ body {
     font-size: 13px;
   }
 }
+
+/* TODO: this breaks the spacing on the phone size layout */
 .radio-inline {
   padding-top: 9px;
 }
