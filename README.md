@@ -34,6 +34,7 @@ Out of scope:
 - More detailed settings
 - Phases abstraction for settings (1 Submission, 2 Bidding, 3 Review, ...)
 - Client side stuff (starting with form validation)
+- SSL
 - ...
 
 [1]: http://www.theserverside.com/news/1365146/Redirect-After-Post

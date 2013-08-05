@@ -49,7 +49,7 @@ object SubmissionLock extends BooleanSetting(
 // CanUploadReviewPaper
 // CanUploadFinalPaper
 object ConferenceShortName extends StringSetting(
-  "Acmss Demo", "Short name of the conference (first entry of the menu)."
+  "SlickChair Demo", "Short name of the conference (first entry of the menu)."
 )
 
 case class DBSetting (name: String, value: String )

@@ -1,7 +1,7 @@
 Authentication
 ===============================================================================
 
-Acmss supports two authentication methods:
+SlickChair supports two authentication methods:
 - With an email address and a password
 - With an external identity provider
 
