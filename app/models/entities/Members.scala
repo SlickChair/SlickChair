@@ -9,7 +9,7 @@ import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
 import securesocial.core.SecuredRequest
 
-/** Enumerate the possible roles of a member. */
+/** Enumerates the possible roles of a member. */
 object MemberRole extends Enumeration with BitmaskedEnumeration {
   type MemberRole = Value
   val Chair, Member, Disabled = Value
@@ -63,7 +63,9 @@ case class NewMember(
   * methods to manipulate the table for inserting, deleting and querying.
   */
 object Members extends Table[Member]("MEMBERS") {
-  /** "Defines a {} {} of type {} with name {} as a {}.".format("id", "column", "Int", "ID", "autoincementing primary key") */ 
+  /** "Defines a {} {} of type {} with name {} as a {}.".format("id",
+    * "column", "Int", "ID", "autoincementing primary key")
+    */
   def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
   def email = column[String]("EMAIL", O.DBType("TEXT"))
   def invitedas = column[String]("INVITEDAS", O.DBType("TEXT"))
@@ -77,28 +79,66 @@ object Members extends Table[Member]("MEMBERS") {
   def * =  id ~ email ~ invitedas ~ firstlogindate ~ lastlogindate ~ role ~ firstname ~ lastname <> (Member, Member.unapply _)
   def autoinc = email ~ invitedas ~ firstlogindate ~ lastlogindate ~ role ~ firstname ~ lastname <> (NewMember, NewMember.unapply _) returning id
   
-  def ins(newMember: NewMember) = DB.withSession(implicit session =>
+  /** Inserts a new Member in the database. The database will find an id for
+    * the NewMember by autoincementing.
+    *
+    * @param newMember  the NewMember to insert
+    * @return  the identifier found by the database
+    */
+  def ins(newMember: NewMember): Int = DB.withSession(implicit session =>
     Members.autoinc.insert(newMember) )
   
+  /** Retrives all Members stored in the database.
+    *
+    * @return  all Members stored in the database
+    */
   def all: List[Member] = DB.withSession(implicit session =>
     Query(Members).list )
   
+  /** Finds a Member in the database with a given identifier.
+    *
+    * @param  memberId  the given identifier
+    * @return  an optional Member
+    */
   def withId(memberId: Int): Option[Member] = DB.withSession(implicit session =>
     Query(Members).filter(_.id is memberId).list.headOption )
   
+  /** Finds a Member in the database with a given email.
+    *
+    * @param  memberEmail  the given email
+    * @return  an optional Member
+    */
   def withEmail(memberEmail: String): Option[Member] = DB.withSession(implicit session =>
     Query(Members).filter(_.email is memberEmail).list.headOption )
   
-  def relevantCategories: List[(String, String)] = DB.withSession(implicit session =>
+  /** Return the emails of mulitple relevant categories of Members. The
+    * possibly intesecting subsets of Members are returned along with a short
+    * textual description.
+    *
+    * Example:
+    * ("All Members", "joe@epfl.ch, bob@epfl.ch, alice@epfl.ch"),
+    * ("Reviwers with pending reviews", "joe@epfl.ch, bob@epfl.ch")
+    *
+    * @return  a list of (description, emails)
+    */
+  def relevantCategories: List[(String, String)] = DB.withTransaction(implicit session =>
     List(
+      // TODO: add categories as needed
       ("All Members", Query(Members).map(_.email).list)
     ).map(c => (c._1, c._2.mkString(", ")))
   )
   
-  def promote(memberId: Int, newRole: MemberRole) = DB.withSession(implicit session =>
+  /** Change the role of a Member in the database.
+    *
+    * @param  memberId  the identifier of the promoted Member
+    * @param  newRole  the new Role of this Member
+    */
+  def promote(memberId: Int, newRole: MemberRole): Unit = DB.withSession(implicit session =>
     Query(Members).filter(_.id is memberId).map(_.role).update(newRole) )
   
-  /** The last get won't fail if called after the MemberOrChair authentication succeeded. */
-  def getFromRequest[T](implicit request: SecuredRequest[T]) =
+  /** The last get won't fail if called after the MemberOrChair authentication
+    * succeeded.
+    */
+  def getFromRequest[T](implicit request: SecuredRequest[T]): Member =
     Members.withEmail(request.user.email.get).get
 }
