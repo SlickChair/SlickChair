@@ -9,10 +9,10 @@ more about it, here are two good staring points:
 - Very good [talk][1] explaining Slick from scratch (1 hour)
 - The official [documentation][2] with lots of examples
 
-Note that this package was not written with performances in mind. For instance
-some repeated operations generate repeated database query instead of wrapping
-them all into a single one. This might be a bottleneck of the system when used
-with large tables.
+Note that this package was not written with performances in mind. For
+instance, some repeated operations generate multiple database query instead of
+wrapping them all into a single transaction. This might be a bottleneck of the
+system when used on a large scale.
 
 Slick is supposed to be database independent. However switching from H2 to
 PostgreSQL (to deploy the project [Heroku][3]) we had a few issues that could
@@ -21,9 +21,8 @@ only be solved with added verbosity:
   ([workaround][4])
 - Auto-incrementing cannot be done by passing a None id ([workaround][5])
 
-Hopefully the next versions of Slick will fix these issues and remove all code
-duplication.
-
+Hopefully the next versions of Slick will fix these issues and remove all
+attribute duplication.
 
 [1]: https://www.youtube.com/watch?v=mJ_mnEwZMR0
 [2]: http://slick.typesafe.com/doc/1.0.1/gettingstarted.html

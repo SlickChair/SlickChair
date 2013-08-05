@@ -4,7 +4,7 @@ import play.api.db.slick.DB
 import play.api.db.slick.Config.driver.simple._
 import play.api.Play.current
 
-// Email templates
+/********/
 case class Template (
   id: Int,
   name: String,

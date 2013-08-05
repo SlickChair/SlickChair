@@ -7,7 +7,7 @@ import com.github.tototoshi.slick.JodaSupport._
 import java.sql.Date
 import org.joda.time.DateTime
 
-// Logs of when status changes
+/********/
 case class Log(
   id: Int,
   date: DateTime,

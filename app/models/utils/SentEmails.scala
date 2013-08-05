@@ -7,7 +7,7 @@ import com.github.tototoshi.slick.JodaSupport._
 import java.sql.Date
 import org.joda.time.DateTime
 
-// Emails sent out
+/********/
 case class Email(
   id: Int,
   to: String,

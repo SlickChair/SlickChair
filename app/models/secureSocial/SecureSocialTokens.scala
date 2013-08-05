@@ -7,6 +7,7 @@ import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
 import securesocial.core.providers.Token
 
+/********/
 case class MyToken(
   uuid: String,
   email: String,

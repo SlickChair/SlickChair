@@ -4,7 +4,7 @@ import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
 
-// Authors for each submission
+/********/
 case class Author(
   paperid: Int,
   position: Int,

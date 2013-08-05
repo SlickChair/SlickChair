@@ -8,6 +8,7 @@ import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
 
+/********/
 object ReviewConfidence extends Enumeration with BitmaskedEnumeration {
   type ReviewConfidence = Value
   val VeryLow, Low, Medium, High, VeryHigh = Value

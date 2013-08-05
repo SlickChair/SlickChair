@@ -5,15 +5,13 @@ import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
 
+/********/
 case class Topic(
   id: Int,
   name: String,
   description: String
 )
-case class NewTopic(
-  name: String,
-  description: String
-)
+case class NewTopic(name: String, description: String)
 
 object Topics extends Table[Topic]("TOPICS") {
   def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)

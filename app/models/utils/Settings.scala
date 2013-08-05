@@ -4,6 +4,7 @@ import play.api.db.slick.DB
 import play.api.db.slick.Config.driver.simple._
 import play.api.Play.current
 
+// TODO: ScalaDoc-me!
 trait Setting[T] {
   private def dbname: String = this.getClass.getName.split("$")(0)
   protected def fromString(s: String): T

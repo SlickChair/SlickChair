@@ -5,6 +5,7 @@ import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
 
+/********/
 case class MemberTopic(
   memberid: Int,
   topicid: Int

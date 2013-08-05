@@ -1,9 +1,7 @@
 package models.entities
 
 import org.joda.time.DateTime
-
 import com.github.tototoshi.slick.JodaSupport.dateTimeTypeMapper
-
 import PaperType.enumTypeMapper
 import models.BitmaskedEnumeration
 import models.utils.Files
@@ -11,13 +9,13 @@ import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
 
+/********/
 object PaperType extends Enumeration with BitmaskedEnumeration {
   type PaperType = Value
   val Full_Paper, Short_Paper, Tool_Demo, Presentation = Value
 }
 import PaperType._
 
-// Submission data
 case class Paper(
   id: Int,
   contactemail: String,
@@ -30,7 +28,6 @@ case class Paper(
   abstrct: String,
   fileid: Option[Int]
 )
-// Paper without the id field
 case class NewPaper(contactemail: String, submissiondate: DateTime, lastupdate: DateTime, accepted: Option[Boolean], title: String, format: PaperType, keywords: String, abstrct: String, fileid: Option[Int])
 
 object Papers extends Table[Paper]("PAPERS") {

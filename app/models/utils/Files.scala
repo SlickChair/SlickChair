@@ -7,7 +7,7 @@ import com.github.tototoshi.slick.JodaSupport._
 import java.sql.Date
 import org.joda.time.DateTime
 
-// Files
+/********/
 case class File(
   id: Int,
   name: String,
