@@ -7,7 +7,11 @@ import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
 import securesocial.core.providers.Token
 
-/********/
+/** This file holds all the code related to the storage of SecureSocial
+  * Tokens in the database.
+  * @see models.Members.scala for a similar implementation with ScalaDoc.
+  */
+
 case class MyToken(
   uuid: String,
   email: String,

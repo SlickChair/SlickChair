@@ -9,7 +9,11 @@ import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
 
-/********/
+/** This file holds all the code related to the storage of submissions
+  * (Papers) in the database.
+  * @see models.Members.scala for a similar implementation with ScalaDoc.
+  */
+
 object PaperType extends Enumeration with BitmaskedEnumeration {
   type PaperType = Value
   val Full_Paper, Short_Paper, Tool_Demo, Presentation = Value

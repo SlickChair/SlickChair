@@ -2,8 +2,8 @@
   emailForm: Form[models.utils.Email],
   recipientsCategories: List[(String, String)] =
       models.entities.Papers.relevantCategories ::: models.entities.Members.relevantCategories,
-  templates: List[models.utils.Template] =
-      models.utils.Templates.all
+  templates: List[models.utils.EmailTemplate] =
+      models.utils.EmailTemplates.all
 )
 
 @import helper._

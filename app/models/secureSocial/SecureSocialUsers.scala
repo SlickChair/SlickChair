@@ -5,7 +5,11 @@ import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
 import securesocial.core.{AuthenticationMethod, Identity, PasswordInfo, SocialUser, UserId}
 
-/********/
+/** This file holds all the code related to the storage of SecureSocial Users
+  * in the database.
+  * @see models.Members.scala for a similar implementation with ScalaDoc.
+  */
+
 case class User(
   uid: String,
   pid: String,
@@ -24,8 +28,8 @@ case class User(
   )
 }
 object User {
-  // IMPORTANT NOTE: At this point (i.email.get) we assume that the provider
-  // gives us an email, which is not the case for some of them (eg twitter).
+  // IMPORTANT: At this point (i.email.get) we assume that the provider gives
+  // us an email, which is not the case for some of them (eg twitter).
   def fromIdentity(i: Identity) = User(
     i.id.id, i.id.providerId, i.email.get, i.firstName,
     i.lastName, i.authMethod.method, i.passwordInfo.map(_.hasher),

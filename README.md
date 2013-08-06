@@ -30,10 +30,11 @@ Todo:
 Out of scope:
 -------------
 
-- Logs
+- Log system
 - More detailed settings
 - Phases abstraction for settings (1 Submission, 2 Bidding, 3 Review, ...)
 - Client side stuff (starting with form validation)
+- Prefill the submission form with data extracted from the PDF
 - SSL
 - ...
 

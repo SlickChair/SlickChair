@@ -8,7 +8,11 @@ import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
 
-/********/
+/** This file holds all the code related to the storage of Reviews in the
+  * database.
+  * @see models.Members.scala for a similar implementation with ScalaDoc.
+  */
+
 object ReviewConfidence extends Enumeration with BitmaskedEnumeration {
   type ReviewConfidence = Value
   val VeryLow, Low, Medium, High, VeryHigh = Value

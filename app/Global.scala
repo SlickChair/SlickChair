@@ -3,11 +3,10 @@ import org.joda.time.DateTime
 import models.entities._
 import models.relations._
 import models.secureSocial._
-import models.utils.{NewTemplate, Templates}
+import models.utils.{NewEmailTemplate, EmailTemplates}
 import play.api.{Application, GlobalSettings}
 
-/**
-  * Populates the database with fake data for testing. Global.onStart() is
+/** Populates the database with fake data for testing. Global.onStart() is
   * called when the application starts.
   */
 object Global extends GlobalSettings {
@@ -62,9 +61,9 @@ object Global extends GlobalSettings {
       ).foreach(Comments.ins)
       
       List(
-        NewTemplate("Msg", "A message to @fullname", "Dear @firstname, \nThis message is about..."),
-        NewTemplate("Warn", "A warrning to @fullname", "Dear @firstname, \nThis writting is about...")
-      ).foreach(Templates.ins)
+        NewEmailTemplate("Msg", "A message to @fullname", "Dear @firstname, \nThis message is about..."),
+        NewEmailTemplate("Warn", "A warrning to @fullname", "Dear @firstname, \nThis writting is about...")
+      ).foreach(EmailTemplates.ins)
       
       List(
         MyToken(java.util.UUID.randomUUID().toString, "1@1", DateTime.now, DateTime.now.plusDays(7), false, true),

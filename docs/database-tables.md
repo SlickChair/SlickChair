@@ -3,7 +3,7 @@ Database tables:
 
 Chairs have access to a SQL form at `your-website/sql` where abitrary queries can be executed. This page could be use to extracting relevant data or performing actions that are not doable via the web interface (such as breaking the system).
 
-The system uses a total of 16 table:
+The system uses a total of 15 table:
 
     TOPICS (
       ID             AUTOINCEMENT INTEGER
@@ -59,7 +59,7 @@ The system uses a total of 16 table:
       ISINVITATION   BOOLEAN
     )
 
-    TEMPLATES (
+    EMAIL_TEMPLATES (
       ID             AUTOINCEMENT INTEGER
       NAME           TEXT
       SUBJECT        TEXT
@@ -72,12 +72,6 @@ The system uses a total of 16 table:
       SUBJECT        TEXT
       BODY           TEXT
       SENT           TIMESTAMP
-    )
-
-    LOGS (
-      ID             AUTOINCEMENT INTEGER
-      DATE           TIMESTAMP
-      ENTRY          TEXT
     )
 
     PAPER_TOPICS (

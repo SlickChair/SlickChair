@@ -9,6 +9,12 @@ import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
 import securesocial.core.SecuredRequest
 
+/** This file holds all the code related to the storage of SlickChair Members
+  * in the database. It follows the standard Slick template by providing the
+  * definition of a case class to be stored in the database, the definition of
+  * a database table and a set of methods to manipulate this table.
+  */
+
 /** Enumerates the possible roles of a member. */
 object MemberRole extends Enumeration with BitmaskedEnumeration {
   type MemberRole = Value
@@ -21,8 +27,8 @@ import MemberRole._
   * 
   * @constructor  Create a new Member.
   * @param  id  the unique Member identifier
-  * @param  email  the Member email adresse
-  * @param  invitedas  the email adresse used to send the invitation 
+  * @param  email  the Member email address
+  * @param  invitedas  the email address used to send the invitation 
   * @param  firstlogindate  the time at which the Member first logged-in
   * @param  lastlogindate  the time at which the Member last logged-in
   * @param  role  the role of this Member
@@ -41,7 +47,7 @@ case class Member(
 )
 
 /** A Member without id field. This class is to be used when first inserting
-  * Member into the database, which will automaticaly assign it an
+  * Member into the database, which will automatically assign it an
   * autoincremented id.
   *
   * @See Member
@@ -58,13 +64,13 @@ case class NewMember(
 
 
 /** Represents a database table storing Member objects. This singleton follows
-  * the Slick recomendations and provides both definition of the table in
+  * the Slick recommendations and provides both definition of the table in
   * therm of columns name/types and primary/foreign key, as well as a set of
   * methods to manipulate the table for inserting, deleting and querying.
   */
 object Members extends Table[Member]("MEMBERS") {
-  /** "Defines a {} {} of type {} with name {} as a {}.".format("id",
-    * "column", "Int", "ID", "autoincementing primary key")
+  /** Defines an id column of type Int with name ID as an auto-incrementing
+    * primary key. The same semantic applies to the other column definitions
     */
   def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
   def email = column[String]("EMAIL", O.DBType("TEXT"))
@@ -75,12 +81,12 @@ object Members extends Table[Member]("MEMBERS") {
   def firstname = column[String]("FIRSTNAME", O.DBType("TEXT"))
   def lastname = column[String]("LASTNAME", O.DBType("TEXT"))
   
-  /** The star projection informs Slick on how to (@see slick doc...) */
+  /** The star projection informs Slick on how to (@see slick doc...) TODO! */
   def * =  id ~ email ~ invitedas ~ firstlogindate ~ lastlogindate ~ role ~ firstname ~ lastname <> (Member, Member.unapply _)
   def autoinc = email ~ invitedas ~ firstlogindate ~ lastlogindate ~ role ~ firstname ~ lastname <> (NewMember, NewMember.unapply _) returning id
   
   /** Inserts a new Member in the database. The database will find an id for
-    * the NewMember by autoincementing.
+    * the NewMember by auto-incrementing.
     *
     * @param newMember  the NewMember to insert
     * @return  the identifier found by the database
@@ -88,7 +94,7 @@ object Members extends Table[Member]("MEMBERS") {
   def ins(newMember: NewMember): Int = DB.withSession(implicit session =>
     Members.autoinc.insert(newMember) )
   
-  /** Retrives all Members stored in the database.
+  /** Retrieves all Members stored in the database.
     *
     * @return  all Members stored in the database
     */
@@ -111,8 +117,8 @@ object Members extends Table[Member]("MEMBERS") {
   def withEmail(memberEmail: String): Option[Member] = DB.withSession(implicit session =>
     Query(Members).filter(_.email is memberEmail).list.headOption )
   
-  /** Return the emails of mulitple relevant categories of Members. The
-    * possibly intesecting subsets of Members are returned along with a short
+  /** Returns the emails of multiple relevant categories of Members. The
+    * possibly intersecting subsets of Members are returned along with a short
     * textual description.
     *
     * Example:
@@ -128,7 +134,7 @@ object Members extends Table[Member]("MEMBERS") {
     ).map(c => (c._1, c._2.mkString(", ")))
   )
   
-  /** Change the role of a Member in the database.
+  /** Changes the role of a Member in the database.
     *
     * @param  memberId  the identifier of the promoted Member
     * @param  newRole  the new Role of this Member
@@ -136,9 +142,14 @@ object Members extends Table[Member]("MEMBERS") {
   def promote(memberId: Int, newRole: MemberRole): Unit = DB.withSession(implicit session =>
     Query(Members).filter(_.id is memberId).map(_.role).update(newRole) )
   
-  /** The last get won't fail if called after the MemberOrChair authentication
-    * succeeded.
+  
+  /** Extracts the Member from the a request, assuming the the MemberOrChair
+    * authentication succeeded.
+    *
+    * @param  request  the request
+    * @return  the extracted Member
     */
   def getFromRequest[T](implicit request: SecuredRequest[T]): Member =
+    // The last get might fail if not called after a MemberOrChair auth.
     Members.withEmail(request.user.email.get).get
 }

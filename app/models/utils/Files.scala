@@ -7,7 +7,11 @@ import com.github.tototoshi.slick.JodaSupport._
 import java.sql.Date
 import org.joda.time.DateTime
 
-/********/
+/** This file holds all the code related to the storage of submission Files
+  * in the database.
+  * @see models.Members.scala for a similar implementation with ScalaDoc.
+  */
+
 case class File(
   id: Int,
   name: String,
