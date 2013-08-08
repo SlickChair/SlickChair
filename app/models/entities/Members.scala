@@ -143,11 +143,11 @@ object Members extends Table[Member]("MEMBERS") {
     Query(Members).filter(_.id is memberId).map(_.role).update(newRole) )
   
   
-  /** Extracts the Member from the a request, assuming the the MemberOrChair
-    * authentication succeeded.
+  /** Extracts the Member from the a request, assuming the succeeded.
     *
     * @param  request  the request
     * @return  the extracted Member
+    * @throws  NoSuchElementException  if the request does comes from a known Member
     */
   def getFromRequest[T](implicit request: SecuredRequest[T]): Member =
     // The last get might fail if not called after a MemberOrChair auth.

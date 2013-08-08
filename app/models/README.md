@@ -1,5 +1,5 @@
 models.{ entities, relations, secureSocial, utils }
--------------------------------------------------------------------------------
+---------------------------------------------------
 
 The model package hold all the classes related to the database access. This
 project makes use of [Slick][6] to manipulate databases. It allows to write
