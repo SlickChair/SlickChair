@@ -4,7 +4,6 @@ import slick.jdbc.GetResult
 import slick.lifted.{BaseTypeMapper, MappedTypeMapper}
 
 /** Source: https://github.com/nafg/slick-additions. */
-
 trait Bitmasked {
   type Value
   def bitFor: Value => Int
