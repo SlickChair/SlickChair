@@ -3,7 +3,7 @@ package models.secureSocial
 import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
-import securesocial.core.{AuthenticationMethod, Identity, PasswordInfo, SocialUser, UserId}
+import securesocial.core.{AuthenticationMethod, Identity, PasswordInfo, SocialUser, IdentityId}
 
 /** This file holds all the code related to the storage of SecureSocial Users
   * in the database.
@@ -21,9 +21,9 @@ case class User(
   password: Option[String],
   salt: Option[String]
 ) {
-  def id: UserId = UserId(uid, pid)
+  def id: IdentityId = IdentityId(uid, pid)
   def toIdentity: Identity = SocialUser(
-    UserId(uid, pid), s"$firstname $lastname", firstname, lastname, Some(email), None, AuthenticationMethod(authmethod),
+    IdentityId(uid, pid), s"$firstname $lastname", firstname, lastname, Some(email), None, AuthenticationMethod(authmethod),
     None, None, password.map(p => PasswordInfo(hasher.getOrElse(""), p, salt))
   )
 }
@@ -31,7 +31,7 @@ object User {
   // IMPORTANT: At this point (i.email.get) we assume that the provider gives
   // us an email, which is not the case for some of them (eg twitter).
   def fromIdentity(i: Identity) = User(
-    i.id.id, i.id.providerId, i.email.get, i.firstName,
+    i.identityId.userId, i.identityId.providerId, i.email.get, i.firstName,
     i.lastName, i.authMethod.method, i.passwordInfo.map(_.hasher),
     i.passwordInfo.map(_.password), i.passwordInfo.map(_.salt).getOrElse(None)
   )
@@ -51,9 +51,9 @@ object SecureSocialUsers extends Table[User]("SECURE_SOCIAL_USERS") {
   def pk = primaryKey("SECURESOCIALUSERS_PK", uid ~ pid)
   def * = uid ~ pid ~ email ~ firstname ~ lastname ~ authmethod ~ hasher ~ password ~ salt <> (User.apply _, User.unapply _)
 
-  def userByUserId(userId: UserId) = 
+  def UserByidentityId(identityId: IdentityId) = 
     Query(SecureSocialUsers).filter( user =>
-      (user.uid is userId.id) && (user.pid is userId.providerId) )
+      (user.uid is identityId.userId) && (user.pid is identityId.providerId) )
   
   def userByEmailAndProvider(email: String, pid: String) = 
     Query(SecureSocialUsers).filter( user =>
@@ -70,13 +70,13 @@ object SecureSocialUsers extends Table[User]("SECURE_SOCIAL_USERS") {
         case None =>
           SecureSocialUsers.insert(user)
         case Some(u) =>
-          userByUserId(u.id).update(user)
+          UserByidentityId(u.identityId).update(user)
       }
       identity
     }
     
-    def find(userId: UserId): Option[Identity] = DB.withSession(implicit session =>
-      userByUserId(userId).firstOption.map(_.toIdentity)
+    def find(identityId: IdentityId): Option[Identity] = DB.withSession(implicit session =>
+      UserByidentityId(identityId).firstOption.map(_.toIdentity)
     )
     
     def findByEmailAndProvider(email: String, pid: String): Option[Identity] = DB.withSession(implicit session =>
