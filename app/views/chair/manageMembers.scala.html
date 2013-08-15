@@ -1,8 +1,8 @@
 @(inviteForm: Form[models.utils.Email],
   invalidateForm: Form[controllers.chair.InvalidateForm],
   promoteForm: Form[controllers.chair.PromoteForm],
-  pendingInvitations: List[models.secureSocial.MyToken]
-    = models.secureSocial.SecureSocialTokens.allInvitations,
+  pendingInvitations: List[models.securesocial.MyToken]
+    = models.securesocial.SecureSocialTokens.allInvitations,
   members: List[models.entities.Member]
     = models.entities.Members.all
 )
@@ -10,7 +10,7 @@
 @import helper._
 @import controllers.chair._
 @import models.entities._
-@import models.secureSocial._
+@import models.securesocial._
 
 @main("Manage Members") {
   @form(routes.MembersManaging.handle) {

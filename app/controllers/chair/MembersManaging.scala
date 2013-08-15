@@ -6,7 +6,7 @@ import controllers.member
 import models.entities.MemberRole
 import models.entities.MemberRole.MemberRole
 import models.entities.Members
-import models.secureSocial.{MyToken, SecureSocialTokens}
+import models.securesocial.{MyToken, SecureSocialTokens}
 import models.utils.{Email, NewEmail, SentEmails}
 import play.api.data.Form
 import play.api.data.Forms.{list, mapping, nonEmptyText, number}
@@ -43,7 +43,7 @@ object MembersManaging extends Controller with SecureSocial {
     )(PromoteForm.apply _)(PromoteForm.unapply _)
   ).fill(PromoteForm(Nil, MemberRole.Chair))
   
-  def page = Action(Ok(views.html.manageMembers(inviteForm, invalidateForm, promoteForm)))
+  def page = Action(Ok(views.html.chair.manageMembers(inviteForm, invalidateForm, promoteForm)))
   
   def handle = Action { implicit request => 
     request.body.asFormUrlEncoded.get("action").headOption match {
@@ -55,7 +55,7 @@ object MembersManaging extends Controller with SecureSocial {
   }
   
   def OkBinded[T](emailF: Option[Form[Email]], invalidateF: Option[Form[InvalidateForm]], promoteF: Option[Form[PromoteForm]])(implicit request: Request[T]) =
-    Ok(views.html.manageMembers(
+    Ok(views.html.chair.manageMembers(
       emailF getOrElse inviteForm.bindFromRequest.discardingErrors,
       invalidateF getOrElse invalidateForm.bindFromRequest.discardingErrors, 
       promoteF getOrElse promoteForm.bindFromRequest.discardingErrors

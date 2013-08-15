@@ -1,4 +1,4 @@
-package models.secureSocial
+package models.securesocial
 
 import org.joda.time.DateTime
 import com.github.tototoshi.slick.JodaSupport.dateTimeTypeMapper

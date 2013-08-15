@@ -3,13 +3,13 @@ package controllers.member
 import org.joda.time.DateTime
 import controllers.{Anyone, MemberOrChair}
 import models.entities.{Authors, MemberRole, Members, NewMember, Papers}
-import models.secureSocial.{SecureSocialTokens, User}
+import models.securesocial.{SecureSocialTokens, User}
 import play.api.mvc.Controller
 import securesocial.core.SecureSocial
 
 object Dashboard extends Controller with SecureSocial {
   def papers = SecuredAction(MemberOrChair) { implicit request =>
-    Ok(views.html.paperList(
+    Ok(views.html.member.paperList(
       Papers.all.map(p => (p, Authors.of(p)))
     ))
   }

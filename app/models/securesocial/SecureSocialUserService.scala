@@ -1,4 +1,4 @@
-package models.secureSocial
+package models.securesocial
 
 import play.api.Application
 import securesocial.core.UserServicePlugin

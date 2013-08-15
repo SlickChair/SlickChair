@@ -1,14 +1,6 @@
 /* TODO: rewrite in LESS */
 
-body {
-  padding-top: 50px;
-}
-
-@media screen and (min-width: 1200px) {
-  .container {
-    max-width: 940px;
-  }
-}
+/* Gray title header (similar to was is used on Play! demos). */
 .content {
   background-color: #fff;
   padding-right: 20px;
@@ -32,6 +24,7 @@ body {
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
+/* Old school navigation bar (similar to bootstrap 2). */
 .navbar-inverse .navbar-brand:hover {
   background-color: #333;
   background-color: rgba(255, 255, 255, 0.05);
@@ -50,10 +43,22 @@ body {
   }
 }
 
-/* TODO: this breaks the spacing on the phone size layout */
-.radio-inline {
-  padding-top: 9px;
+/* Fix the small offset between the horizontal form text and element on computer
+   view. */
+@media (min-width: 768px) {
+  .radio-inline {
+    padding-top: 9px;
+  }
+  .form-horizontal .control-label {
+    padding-top: 9px;
+  }
 }
-.form-horizontal .control-label {
-  padding-top: 9px;
+
+/* Fix the gap between the inputCheckboxGrou text and first checkbox on
+   smartphone view. */
+@media (max-width: 768px) {
+  .radio,
+  .checkbox {
+    margin-top: 0px;
 }
+

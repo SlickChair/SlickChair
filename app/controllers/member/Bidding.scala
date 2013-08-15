@@ -42,20 +42,20 @@ object Bidding extends Controller with SecureSocial {
       ++ Papers.all.filterNot(paper => memberBids.map(_.paperid).contains(paper.id))
         .map(paper => ("memberbids[%s].bid.value".format(paper.id), Bid.Medium.toString)).toMap
     )
-    Ok(views.html.bid(None, existingBidForm))
+    Ok(views.html.member.bid(None, existingBidForm))
   }
   
   def make = SecuredAction(MemberOrChair) { implicit request =>
     val member = Members.getFromRequest
     val bindedForm = bidForm.bindFromRequest
     bindedForm.fold(
-      _ => Ok(views.html.bid(Some("Error found!"), bindedForm)),
+      _ => Ok(views.html.member.bid(Some("Error found!"), bindedForm)),
       { case f @ BidForm(memberbids, topicIds) =>
         MemberTopics.deleteFor(member)
         MemberTopics.insertAll(topicIds.map(MemberTopic(member.id, _)))
         MemberBids.deleteFor(member)
         MemberBids.insertAll(memberbids.map(_.copy(memberid = member.id)))
-        Ok(views.html.bid(Some("Saved"), bindedForm))
+        Ok(views.html.member.bid(Some("Saved"), bindedForm))
       }
     )    
   }

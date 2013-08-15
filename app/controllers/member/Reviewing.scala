@@ -50,7 +50,7 @@ object Reviewing extends Controller with SecureSocial {
     
   def page(id: Int) = SecuredAction(MemberOrChair) { implicit request =>
     paperOrNotFound(id) { paper =>
-      Ok(views.html.paperPage(
+      Ok(views.html.member.paperPage(
         Reviews.of(paper, Members.getFromRequest).nonEmpty,
         paper,
         Authors.of(paper),
@@ -65,9 +65,9 @@ object Reviewing extends Controller with SecureSocial {
     paperOrNotFound(id) { paper =>
       Reviews.of(paper, Members.getFromRequest) match {
         case None =>
-          Ok(views.html.paperReview(false, paper, Authors.of(paper), reviewForm))
+          Ok(views.html.member.paperReview(false, paper, Authors.of(paper), reviewForm))
         case Some(review) => 
-          Ok(views.html.paperReview(true, paper, Authors.of(paper), reviewForm.fill(review)))
+          Ok(views.html.member.paperReview(true, paper, Authors.of(paper), reviewForm.fill(review)))
       }
     }
   }
@@ -77,7 +77,7 @@ object Reviewing extends Controller with SecureSocial {
     paperOrNotFound(id) { paper =>
       reviewForm.bindFromRequest.fold(
         errors =>
-          Ok(views.html.paperReview(Reviews.of(paper, member).nonEmpty, paper, Authors.of(paper), errors)),
+          Ok(views.html.member.paperReview(Reviews.of(paper, member).nonEmpty, paper, Authors.of(paper), errors)),
         form => {
           val now = DateTime.now
           Reviews.of(paper, member) match {

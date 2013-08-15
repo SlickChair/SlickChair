@@ -2,7 +2,7 @@ import org.joda.time.DateTime
 
 import models.entities._
 import models.relations._
-import models.secureSocial._
+import models.securesocial._
 import models.utils.{NewEmailTemplate, EmailTemplates}
 import play.api.{Application, GlobalSettings}
 

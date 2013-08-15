@@ -1,4 +1,4 @@
-package models.secureSocial
+package models.securesocial
 
 import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._

@@ -7,7 +7,7 @@ import models.entities.PaperType.PaperType
 import play.api.data.Form
 import play.api.data.Forms.{ignored, list, mapping, nonEmptyText, number, text}
 import play.api.data.Mapping
-import play.api.mvc.Controller
+import play.api.mvc.{Action, Controller}
 import securesocial.core.SecureSocial
 
 case class SubmissionForm(
@@ -59,7 +59,7 @@ object Submitting extends Controller with SecureSocial {
         Some(submissionForm.paper, submissionForm.authors.size, submissionForm.authors, submissionForm.topics))
   )
   
-  def form = SecuredAction { implicit request =>
+  def form = controllers.FakeAuth.FakeUserAction { implicit request =>
     Papers.withEmail(request.user.email.get) match {
       case None =>
         Ok(views.html.submission("New Submission", submissionForm))
@@ -73,59 +73,54 @@ object Submitting extends Controller with SecureSocial {
     }
   }
   
-  def make = UserAwareAction(parse.multipartFormData) { implicit request =>
-    request.user match {
-      case None =>
-        Redirect(routes.Submitting.form)
-      case Some(u) =>
-        val email = u.email.get
-        submissionForm.bindFromRequest.fold(
-          // TODO: if the form is not js validated we might want to save the
-          //       uploaded file in case of errors. Otherwise the user will
-          //       have to select it again.
-          errors => Ok(views.html.submission(email + "Submission: Errors found", errors)),
-          form => {
-            Ok(form.toString)
-            /*val SubmissionForm(formPaper, formAuthors, formTopics) = form 
-            val newFileId: Option[Int] = request.body.file("data").map{ file =>
-              val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray
-              Files.ins(NewFile(file.filename, blob.size, DateTime.now, blob))
-            }
-            
-            val paperId = Papers.withEmail(email) match {
-              case None =>
-                Papers.ins(NewPaper(
-                  contactemail = email,
-                  submissiondate = DateTime.now,
-                  lastupdate = DateTime.now,
-                  accepted = None,
-                  formPaper.title,
-                  formPaper.format,
-                  formPaper.keywords,
-                  formPaper.abstrct,
-                  fileid = newFileId
-                ))
-              case Some(dbPaper) =>
-                newFileId.map{ _ => dbPaper.fileid.map(i => Files.delete(i)) }
-                Authors.deleteFor(dbPaper)
-                PaperTopics.deleteFor(dbPaper)
-                Papers.updt(formPaper.copy(
-                  id = dbPaper.id,
-                  contactemail = dbPaper.contactemail, // == email by construction
-                  submissiondate = dbPaper.submissiondate,
-                  lastupdate = DateTime.now,
-                  accepted = dbPaper.accepted,
-                  fileid = newFileId.orElse(dbPaper.fileid)
-                ))
-                dbPaper.id
-            }
-            
-            Authors.insertAll(formAuthors.map(_.copy(paperId)))
-            PaperTopics.insertAll(formTopics.map(PaperTopic(paperId, _)))
-            Redirect(routes.Submitting.info)*/
-          }
-        )
-    }
+  def make = SecuredAction(false, None, parse.multipartFormData) { implicit request =>
+    val email = request.user.email.get
+    submissionForm.bindFromRequest.fold(
+      // TODO: if the form is not js validated we might want to save the
+      //       uploaded file in case of errors. Otherwise the user will
+      //       have to select it again.
+      errors => Ok(views.html.submission(email + "Submission: Errors found", errors)),
+      form => {
+        Ok(form.toString)
+        /*val SubmissionForm(formPaper, formAuthors, formTopics) = form 
+        val newFileId: Option[Int] = request.body.file("data").map{ file =>
+          val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray
+          Files.ins(NewFile(file.filename, blob.size, DateTime.now, blob))
+        }
+        
+        val paperId = Papers.withEmail(email) match {
+          case None =>
+            Papers.ins(NewPaper(
+              contactemail = email,
+              submissiondate = DateTime.now,
+              lastupdate = DateTime.now,
+              accepted = None,
+              formPaper.title,
+              formPaper.format,
+              formPaper.keywords,
+              formPaper.abstrct,
+              fileid = newFileId
+            ))
+          case Some(dbPaper) =>
+            newFileId.map{ _ => dbPaper.fileid.map(i => Files.delete(i)) }
+            Authors.deleteFor(dbPaper)
+            PaperTopics.deleteFor(dbPaper)
+            Papers.updt(formPaper.copy(
+              id = dbPaper.id,
+              contactemail = dbPaper.contactemail, // == email by construction
+              submissiondate = dbPaper.submissiondate,
+              lastupdate = DateTime.now,
+              accepted = dbPaper.accepted,
+              fileid = newFileId.orElse(dbPaper.fileid)
+            ))
+            dbPaper.id
+        }
+        
+        Authors.insertAll(formAuthors.map(_.copy(paperId)))
+        PaperTopics.insertAll(formTopics.map(PaperTopic(paperId, _)))
+        Redirect(routes.Submitting.info)*/
+      }
+    )
   }
   
   def info = SecuredAction { implicit request =>

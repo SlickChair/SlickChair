@@ -27,7 +27,7 @@ object Sql extends Controller with SecureSocial {
   ).fill(("SELECT SQL FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = SCHEMA()", Execute))
   
   def form = SecuredAction(ChairOnly) { implicit request =>
-    Ok(views.html.sql(None, queryForm))
+    Ok(views.html.chair.sql(None, queryForm))
   }
   
   def runQuery = SecuredAction(ChairOnly) { implicit request =>
@@ -46,7 +46,7 @@ object Sql extends Controller with SecureSocial {
       } catch {
         case e: Exception => e.toString.replaceFirst(": ", ":\n")
       }
-      Ok(views.html.sql(Some(result), filledForm))
+      Ok(views.html.chair.sql(Some(result), filledForm))
     }
   }
   
