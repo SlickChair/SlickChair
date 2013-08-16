@@ -1,5 +1,6 @@
 package controllers
 
+import controllers.Anyone
 import org.joda.time.DateTime
 import models.entities.{Author, Authors, Paper, PaperType}
 import models.entities.{Papers, Topics}
@@ -59,7 +60,7 @@ object Submitting extends Controller with SecureSocial {
         Some(submissionForm.paper, submissionForm.authors.size, submissionForm.authors, submissionForm.topics))
   )
   
-  def form = controllers.FakeAuth.FakeUserAction { implicit request =>
+  def form = controllers.FakeAuth.FakeAction(Anyone) { implicit request =>
     Papers.withEmail(request.user.email.get) match {
       case None =>
         Ok(views.html.submission("New Submission", submissionForm))

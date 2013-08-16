@@ -4,7 +4,7 @@
 )
 
 @import helper.bootstrap3._
-  @import models.entities._
+@import models.entities._
 
 @legend(name: String) = {
   <div class="row">
@@ -13,7 +13,7 @@
     </div>
   </div>
 }
-@authors  = @{(0 to 2)}
+@authors = @{(0 to 2)}
 
 @main(message) {
   @helper.form(routes.Submitting.make, 'enctype -> "multipart/form-data", 'class -> "form-horizontal") {
@@ -46,29 +46,80 @@
         '_label -> "File")
     
       @legend("Authors")
-      @bootstrap3.select(
-        submissionForm("nauthors"),
-        authors.map(i => ((i+1).toString, (i+1).toString)),
-        '_label -> "Number of authors")
+      <div class="hidden">
+        @bootstrap3.select(
+          submissionForm("nauthors"),
+          authors.map(i => ((i+1).toString, (i+1).toString)),
+          '_label -> "Number of authors")
+      </div>
       @authors.map { i =>
-        <fieldset><legend>Author @(i+1)</legend>
-        @bootstrap3.inputText(
-          submissionForm(s"authors[$i].firstname"),
-          '_label -> "First Name")
-        @bootstrap3.inputText(
-          submissionForm(s"authors[$i].lastname"),
-          '_label -> "Last Name")
-        @bootstrap3.inputText(
-          submissionForm(s"authors[$i].organization"), 
-          '_label -> "Organization")
-        @bootstrap3.inputText(
-          submissionForm(s"authors[$i].email"),
-          '_label -> "Email")
-      </fieldset><br>
+        <div class="hidden" id="author@i">
+          <fieldset><legend>Author @(i+1)</legend>
+            @bootstrap3.inputText(
+              submissionForm(s"authors[$i].firstname"),
+              '_label -> "First Name")
+            @bootstrap3.inputText(
+              submissionForm(s"authors[$i].lastname"),
+              '_label -> "Last Name")
+            @bootstrap3.inputText(
+              submissionForm(s"authors[$i].organization"), 
+              '_label -> "Organization")
+            @bootstrap3.inputText(
+              submissionForm(s"authors[$i].email"),
+              '_label -> "Email")
+          </fieldset><br>
+        </div>
     }
     </fieldset>
 
     <br>
     <input type="submit">
+    <script>
+    window.onload = function () {
+      document.getElementById('author0').className="visible";
+      // document.body.onkeydown = function (e) {
+      //   if (e.keyCode == 13 && e.ctrlKey) {
+      //     document.getElementById('submit').click();
+      //     return false; 
+      //   }
+      // }
+    }
+    // TODO: use Play function to convert data structure to Json.
+    // var recipients = new Array();
+    // var subjects = new Array();
+    // var bodies = new Array();
+    // document.getElementById("recipientSelect").onchange = function() {
+    //   if(this.selectedIndex !== 0) {
+    //     changeTextareaValueById("to", recipients[this.selectedIndex - 1]);
+    //   }
+    // }
+    
+    // document.getElementById("templateSelect").onchange = function() {
+    //   if(this.selectedIndex !== 0) {
+    //     changeTextareaValueById("subject", subjects[this.selectedIndex - 1]);
+    //     changeTextareaValueById("body", bodies[this.selectedIndex - 1]);
+    //   }
+    // }
+    
+    // var changeTextareaValueById = function(id, text) {
+    //   var element = document.getElementById(id);
+    //   var event = document.createEvent("TextEvent");
+    //   element.focus();
+    //   element.select();
+    //   event.initTextEvent("textInput", true, true, null, text);
+    //   element.dispatchEvent(event);
+    // }
+    
+    // document.getElementById("submit").addEventListener("click",
+    //   function(e) {
+    //     var confirmed = confirm("You are about to send "
+    //       + document.getElementById("to").value.split(",").length
+    //       + " emails.\nDo you want continue?")
+    //     if (!confirmed) {
+    //       e.preventDefault();
+    //     }
+    //   }, false);
+    
+    </script>
   }
 }

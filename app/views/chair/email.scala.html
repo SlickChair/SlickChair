@@ -52,6 +52,7 @@
     <input type="submit" id="submit" value="Send">
   }
   <script>
+    // TODO: use Play function to convert data structure to Json.
     var recipients = new Array();
     @for((emails, index) <- recipientsCategories.map(_._2).zipWithIndex) {
       recipients[@index] = "@emails.toString";
