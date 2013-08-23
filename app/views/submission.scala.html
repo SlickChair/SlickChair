@@ -6,19 +6,11 @@
 @import helper.bootstrap3._
 @import models.entities._
 
-@legend(name: String) = {
-  <div class="row">
-    <div class="col-lg-10 col-offset-2">
-      <h3>@name</h3>
-    </div>
-  </div>
-}
 @authors = @{(0 to 2)}
 
 @main(message) {
   @helper.form(routes.Submitting.make, 'enctype -> "multipart/form-data", 'class -> "form-horizontal") {
-    <fieldset>
-      @legend("General Informations")
+      <legend>General Informations</legend>
       @bootstrap3.inputText(
         submissionForm("paper.title"),
         '_label -> "Paper title")
@@ -39,13 +31,9 @@
         "topics",
         topics.toSeq.map( t => (t.id, t.name) ),
         '_label -> "Topics")
-    </fieldset><br>
-    
       @bootstrap3.inputFile(
         submissionForm("data"),
         '_label -> "File")
-    
-      @legend("Authors")
       <div class="hidden">
         @bootstrap3.select(
           submissionForm("nauthors"),
@@ -54,6 +42,7 @@
       </div>
       @authors.map { i =>
         <div class="hidden" id="author@i">
+          <br>
           <fieldset><legend>Author @(i+1)</legend>
             @bootstrap3.inputText(
               submissionForm(s"authors[$i].firstname"),
@@ -70,6 +59,8 @@
           </fieldset><br>
         </div>
     }
+    <span class="glyphicon glyphicon-plus-sign"></span>
+    <span class="glyphicon glyphicon-minus-sign"></span>
     </fieldset>
 
     <br>

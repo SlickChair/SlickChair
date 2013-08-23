@@ -1,4 +1,4 @@
-/* TODO: rewrite in LESS */
+/* TODO: rewrite in LESS/SASS */  
 
 /*body {
   padding-top: 50px;
@@ -9,6 +9,13 @@
     max-width: 940px;
   }
 }*/
+
+/* Prevent the titles for beeing indented alone on tablet view.*/
+/*@media (max-width: 991px) {
+  .col-md-offset-2 {
+    margin-left: 0;
+  }
+} */
 
 /* Gray title header (similar to was is used on Play! demos). */
 .content {
@@ -45,30 +52,45 @@
   color: #fff;
 }
 @media (min-width: 768px) {
-  .navbar-inverse .navbar-brand {
+  .navbar > .container .navbar-brand {
     margin-left: 0px;
   }
-  .navbar-text {
+  .navbar-brandt {
     font-size: 13px;
   }
 }
 
-/* Fix the small offset between the horizontal form text and element on computer
-   view. */
-@media (min-width: 768px) {
-  .radio-inline {
-    padding-top: 9px;
+/* Fix the gap between the checkbox/radio text on smartphone view. */
+@media (max-width: 991px) {
+  .form-horizontal .radio-inline {
+    padding-top: 0px;
   }
-  .form-horizontal .control-label {
-    padding-top: 9px;
+
+  .form-horizontal .checkbox{
+    padding-top: 0px;
+    padding-bottom: 7px;
   }
 }
 
-/* Fix the gap between the inputCheckboxGrou text and first checkbox on
-   smartphone view. */
-@media (max-width: 768px) {
-  .radio,
-  .checkbox {
-    margin-top: 0px;
+/* Aligns the legend with the horizontal form. */
+@media (min-width: 991px) {
+  legend {
+    padding-left: 17.2%;
+  }
+}
+/* Legends as h3. */
+legend {
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+  margin-top: 20px;
+  font-size: 26px;
 }
 
+/* Fix the double border on file selector. */
+#data {
+  border-left: 0px;
+}
+
+.glyphicon {
+    font-size: 20px;    
+}

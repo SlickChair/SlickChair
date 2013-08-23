@@ -2,19 +2,19 @@
 
 @import views.html.helper._
 
-<div class="row control-group @elements.args.get('_class) @if(elements.hasErrors) {has-error}" id="@elements.args.get('_id).getOrElse(elements.id + "_field")">
+<div class="form-group @elements.args.get('_class) @if(elements.hasErrors) {has-error}" id="@elements.args.get('_id).getOrElse(elements.id + "_field")">
   <label for="@elements.id" class="col-lg-2 control-label">@elements.label(elements.lang)</label>
-  <div class="col-lg-9 controls">
+  <div class="col-lg-10">
     @elements.input
     @*defining(elements.infos(elements.lang)) { infos =>
       @if(infos.nonEmpty) {
         <span class="help-block">@infos.mkString(", ")</span>
       }
-    }*@
+    }
     @defining(elements.errors(elements.lang)) { errors =>
       @if(errors.nonEmpty) {
-        <span class="help-block">@errors.mkString(", ")</span>@* or help-inline *@
+        <span class="help-block">@errors.mkString(", ")</span>@* or help-inline
       }
-    }
+    }*@
   </div>
 </div>

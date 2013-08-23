@@ -16,5 +16,6 @@
 @placeholder = @{ args.toMap.get('_label).map(_.toString).getOrElse("") }
 
 @input(field, args.filter(_._1 != 'type):_*) { (id, name, value, htmlArgs) =>
-    <input type="@inputType" id="@id" name="@name" value="@value" @toHtmlArgs(htmlArgs) class="input-with-feedback" placeholder="@placeholder">
+  <input type="@inputType" id="@id" name="@name" value="@value" @toHtmlArgs(htmlArgs) class="form-control" placeholder="@placeholder">
 }
+

@@ -1,6 +1,5 @@
 package controllers
 
-import controllers.Anyone
 import org.joda.time.DateTime
 import models.entities.{Author, Authors, Paper, PaperType}
 import models.entities.{Papers, Topics}
