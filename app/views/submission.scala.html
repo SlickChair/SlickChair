@@ -43,7 +43,7 @@
       @authors.map { i =>
         <div class="hidden" id="author@i">
           <br>
-          <fieldset><legend>Author @(i+1)</legend>
+          <fieldset><legend><div style="margin-left: 5px">Author @(i+1)</div><div> lolol</div></legend>
             @bootstrap3.inputText(
               submissionForm(s"authors[$i].firstname"),
               '_label -> "First Name")
