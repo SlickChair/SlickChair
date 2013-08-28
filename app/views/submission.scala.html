@@ -10,107 +10,64 @@
 
 @main(message) {
   @helper.form(routes.Submitting.make, 'enctype -> "multipart/form-data", 'class -> "form-horizontal") {
-      <legend>General Informations</legend>
-      @bootstrap3.inputText(
-        submissionForm("paper.title"),
-        '_label -> "Paper title")
-      @bootstrap3.inputRadioGroup(
-        submissionForm("paper.format.value"), 
-        PaperType.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
-        '_label -> "Type")
-      @bootstrap3.inputText(
-        submissionForm("paper.keywords"),
-        '_label -> "Keywords")
-      @bootstrap3.textarea(
-        submissionForm("paper.abstrct"),
-        '_label -> "Abstract",
-        'placeholder -> "Abstract",
-        'rows -> 5)
-      @bootstrap3.inputCheckboxGroup(
-        submissionForm,
-        "topics",
-        topics.toSeq.map( t => (t.id, t.name) ),
-        '_label -> "Topics")
-      @bootstrap3.inputFile(
-        submissionForm("data"),
-        '_label -> "File")
-      <div class="hidden">
+      <fieldset>
+        <legend>General Informations</legend>
+        @bootstrap3.inputText(
+          submissionForm("paper.title"),
+          '_label -> "Paper title")
+        @bootstrap3.inputRadioGroup(
+          submissionForm("paper.format.value"), 
+          PaperType.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
+          '_label -> "Type")
+        @bootstrap3.inputText(
+          submissionForm("paper.keywords"),
+          '_label -> "Keywords")
+        @bootstrap3.textarea(
+          submissionForm("paper.abstrct"),
+          '_label -> "Abstract",
+          'placeholder -> "Abstract",
+          'rows -> 5)
+        @bootstrap3.inputCheckboxGroup(
+          submissionForm,
+          "topics",
+          topics.toSeq.map( t => (t.id, t.name) ),
+          '_label -> "Topics")
+        @bootstrap3.inputFile(
+          submissionForm("data"),
+          '_label -> "File")
         @bootstrap3.select(
           submissionForm("nauthors"),
           authors.map(i => ((i+1).toString, (i+1).toString)),
-          '_label -> "Number of authors")
-      </div>
+          '_label -> "Number of authors",
+          '_class -> "hidejs")
+      </fieldset>
       @authors.map { i =>
-        <div class="hidden" id="author@i">
-          <br>
-          <fieldset><legend><div style="margin-left: 5px">Author @(i+1)</div><div> lolol</div></legend>
-            @bootstrap3.inputText(
-              submissionForm(s"authors[$i].firstname"),
-              '_label -> "First Name")
-            @bootstrap3.inputText(
-              submissionForm(s"authors[$i].lastname"),
-              '_label -> "Last Name")
-            @bootstrap3.inputText(
-              submissionForm(s"authors[$i].organization"), 
-              '_label -> "Organization")
-            @bootstrap3.inputText(
-              submissionForm(s"authors[$i].email"),
-              '_label -> "Email")
-          </fieldset><br>
-        </div>
+        <fieldset class="hidejs" id="author@i">
+          <legend>Author @(i+1)</legend>
+          @bootstrap3.inputText(
+            submissionForm(s"authors[$i].firstname"),
+            '_label -> "First Name")
+          @bootstrap3.inputText(
+            submissionForm(s"authors[$i].lastname"),
+            '_label -> "Last Name")
+          @bootstrap3.inputText(
+            submissionForm(s"authors[$i].organization"), 
+            '_label -> "Organization")
+          @bootstrap3.inputText(
+            submissionForm(s"authors[$i].email"),
+            '_label -> "Email")
+        </fieldset>
     }
-    <span class="glyphicon glyphicon-plus-sign"></span>
-    <span class="glyphicon glyphicon-minus-sign"></span>
     </fieldset>
+      <div class="form-group showjs">
+        <label class="col-lg-2 control-label">Add/Remove Authors</label>
+        <div class="col-lg-10">
+        <span class="glyphicon glyphicon-plus-sign"></span>
+        <span class="glyphicon glyphicon-minus-sign disabeled"></span>
+        </div>
+      </div>
+    <fieldset>
 
-    <br>
     @bootstrap3.button("Submit")
-    <script>
-    window.onload = function () {
-      document.getElementById('author0').className="visible";
-      // document.body.onkeydown = function (e) {
-      //   if (e.keyCode == 13 && e.ctrlKey) {
-      //     document.getElementById('submit').click();
-      //     return false; 
-      //   }
-      // }
-    }
-    // TODO: use Play function to convert data structure to Json.
-    // var recipients = new Array();
-    // var subjects = new Array();
-    // var bodies = new Array();
-    // document.getElementById("recipientSelect").onchange = function() {
-    //   if(this.selectedIndex !== 0) {
-    //     changeTextareaValueById("to", recipients[this.selectedIndex - 1]);
-    //   }
-    // }
-    
-    // document.getElementById("templateSelect").onchange = function() {
-    //   if(this.selectedIndex !== 0) {
-    //     changeTextareaValueById("subject", subjects[this.selectedIndex - 1]);
-    //     changeTextareaValueById("body", bodies[this.selectedIndex - 1]);
-    //   }
-    // }
-    
-    // var changeTextareaValueById = function(id, text) {
-    //   var element = document.getElementById(id);
-    //   var event = document.createEvent("TextEvent");
-    //   element.focus();
-    //   element.select();
-    //   event.initTextEvent("textInput", true, true, null, text);
-    //   element.dispatchEvent(event);
-    // }
-    
-    // document.getElementById("submit").addEventListener("click",
-    //   function(e) {
-    //     var confirmed = confirm("You are about to send "
-    //       + document.getElementById("to").value.split(",").length
-    //       + " emails.\nDo you want continue?")
-    //     if (!confirmed) {
-    //       e.preventDefault();
-    //     }
-    //   }, false);
-    
-    </script>
   }
 }

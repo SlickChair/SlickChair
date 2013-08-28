@@ -13,7 +13,7 @@
 @(field: play.api.data.Field, options: Seq[(String,String)], args: (Symbol,Any)*)(implicit handler: helper.FieldConstructor, lang: play.api.i18n.Lang)
 
 @input(field, args:_*) { (id, name, value, htmlArgs) =>
-    <select id="@id" name="@name" @toHtmlArgs(htmlArgs)>
+    <select id="@id" name="@name" class="form-control" @toHtmlArgs(htmlArgs)>
         @args.toMap.get('_default).map { defaultValue =>
             <option class="blank" value="">@defaultValue</option>
         }
