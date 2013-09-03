@@ -1,5 +1,6 @@
 @(title: String,
-  conferenceName: String = models.utils.ConferenceShortName.get
+  user: Option[String] = None,
+  conferenceName: String = models.utils.ConferenceShortName.get 
 )(content: Html)
 
 @minified = @{ if (play.Play.isProd()) ".min" else "" }
@@ -14,14 +15,13 @@
   <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")">
   <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
   <style type="text/css">
+    @* Made by http://www.domainsinfo.org/, found on http://subtlepatterns.com/. *@
     body {
-      @* Made by http://www.domainsinfo.org/, found on http://subtlepatterns.com/ *@
       background-image:url('@routes.Assets.at("images/wavegrid.png")');
-      background-repeat:;
     }
   </style>
 </head>
-<body>
+<body @if(user.isEmpty) { class="modal-open"}>
   <nav>
     <div class="navbar navbar-inverse navbar-static-top">
       <div class="container">
@@ -40,7 +40,13 @@
           <li><a href="#">Menus</a></li>
           <li><a href="#">Entries</a></li>
         </ul>
-      <p class="navbar-text pull-right">user@@gmail.com — <a href="#" class="navbar-link">Disconnect</a></p>
+      <p class="navbar-text pull-right">
+      @if(user.isEmpty) {
+        <a href="#" class="navbar-link">Disconnected</a>
+      } else {
+        @user.get — <a href="#" class="navbar-link">Disconnect</a>
+      }
+      </p>
       </div>
     </div>
     </div>
@@ -60,7 +66,7 @@
   </div>
   <script src="@routes.Assets.at("vendor/javascripts/jquery.min.js")" type="text/javascript"></script>
   <script src="@routes.Assets.at("vendor/javascripts/bootstrap.js")" type="text/javascript"></script>
-  <script src="@routes.Assets.at("javascripts/main.js")" type="text/javascript"></script>
   <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+@if(user.isEmpty) { <div class="modal-backdrop fade in"></div> }
 </body>
 </html>

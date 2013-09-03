@@ -13,5 +13,5 @@
 @(field: play.api.data.Field, args: (Symbol,Any)*)(implicit handler: helper.FieldConstructor, lang: play.api.i18n.Lang)
 
 @input(field, args:_*) { (id, name, value, htmlArgs) =>
-    <textarea class="form-control" id="@id" name="@name" @toHtmlArgs(htmlArgs)>@value</textarea>
+  <textarea class="form-control" id="@id" name="@name" @toHtmlArgs(htmlArgs)>@value</textarea>
 }

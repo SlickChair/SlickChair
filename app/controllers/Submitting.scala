@@ -59,17 +59,20 @@ object Submitting extends Controller with SecureSocial {
         Some(submissionForm.paper, submissionForm.authors.size, submissionForm.authors, submissionForm.topics))
   )
   
-  def form = controllers.FakeAuth.FakeAction(Anyone) { implicit request =>
-    Papers.withEmail(request.user.email.get) match {
+
+  // def form = controllers.FakeAuth.FakeAwareAction { implicit request =>
+  def form = UserAwareAction { implicit request =>
+    val email = request.user.map(_.email.get)
+    Papers.withEmail(email.getOrElse("")) match { // TODO hacky.
       case None =>
-        Ok(views.html.submission("New Submission", submissionForm))
+        Ok(views.html.submission("New Submission", submissionForm, email))
       case Some(paper) =>
         def incBind[T](form: Form[T], data: Map[String, String]) = form.bind(form.data ++ data)
         val existingSubmissionForm = incBind(
           submissionForm.fill(SubmissionForm(paper, Authors.of(paper), List())),
           Topics.of(paper).map(topic => ("topics[%s]".format(topic.id), topic.id.toString)).toMap
         )
-        Ok(views.html.submission("Edit Submission", existingSubmissionForm))
+        Ok(views.html.submission("Edit Submission", existingSubmissionForm, email))
     }
   }
   

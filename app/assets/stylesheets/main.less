@@ -82,17 +82,19 @@ legend {
 // Inline file selector, looks nicer when js is off.
 input[type="file"] {
   display: inline-block;
+  height: 34px;
 }
 
-// Add space between authors
+// Add space between authors.
 fieldset {
   margin-bottom: 30px;
 }
 
-// .disabeled {
-//   color: lighten(black, 65%);
-// }
-
+// Elements that are displayed only if javascript is ON. .hidejs plays the opposite role.
 .showjs {
   display: none;
+}
+
+.modal-dialog {
+  padding-top: 110px;
 }

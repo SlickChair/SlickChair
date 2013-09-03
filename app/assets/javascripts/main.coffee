@@ -25,7 +25,7 @@ $ ->
   plus = $(".glyphicon-plus-sign")
   nauthors = $("#nauthors")
   disableMinusIfZero = ->
-    minus.css("color", if Number(nauthors.val()) == 1 then "#a6a6a6" else "#333333")
+    minus.css("color", if Number(nauthors.val()) == 1 then "#a6a6a6" else plus.css("color"))
   disableMinusIfZero()
   
   plus.click (e) ->
