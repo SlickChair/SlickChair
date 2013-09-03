@@ -1,8 +1,7 @@
 @(title: String,
   submissionForm: Form[SubmissionForm],
   user: Option[String] = None,
-  topics: List[models.entities.Topic] = models.entities.Topics.all
-)
+  topics: List[models.entities.Topic] = models.entities.Topics.all)
 
 @import helper.bootstrap3._
 @import models.entities._
@@ -10,10 +9,9 @@
 @authors = @{(0 to 2)}
 
 @main(title, user) {
-  @helper.form(
+  @bootstrap3.form(
     routes.Submitting.make,
-    'enctype -> "multipart/form-data",
-    'class -> "form-horizontal") {
+    'enctype -> "multipart/form-data") {
   
     @if(user.isEmpty) {
       <!-- Modal -->
@@ -85,10 +83,10 @@
     }
     </fieldset>
       <div class="form-group showjs"> 
-        <label class="col-lg-2 control-label">Remove/Add Authors</label>
+        <label class="col-lg-2 control-label">Add/Remove Authors</label>
         <div class="col-lg-10">
-        <span class="glyphicon glyphicon-minus-sign disabeled"></span>
         <span class="glyphicon glyphicon-plus-sign"></span>
+        <span class="glyphicon glyphicon-minus-sign disabeled"></span>
         </div>
       </div>
     <fieldset>

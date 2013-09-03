@@ -15,7 +15,7 @@ Done:
 Todo:
 =====
 
-- Refine a bit the look of the UI
+- Use a modal for login
 - Paper/Reviewer assignement
 - Config page(s)
 - Decision page (accepted/rejected)

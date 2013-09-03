@@ -1,30 +1,30 @@
-@(result: Option[String], queryForm: Form[(String, controllers.chair.SqlMethod.Value)])
+@(result: Option[String],
+  queryForm: Form[(String, controllers.chair.SqlMethod.Value)],
+  user: String)
 
-@import helper._
 @import controllers.chair._
+@import helper.bootstrap3._
 
-@main("SQL Form") {
-  <h1>Query:</h1>
-  @form(routes.Sql.runQuery) {
-    @textarea(
+@main("SQL Form", Some(user)) {
+  @bootstrap3.form(routes.Sql.runQuery) {
+    <legend>Query</legend>
+    @bootstrap3.textarea(
       queryForm("query"),
       'placeholder -> "SELECT * FROM SECURE_SOCIAL_USERS",
-      '_label -> "",
-      '_help -> "",
-      'rows -> 5,
-      'cols -> 50)
+      '_label -> "PostgreSQL",
+      'rows -> 3)
     
-    @inputRadioGroup(
+    @bootstrap3.inputRadioGroup(
       queryForm("method.m"), 
       SqlMethod.values.toSeq.map(f => f.toString -> f.toString), 
-      '_label -> "",
-      '_help -> "")
-    
-    <input type="submit" id="submit" value="Run (Ctrl+Enter)">
+      '_label -> "Query Type")
+          
+    <div class="small-gap"></div>
+    @bootstrap3.button("Run (Ctrl+Enter)")
   }
-  
+
   @result.map { output =>
-    <h1>Results:</h1>
+    <legend></legend>
     <pre>@output</pre>
   }
   <script>

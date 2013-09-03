@@ -2,7 +2,6 @@ package controllers.chair
 
 import anorm.SQL
 import controllers.ChairOnly
-import controllers.FakeAuth.FakeAction
 import play.api.Play.current
 import play.api.data.Form
 import play.api.data.Forms.{mapping, nonEmptyText, text, tuple}
@@ -25,13 +24,13 @@ object Sql extends Controller with SecureSocial {
         )(SqlMethod.withName(_))
          (Some(_).map(_.toString))
     )
-  ).fill(("SELECT SQL FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = SCHEMA()", Execute))
+  ).fill(("", Execute))
   
-  def form = FakeAction(ChairOnly) { implicit request =>
-    Ok(views.html.chair.sql(None, queryForm))
+  def form = controllers.FakeAuth.FakeAction(ChairOnly) { implicit request =>
+    Ok(views.html.chair.sql(None, queryForm, request.user.email.get))
   }
   
-  def runQuery = FakeAction(ChairOnly) { implicit request =>
+  def runQuery = controllers.FakeAuth.FakeAction(ChairOnly) { implicit request =>
     val filledForm = queryForm.bindFromRequest
     DB.withConnection { implicit session =>
       val (query, method) = filledForm.get
@@ -47,7 +46,7 @@ object Sql extends Controller with SecureSocial {
       } catch {
         case e: Exception => e.toString.replaceFirst(": ", ":\n")
       }
-      Ok(views.html.chair.sql(Some(result), filledForm))
+      Ok(views.html.chair.sql(Some(result), filledForm, request.user.email.get))
     }
   }
   

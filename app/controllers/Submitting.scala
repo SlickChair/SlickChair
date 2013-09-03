@@ -1,9 +1,11 @@
 package controllers
 
 import org.joda.time.DateTime
-import models.entities.{Author, Authors, Paper, PaperType}
+import models.entities.{Author, Authors, NewPaper, Paper, PaperType}
 import models.entities.{Papers, Topics}
 import models.entities.PaperType.PaperType
+import models.utils.{Files, NewFile}
+import models.relations.{PaperTopics, PaperTopic}
 import play.api.data.Form
 import play.api.data.Forms.{ignored, list, mapping, nonEmptyText, number, text}
 import play.api.data.Mapping
@@ -60,8 +62,8 @@ object Submitting extends Controller with SecureSocial {
   )
   
 
-  // def form = controllers.FakeAuth.FakeAwareAction { implicit request =>
-  def form = UserAwareAction { implicit request =>
+  def form = controllers.FakeAuth.FakeAwareAction { implicit request =>
+  // def form = UserAwareAction { implicit request =>
     val email = request.user.map(_.email.get)
     Papers.withEmail(email.getOrElse("")) match { // TODO hacky.
       case None =>
@@ -84,8 +86,8 @@ object Submitting extends Controller with SecureSocial {
       //       have to select it again.
       errors => Ok(views.html.submission(email + "Submission: Errors found", errors)),
       form => {
-        Ok(form.toString)
-        /*val SubmissionForm(formPaper, formAuthors, formTopics) = form 
+        // Ok(form.toString)
+        val SubmissionForm(formPaper, formAuthors, formTopics) = form 
         val newFileId: Option[Int] = request.body.file("data").map{ file =>
           val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray
           Files.ins(NewFile(file.filename, blob.size, DateTime.now, blob))
@@ -121,7 +123,7 @@ object Submitting extends Controller with SecureSocial {
         
         Authors.insertAll(formAuthors.map(_.copy(paperId)))
         PaperTopics.insertAll(formTopics.map(PaperTopic(paperId, _)))
-        Redirect(routes.Submitting.info)*/
+        Redirect(routes.Submitting.info)
       }
     )
   }
