@@ -19,21 +19,13 @@
       SqlMethod.values.toSeq.map(f => f.toString -> f.toString), 
       '_label -> "Query Type")
           
-    <div class="small-gap"></div>
-    @bootstrap3.button("Run (Ctrl+Enter)")
+    <div class="ctrl-enter">
+      @bootstrap3.button("Run (Ctrl+Enter)")
+    </div>
   }
-
   @result.map { output =>
-    <legend></legend>
+    <br>
+    <br>
     <pre>@output</pre>
   }
-  <script>
-  // TODO: rewrite in jquery/caffescript, pull out.
-  window.onload = function () {
-    document.getElementById('query').select();
-    document.body.onkeydown = function (e) {
-      if (e.keyCode == 13 && e.ctrlKey) {
-        document.getElementById('submit').click();
-        return false; }}}
-  </script>
 }

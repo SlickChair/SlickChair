@@ -62,8 +62,8 @@ object Submitting extends Controller with SecureSocial {
   )
   
 
-  def form = controllers.FakeAuth.FakeAwareAction { implicit request =>
-  // def form = UserAwareAction { implicit request =>
+  // def form = controllers.FakeAuth.FakeAwareAction { implicit request =>
+  def form = UserAwareAction { implicit request =>
     val email = request.user.map(_.email.get)
     Papers.withEmail(email.getOrElse("")) match { // TODO hacky.
       case None =>

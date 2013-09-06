@@ -43,3 +43,10 @@ $ ->
     else
       $("#author#{ n - 1 }").hide()
     disableMinusIfZero()
+  
+  # /slq, select the query textarea and submit on ctrl+enter.
+  $("#query").select()
+  $("body").keydown (e) ->
+    ENTER = 13
+    if e.keyCode == ENTER and e.ctrlKey
+      $(".ctrl-enter").find("button").click()

@@ -49,12 +49,4 @@ object Sql extends Controller with SecureSocial {
       Ok(views.html.chair.sql(Some(result), filledForm, request.user.email.get))
     }
   }
-  
-  def email = TODO
-  def config = TODO
-  def topics = TODO
-  def members = TODO
-  def auctions = TODO
-  def decisions = TODO
-  def dashboard = TODO
 }

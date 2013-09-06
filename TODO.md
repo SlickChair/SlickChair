@@ -15,7 +15,8 @@ Done:
 Todo:
 =====
 
-- Use a modal for login
+- Use a modal style login
+- Build a menu for each type of user 
 - Paper/Reviewer assignement
 - Config page(s)
 - Decision page (accepted/rejected)
