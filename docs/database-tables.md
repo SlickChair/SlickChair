@@ -1,7 +1,10 @@
 Database tables:
 ================
 
-Chairs have access to a SQL form at `your-website/sql` where abitrary queries can be executed. This page could be use to extracting relevant data or performing actions that are not doable via the web interface (such as breaking the system).
+Chairs have access to a SQL form at `your-website/sql` where abitrary queries
+can be executed. This page could be use to extracting relevant data or
+performing actions that are not doable via the web interface (such as breaking
+the system).
 
 The system uses a total of 15 table:
 
