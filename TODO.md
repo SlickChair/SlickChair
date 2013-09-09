@@ -24,6 +24,7 @@ Todo:
 - Variables for the email client
 - Use the [POST-Redirect-GET pattern][1] in all the forms to prevent repost on
   page reload
+- SSL
 
 Out of scope:
 =============
@@ -33,7 +34,6 @@ Out of scope:
 - Phases abstraction for settings (1 Submission, 2 Bidding, 3 Review, ...)
 - Client side stuff (starting with form validation)
 - Prefill the submission form with data extracted from the PDF
-- SSL
 - ...
 
 [1]: http://www.theserverside.com/news/1365146/Redirect-After-Post

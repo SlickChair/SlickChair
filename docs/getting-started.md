@@ -1,38 +1,94 @@
-Getting Started
-===============
+Running in production
+=====================
 
-Requirements
-------------
-
-To run SlickChair, you need the [Play Framework v2.1.1][2].
+The instance that you obtain by following the getting started instructions is configured for testing/development. A few additional steps are required to setup your SlickChair instance in production.
 
 
-Running locally
----------------
+Database
+--------
 
-You first need to download SlickChair sources from [GitHub][7]. If you have [Git][3], it can be done with the following command:
+The SlickChair demo works with an in-memory H2 database that should only be used for testing purposes. The first thing to do to deploy deployment is to setup more robust database. SlickChair uses [Slick][1] to access databases, which means that it works with most of the [popular database systems][2].
 
-    git clone https://github.com/SlickChair/SlickChair
+Once you have a database system up and running, you need to configure SlickChair to use it by editing the following lines of `conf/prod.conf`:
 
-After that, move to the SlickChair directory and run the application with Play:
+**TODO: create and link**
 
-    cd SlickChair
-    play run
+    # Database configuration
+    db.default.driver=org.CHANGE_TO_DATABASE_NAME.Driver
+    db.default.url="CHANGE_TO_DATABASE_URL"
 
-Once started, SlickChair will be accessible at [http://localhost:9000/][5]. The first person to log into SlickChair will obtain the chair privileges (administrator). You can navigate thought the administration pages for further informations on how to invite program committee members, manage submissions and configure SlickChair.
+Note that if you plan to deploy your instance on Heroku, you can skip this step entirely. The database driver (postgresql) and url are overwritten by Heroku.
+
+**TODO: link to deploying on heroku doc page**
 
 
-Deploying on Heroku
--------------------
+Secret key
+----------
 
-[Heroku][4] provides a handy infrastructure for hosting web applications. Within a few minutes you will be able to get your SlickChair instance up and running online. 
+Play uses a secret key use to secure cryptographic functions. You first need to generate a new one:
+
+    $ cat /dev/urandom | tr -cd '[:alnum:]' | fold -w65 | head -n1
+    RAfar4lHJ1fnJNaQ8yQemwrGuA0pISJ4qCxqNjRALRxNtcEaaEkgl3Rd0wsPPjgCH
     
-    # TODO
+And set it in `conf/prod.conf`:
+
+    # Secret key
+    application.secret="A_RANDOMELY_GENERATED_65_CHARACTERS_LONG_STRING_FOR_CRYPTOGRAPHY"
+
+
+SMTP
+----
+
+To be able to send emails through SlickChair you need to configure a SMTP server:
+
+    # SMTP settings
+    smtp {
+      host=smtp.gmail.com
+      #port=25
+      ssl=true
+      user="CHANGE_TO_YOUR_EMAIL@gmail.com"
+      password=CHANGE_TO_YOUR_PASSWORD
+      from="CHANGE_TO_YOUR_EMAIL@gmail.com"
+    }
+
+
+Google/Facebook login
+---------------------
+
+The login via Google/Facebook requires your SlickChair instance to be registered as a Google/Facebook application. If you don't have accounts on these networks, first create one:
+
+- [Google (mobile phone confirmation)][3]
+- [Facebook (email confirmation)][4]
+
+**TODO: Check names**
+
+During the application registration, you will be asked to provide a call back url. If you do not yet have a domain name for your conference, or simply want to test locally, set it to `http://localhost:9000/login`. You can change it later from the same interfaces.
+
+- [Google application registration][3]
+- [Facebook application registration][4]
+
+Finally, set the `clientId` and `clientSecret` in `conf/prod.conf`:
+
+**TODO: hide constants?**
+
+    facebook {
+      authorizationUrl="https://graph.facebook.com/oauth/authorize"
+      accessTokenUrl="https://graph.facebook.com/oauth/access_token"
+      clientId=CHANGE_TO_YOUR_CLIENT_ID
+      clientSecret=CHANGE_TO_YOUR_CLIENT_SECRET
+      scope=email
+    }
     
-[1]: http://www.java.com
-[2]: http://www.playframework.com/documentation/2.1.1/Installing
-[3]: http://git-scm.com/downloads
-[4]: https://www.heroku.com/
-[5]: http://localhost:9000/
-[6]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
-[7]: https://github.com/SlickChair/SlickChair
+    google {
+      authorizationUrl="https://accounts.google.com/o/oauth2/auth"
+      accessTokenUrl="https://accounts.google.com/o/oauth2/token"
+      clientId=CHANGE_TO_YOUR_CLIENT_ID
+      clientSecret=CHANGE_TO_YOUR_CLIENT_SECRET
+      scope="https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email"
+    }
+  
+[1]: http://slick.typesafe.com/
+[2]: http://slick.typesafe.com/doc/1.0.1/introduction.html#supported-database-systems
+[3]: http://google.account
+[4]: http://facebook.account
+[5]: https://www.heroku.com/
