@@ -103,27 +103,34 @@ fieldset {
   padding-top:6px;
 }
 
-.facebook {
-}
-.google {
-}
-.email {
-}
-.login {
-  display: block;
-  font-size: 20px;
-  font-weight: bold;
-  background-color: #2D72D9;
-  color: #fff;
-  width: 145px;
-  height: 50px;
-  line-height: 28px;
-  text-align: center;
-  // padding: 15px 15px 15px 60px;
-  border-radius: 3px;
+.login > a {
   float: left;
+  color: #fff;
+  border-radius: 6px;
+  
+  height: 50px;
+  width: 168px;
+  margin: 10px 16px 10px 0px;
+  padding: 11px 0px 0px 43px;
+
+  font-family: 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+}
+
+a.facebook { background: #3C5A99 url(../images/facebook.svg) no-repeat; }
+a.google { background: #DC4A38 url(../images/google.svg) no-repeat; }
+a.email {
+  background: #92D13D url(../images/email.svg) no-repeat;
+  margin-right: 0px;
+}
+.no-svg {
+  .facebook { background-image: url(../images/facebook.png); }
+  .google { background-image: url(../images/google.png); }
+  .email { background-image: url(../images/email.png); }
 }
 
 .logo {
-  size: 20%;
 }
