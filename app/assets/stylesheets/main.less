@@ -36,9 +36,6 @@
   .navbar > .container .navbar-brand {
     margin-left: 0px;
   }
-  .navbar-brandt {
-    font-size: 13px;
-  }
 }
 
 // Fix the gap between the checkbox/radio text on smartphone view. 
@@ -100,9 +97,10 @@ fieldset {
 }
 
 .ctrl-enter {
-  padding-top:6px;
+  padding-top: 6px;
 }
 
+// Modal login buttons.
 .login > a {
   float: left;
   color: #fff;
@@ -110,8 +108,8 @@ fieldset {
   
   height: 50px;
   width: 168px;
-  margin: 10px 16px 10px 0px;
-  padding: 11px 0px 0px 43px;
+  margin: 10px 16px 16px 0px;
+  padding: 12px 0px 0px 43px;
 
   font-family: 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif;
   font-size: 18px;
@@ -120,17 +118,26 @@ fieldset {
   text-decoration: none;
 }
 
-a.facebook { background: #3C5A99 url(../images/facebook.svg) no-repeat; }
-a.google { background: #DC4A38 url(../images/google.svg) no-repeat; }
+// Modal login logos.
+a.facebook {
+  background: #3C5A99 url(../images/facebook.svg) no-repeat; 
+}
+a.google {
+  background: #DC4A38 url(../images/google.svg) no-repeat;
+}
 a.email {
   background: #92D13D url(../images/email.svg) no-repeat;
   margin-right: 0px;
 }
-.no-svg {
+.no-svg { // TODO: Use. (modernizr.js)
   .facebook { background-image: url(../images/facebook.png); }
   .google { background-image: url(../images/google.png); }
   .email { background-image: url(../images/email.png); }
 }
+.half-transparent {
+  opacity: 0.5;
+}
 
-.logo {
+#signup_field {
+  margin-bottom: 20px;
 }

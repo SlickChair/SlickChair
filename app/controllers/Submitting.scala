@@ -6,12 +6,12 @@ import models.entities.{Papers, Topics}
 import models.entities.PaperType.PaperType
 import models.utils.{Files, NewFile}
 import models.relations.{PaperTopics, PaperTopic}
+import models.securesocial.User
 import play.api.data.Form
 import play.api.data.Forms.{ignored, list, mapping, nonEmptyText, number, text}
 import play.api.data.Mapping
 import play.api.mvc.{Action, Controller}
 import securesocial.core.SecureSocial
-
 case class SubmissionForm(
   paper: Paper,
   authors: List[Author],
@@ -27,6 +27,8 @@ object Submitting extends Controller with SecureSocial {
     // the POST on a form before storing the Paper in the database.
     "id" -> ignored(null.asInstanceOf[Int]),
     "contactemail" -> ignored(null.asInstanceOf[String]),
+    "contactfirstname" -> ignored(null.asInstanceOf[String]),
+    "contactlastname" -> ignored(null.asInstanceOf[String]),
     "submissiondate" -> ignored(null.asInstanceOf[DateTime]),
     "lastupdate" -> ignored(null.asInstanceOf[DateTime]),
     "accepted" -> ignored(null.asInstanceOf[Option[Boolean]]),
@@ -79,7 +81,8 @@ object Submitting extends Controller with SecureSocial {
   }
   
   def make = SecuredAction(false, None, parse.multipartFormData) { implicit request =>
-    val email = request.user.email.get
+    val user = User.fromIdentity(request.user)
+    val email = user.email
     submissionForm.bindFromRequest.fold(
       // TODO: if the form is not js validated we might want to save the
       //       uploaded file in case of errors. Otherwise the user will
@@ -97,6 +100,8 @@ object Submitting extends Controller with SecureSocial {
           case None =>
             Papers.ins(NewPaper(
               contactemail = email,
+              contactfirstname = request.user.firstName,
+              contactlastname = request.user.lastName,
               submissiondate = DateTime.now,
               lastupdate = DateTime.now,
               accepted = None,

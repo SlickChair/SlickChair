@@ -7,10 +7,8 @@ $ ->
       button = $(this).find("button")
       text = $(this).find(":text")
       fileInput = $(this).find(":file")
-      
       fileInput.change ->
         text.val(fileInput.val().split("\\").pop())
-
       button.click (e) ->
         e.preventDefault()
         fileInput.click()
@@ -50,3 +48,15 @@ $ ->
     ENTER = 13
     if e.keyCode == ENTER and e.ctrlKey
       $(".ctrl-enter").find("button").click()
+  
+  # Modal login magic.
+  $(".email").click (e) ->
+    $(".email-form").toggle()
+    $(".facebook").toggleClass("half-transparent")
+    $(".google").toggleClass("half-transparent")
+  
+  $("#signup").on "change", (e) ->
+    $("#password").val("")
+    $("#password").prop("disabled", not $("#password").prop("disabled"))
+  
+  

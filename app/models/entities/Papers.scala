@@ -23,6 +23,8 @@ import PaperType._
 case class Paper(
   id: Int,
   contactemail: String,
+  contactfirstname: String,
+  contactlastname: String,
   submissiondate: DateTime,
   lastupdate: DateTime,
   accepted: Option[Boolean],
@@ -32,11 +34,13 @@ case class Paper(
   abstrct: String,
   fileid: Option[Int]
 )
-case class NewPaper(contactemail: String, submissiondate: DateTime, lastupdate: DateTime, accepted: Option[Boolean], title: String, format: PaperType, keywords: String, abstrct: String, fileid: Option[Int])
+case class NewPaper(contactemail: String, contactfirstname: String, contactlastname: String, submissiondate: DateTime, lastupdate: DateTime, accepted: Option[Boolean], title: String, format: PaperType, keywords: String, abstrct: String, fileid: Option[Int])
 
 object Papers extends Table[Paper]("PAPERS") {
   def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
   def contactemail = column[String]("CONTACTEMAIL", O.DBType("TEXT"))
+  def contactfirstname = column[String]("CONTACTFIRSTNAME", O.DBType("TEXT"))
+  def contactlastname = column[String]("CONTACTLASTNAME", O.DBType("TEXT"))
   def submissiondate = column[DateTime]("SUBMISSIONDATE")
   def lastupdate = column[DateTime]("LASTUPDATE")
   def accepted = column[Option[Boolean]]("ACCEPTED")
@@ -47,8 +51,8 @@ object Papers extends Table[Paper]("PAPERS") {
   def fileid = column[Option[Int]]("FILEID")
   
   def file = foreignKey("PAPERS_FILEID_FK", fileid, Files)(_.id)
-  def * =  id ~ contactemail ~ submissiondate ~ lastupdate ~ accepted ~ title ~ format ~ keywords ~ abstrct ~ fileid <> (Paper, Paper.unapply _)
-  def autoInc = contactemail ~ submissiondate ~ lastupdate ~ accepted ~ title ~ format ~ keywords ~ abstrct ~ fileid <> (NewPaper, NewPaper.unapply _) returning id
+  def * =  id ~ contactemail ~ contactfirstname ~ contactlastname ~ submissiondate ~ lastupdate ~ accepted ~ title ~ format ~ keywords ~ abstrct ~ fileid <> (Paper, Paper.unapply _)
+  def autoInc = contactemail ~ contactfirstname ~ contactlastname ~ submissiondate ~ lastupdate ~ accepted ~ title ~ format ~ keywords ~ abstrct ~ fileid <> (NewPaper, NewPaper.unapply _) returning id
 
   def all: List[Paper] = DB.withSession(implicit session =>
     Query(Papers).list )
