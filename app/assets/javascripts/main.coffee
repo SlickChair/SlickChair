@@ -19,27 +19,34 @@ $ ->
   $("#author0").show()
   
   # Handles plus and minus buttons.
-  minus = $(".glyphicon-minus-sign")
-  plus = $(".glyphicon-plus-sign")
   nauthors = $("#nauthors")
+  getNauthors = -> Number(nauthors.val())
+  setNauthors = (n) ->
+    oldn = getNauthors()
+    nauthors.val(n)
+    if nauthors.val() == null
+      nauthors.val(oldn)
+      false
+    else
+      true
+  incNauthors = -> setNauthors(getNauthors() + 1)
+  decNauthors = -> setNauthors(getNauthors() - 1)
+  
   disableMinusIfZero = ->
-    minus.css("color", if Number(nauthors.val()) == 1 then "#a6a6a6" else plus.css("color"))
+    if getNauthors() == 1
+      $(".glyphicon-minus-sign").addClass("half-transparent")
+    else
+      $(".glyphicon-minus-sign").removeClass("half-transparent")
   disableMinusIfZero()
   
-  plus.click (e) ->
-    n = Number(nauthors.val())
-    if nauthors.val(n + 1).val() == null
-      nauthors.val(n)
-    else
-      $("#author#{ n }").show()
+  $(".glyphicon-plus-sign").click (e) ->
+    if incNauthors()
+      $("#author#{ getNauthors() - 1 }").show()
     disableMinusIfZero()
     
-  minus.click (e) ->
-    n = Number(nauthors.val())
-    if nauthors.val(n - 1).val() == null
-      nauthors.val(n)
-    else
-      $("#author#{ n - 1 }").hide()
+  $(".glyphicon-minus-sign").click (e) ->
+    if decNauthors()
+      $("#author#{ getNauthors() }").hide()
     disableMinusIfZero()
   
   # /slq, select the query textarea and submit on ctrl+enter.
@@ -58,5 +65,3 @@ $ ->
   $("#signup").on "change", (e) ->
     $("#password").val("")
     $("#password").prop("disabled", not $("#password").prop("disabled"))
-  
-  
