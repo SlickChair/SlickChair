@@ -27,7 +27,7 @@
     
     <table>
     @for(Paper(id, _, _, _, _, _, _, title, forma, keywords, abstrct, _) <- papers) {
-      <tr>
+      <tr>  
         <td>
         @inputRadioGroup( // or select
           bidForm(s"memberbids[$id].bid.value"),

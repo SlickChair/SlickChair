@@ -1,9 +1,37 @@
 {
-  "folders":[{
-    "path": "~/workspace/SlickChair",
-    "folder_exclude_patterns": [".git", "project/project", "project/target", "bin", ".history", "out", ".idea_modules", ".classpath", ".project", ".target", ".settings", "/RUNNING_PID", "logs", "Gemfile.lock", "Gemfile", "Guardfile", "project/SlickChair.sublime-workspace" ],
-    "file_exclude_patterns": [ "*.classpath", "*.project", "*.cache" ]
-  },{
-    "path":"~/workspace/SlickChair/target/External Libraries"
-  }]
+	"folders":
+	[
+		{
+			"file_exclude_patterns":
+			[
+				"*.classpath",
+				"*.project",
+				"*.cache"
+			],
+			"folder_exclude_patterns":
+			[
+				".git",
+				"project/project",
+				"project/target",
+				"bin",
+				".history",
+				"out",
+				".idea_modules",
+				".classpath",
+				".project",
+				".target",
+				".settings",
+				"/RUNNING_PID",
+				"logs",
+				"Gemfile.lock",
+				"Gemfile",
+				"Guardfile",
+				"project/SlickChair.sublime-workspace"
+			],
+			"path": "/home/olivier/workspace/SlickChair"
+		},
+		{
+			"path": "/home/olivier/workspace/SlickChair/target/External Libraries"
+		}
+	]
 }
