@@ -12,6 +12,7 @@ import play.api.data.Forms.{ignored, list, mapping, nonEmptyText, number, text}
 import play.api.data.Mapping
 import play.api.mvc.{Action, Controller}
 import securesocial.core.SecureSocial
+
 case class SubmissionForm(
   paper: Paper,
   authors: List[Author],
@@ -48,6 +49,7 @@ object Submitting extends Controller with SecureSocial {
     "email" -> text
   )(Author.apply _)(Author.unapply _)
     
+  /** Form for submissions with appropriate type mapping. */
   val submissionForm: Form[SubmissionForm] = Form(
     mapping(
       "paper" -> paperMapping,
@@ -63,11 +65,11 @@ object Submitting extends Controller with SecureSocial {
         Some(submissionForm.paper, submissionForm.authors.size, submissionForm.authors, submissionForm.topics))
   )
   
-
+  /**  Display submission form, filled with last values if present. */
   // def form = controllers.FakeAuth.FakeAwareAction { implicit request =>
   def form = UserAwareAction { implicit request =>
     val email = request.user.map(_.email.get)
-    Papers.withEmail(email.getOrElse("")) match { // TODO hacky.
+    Papers.withEmail(email.getOrElse("")) match { // TODO: hacky.
       case None =>
         Ok(views.html.submission("New Submission", submissionForm, email))
       case Some(paper) =>
@@ -80,6 +82,7 @@ object Submitting extends Controller with SecureSocial {
     }
   }
   
+  /** Handles submissions. Creates or update database entry with data of the form. */
   def make = SecuredAction(false, None, parse.multipartFormData) { implicit request =>
     val user = User.fromIdentity(request.user)
     val email = user.email
@@ -90,7 +93,8 @@ object Submitting extends Controller with SecureSocial {
       errors => Ok(views.html.submission(email + "Submission: Errors found", errors)),
       form => {
         // Ok(form.toString)
-        val SubmissionForm(formPaper, formAuthors, formTopics) = form 
+        // TODO: Remove next line and change formPaper to form.paper...
+        val SubmissionForm(formPaper, formAuthors, formTopics) = form
         val newFileId: Option[Int] = request.body.file("data").map{ file =>
           val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray
           Files.ins(NewFile(file.filename, blob.size, DateTime.now, blob))
@@ -133,6 +137,7 @@ object Submitting extends Controller with SecureSocial {
     )
   }
   
+  // TODO: Remove?
   def info = SecuredAction { implicit request =>
     Papers.withEmail(request.user.email.get) match {
       case None =>

@@ -11,16 +11,16 @@ Done:
 - Email client for the chair with templates
 - Manage members (invitations, delete, promotion..)
 - Paper biding
+- Getting started instructions
+- Use a modal style login
 
 Todo:
 =====
 
-- Use a modal style login
 - Build a menu for each type of user 
 - Paper/Reviewer assignement
 - Config page(s)
 - Decision page (accepted/rejected)
-- Getting started instructions
 - Variables for the email client
 - Use the [POST-Redirect-GET pattern][1] in all the forms to prevent repost on
   page reload

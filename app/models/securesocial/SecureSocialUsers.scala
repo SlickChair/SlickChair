@@ -23,17 +23,31 @@ case class User(
 ) {
   def id: IdentityId = IdentityId(uid, pid)
   def toIdentity: Identity = SocialUser(
-    IdentityId(uid, pid), s"$firstname $lastname", firstname, lastname, Some(email), None, AuthenticationMethod(authmethod),
-    None, None, password.map(p => PasswordInfo(hasher.getOrElse(""), p, salt))
+    identityId=   IdentityId(uid, pid),
+    firstName=    firstname,
+    lastName=     lastname,
+    fullName=     s"$firstname $lastname",
+    email=        Some(email),
+    avatarUrl=    None,
+    authMethod=   AuthenticationMethod(authmethod),
+    oAuth1Info=   None,
+    oAuth2Info=   None,
+    passwordInfo= password.map(p => PasswordInfo(hasher.getOrElse(""), p, salt))
   )
 }
 object User {
   // IMPORTANT: At this point (i.email.get) we assume that the provider gives
-  // us an email, which is not the case for some of them (eg twitter).
+  // us an email, which is not the case for some of them (e.g. Twitter).
   def fromIdentity(i: Identity) = User(
-    i.identityId.userId, i.identityId.providerId, i.email.get, i.firstName,
-    i.lastName, i.authMethod.method, i.passwordInfo.map(_.hasher),
-    i.passwordInfo.map(_.password), i.passwordInfo.map(_.salt).getOrElse(None)
+    uid=        i.identityId.userId,
+    pid=        i.identityId.providerId,
+    email=      i.email.get,
+    firstname=  i.firstName,
+    lastname=   i.lastName,
+    authmethod= i.authMethod.method,
+    hasher=     i.passwordInfo.map(_.hasher),
+    password=   i.passwordInfo.map(_.password),
+    salt=       i.passwordInfo.map(_.salt).getOrElse(None)
   )
 }
 

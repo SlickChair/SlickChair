@@ -41,6 +41,8 @@ GET     /dashboard                           controllers.chair.Chair.dashboard
 # Login page
 GET     /login                  securesocial.controllers.LoginPage.login
 GET     /logout                 securesocial.controllers.LoginPage.logout
+GET     /dispatch               controllers.SecureSocialWrapper.dispatch
+POST    /dispatch               controllers.SecureSocialWrapper.dispatch
 # User Registration and password handling 
 GET     /signup                 securesocial.controllers.Registration.startSignUp
 POST    /signup                 securesocial.controllers.Registration.handleStartSignUp

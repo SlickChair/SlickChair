@@ -4,29 +4,24 @@
 		{
 			"file_exclude_patterns":
 			[
+				"*.cache",
 				"*.classpath",
-				"*.project",
-				"*.cache"
+				"*.project"
 			],
 			"folder_exclude_patterns":
 			[
-				".git",
-				"project/project",
-				"project/target",
-				"bin",
-				".history",
-				"out",
-				".idea_modules",
-				".classpath",
-				".project",
-				".target",
-				".settings",
+				".*",
 				"/RUNNING_PID",
-				"logs",
-				"Gemfile.lock",
+				"bin",
 				"Gemfile",
+				"Gemfile.lock",
 				"Guardfile",
-				"project/SlickChair.sublime-workspace"
+				"logs",
+				"out",
+				"project/project",
+				"project/SlickChair.sublime-workspace",
+				"project/target",
+				"target"
 			],
 			"path": "/home/olivier/workspace/SlickChair"
 		},

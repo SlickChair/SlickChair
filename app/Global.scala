@@ -39,12 +39,13 @@ object Global extends GlobalSettings {
         Author(3, 1, "first name 31", "last name 31", "org 31", "33@331")
       )
       
+      // Passwords = 1234567890
       List(
-        User("1@1", "userpass", "1@1", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$lR2Qcz7OolHLXGDgbKurF.n6E9yTFHVHHutrfMeKls.X5y/WbzUWq"), None),
-        User("2@2", "userpass", "2@2", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$lR2Qcz7OolHLXGDgbKurF.n6E9yTFHVHHutrfMeKls.X5y/WbzUWq"), None),
-        User("3@3", "userpass", "3@3", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$lR2Qcz7OolHLXGDgbKurF.n6E9yTFHVHHutrfMeKls.X5y/WbzUWq"), None),
-        User("4@4", "userpass", "4@4", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$lR2Qcz7OolHLXGDgbKurF.n6E9yTFHVHHutrfMeKls.X5y/WbzUWq"), None)
-      ).foreach(u => new SecureSocialUserService(null).save(u.toIdentity))
+        User("1@1", "userpass", "1@1", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$i2jZu3F6rty/a0vj8Jbeb.BnZNW7dXutAM8wSXLIdIolJETt8YdWe"), None),
+        User("2@2", "userpass", "2@2", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$i2jZu3F6rty/a0vj8Jbeb.BnZNW7dXutAM8wSXLIdIolJETt8YdWe"), None),
+        User("3@3", "userpass", "3@3", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$i2jZu3F6rty/a0vj8Jbeb.BnZNW7dXutAM8wSXLIdIolJETt8YdWe"), None),
+        User("4@4", "userpass", "4@4", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$i2jZu3F6rty/a0vj8Jbeb.BnZNW7dXutAM8wSXLIdIolJETt8YdWe"), None)
+      ).foreach(u => securesocial.core.UserService.save(u.toIdentity))
       
       List(
         NewMember("4@4", "4@4.com", DateTime.now, DateTime.now, MemberRole.Member, "membername", "memberlastname"),

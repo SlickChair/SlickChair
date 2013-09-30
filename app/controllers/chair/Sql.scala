@@ -36,9 +36,8 @@ object Sql extends Controller with SecureSocial {
       val (query, method) = filledForm.get
       val result: String = try {
         method match {
-          // Fun fact: removing the .toStrings will crash the Scala compiler
-          // with a java.lang.NullPointerException:
-          // scala.tools.nsc.typechecker.Typers$Typer.adapt(Typers.scala:1131)
+          // Fun fact: removing the .toStrings will crash the Scala compiler with a
+          // [error] (compile:compile) java.lang.NullPointerException
           case Execute => SQL(query.toUpperCase).apply().map(_.asList).toList.mkString("\n")
           case Update => SQL(query.toUpperCase).executeUpdate().toString
           case Insert => SQL(query.toUpperCase).executeInsert().toString

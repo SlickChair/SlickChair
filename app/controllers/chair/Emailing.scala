@@ -16,8 +16,8 @@ import securesocial.core.SecureSocial
 
 object Emailing extends Controller with SecureSocial {
   val fromAddress = current.configuration.getString("smtp.from").get
-
-  val emailMapping: Mapping[Email] = mapping(
+  
+  val emailMapping = mapping(
     // TODO: email validation + @firstname validation
     "id" -> ignored(null.asInstanceOf[Int]),
     "to" -> nonEmptyText,
@@ -36,7 +36,7 @@ object Emailing extends Controller with SecureSocial {
     }
   }
   
-  val emailForm = Form[Email] (Emailing.emailMapping)
+  val emailForm = Form[Email] (emailMapping)
   
   def form = Action(Ok(views.html.chair.email(None, emailForm)))
   

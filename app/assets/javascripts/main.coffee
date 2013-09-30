@@ -23,6 +23,7 @@ $ ->
   ### Handles plus and minus buttons. ###
   $("#author0").show()
   nauthors = $("#nauthors")
+  nauthors.val(1) # JS initialize it, or things could go wrong with previous/next
   getNauthors = -> Number(nauthors.val())
   setNauthors = (n) ->
     oldn = getNauthors()
@@ -66,6 +67,7 @@ $ ->
     $(".facebook").toggleClass("half-transparent")
     $(".google").toggleClass("half-transparent")
   
-  $("#signup").on "change", (e) ->
+  $("#create").on "change", (e) ->
     $("#password").val("")
     $("#password").prop("disabled", not $("#password").prop("disabled"))
+    # TODO:JS initialize it, or things could go wrong with previous/next
