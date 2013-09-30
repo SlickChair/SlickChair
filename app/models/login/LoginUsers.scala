@@ -1,4 +1,4 @@
-package models.securesocial
+package models.login
 
 import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
@@ -51,7 +51,7 @@ object User {
   )
 }
 
-object SecureSocialUsers extends Table[User]("SECURE_SOCIAL_USERS") {
+object LoginUsers extends Table[User]("LOGIN_USERS") {
   def uid = column[String]("UID", O.DBType("TEXT"))
   def pid = column[String]("PID", O.DBType("TEXT"))
   def email = column[String]("EMAIL", O.DBType("TEXT"))
@@ -62,19 +62,19 @@ object SecureSocialUsers extends Table[User]("SECURE_SOCIAL_USERS") {
   def password = column[Option[String]]("PASSWORD", O.DBType("TEXT"))
   def salt = column[Option[String]]("SALT", O.DBType("TEXT"))
   
-  def pk = primaryKey("SECURESOCIALUSERS_PK", uid ~ pid)
+  def pk = primaryKey("LOGINUSERS_PK", uid ~ pid)
   def * = uid ~ pid ~ email ~ firstname ~ lastname ~ authmethod ~ hasher ~ password ~ salt <> (User.apply _, User.unapply _)
 
   def UserByidentityId(identityId: IdentityId) = 
-    Query(SecureSocialUsers).filter( user =>
+    Query(LoginUsers).filter( user =>
       (user.uid is identityId.userId) && (user.pid is identityId.providerId) )
   
   def userByEmailAndProvider(email: String, pid: String) = 
-    Query(SecureSocialUsers).filter( user =>
+    Query(LoginUsers).filter( user =>
       (user.email is email) && (user.pid is pid) )
   
   def withEmail(email: String) = DB.withTransaction(implicit session =>
-    Query(SecureSocialUsers).filter(_.email is email).list.headOption
+    Query(LoginUsers).filter(_.email is email).list.headOption
   )
 
   trait Queries {
@@ -82,7 +82,7 @@ object SecureSocialUsers extends Table[User]("SECURE_SOCIAL_USERS") {
       val user = User.fromIdentity(identity)
       find(user.id) match {
         case None =>
-          SecureSocialUsers.insert(user)
+          LoginUsers.insert(user)
         case Some(u) =>
           UserByidentityId(u.identityId).update(user)
       }

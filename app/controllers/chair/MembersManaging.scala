@@ -6,7 +6,7 @@ import controllers.member
 import models.entities.MemberRole
 import models.entities.MemberRole.MemberRole
 import models.entities.Members
-import models.securesocial.{MyToken, SecureSocialTokens}
+import models.login.{MyToken, LoginTokens}
 import models.utils.{Email, NewEmail, SentEmails}
 import play.api.data.Form
 import play.api.data.Forms.{list, mapping, nonEmptyText, number}
@@ -70,7 +70,7 @@ object MembersManaging extends Controller with SecureSocial {
         to.split(",").foreach { email =>
           val uuid = UUID.randomUUID().toString
           val bodyWithLink = body.replaceAll(urlTemplateVariable, member.routes.Dashboard.invite(uuid).absoluteURL())
-          SecureSocialTokens.ins(MyToken(uuid, email, now, now.plusDays(7), false, true))
+          LoginTokens.ins(MyToken(uuid, email, now, now.plusDays(7), false, true))
           Emailing.sendEmail(email, subject, bodyWithLink)
         }
         inviteForm
@@ -83,7 +83,7 @@ object MembersManaging extends Controller with SecureSocial {
     val newInvalidateForm = invalidateForm.bindFromRequest.fold(
       errors => errors,
       { case InvalidateForm(candidates) =>
-        candidates.foreach(SecureSocialTokens.del)
+        candidates.foreach(LoginTokens.del)
         invalidateForm
       }
     )

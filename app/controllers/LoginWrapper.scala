@@ -5,7 +5,7 @@ import models.entities.{Papers, Topics}
 import models.entities.PaperType.PaperType
 import models.utils.{Files, NewFile}
 import models.relations.{PaperTopics, PaperTopic}
-import models.securesocial.User
+import models.login.User
 import play.api.data.Form
 import play.api.data.Forms.{boolean, ignored, list, mapping, nonEmptyText, number, text, default}
 import play.api.data.Mapping
@@ -13,7 +13,7 @@ import play.api.mvc.{AnyContent, AnyContentAsEmpty, Action, Controller}
 import securesocial.core.{SecureSocial, UserService}
 import securesocial.controllers.{ProviderController, Registration}
 
-case class SecureSocialWrapperForm(
+case class LoginWrapperForm(
   username: String,
   email: String,
   password: String,
@@ -23,13 +23,13 @@ case class SecureSocialWrapperForm(
 /** Wraps the four SecureSocial events into a single handler. Login, signup,
   * change password and forget password are all called using a single form.
   */
-object SecureSocialWrapper extends Controller with SecureSocial {
+object LoginWrapper extends Controller with SecureSocial {
   /** "Extends" securesocial.core.providers.UsernamePasswordProvider.loginForm */
-  val secureSocialWrapperForm = Form[SecureSocialWrapperForm] (mapping(
+  val loginWrapperForm = Form[LoginWrapperForm] (mapping(
     "username" -> nonEmptyText,
     "password" -> default(text, ""),
     "create" -> boolean
-  )((username, password, create) => SecureSocialWrapperForm(username, username, password, create))
+  )((username, password, create) => LoginWrapperForm(username, username, password, create))
    (ssw => Some(ssw.username, ssw.password, ssw.create) )
   )
     
@@ -52,7 +52,7 @@ object SecureSocialWrapper extends Controller with SecureSocial {
   /** Dispatches the request to the appropriate SecureSocial handler. */
   def dispatch = Action { implicit request =>
         import play.api.Logger
-    secureSocialWrapperForm.bindFromRequest.fold(
+    loginWrapperForm.bindFromRequest.fold(
       errors => Ok("errors: " + errors), // TODO, show in src form?
       form => {
         if(!form.create) {
@@ -99,7 +99,7 @@ object SecureSocialWrapper extends Controller with SecureSocial {
 // def dispatch = Action { implicit request =>
 //   import com.typesafe.plugin._
 //   import play.api.Play.current
-//   SecureSocial.withRefererAsOriginalUrl(Ok(use[SecureSocialTemplates].getLoginPage(request, UsernamePasswordProvider.loginForm)))
+//   SecureSocial.withRefererAsOriginalUrl(Ok(use[LoginTemplates].getLoginPage(request, UsernamePasswordProvider.loginForm)))
 // }
 }
 

@@ -2,7 +2,7 @@ import org.joda.time.DateTime
 
 import models.entities._
 import models.relations._
-import models.securesocial._
+import models.login._
 import models.utils.{NewEmailTemplate, EmailTemplates}
 import play.api.{Application, GlobalSettings}
 
@@ -70,7 +70,7 @@ object Global extends GlobalSettings {
         MyToken(java.util.UUID.randomUUID().toString, "1@1", DateTime.now, DateTime.now.plusDays(7), false, true),
         MyToken(java.util.UUID.randomUUID().toString, "2@2", DateTime.now, DateTime.now.plusDays(7), false, true),
         MyToken(java.util.UUID.randomUUID().toString, "3@3", DateTime.now, DateTime.now.plusDays(7), false, true)
-      ).foreach(SecureSocialTokens.ins)
+      ).foreach(LoginTokens.ins)
       
       List(MemberTopic(2, 2)).foreach(MemberTopics.ins)
       List(MemberBid(2, 2, Bid.High)).foreach(MemberBids.ins)

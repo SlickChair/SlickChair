@@ -1,4 +1,4 @@
-@(secureSocialWrapperForm: Form[controllers.SecureSocialWrapperForm])
+@(loginWrapperForm: Form[controllers.LoginWrapperForm])
 
 @import helper.bootstrap3._
 
@@ -16,17 +16,17 @@
     </div>
     <div class="hidejs email-form">
       @bootstrap3.form(
-        routes.SecureSocialWrapper.dispatch) {
+        routes.LoginWrapper.dispatch) {
           <fieldset>
             @bootstrap3.inputText(
-              secureSocialWrapperForm("username"),
+              loginWrapperForm("username"),
               '_label -> "Email")
             @bootstrap3.inputText(
-              secureSocialWrapperForm("password"),
+              loginWrapperForm("password"),
               '_label -> "Password",
               'type -> "password")
             @bootstrap3.checkbox(
-              secureSocialWrapperForm("create"),
+              loginWrapperForm("create"),
               '_label -> "Create",
               '_text -> "Create a new password (sign-up or forgot)",
               'value -> true)

@@ -3,7 +3,7 @@ package controllers.chair
 import concurrent.duration.DurationInt
 import org.joda.time.DateTime
 import com.typesafe.plugin.{MailerPlugin, use}
-import models.securesocial.SecureSocialUsers
+import models.login.LoginUsers
 import models.utils.{Email, NewEmail, SentEmails}
 import play.api.Play.current
 import play.api.data.Form
@@ -45,7 +45,7 @@ object Emailing extends Controller with SecureSocial {
       errors => Ok(views.html.chair.email(None, errors)),
       { case Email(id, to, subject, body, sent) =>
         to.split(",").foreach { email =>
-          SecureSocialUsers.withEmail(email).getOrElse{ throw new java.lang.UnsupportedOperationException("TODO") }
+          LoginUsers.withEmail(email).getOrElse{ throw new java.lang.UnsupportedOperationException("TODO") }
           // TODO add email variables like 
           // @title
           // @firstname
@@ -53,7 +53,7 @@ object Emailing extends Controller with SecureSocial {
         }
         SentEmails.ins(NewEmail(to, subject, body, DateTime.now))
         to.split(",").foreach { email =>
-          val user = SecureSocialUsers.withEmail(email).get
+          val user = LoginUsers.withEmail(email).get
           Emailing.sendEmail(user.email, subject, body)
         }
         Ok(views.html.chair.email(Some("Email sent)."), emailForm))

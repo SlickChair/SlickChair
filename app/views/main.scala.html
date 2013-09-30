@@ -4,7 +4,7 @@
 )(content: Html)
 
 @minified = @{ if (play.Play.isProd()) ".min" else "" }
-@import _root_.securesocial.core.providers.utils.RoutesHelper // TODO: remove on model.securesocial rename
+@import securesocial.core.providers.utils.RoutesHelper
 
 <!DOCTYPE html>
 <html><head>
@@ -59,7 +59,7 @@
         <h1>@title<small></small></h1>
       </div>
       @if(user.isEmpty) {
-        @modallogin(controllers.SecureSocialWrapper.secureSocialWrapperForm)
+        @modallogin(controllers.LoginWrapper.loginWrapperForm)
       }
       @content
       <br><br>

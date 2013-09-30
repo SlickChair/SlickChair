@@ -1,4 +1,4 @@
-models.{ entities, relations, secureSocial, utils }
+models.{ entities, relations, login, utils }
 ---------------------------------------------------
 
 The model package hold all the classes related to the database access. This

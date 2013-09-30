@@ -5,7 +5,7 @@ import securesocial.core.{Authorization, Identity}
 import play.api.mvc._
 import securesocial.core._
 import models.entities._
-import models.securesocial._
+import models.login._
 
 /** Authorization checking that the user is chair. */
 object ChairOnly extends Authorization {

@@ -1,4 +1,4 @@
-package models.securesocial
+package models.login
 
 import play.api.Application
 import securesocial.core.UserServicePlugin
@@ -7,6 +7,6 @@ import securesocial.core.UserServicePlugin
   * top of Slick. See http://securesocial.ws/guide/user-service.html for more
   * details.
   */
-class SecureSocialUserService(application: Application) extends UserServicePlugin(application)
-  with SecureSocialUsers.Queries
-  with SecureSocialTokens.Queries
+class LoginUserService(application: Application) extends UserServicePlugin(application)
+  with LoginUsers.Queries
+  with LoginTokens.Queries

@@ -9,7 +9,7 @@ import securesocial.controllers.Registration.RegistrationInfo
 import securesocial.controllers.PasswordChange.ChangeInfo
 import securesocial.controllers.TemplatesPlugin
 
-class SecureSocialTemplates(application: Application) extends TemplatesPlugin {
+class LoginTemplates(application: Application) extends TemplatesPlugin {
   override def getLoginPage[A](implicit request: Request[A], form: Form[(String, String)],
                                msg: Option[String] = None): Html =
   {

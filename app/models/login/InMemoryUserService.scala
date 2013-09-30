@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
- package models.securesocial
+ package models.login
 
 import play.api.{Logger, Application}
 import securesocial.core._
@@ -66,7 +66,7 @@ class InMemoryUserService(application: Application) extends UserServicePlugin(ap
     tokens -= uuid
   }
 
-  def deleteTokens() {
+  def deleteLoginTokens() {
     tokens = Map()
   }
 

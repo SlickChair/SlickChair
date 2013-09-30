@@ -6,7 +6,7 @@ import models.entities.{Papers, Topics}
 import models.entities.PaperType.PaperType
 import models.utils.{Files, NewFile}
 import models.relations.{PaperTopics, PaperTopic}
-import models.securesocial.User
+import models.login.User
 import play.api.data.Form
 import play.api.data.Forms.{ignored, list, mapping, nonEmptyText, number, text}
 import play.api.data.Mapping

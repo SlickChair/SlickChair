@@ -1,4 +1,4 @@
-package models.securesocial
+package models.login
 
 import org.joda.time.DateTime
 import com.github.tototoshi.slick.JodaSupport.dateTimeTypeMapper
@@ -8,7 +8,7 @@ import play.api.db.slick.DB
 import securesocial.core.providers.Token
 
 /** This file holds all the code related to the storage of SecureSocial
-  * Tokens in the database.
+  * LoginTokens in the database.
   * @see models.Members.scala for a similar implementation with ScalaDoc.
   */
 
@@ -26,7 +26,7 @@ object MyToken {
   def fromT(t: Token) = MyToken(t.uuid, t.email, t.creationTime, t.expirationTime, t.isSignUp, false)
 }
 
-object SecureSocialTokens extends Table[MyToken]("SECURE_SOCIAL_TOKENS") {
+object LoginTokens extends Table[MyToken]("LOGIN_TOKENS") {
   def uuid = column[String]("UUID", O.DBType("TEXT"), O.PrimaryKey)
   def email = column[String]("EMAIL", O.DBType("TEXT"))
   def creationTime = column[DateTime]("CREATIONTIME")
@@ -36,13 +36,13 @@ object SecureSocialTokens extends Table[MyToken]("SECURE_SOCIAL_TOKENS") {
   def * = uuid ~ email ~ creationTime ~ expirationTime ~ isSignUp ~ isInvitation <> (MyToken.apply _, MyToken.unapply _)
   
   def allInvitations = DB.withSession(implicit session =>
-    Query(SecureSocialTokens).filter(_.isInvitation).list )
+    Query(LoginTokens).filter(_.isInvitation).list )
   
   def ins(myToken: MyToken) = DB.withSession(implicit session =>
-    SecureSocialTokens.insert(myToken) )
+    LoginTokens.insert(myToken) )
   
   def del(uuid: String) = DB.withTransaction(implicit session =>
-    SecureSocialTokens.filter(_.uuid is uuid).delete )
+    LoginTokens.filter(_.uuid is uuid).delete )
   
   def withUUID(uuid: String): Option[MyToken] = DB.withSession(implicit session =>
     createFinderBy(_.uuid).apply(uuid).firstOption )
@@ -53,12 +53,12 @@ object SecureSocialTokens extends Table[MyToken]("SECURE_SOCIAL_TOKENS") {
 
     def save(token: Token): Unit = DB.withTransaction { implicit session =>
       findToken(token.uuid) match {
-        case None => SecureSocialTokens.insert(MyToken.fromT(token))
-        case Some(t) => SecureSocialTokens.filter(_.uuid is t.uuid).update(MyToken.fromT(token))
+        case None => LoginTokens.insert(MyToken.fromT(token))
+        case Some(t) => LoginTokens.filter(_.uuid is t.uuid).update(MyToken.fromT(token))
       }
     }
 
     def deleteExpiredTokens: Unit = DB.withTransaction(implicit session =>
-      SecureSocialTokens.filter(_.expirationTime <= DateTime.now).delete )
+      LoginTokens.filter(_.expirationTime <= DateTime.now).delete )
   }
 }
