@@ -33,8 +33,6 @@ Testing locally
 First download SlickChair sources from the [GitHub repository][2]. If you have
 [Git][3] installed:
 
-**TODO: setup SlickChair/SlickChair repo**
-
     git clone https://github.com/SlickChair/SlickChair
 
 After that, move to the SlickChair directory and run the application with
