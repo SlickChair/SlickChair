@@ -17,7 +17,7 @@ Todo:
 
 - Use a modal style login
 - Build a menu for each type of user 
-- Paper/Reviewer assignement
+- Manual Paper/Reviewer assignement
 - Config page(s)
 - Decision page (accepted/rejected)
 - Getting started instructions
@@ -34,6 +34,8 @@ Out of scope:
 - Phases abstraction for settings (1 Submission, 2 Bidding, 3 Review, ...)
 - Client side stuff (starting with form validation)
 - Prefill the submission form with data extracted from the PDF
+- Automatic Paper/Reviewer assignement ([link][2])
 - ...
 
 [1]: http://www.theserverside.com/news/1365146/Redirect-After-Post
+[2]: http://140.123.102.14:8080/reportSys/file/paper/scfu/scfu_21_paper.pdf
