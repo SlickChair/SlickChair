@@ -14,7 +14,6 @@ $ ->
         e.preventDefault()
         fileInput.click()
 
-
   ### Hides/show javascript managed elements. ###
   $(".hidejs").each -> $(this).hide()
   $(".showjs").each -> $(this).show()
@@ -67,7 +66,7 @@ $ ->
     $(".facebook").toggleClass("half-transparent")
     $(".google").toggleClass("half-transparent")
   
+  $("#create").prop("checked", false)
   $("#create").on "change", (e) ->
     $("#password").val("")
     $("#password").prop("disabled", not $("#password").prop("disabled"))
-    # TODO:JS initialize it, or things could go wrong with previous/next

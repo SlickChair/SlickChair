@@ -70,7 +70,6 @@ case class StringSetting(default: String, description: String) extends Setting[S
   override def fromString(s: String) = s
 }
 
-/** TODO: ScalaDoc us! */
 object SubmissionLock extends BooleanSetting(
   false, "Prevent user from posting new submissions")
 // CanMakeSubmission
