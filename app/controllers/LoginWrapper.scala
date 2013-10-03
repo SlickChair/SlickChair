@@ -1,17 +1,16 @@
 package controllers
 
-import models.entities.{Author, Authors, NewPaper, Paper, PaperType}
-import models.entities.{Papers, Topics}
-import models.entities.PaperType.PaperType
-import models.utils.{Files, NewFile}
-import models.relations.{PaperTopics, PaperTopic}
-import models.login.User
+import java.util.UUID
+import org.joda.time.DateTime
 import play.api.data.Form
-import play.api.data.Forms.{boolean, ignored, list, mapping, nonEmptyText, number, text, default}
-import play.api.data.Mapping
-import play.api.mvc.{AnyContent, AnyContentAsEmpty, Action, Controller}
-import securesocial.core.{SecureSocial, UserService}
+import play.api.data.Forms.{boolean, default, mapping, nonEmptyText, text}
+import play.api.i18n.Messages
+import play.api.mvc.{Action, Controller}
 import securesocial.controllers.{ProviderController, Registration}
+import securesocial.core.{SecureSocial, UserService}
+import securesocial.core.providers.Token
+import securesocial.core.providers.UsernamePasswordProvider.UsernamePassword
+import securesocial.core.providers.utils.Mailer
 
 case class LoginWrapperForm(
   username: String,
@@ -33,65 +32,43 @@ object LoginWrapper extends Controller with SecureSocial {
    (ssw => Some(ssw.username, ssw.password, ssw.create) )
   )
     
-  // val submissionForm: Form[SubmissionForm] = Form(
-  //   mapping(
-  //     "paper" -> paperMapping,
-  //     "nauthors" -> number,
-  //     "authors" -> list(authorMapping),
-  //     "topics" -> list(number).verifying("Please select at least one topic.", _.nonEmpty)
-  //   )((paper, nauthors, authors, topics) =>
-  //       SubmissionForm(paper, authors.take(nauthors).zipWithIndex.map{case (a, i) => a.copy(position = i)}, topics))
-  //     // After calling this function authors positions are constistant but
-  //     // authors paperid and paper {id, contactemail, submissiondate,
-  //     // lastupdate, accepted, fileid} are still null.
-  //    (submissionForm =>
-  //       Some(submissionForm.paper, submissionForm.authors.size, submissionForm.authors, submissionForm.topics))
-  // )
-  
-  
-  /** Dispatches the request to the appropriate SecureSocial handler. */
   def dispatch = Action { implicit request =>
         import play.api.Logger
     loginWrapperForm.bindFromRequest.fold(
-      errors => Ok("errors: " + errors), // TODO, show in src form?
+      errors => Ok("errors: " + errors), // TODO, show in src form? BadRequest(...)
       form => {
         if(!form.create) {
-          // Login.
-          ProviderController.authenticateByPost("userpass")(request)
+          ProviderController.authenticateByPost(UsernamePassword)(request) // Login
         } else {
-          // Forgot password or creat account. In order to re-use SecureSocial
-          // internals we need to remap the request so that it defines an
-          // "email" field, instead of "username" that used for the login.
-          val withEmailRequest = request.map {
-             // I don't see another was to do it...
-            case body: Map[_, _] => 
-              Logger.info("map:)")
-              // val typedBody = body.asInstanceOf[Map[String, Seq[String]]]
-
-              // Logger.info(typedBody.toString)
-              // val updatedBody = typedBody + (("email", Seq(form.username)))
-              // Logger.info(updatedBody.toString)
-              // println (updatedBody)
-              // updatedBody.asInstanceOf[AnyContent]
-              AnyContentAsEmpty
-            case body => 
-              Logger.info("other:(" + body.getClass)
-              AnyContentAsEmpty
-          }
-          
-          UserService.findByEmailAndProvider(form.username, "userpass") match {
-            case Some(user) =>
-              // Forgot password.
-              Logger.info("handleStartResetPassword")
-              Registration.handleStartResetPassword(withEmailRequest)
+          UserService.findByEmailAndProvider(form.username, UsernamePassword) match {
+            case Some(user) => 
+              // Forgot password
+              val token = createToken(form.email, isSignUp = false)
+              Mailer.sendPasswordResetEmail(user, token._1)
             case None =>
-              // Creat account.
-              Logger.info("handleStartSignUp")
-              Registration.handleStartSignUp(withEmailRequest)
+              // Creat account
+              val token = createToken(form.email, isSignUp = true)
+              Mailer.sendSignUpEmail(form.email, token._1)
           }
+          Redirect(Registration.onHandleStartResetPasswordGoTo).flashing(Registration.Success -> Messages(Registration.ThankYouCheckEmail))
         }
       }
     )
+  }
+  
+  /** Copy pasted from securesocial.controllers/Registration.scala */
+  private def createToken(email: String, isSignUp: Boolean): (String, Token) = {
+    val uuid = UUID.randomUUID().toString
+    val now = DateTime.now
+
+    val token = Token(
+      uuid, email,
+      now,
+      now.plusMinutes(Registration.TokenDuration),
+      isSignUp = isSignUp
+    )// Finalizes
+    UserService.save(token)
+    (uuid, token)
   }
   
 // Fun fact: compiling this method results in 

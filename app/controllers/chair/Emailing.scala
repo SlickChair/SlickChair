@@ -8,7 +8,6 @@ import models.utils.{Email, NewEmail, SentEmails}
 import play.api.Play.current
 import play.api.data.Form
 import play.api.data.Forms.{ignored, mapping, nonEmptyText}
-import play.api.data.Mapping
 import play.api.libs.concurrent.Akka
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.{Action, Controller}

@@ -1,11 +1,9 @@
 package controllers
 
 import models.entities.{MemberRole, Members}
-import securesocial.core.{Authorization, Identity}
-import play.api.mvc._
-import securesocial.core._
-import models.entities._
-import models.login._
+import models.login.User
+import play.api.mvc.{Action, AnyContent, Controller, Result}
+import securesocial.core.{Authorization, Identity, RequestWithUser, SecuredRequest}
 
 /** Authorization checking that the user is chair. */
 object ChairOnly extends Authorization {

@@ -1,7 +1,6 @@
 package controllers.chair
 
-import play.api._
-import play.api.mvc._
+import play.api.mvc.{Action, Controller}
 
 object Doc extends Controller {
   def umentation = Action {
