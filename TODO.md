@@ -22,20 +22,20 @@ Todo:
 - Config page(s)
 - Decision page (accepted/rejected)
 - Variables for the email client
-- Use the [POST-Redirect-GET pattern][1] in all the forms to prevent repost on
-  page reload
+- Use the [POST-Redirect-GET pattern](http://www.theserverside.com/news/1365146/Redirect-After-Post)
+  in all the forms to prevent repost on page reload
 - SSL
 
 Out of scope:
 =============
 
-- Logs
+- Logs, tests
 - More detailed settings
 - Phases abstraction for settings (1 Submission, 2 Bidding, 3 Review, ...)
 - Client side stuff (starting with form validation)
+- Use [Scala-JS](https://github.com/lampepfl/scala-js) instead of CoffeScript
 - Prefill the submission form with data extracted from the PDF
-- Automatic Paper/Reviewer assignement ([link][2])
+- Automatic Paper/Reviewer assignement ([starting point](http://140.123.102.14:8080/reportSys/file/paper/scfu/scfu_21_paper.pdf))
+- Extract abstract authors and keywords from PDF ([starting](https://code.google.com/p/pdfssa4met/)
+   [points](http://www.cs.cornell.edu/cdlrg/reference%20linking/extraction.pdf))
 - ...
-
-[1]: http://www.theserverside.com/news/1365146/Redirect-After-Post
-[2]: http://140.123.102.14:8080/reportSys/file/paper/scfu/scfu_21_paper.pdf
