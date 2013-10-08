@@ -22,7 +22,7 @@ Todo:
 - Config page(s)
 - Decision page (accepted/rejected)
 - Variables for the email client
-- Use the [POST-Redirect-GET pattern][http://www.theserverside.com/news/1365146/Redirect-After-Post]
+- Use the [POST-Redirect-GET pattern](http://www.theserverside.com/news/1365146/Redirect-After-Post)
   in all the forms to prevent repost on page reload
 - SSL
 
@@ -35,7 +35,7 @@ Out of scope:
 - Client side stuff (starting with form validation)
 - Use [Scala-JS](https://github.com/lampepfl/scala-js) instead of CoffeScript
 - Prefill the submission form with data extracted from the PDF
-- Automatic Paper/Reviewer assignement ([starting point][http://140.123.102.14:8080/reportSys/file/paper/scfu/scfu_21_paper.pdf])
-- Extract abstract authors and keywords from PDF ([starting][https://code.google.com/p/pdfssa4met/]
-   [points][http://www.cs.cornell.edu/cdlrg/reference%20linking/extraction.pdf])
+- Automatic Paper/Reviewer assignement ([starting point](http://140.123.102.14:8080/reportSys/file/paper/scfu/scfu_21_paper.pdf))
+- Extract abstract authors and keywords from PDF ([starting](https://code.google.com/p/pdfssa4met/)
+   [points](http://www.cs.cornell.edu/cdlrg/reference%20linking/extraction.pdf))
 - ...
