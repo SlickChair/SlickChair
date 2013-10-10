@@ -3,19 +3,11 @@ Work in progress
 
 SlickChair is an open source conference management system written in Scala
 using the Play Framework. This project uses several modern web technology to
-provide the best experience to both the conference administrator and the end
+provide the best experience to both the conference administrators and the end
 users.
-
-<!-- - Modern web interface build to work on desktops, tablets and smartphone
-- One click login with Google/Facebook accounts
-- Highly configurable
-- Full control over the data
- -->
 
 Screen-shots
 ------------
-
-wip
 
 
 Getting Started

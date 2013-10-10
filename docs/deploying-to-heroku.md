@@ -1,6 +1,9 @@
 Deploying to Heroku
 ===================
 
+(This is a stub and the project is quite far from beeing usable in
+production.)
+
 [Heroku][1] provides a handy infrastructure for hosting web applications.
 Automatic database backups and scalability to multiple servers are also
 commercially available.
@@ -47,5 +50,5 @@ SlickChair.
 [3]: http://toolbelt.heroku.com/
 [4]: http://heroku.com/signup
 [5]: running-in-production.md
-[6]: TODO
-[7]: TODO
+[6]: https://cloud.google.com/console#/project
+[7]: https://developers.facebook.com/apps

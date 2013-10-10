@@ -36,6 +36,6 @@ Out of scope:
 - Use [Scala-JS](https://github.com/lampepfl/scala-js) instead of CoffeScript
 - Prefill the submission form with data extracted from the PDF
 - Automatic Paper/Reviewer assignement ([starting point](http://140.123.102.14:8080/reportSys/file/paper/scfu/scfu_21_paper.pdf))
-- Extract abstract authors and keywords from PDF ([starting](https://code.google.com/p/pdfssa4met/)
+- Extract abstract authors and keywords from PDF ([starting](http://pdfx.cs.man.ac.uk/)
    [points](http://www.cs.cornell.edu/cdlrg/reference%20linking/extraction.pdf))
 - ...
