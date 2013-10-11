@@ -91,31 +91,31 @@ object Members extends Table[Member]("MEMBERS") {
     * @param newMember  the NewMember to insert
     * @return  the identifier found by the database
     */
-  def ins(newMember: NewMember): Int = DB.withSession(implicit session =>
-    Members.autoinc.insert(newMember) )
+  def ins(newMember: NewMember): Int = DB.withSession{implicit session:Session =>
+    Members.autoinc.insert(newMember) }
   
   /** Retrieves all Members stored in the database.
     *
     * @return  all Members stored in the database
     */
-  def all: List[Member] = DB.withSession(implicit session =>
-    Query(Members).list )
+  def all: List[Member] = DB.withSession{implicit session:Session =>
+    Query(Members).list }
   
   /** Finds a Member in the database with a given identifier.
     *
     * @param  memberId  the given identifier
     * @return  an optional Member
     */
-  def withId(memberId: Int): Option[Member] = DB.withSession(implicit session =>
-    Query(Members).filter(_.id is memberId).list.headOption )
+  def withId(memberId: Int): Option[Member] = DB.withSession{implicit session:Session =>
+    Query(Members).filter(_.id is memberId).list.headOption }
   
   /** Finds a Member in the database with a given email.
     *
     * @param  memberEmail  the given email
     * @return  an optional Member
     */
-  def withEmail(memberEmail: String): Option[Member] = DB.withSession(implicit session =>
-    Query(Members).filter(_.email is memberEmail).list.headOption )
+  def withEmail(memberEmail: String): Option[Member] = DB.withSession{implicit session:Session =>
+    Query(Members).filter(_.email is memberEmail).list.headOption }
   
   /** Returns the emails of multiple relevant categories of Members. The
     * possibly intersecting subsets of Members are returned along with a short
@@ -127,20 +127,20 @@ object Members extends Table[Member]("MEMBERS") {
     *
     * @return  a list of (description, emails)
     */
-  def relevantCategories: List[(String, String)] = DB.withTransaction(implicit session =>
+  def relevantCategories: List[(String, String)] = DB.withTransaction{implicit session:Session =>
     List(
       // TODO: add categories as needed
       ("All Members", Query(Members).map(_.email).list)
     ).map(c => (c._1, c._2.mkString(", ")))
-  )
+  }
   
   /** Changes the role of a Member in the database.
     *
     * @param  memberId  the identifier of the promoted Member
     * @param  newRole  the new Role of this Member
     */
-  def promote(memberId: Int, newRole: MemberRole): Unit = DB.withSession(implicit session =>
-    Query(Members).filter(_.id is memberId).map(_.role).update(newRole) )
+  def promote(memberId: Int, newRole: MemberRole): Unit = DB.withSession{implicit session:Session =>
+    Query(Members).filter(_.id is memberId).map(_.role).update(newRole) }
   
   
   /** Extracts the Member from the a request, assuming the succeeded.

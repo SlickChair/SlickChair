@@ -66,19 +66,19 @@ object LoginUsers extends Table[User]("LOGIN_USERS") {
   def * = uid ~ pid ~ email ~ firstname ~ lastname ~ authmethod ~ hasher ~ password ~ salt <> (User.apply _, User.unapply _)
 
   def UserByidentityId(identityId: IdentityId) = 
-    Query(LoginUsers).filter( user =>
-      (user.uid is identityId.userId) && (user.pid is identityId.providerId) )
+    Query(LoginUsers).filter{ user =>
+      (user.uid is identityId.userId) && (user.pid is identityId.providerId) }
   
   def userByEmailAndProvider(email: String, pid: String) = 
-    Query(LoginUsers).filter( user =>
-      (user.email is email) && (user.pid is pid) )
+    Query(LoginUsers).filter{ user =>
+      (user.email is email) && (user.pid is pid) }
   
-  def withEmail(email: String) = DB.withTransaction(implicit session =>
-    Query(LoginUsers).filter(_.email is email).list.headOption
-  )
+  def withEmail(email: String) = DB.withTransaction{implicit session:Session =>
+    Query(LoginUsers).filter{_.email is email}.list.headOption
+  }
 
   trait Queries {
-    def save(identity: Identity): Identity = DB.withTransaction { implicit session =>
+    def save(identity: Identity): Identity = DB.withTransaction { implicit session:Session =>
       val user = User.fromIdentity(identity)
       find(user.id) match {
         case None =>
@@ -89,12 +89,12 @@ object LoginUsers extends Table[User]("LOGIN_USERS") {
       identity
     }
     
-    def find(identityId: IdentityId): Option[Identity] = DB.withSession(implicit session =>
+    def find(identityId: IdentityId): Option[Identity] = DB.withSession{implicit session:Session =>
       UserByidentityId(identityId).firstOption.map(_.toIdentity)
-    )
+    }
     
-    def findByEmailAndProvider(email: String, pid: String): Option[Identity] = DB.withSession(implicit session =>
+    def findByEmailAndProvider(email: String, pid: String): Option[Identity] = DB.withSession{implicit session:Session =>
       userByEmailAndProvider(email, pid).firstOption.map(_.toIdentity)
-    )
+    }
   }
 }

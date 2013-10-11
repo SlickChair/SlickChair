@@ -54,24 +54,24 @@ object Papers extends Table[Paper]("PAPERS") {
   def * =  id ~ contactemail ~ contactfirstname ~ contactlastname ~ submissiondate ~ lastupdate ~ accepted ~ title ~ format ~ keywords ~ abstrct ~ fileid <> (Paper, Paper.unapply _)
   def autoInc = contactemail ~ contactfirstname ~ contactlastname ~ submissiondate ~ lastupdate ~ accepted ~ title ~ format ~ keywords ~ abstrct ~ fileid <> (NewPaper, NewPaper.unapply _) returning id
 
-  def all: List[Paper] = DB.withSession(implicit session =>
-    Query(Papers).list )
+  def all: List[Paper] = DB.withSession {implicit session:Session =>
+    Query(Papers).list }
   
-  def ins(newPaper: NewPaper): Int = DB.withSession(implicit session =>
-    Papers.autoInc.insert(newPaper) )
+  def ins(newPaper: NewPaper): Int = DB.withSession {implicit session:Session =>
+    Papers.autoInc.insert(newPaper) }
   
-  def updt(paper: Paper) = DB.withSession(implicit session =>
-    Papers.filter(_.id is paper.id).update(paper) )
+  def updt(paper: Paper) = DB.withSession {implicit session:Session =>
+    Papers.filter(_.id is paper.id).update(paper) }
   
-  def withId(paperId: Int): Option[Paper] = DB.withSession(implicit session =>
-    Query(Papers).filter(_.id is paperId).list.headOption )
+  def withId(paperId: Int): Option[Paper] = DB.withSession  {implicit session:Session =>
+    Query(Papers).filter(_.id is paperId).list.headOption }
 
-  def withEmail(email: String): Option[Paper] = DB.withSession(implicit session =>
-    Query(Papers).filter(_.contactemail is email).list.headOption )
+  def withEmail(email: String): Option[Paper] = DB.withSession  {implicit session:Session =>
+    Query(Papers).filter(_.contactemail is email).list.headOption }
   
-  def relevantCategories: List[(String, String)] = DB.withSession(implicit session =>
+  def relevantCategories: List[(String, String)] = DB.withSession {implicit session:Session =>
     List(
       ("All Authors", Query(Papers).map(_.contactemail).list)
     ).map(c => (c._1, c._2.mkString(", ")))
-  )
+  }
 }

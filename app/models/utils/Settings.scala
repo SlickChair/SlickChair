@@ -36,7 +36,7 @@ trait Setting[T] {
     *
     * @return the value of the Setting
     */
-  def get: T = DB.withSession{implicit session =>
+  def get: T = DB.withSession{implicit session:Session =>
     Query(Settings).filter(_.name is dbname).list.headOption match {
       case Some(DBSetting(_, value)) => fromString(value)
       case None => default
@@ -47,7 +47,7 @@ trait Setting[T] {
     *
     * @param  value  the value of the Setting
     */
-  def set(value: T): Unit = DB.withTransaction { implicit session =>
+  def set(value: T): Unit = DB.withTransaction { implicit session:Session =>
     val entry = DBSetting(dbname, value.toString)
     Query(Settings).filter(_.name is dbname).list.headOption match {
       // Insert-or-update would have been nice here, https://github.com/slick/slick/issues/6.

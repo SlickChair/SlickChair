@@ -35,18 +35,18 @@ object MemberBids extends Table[MemberBid]("MEMBER_BIDS") {
   
   def * = paperid ~ memberid ~ bid <> (MemberBid, MemberBid.unapply _)
   
-  def all = DB.withSession(implicit session =>
-    Query(MemberBids).list )
+  def all = DB.withSession{implicit session:Session =>
+    Query(MemberBids).list }
   
-  def ins(mb: MemberBid) = DB.withSession(implicit session =>
-    MemberBids.insert(mb) )
+  def ins(mb: MemberBid) = DB.withSession{implicit session:Session =>
+    MemberBids.insert(mb) }
   
-  def of(member: Member) = DB.withSession(implicit session =>
-    Query(MemberBids).filter(_.memberid is member.id).list )
+  def of(member: Member) = DB.withSession{implicit session:Session =>
+    Query(MemberBids).filter(_.memberid is member.id).list }
   
-  def deleteFor(member: Member) = DB.withSession(implicit session =>
-    MemberBids.filter(_.memberid is member.id).delete )
+  def deleteFor(member: Member) = DB.withSession{implicit session:Session =>
+    MemberBids.filter(_.memberid is member.id).delete }
 
-  def insertAll(memberBids: List[MemberBid]) = DB.withSession(implicit session =>
-    memberBids.foreach(MemberBids.insert) )
+  def insertAll(memberBids: List[MemberBid]) = DB.withSession{implicit session:Session =>
+    memberBids.foreach(MemberBids.insert) }
 }

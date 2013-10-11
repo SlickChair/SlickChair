@@ -26,12 +26,12 @@ object EmailTemplates extends Table[EmailTemplate]("EMAIL_TEMPLATES") {
   def * =  id ~ name ~ subject ~ body <> (EmailTemplate, EmailTemplate.unapply _)
   def autoInc = name ~ subject ~ body <> (NewEmailTemplate, NewEmailTemplate.unapply _) returning id
 
-  def all = DB.withSession(implicit session =>
-    Query(EmailTemplates).list )
+  def all = DB.withSession{implicit session:Session =>
+    Query(EmailTemplates).list }
 
-  def ins(newEmailTemplate: NewEmailTemplate) = DB.withSession(implicit session =>
-    EmailTemplates.autoInc.insert(newEmailTemplate) )
+  def ins(newEmailTemplate: NewEmailTemplate) = DB.withSession{implicit session:Session =>
+    EmailTemplates.autoInc.insert(newEmailTemplate) }
 
-  // def delete(id: Int) = DB.withSession(implicit session =>
-  //   MailTemplates.filter(_.id is id).delete )
+  // def delete(id: Int) = DB.withSession({implicit session:Session =>
+  //   MailTemplates.filter(_.id is id).delete)}
 }

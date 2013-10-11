@@ -30,15 +30,15 @@ object Authors extends Table[Author]("AUTHORS") {
   def paper = foreignKey("AUTHORS_PAPERID_FK", paperid, Papers)(_.id)
   def * = paperid ~ position ~ firstname ~ lastname ~ organization ~ email <> (Author, Author.unapply _)
 
-  def all = DB.withSession(implicit session =>
-    Query(Authors).list )
+  def all = DB.withSession{implicit session:Session =>
+    Query{Authors}.list }
   
-  def of(paper: Paper) = DB.withSession(implicit session =>
-    Query(Authors).filter(_.paperid is paper.id).list )
+  def of(paper: Paper) = DB.withSession{implicit session:Session =>
+    Query{Authors}.filter(_.paperid is paper.id).list }
   
-  def insertAll(authors: List[Author]) = DB.withSession(implicit session =>
-    authors.foreach(a => Authors.insert(a)) )
+  def insertAll(authors: List[Author]) = DB.withSession{implicit session:Session =>
+    authors.foreach(a => Authors.insert(a)) }
   
-  def deleteFor(paper: Paper) = DB.withSession(implicit session =>
-    Authors.filter(_.paperid is paper.id).delete )
+  def deleteFor(paper: Paper) = DB.withSession{implicit session:Session =>
+    Authors.filter(_.paperid is paper.id).delete }
 }

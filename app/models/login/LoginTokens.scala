@@ -35,30 +35,30 @@ object LoginTokens extends Table[MyToken]("LOGIN_TOKENS") {
   def isInvitation = column[Boolean]("ISINVITATION")
   def * = uuid ~ email ~ creationTime ~ expirationTime ~ isSignUp ~ isInvitation <> (MyToken.apply _, MyToken.unapply _)
   
-  def allInvitations = DB.withSession(implicit session =>
-    Query(LoginTokens).filter(_.isInvitation).list )
+  def allInvitations = DB.withSession{implicit session:Session =>
+    Query(LoginTokens).filter(_.isInvitation).list }
   
-  def ins(myToken: MyToken) = DB.withSession(implicit session =>
-    LoginTokens.insert(myToken) )
+  def ins(myToken: MyToken) = DB.withSession{implicit session:Session =>
+    LoginTokens.insert(myToken) }
   
-  def del(uuid: String) = DB.withTransaction(implicit session =>
-    LoginTokens.filter(_.uuid is uuid).delete )
+  def del(uuid: String) = DB.withTransaction{implicit session:Session =>
+    LoginTokens.filter(_.uuid is uuid).delete }
   
-  def withUUID(uuid: String): Option[MyToken] = DB.withSession(implicit session =>
-    createFinderBy(_.uuid).apply(uuid).firstOption )
+  def withUUID(uuid: String): Option[MyToken] = DB.withSession{implicit session:Session =>
+    createFinderBy(_.uuid).apply(uuid).firstOption }
 
   trait Queries {
     def deleteToken(uuid: String): Unit = del(uuid)
     def findToken(uuid: String): Option[Token] = withUUID(uuid).map(_.toT)
 
-    def save(token: Token): Unit = DB.withTransaction { implicit session =>
+    def save(token: Token): Unit = DB.withTransaction { implicit session:Session =>
       findToken(token.uuid) match {
         case None => LoginTokens.insert(MyToken.fromT(token))
         case Some(t) => LoginTokens.filter(_.uuid is t.uuid).update(MyToken.fromT(token))
       }
     }
 
-    def deleteExpiredTokens: Unit = DB.withTransaction(implicit session =>
-      LoginTokens.filter(_.expirationTime <= DateTime.now).delete )
+    def deleteExpiredTokens: Unit = DB.withTransaction{implicit session:Session =>
+      LoginTokens.filter(_.expirationTime <= DateTime.now).delete }
   }
 }

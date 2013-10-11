@@ -17,13 +17,13 @@ libraryDependencies ++= Seq(
   "com.typesafe.play"       %% "play-jdbc"                   % "2.2.0" exclude("org.scala-stm", "scala-stm_2.10.0") exclude("play", "*"),
   "com.typesafe.play"       %% "anorm"                       % "2.2.0" exclude("org.scala-stm", "scala-stm_2.10.0") exclude("play", "*"),
   // "com.typesafe.play"       %% "play-json"                   % "2.2.0" exclude("org.scala-stm", "scala-stm_2.10.0") exclude("play", "*"),
-  // 
+                                                                 // 
   "com.typesafe.play" %% "play-slick" % "0.5.0.7",
   "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
-  // 
+                                                                 // 
   "com.github.tototoshi" %% "slick-joda-mapper" % "0.2.1",
   // "org.scala-tools.time" % "time_2.9.1" % "0.5",
-  // 
+                                                                 // 
   "com.micronautics" % "securesocial" % "2.2.0" exclude("org.scala-stm", "scala-stm_2.10.0") exclude("play", "*") withSources
 )
 

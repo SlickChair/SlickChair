@@ -25,15 +25,15 @@ object MemberTopics extends Table[MemberTopic]("MEMBER_TOPICS") {
 
   def * = memberid ~ topicid <> (MemberTopic, MemberTopic.unapply _)
   
-  def all = DB.withSession(implicit session =>
-    Query(MemberTopics).list )
+  def all = DB.withSession{implicit session:Session =>
+    Query(MemberTopics).list }
   
-  def ins(mt: MemberTopic) = DB.withSession(implicit session =>
-    MemberTopics.insert(mt) )
+  def ins(mt: MemberTopic) = DB.withSession{implicit session:Session =>
+    MemberTopics.insert(mt) }
   
-  def deleteFor(member: Member) = DB.withSession(implicit session =>
-    MemberTopics.filter(_.memberid is member.id).delete )
+  def deleteFor(member: Member) = DB.withSession{implicit session:Session =>
+    MemberTopics.filter(_.memberid is member.id).delete }
 
-  def insertAll(pts: List[MemberTopic]) = DB.withSession(implicit session =>
-    pts.foreach(pt => MemberTopics.insert(pt)) )
+  def insertAll(pts: List[MemberTopic]) = DB.withSession{implicit session:Session =>
+    pts.foreach(pt => MemberTopics.insert(pt)) }
 }
