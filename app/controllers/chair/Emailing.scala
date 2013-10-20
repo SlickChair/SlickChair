@@ -28,9 +28,9 @@ object Emailing extends Controller with SecureSocial {
   def sendEmail(to: String, subject: String, body: String) {
     Akka.system.scheduler.scheduleOnce(1 seconds) {
       val mail = use[MailerPlugin].email
-      mail.addRecipient(to)
+      mail.setRecipient(to)
       mail.setSubject(subject)
-      mail.addFrom(fromAddress)
+      mail.setFrom(fromAddress)
       mail.send(body, "")
     }
   }

@@ -32,7 +32,7 @@ object Sql extends Controller with SecureSocial {
   
   def runQuery = controllers.FakeAuth.FakeAction(ChairOnly) { implicit request =>
     val filledForm = queryForm.bindFromRequest
-    DB.withConnection { implicit session:Session =>
+    DB.withConnection { implicit session =>
       val (query, method) = filledForm.get
       val result: String = try {
         method match {

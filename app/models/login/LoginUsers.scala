@@ -66,15 +66,15 @@ object LoginUsers extends Table[User]("LOGIN_USERS") {
   def * = uid ~ pid ~ email ~ firstname ~ lastname ~ authmethod ~ hasher ~ password ~ salt <> (User.apply _, User.unapply _)
 
   def UserByidentityId(identityId: IdentityId) = 
-    Query(LoginUsers).filter{ user =>
-      (user.uid is identityId.userId) && (user.pid is identityId.providerId) }
+    Query(LoginUsers).filter( user =>
+      (user.uid is identityId.userId) && (user.pid is identityId.providerId) )
   
   def userByEmailAndProvider(email: String, pid: String) = 
-    Query(LoginUsers).filter{ user =>
-      (user.email is email) && (user.pid is pid) }
+    Query(LoginUsers).filter( user =>
+      (user.email is email) && (user.pid is pid) )
   
   def withEmail(email: String) = DB.withTransaction{implicit session:Session =>
-    Query(LoginUsers).filter{_.email is email}.list.headOption
+    Query(LoginUsers).filter(_.email is email).list.headOption
   }
 
   trait Queries {

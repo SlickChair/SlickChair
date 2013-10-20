@@ -84,7 +84,8 @@ object Submitting extends Controller with SecureSocial {
   }
   
   /** Handles submissions. Creates or update database entry with data of the form. */
-  def make = SecuredAction(false, None, parse.multipartFormData) { implicit request =>
+  def make = SecuredAction( parse.multipartFormData) { implicit request =>
+  // def make = SecuredAction(false, None, parse.multipartFormData) { implicit request =>
     val user = User.fromIdentity(request.user)
     val email = user.email
     submissionForm.bindFromRequest.fold(

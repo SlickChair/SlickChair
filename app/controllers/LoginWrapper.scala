@@ -3,11 +3,13 @@ package controllers
 import play.api.data.Form
 import play.api.data.Forms.{boolean, default, mapping, nonEmptyText, text}
 import play.api.i18n.Messages
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, Controller, Result, SimpleResult}
 import securesocial.controllers.{ProviderController, Registration}
 import securesocial.core.{SecureSocial, UserService}
 import securesocial.core.providers.UsernamePasswordProvider.UsernamePassword
 import securesocial.core.providers.utils.Mailer
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
 case class LoginWrapperForm(
   username: String,
@@ -34,12 +36,13 @@ object LoginWrapper extends Controller with SecureSocial {
     *  and the existence of the user in the database.
     */
   def dispatch = Action { implicit request =>
-        import play.api.Logger
+    import play.api.Logger
     loginWrapperForm.bindFromRequest.fold(
       errors => Ok("errors: " + errors), // TODO, show in src form? BadRequest(...)
       form => {
         if(!form.create) {
-          ProviderController.authenticateByPost(UsernamePassword)(request) // Login
+          val req = ProviderController.authenticateByPost(UsernamePassword)(request) 
+          Await.result(req, Duration.Inf)
         } else {
           // Because of the way securesocial implements the forms for forgot
           // password, creat account and login it is not possible to use the

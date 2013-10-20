@@ -24,7 +24,8 @@ libraryDependencies ++= Seq(
   "com.github.tototoshi" %% "slick-joda-mapper" % "0.2.1",
   // "org.scala-tools.time" % "time_2.9.1" % "0.5",
                                                                  // 
-  "com.micronautics" % "securesocial" % "2.2.0" exclude("org.scala-stm", "scala-stm_2.10.0") exclude("play", "*") withSources
+  // "com.micronautics" % "securesocial" % "2.2.0" exclude("org.scala-stm", "scala-stm_2.10.0") exclude("play", "*") withSources
+  "securesocial" %% "securesocial" % "master-SNAPSHOT"
 )
 
 resolvers ++= Seq(
@@ -43,4 +44,4 @@ resolvers ++= Seq(
   //"Local ivy2 Repository" at "file:///Users/pawanacelr/.ivy2/local"
 )
 
-scalacOptions ++= Seq("-deprecation", "-encoding", "UTF-8", "-feature", "-target:jvm-1.6", "-unchecked", "-Ywarn-adapted-args", "-Ywarn-value-discard", "-Xlint")
+// scalacOptions ++= Seq("-deprecation", "-encoding", "UTF-8", "-feature", "-target:jvm-1.6", "-unchecked", "-Ywarn-adapted-args", "-Ywarn-value-discard", "-Xlint")
