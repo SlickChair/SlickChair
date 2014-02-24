@@ -10,7 +10,8 @@ GET     /assets/*file                        controllers.Assets.at(path="/public
 
 # Submitters
 GET     /submission                          controllers.Submitting.form
-POST    /submission/edit                     controllers.Submitting.make
+POST    /submission/make                     controllers.Submitting.make
+GET     /submission/edit                     controllers.Submitting.make
 GET     /submission/info                     controllers.Submitting.info
 
 # Reviewers
@@ -40,20 +41,13 @@ GET     /dashboard                           controllers.chair.Chair.dashboard
 # SecureSocial
 # Login page
 GET     /login                  securesocial.controllers.LoginPage.login
+POST    /login                  controllers.LoginWrapper.dispatch
 GET     /logout                 securesocial.controllers.LoginPage.logout
-GET     /dispatch               controllers.LoginWrapper.dispatch
-POST    /dispatch               controllers.LoginWrapper.dispatch
 # User Registration and password handling 
-GET     /signup                 securesocial.controllers.Registration.startSignUp
-POST    /signup                 securesocial.controllers.Registration.handleStartSignUp
 GET     /signup/:token          securesocial.controllers.Registration.signUp(token)
 POST    /signup/:token          securesocial.controllers.Registration.handleSignUp(token)
-GET     /reset                  securesocial.controllers.Registration.startResetPassword
-POST    /reset                  securesocial.controllers.Registration.handleStartResetPassword
 GET     /reset/:token           securesocial.controllers.Registration.resetPassword(token)
 POST    /reset/:token           securesocial.controllers.Registration.handleResetPassword(token)
-GET     /password               securesocial.controllers.PasswordChange.page
-POST    /password               securesocial.controllers.PasswordChange.handlePasswordChange
 # Providers entry points
 GET     /authenticate/:provider securesocial.controllers.ProviderController.authenticate(provider)
 POST    /authenticate/:provider securesocial.controllers.ProviderController.authenticateByPost(provider)

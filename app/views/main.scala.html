@@ -1,5 +1,5 @@
 @(title: String,
-  user: Option[String] = None,
+  user: Option[String] = None, // TODO: remove default
   conferenceName: String = models.utils.ConferenceShortName.get 
 )(content: Html)
 
@@ -58,9 +58,6 @@
       <div class="page-header">
         <h1>@title<small></small></h1>
       </div>
-      @if(user.isEmpty) {
-        @modallogin(controllers.LoginWrapper.loginWrapperForm)
-      }
       @content
       <br><br>
     </div>

@@ -22,7 +22,7 @@ case class User(
   salt: Option[String]
 ) {
   def id: IdentityId = IdentityId(uid, pid)
-  def toIdentity: Identity = SocialUser(
+  def toIdentity: SocialUser = SocialUser(
     identityId=   IdentityId(uid, pid),
     firstName=    firstname,
     lastName=     lastname,
@@ -73,27 +73,30 @@ object LoginUsers extends Table[User]("LOGIN_USERS") {
     Query(LoginUsers).filter( user =>
       (user.email is email) && (user.pid is pid) )
   
-  def withEmail(email: String) = DB.withTransaction{implicit session:Session =>
+  def withEmail(email: String) = DB.withTransaction { implicit session:Session =>
     Query(LoginUsers).filter(_.email is email).list.headOption
   }
 
   trait Queries {
     def save(identity: Identity): Identity = DB.withTransaction { implicit session:Session =>
       val user = User.fromIdentity(identity)
-      find(user.id) match {
+      val findOption = find(user.id)
+      findOption match {
         case None =>
           LoginUsers.insert(user)
         case Some(u) =>
           UserByidentityId(u.identityId).update(user)
       }
-      identity
+      // Hack: use avatarUrl field to store None if this is the first user
+      // login and Some("") otherwise.
+      user.toIdentity.copy(avatarUrl=findOption.map(x => "")) 
     }
     
-    def find(identityId: IdentityId): Option[Identity] = DB.withSession{implicit session:Session =>
+    def find(identityId: IdentityId): Option[Identity] = DB.withSession { implicit session:Session =>
       UserByidentityId(identityId).firstOption.map(_.toIdentity)
     }
     
-    def findByEmailAndProvider(email: String, pid: String): Option[Identity] = DB.withSession{implicit session:Session =>
+    def findByEmailAndProvider(email: String, pid: String): Option[Identity] = DB.withSession { implicit session:Session =>
       userByEmailAndProvider(email, pid).firstOption.map(_.toIdentity)
     }
   }

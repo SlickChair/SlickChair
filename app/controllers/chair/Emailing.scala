@@ -12,6 +12,7 @@ import play.api.libs.concurrent.Akka
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.{Action, Controller}
 import securesocial.core.SecureSocial
+import scala.language.postfixOps
 
 object Emailing extends Controller with SecureSocial {
   val fromAddress = current.configuration.getString("smtp.from").get
@@ -32,12 +33,15 @@ object Emailing extends Controller with SecureSocial {
       mail.setSubject(subject)
       mail.setFrom(fromAddress)
       mail.send(body, "")
+      ()
     }
   }
   
   val emailForm = Form[Email] (emailMapping)
   
-  def form = Action(Ok(views.html.chair.email(None, emailForm)))
+  def form = Action { implicit request =>
+    Ok(views.html.chair.email(None, emailForm))
+  }
   
   def send = Action { implicit request =>
     emailForm.bindFromRequest.fold(

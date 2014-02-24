@@ -14,7 +14,8 @@
  * limitations under the License.
  *
  */
- package models.login
+
+package models.login
 
 import play.api.{Logger, Application}
 import securesocial.core._

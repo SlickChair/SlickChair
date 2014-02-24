@@ -1,4 +1,5 @@
-@(list: List[(models.entities.Paper, List[models.entities.Author])])
+@(list: List[(models.entities.Paper, List[models.entities.Author])]
+)
 
 @main("Paper list") {
   @for((paper, authors) <- list) {

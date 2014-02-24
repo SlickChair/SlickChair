@@ -63,23 +63,21 @@ object Submitting extends Controller with SecureSocial {
       // authors paperid and paper {id, contactemail, submissiondate,
       // lastupdate, accepted, fileid} are still null.
      (submissionForm =>
-        Some(submissionForm.paper, submissionForm.authors.size, submissionForm.authors, submissionForm.topics))
+        Some((submissionForm.paper, submissionForm.authors.size, submissionForm.authors, submissionForm.topics)))
   )
   
-  /**  Display submission form, filled with last values if present. */
-  // def form = controllers.FakeAuth.FakeAwareAction { implicit request =>
-  def form = UserAwareAction { implicit request =>
-    val email = request.user.map(_.email.get)
-    Papers.withEmail(email.getOrElse("")) match { // TODO: hacky.
+  def form = SecuredAction { implicit request =>
+    val email = request.user.email.get
+    Papers.withEmail(email) match {
       case None =>
-        Ok(views.html.submission("New Submission", submissionForm, email))
+        Ok(views.html.submission("New Submission", submissionForm, Some(email))())
       case Some(paper) =>
         def incBind[T](form: Form[T], data: Map[String, String]) = form.bind(form.data ++ data)
         val existingSubmissionForm = incBind(
           submissionForm.fill(SubmissionForm(paper, Authors.of(paper), List())),
           Topics.of(paper).map(topic => ("topics[%s]".format(topic.id), topic.id.toString)).toMap
         )
-        Ok(views.html.submission("Edit Submission", existingSubmissionForm, email))
+        Ok(views.html.submission("Edit Submission", existingSubmissionForm, Some(email))())
     }
   }
   
@@ -92,7 +90,7 @@ object Submitting extends Controller with SecureSocial {
       // TODO: if the form is not js validated we might want to save the
       //       uploaded file in case of errors. Otherwise the user will
       //       have to select it again.
-      errors => Ok(views.html.submission(email + "Submission: Errors found", errors)),
+      errors => Ok(views.html.submission(email + "Submission: Errors found", errors)()),
       form => {
         // Ok(form.toString)
         // TODO: Remove next line and change formPaper to form.paper...
@@ -142,7 +140,7 @@ object Submitting extends Controller with SecureSocial {
   // TODO: Remove?
   def info = SecuredAction { implicit request =>
     Papers.withEmail(request.user.email.get) match {
-      case None =>
+      case None => // TODO: Needed??
         Redirect(routes.Submitting.form)
       case Some(paper) =>
         Ok(views.html.submissioninfo(

@@ -43,7 +43,9 @@ object MembersManaging extends Controller with SecureSocial {
     )(PromoteForm.apply _)(PromoteForm.unapply _)
   ).fill(PromoteForm(Nil, MemberRole.Chair))
   
-  def page = Action(Ok(views.html.chair.manageMembers(inviteForm, invalidateForm, promoteForm)))
+  def page = Action { implicit request =>
+    Ok(views.html.chair.manageMembers(inviteForm, invalidateForm, promoteForm))
+  }
   
   def handle = Action { implicit request => 
     request.body.asFormUrlEncoded.get("action").headOption match {

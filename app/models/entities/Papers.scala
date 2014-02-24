@@ -63,10 +63,10 @@ object Papers extends Table[Paper]("PAPERS") {
   def updt(paper: Paper) = DB.withSession {implicit session:Session =>
     Papers.filter(_.id is paper.id).update(paper) }
   
-  def withId(paperId: Int): Option[Paper] = DB.withSession  {implicit session:Session =>
+  def withId(paperId: Int): Option[Paper] = DB.withSession {implicit session:Session =>
     Query(Papers).filter(_.id is paperId).list.headOption }
 
-  def withEmail(email: String): Option[Paper] = DB.withSession  {implicit session:Session =>
+  def withEmail(email: String): Option[Paper] = DB.withSession {implicit session:Session =>
     Query(Papers).filter(_.contactemail is email).list.headOption }
   
   def relevantCategories: List[(String, String)] = DB.withSession {implicit session:Session =>

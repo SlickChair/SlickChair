@@ -70,7 +70,7 @@ legend {
   border-left: 0px;
 }
 
-// Increase the size of the icons. 
+// Increase the size of the plus/minus icons. 
 .glyphicon {
   font-size: 25px;
   margin-right: 5px;
@@ -149,4 +149,20 @@ a.email {
 
 .email-form {
   margin-bottom: -20px;
+}
+
+// Plus/Minus shadows
+span.glyphicon {
+  padding: 0px 1px 1px 0px;
+  text-shadow: black 1px 1px 2px;
+}
+
+span.glyphicon.glyphicon-minus-sign.disabeled.half-transparent:active {
+  padding: 0px 1px 1px 0px;
+  text-shadow: black 1px 1px 2px;
+}
+
+span.glyphicon:active {
+  padding: 1px 0px 0px 1px;
+  text-shadow: black 0px 0px 1px;
 }

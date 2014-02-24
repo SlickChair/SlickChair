@@ -1,4 +1,7 @@
-@(paper: models.entities.Paper, authors: List[models.entities.Author], topics: List[models.entities.Topic])
+@(paper: models.entities.Paper,
+  authors: List[models.entities.Author],
+  topics: List[models.entities.Topic]
+)
 
 @main("Submission Infos") {
   @Html(paper.toString.replaceAll(",", ",\n<br>"))

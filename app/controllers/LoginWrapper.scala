@@ -3,17 +3,17 @@ package controllers
 import play.api.data.Form
 import play.api.data.Forms.{boolean, default, mapping, nonEmptyText, text}
 import play.api.i18n.Messages
-import play.api.mvc.{Action, Controller, Result, SimpleResult}
+import play.api.mvc.{Action, Controller, Result, SimpleResult, EssentialAction, Request}
 import securesocial.controllers.{ProviderController, Registration}
-import securesocial.core.{SecureSocial, UserService}
+import securesocial.core.{SecureSocial, UserService, Identity}
 import securesocial.core.providers.UsernamePasswordProvider.UsernamePassword
 import securesocial.core.providers.utils.Mailer
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import scala.concurrent.ExecutionContext.Implicits.global
 
 case class LoginWrapperForm(
   username: String,
-  email: String,
   password: String,
   create: Boolean
 )
@@ -23,47 +23,58 @@ case class LoginWrapperForm(
   * loginWrapperForm form.
   */
 object LoginWrapper extends Controller with SecureSocial {
+  val WELCOMED = "welcomed"
+  
   /** "Extends" securesocial.core.providers.UsernamePasswordProvider.loginForm */
   val loginWrapperForm = Form[LoginWrapperForm] (mapping(
     "username" -> nonEmptyText,
     "password" -> default(text, ""),
     "create" -> boolean
-  )((username, password, create) => LoginWrapperForm(username, username, password, create))
-   (ssw => Some(ssw.username, ssw.password, ssw.create) )
-  )
+  )(LoginWrapperForm.apply _)(LoginWrapperForm.unapply _))
   
   /** Dispatches to the appropriate action as depending of the `create` field
-    *  and the existence of the user in the database.
+    * and the existence of the user in the database.
     */
   def dispatch = Action { implicit request =>
-    import play.api.Logger
+    play.api.Logger.info("dispatch")
+
     loginWrapperForm.bindFromRequest.fold(
-      errors => Ok("errors: " + errors), // TODO, show in src form? BadRequest(...)
+      errors => Ok("LoginWrapper errors: " + errors), // TODO, show in src form? BadRequest(...)
       form => {
         if(!form.create) {
-          val req = ProviderController.authenticateByPost(UsernamePassword)(request) 
+          val req = ProviderController.authenticateByPost(UsernamePassword)(request)
           Await.result(req, Duration.Inf)
         } else {
-          // Because of the way securesocial implements the forms for forgot
-          // password, creat account and login it is not possible to use the
-          // same request for the three actions. The forgot password and
-          // create account code comes from controllers/Registration.scala.
           UserService.findByEmailAndProvider(form.username, UsernamePassword) match {
-            case Some(user) => 
-              // Forgot password
-              val token = createToken(form.email, isSignUp = false)
-              Mailer.sendPasswordResetEmail(user, token._1)
-            case None =>
-              // Create account
-              val token = createToken(form.email, isSignUp = true)
-              Mailer.sendSignUpEmail(form.email, token._1)
+            case Some(user) => forgot(form, user)
+            case None => signup(form)
           }
-          Redirect(Registration.onHandleStartResetPasswordGoTo).flashing(Registration.Success -> Messages(Registration.ThankYouCheckEmail))
         }
       }
     )
   }
   
+  // Because of the way securesocial implements the forms for forgot
+  // password, creat account and login it is not possible to use the
+  // same request for the three actions. The forgot password and
+  // create account code comes from controllers/Registration.scala.
+  private def thankYouCheckEmail = {
+    Redirect(Registration.onHandleStartResetPasswordGoTo).flashing(
+      Registration.Success -> Messages(Registration.ThankYouCheckEmail))
+  }
+  
+  private def forgot(form: LoginWrapperForm, user: Identity)(implicit request: Request[_]) = {
+    val token = createToken(form.username, isSignUp = false)
+    Mailer.sendPasswordResetEmail(user, token._1)
+    thankYouCheckEmail
+  }
+  
+  private def signup(form: LoginWrapperForm)(implicit request: Request[_]) = {
+    val token = createToken(form.username, isSignUp = true)
+    Mailer.sendSignUpEmail(form.username, token._1)
+    thankYouCheckEmail
+  }
+    
   /** Copy pasted from securesocial.controllers/Registration.scala, not usable
     * from here because of the private modifier...
     */
@@ -84,13 +95,4 @@ object LoginWrapper extends Controller with SecureSocial {
     UserService.save(token)
     (uuid, token)
   }
-  
-// Fun fact: compiling this method results in 
-// [error] (compile:compile) java.lang.NullPointerException
-// def dispatch = Action { implicit request =>
-//   import com.typesafe.plugin._
-//   import play.api.Play.current
-//   SecureSocial.withRefererAsOriginalUrl(Ok(use[LoginTemplates].getLoginPage(request, UsernamePasswordProvider.loginForm)))
-// }
 }
-
