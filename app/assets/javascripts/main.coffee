@@ -70,3 +70,8 @@ $ ->
   $("#create").on "change", (e) ->
     $("#password").val("")
     $("#password").prop("disabled", not $("#password").prop("disabled"))
+  
+  $("#modal-close").click (e) ->
+    $("#myModal").toggle()
+    $(".modal-backdrop").toggle()
+    $("body").toggleClass("modal-open")

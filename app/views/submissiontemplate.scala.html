@@ -1,17 +1,15 @@
 @(title: String,
   submissionForm: Form[SubmissionForm],
-  user: Option[String] = None,
-  msg: Option[String] = None,
+  user: Option[String],
   topics: List[models.entities.Topic] = models.entities.Topics.all
-)(modal: Html = Html(""))
+)(modal: Html)
 
 @import helper.bootstrap3._
 @import models.entities._
 
 @authors = @{(0 to 2)}
 
-@main(title, user) {
-  @modal
+@main(title, user, modal) {
   @bootstrap3.form(
     routes.Submitting.make,
     'enctype -> "multipart/form-data") {
@@ -36,14 +34,14 @@
       @bootstrap3.inputCheckboxGroup(
         submissionForm,
         "topics",
-        topics.toSeq.map( t => (t.id, t.name) ),
+        topics.toSeq.map { t => (t.id, t.name) },
         '_label -> "Topics")
       @bootstrap3.inputFile(
         submissionForm("data"),
         '_label -> "File")
       @bootstrap3.select(
         submissionForm("nauthors"),
-        authors.map(i => ((i+1).toString, (i+1).toString)),
+        authors.map { i => ((i+1).toString, (i+1).toString) },
         '_label -> "Number of authors",
         '_class -> "hidejs")
     </fieldset>

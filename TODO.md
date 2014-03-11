@@ -29,11 +29,10 @@ Todo:
 Out of scope:
 =============
 
-- Logs, tests
-- More detailed settings
+- Logs
+- Detailed settings
 - Phases abstraction for settings (1 Submission, 2 Bidding, 3 Review, ...)
-- Client side stuff (starting with form validation)
-- Use [Scala-JS](https://github.com/lampepfl/scala-js) instead of CoffeScript
+- Client side stuff (starting with form validation), scala.js
 - Prefill the submission form with data extracted from the PDF
 - Automatic Paper/Reviewer assignement ([starting point](http://140.123.102.14:8080/reportSys/file/paper/scfu/scfu_21_paper.pdf))
 - Extract abstract authors and keywords from PDF ([starting](http://pdfx.cs.man.ac.uk/)

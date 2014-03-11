@@ -11,12 +11,12 @@ import securesocial.controllers.DefaultTemplatesPlugin
 import controllers.LoginWrapper.loginWrapperForm
 
 class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(application) {
-  override def getLoginPage[A](implicit request: Request[A], form: Form[(String, String)], msg: Option[String] = None): Html = {
-    views.html.login.modal(
+  override def getLoginPage[A](implicit request: Request[A], form: Form[(String, String)], errorMessage: Option[String] = None): Html = {
+    views.html.login(
       form.value match {
         case Some((username, password)) => loginWrapperForm.fillAndValidate(LoginWrapperForm(username, password, false))  
         case None => loginWrapperForm
-      }, msg)
+      }, errorMessage)
   }
 
   // override def getSignUpPage[A](implicit request: Request[A], form: Form[RegistrationInfo], token: String): Html = {

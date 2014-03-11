@@ -1,0 +1,21 @@
+@(title: String, withCloseButton: Boolean)(content: Html)
+
+<div class="modal fade in" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" style="display: block;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">
+          @title
+        </h2>
+      </div>
+      <div class="modal-body">
+        @content
+      </div>
+      @if(withCloseButton) {
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" id="modal-close">Close</button>
+        </div>
+      }
+    </div>
+  </div>
+</div>

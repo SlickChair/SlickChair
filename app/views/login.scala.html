@@ -1,0 +1,40 @@
+@(loginWrapperForm: Form[controllers.LoginWrapperForm],
+  errorMessage: Option[String]
+)
+  
+@import helper.bootstrap3._
+
+@submissiontemplate("New Submission", controllers.Submitting.submissionForm, None) {
+  @modal("Login to SlickChair", withCloseButton=false) {
+    You need to login before sending a new submission.
+    Choose your login method:
+    <div class="login">
+      <a class="facebook" href="@securesocial.controllers.routes.ProviderController.authenticate("facebook")">Facebook</a>
+      <a class="google" href="@securesocial.controllers.routes.ProviderController.authenticate("google")">Google</a>
+      <a class="email" href="#">Email</a>
+    </div>
+    <div class="hidejs email-form">
+      @bootstrap3.form(
+        routes.LoginWrapper.dispatch) {
+          <fieldset>
+            @bootstrap3.inputText(
+              loginWrapperForm("username"),
+              '_label -> "Email")
+            @bootstrap3.inputText(
+              loginWrapperForm("password"),
+              '_label -> "Password",
+              'type -> "password")
+            @bootstrap3.checkbox(
+              loginWrapperForm("create"),
+              '_label -> "Create",
+              '_text -> "Create a new password (sign-up or forgot)",
+              'value -> true)
+            @bootstrap3.button("Submit")
+          </fieldset>
+      }
+    </div>
+    <div class="note">
+      The login with Facebook or Google account is only used for authentication purposes, there won't be interactions with the respective networks. Also make sure to have access to the associated email address before you login with a social account.
+    </div>
+  }
+}

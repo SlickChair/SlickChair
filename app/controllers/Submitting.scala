@@ -1,7 +1,7 @@
 package controllers
 
-import org.joda.time.DateTime
-
+import org.joda.time.{DateTime, Seconds}
+import play.api.templates.Html
 import models.entities.{Author, Authors, NewPaper, Paper, PaperType}
 import models.entities.{Papers, Topics}
 import models.entities.PaperType.PaperType
@@ -11,7 +11,7 @@ import models.utils.{Files, NewFile}
 import play.api.data.Form
 import play.api.data.Forms.{ignored, list, mapping, nonEmptyText, number, text}
 import play.api.data.Mapping
-import play.api.mvc.Controller
+import play.api.mvc.{Controller, Cookie}
 import securesocial.core.SecureSocial
 
 case class SubmissionForm(
@@ -68,21 +68,35 @@ object Submitting extends Controller with SecureSocial {
   
   def form = SecuredAction { implicit request =>
     val email = request.user.email.get
-    Papers.withEmail(email) match {
+    val page = Papers.withEmail(email) match {
       case None =>
-        Ok(views.html.submission("New Submission", submissionForm, Some(email))())
+        views.html.submissiontemplate("New Submission", submissionForm, Some(email)) _
       case Some(paper) =>
+        // TODO: Authors are not populated...
         def incBind[T](form: Form[T], data: Map[String, String]) = form.bind(form.data ++ data)
         val existingSubmissionForm = incBind(
           submissionForm.fill(SubmissionForm(paper, Authors.of(paper), List())),
           Topics.of(paper).map(topic => ("topics[%s]".format(topic.id), topic.id.toString)).toMap
         )
-        Ok(views.html.submission("Edit Submission", existingSubmissionForm, Some(email))())
+        views.html.submissiontemplate("Edit Submission", existingSubmissionForm, Some(email)) _
+      }
+    val CookieName = "not-first-login"
+    request.cookies.get(CookieName) match {
+      case None =>
+        val now = DateTime.now()
+        val maxAge = Some(Seconds.secondsBetween(now, now.plusYears(1)).getSeconds())
+        val modal = views.html.modal("First login", withCloseButton=true)(
+          Html("Warnning, this is your first login in play")
+        )
+        Ok(page(modal)).withCookies(Cookie(CookieName, "", maxAge=maxAge))
+      case Some(c) =>
+        Ok(page(Html("")))
     }
+    
   }
   
   /** Handles submissions. Creates or update database entry with data of the form. */
-  def make = SecuredAction( parse.multipartFormData) { implicit request =>
+  def make = SecuredAction(parse.multipartFormData) { implicit request =>
   // def make = SecuredAction(false, None, parse.multipartFormData) { implicit request =>
     val user = User.fromIdentity(request.user)
     val email = user.email
@@ -90,11 +104,9 @@ object Submitting extends Controller with SecureSocial {
       // TODO: if the form is not js validated we might want to save the
       //       uploaded file in case of errors. Otherwise the user will
       //       have to select it again.
-      errors => Ok(views.html.submission(email + "Submission: Errors found", errors)()),
+      errors => Ok(views.html.submissiontemplate(email + "Submission: Errors found", errors, Some(email))(Html(""))),
       form => {
-        // Ok(form.toString)
-        // TODO: Remove next line and change formPaper to form.paper...
-        val SubmissionForm(formPaper, formAuthors, formTopics) = form
+        // Ok(form.toString)  
         val newFileId: Option[Int] = request.body.file("data").map{ file =>
           val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray
           Files.ins(NewFile(file.filename, blob.size, DateTime.now, blob))
@@ -109,17 +121,17 @@ object Submitting extends Controller with SecureSocial {
               submissiondate = DateTime.now,
               lastupdate = DateTime.now,
               accepted = None,
-              formPaper.title,
-              formPaper.format,
-              formPaper.keywords,
-              formPaper.abstrct,
+              form.paper.title,
+              form.paper.format,
+              form.paper.keywords,
+              form.paper.abstrct,
               fileid = newFileId
             ))
           case Some(dbPaper) =>
             newFileId.map{ _ => dbPaper.fileid.map(i => Files.delete(i)) }
             Authors.deleteFor(dbPaper)
             PaperTopics.deleteFor(dbPaper)
-            Papers.updt(formPaper.copy(
+            Papers.updt(form.paper.copy(
               id = dbPaper.id,
               contactemail = dbPaper.contactemail, // == email by construction
               submissiondate = dbPaper.submissiondate,
@@ -130,8 +142,8 @@ object Submitting extends Controller with SecureSocial {
             dbPaper.id
         }
         
-        Authors.insertAll(formAuthors.map(_.copy(paperId)))
-        PaperTopics.insertAll(formTopics.map(PaperTopic(paperId, _)))
+        Authors.insertAll(form.authors.map(_.copy(paperId)))
+        PaperTopics.insertAll(form.topics.map(PaperTopic(paperId, _)))
         Redirect(routes.Submitting.info)
       }
     )
