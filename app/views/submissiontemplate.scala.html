@@ -43,10 +43,10 @@
         submissionForm("nauthors"),
         authors.map { i => ((i+1).toString, (i+1).toString) },
         '_label -> "Number of authors",
-        '_class -> "hidejs")
+        '_class -> "hidden")
     </fieldset>
     @authors.map { i =>
-      <fieldset class="hidejs" id="author@i">
+      <fieldset @if(i > 0){ class="hidden" } id="author@i">
         <legend>Author @(i+1)</legend>
         @bootstrap3.inputText(
           submissionForm(s"authors[$i].firstname"),

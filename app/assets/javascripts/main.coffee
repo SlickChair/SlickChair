@@ -14,13 +14,7 @@ $ ->
         e.preventDefault()
         fileInput.click()
 
-  ### Hides/show javascript managed elements. ###
-  $(".hidejs").each -> $(this).hide()
-  $(".showjs").each -> $(this).show()
-  
-  
   ### Handles plus and minus buttons. ###
-  $("#author0").show()
   nauthors = $("#nauthors")
   nauthors.val(1) # JS initialize it, or things could go wrong with previous/next
   getNauthors = -> Number(nauthors.val())
@@ -42,12 +36,12 @@ $ ->
   
   $(".glyphicon-plus-sign").click (e) ->
     if setNauthors(getNauthors() + 1)
-      $("#author#{ getNauthors() - 1 }").show()
+      $("#author#{ getNauthors() - 1 }").removeClass("hidden")
     disableMinusIfZero()
   
   $(".glyphicon-minus-sign").click (e) ->
     if setNauthors(getNauthors() - 1)
-      $("#author#{ getNauthors() }").hide()
+      $("#author#{ getNauthors() }").addClass("hidden")
     disableMinusIfZero()
   
   
@@ -61,8 +55,8 @@ $ ->
   
   ### Modal login magic. ###
   $(".email").click (e) ->
-    $(".email-form").toggle()
-    $(".note").toggle()
+    $(".email-form").toggleClass("hidden")
+    $(".note").toggleClass("hidden")
     $(".facebook").toggleClass("half-transparent")
     $(".google").toggleClass("half-transparent")
   
@@ -70,8 +64,3 @@ $ ->
   $("#create").on "change", (e) ->
     $("#password").val("")
     $("#password").prop("disabled", not $("#password").prop("disabled"))
-  
-  $("#modal-close").click (e) ->
-    $("#myModal").toggle()
-    $(".modal-backdrop").toggle()
-    $("body").toggleClass("modal-open")
