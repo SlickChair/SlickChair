@@ -1,14 +1,14 @@
-@(message: Option[String],
+@*(message: Option[String],
   bidForm: Form[controllers.member.BidForm],
-  papers: List[models.entities.Paper] = models.entities.Papers.all,
-  topics: List[models.entities.Topic] = models.entities.Topics.all
+  papers: List[models.Paper] = models.Papers.all,
+  topics: List[models.Topic] = models.Topics.all
 )
 
 @import helper._
 @import controllers.member._
-@import models.relations._
-@import models.entities._
-@import models.entities.PaperType._
+@import models._
+@import models._
+@import models.PaperType._
 
 @main("Bid") {
   @message.map{ m =>
@@ -44,3 +44,4 @@
     <input type="submit" id="submit" value="Save">
   }
 }
+*@

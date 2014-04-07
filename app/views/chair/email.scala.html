@@ -1,9 +1,9 @@
-@(message: Option[String],
-  emailForm: Form[models.utils.Email],
+@*(message: Option[String],
+  emailForm: Form[models.Email],
   recipientsCategories: List[(String, String)] =
-      models.entities.Papers.relevantCategories ::: models.entities.Members.relevantCategories,
-  templates: List[models.utils.EmailTemplate] =
-      models.utils.EmailTemplates.all
+      models.Papers.relevantCategories ::: models.Persons.relevantCategories,
+  templates: List[models.EmailTemplate] =
+      models.EmailTemplates.all
 )
 
 @import helper._
@@ -80,7 +80,7 @@
      * While a textarea content could be changed in one line with something
      * like `document.getElementById(id).value = text;` this complex process
      * preserves the undo stack of the browser.
-     *@
+     *@@*
     var changeTextareaValueById = function(id, text) {
       var element = document.getElementById(id);
       var event = document.createEvent("TextEvent");
@@ -101,3 +101,4 @@
       }, false);
   </script>
 }
+*@

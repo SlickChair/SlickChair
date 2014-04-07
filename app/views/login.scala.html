@@ -1,10 +1,11 @@
-@(loginWrapperForm: Form[controllers.LoginWrapperForm],
-  errorMessage: Option[String]
+@*(loginWrapperForm: Form[controllers.LoginWrapperForm],
+  errorMessage: Option[String],
+  topics: List[models.Topic]
 )
   
 @import helper.bootstrap3._
 
-@submissiontemplate("New Submission", controllers.Submitting.submissionForm, None) {
+@submissiontemplate("New Submission", controllers.Submitting.submissionForm, None, topics) {
   @modal("Login to SlickChair", withCloseButton=false) {
     You need to login before sending a new submission.
     Choose your login method:
@@ -38,3 +39,4 @@
     </div>
   }
 }
+*@

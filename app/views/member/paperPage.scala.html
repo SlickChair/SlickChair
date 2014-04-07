@@ -1,10 +1,10 @@
-@(isEdit: Boolean,
-  paper: models.entities.Paper,
-  authors: List[models.entities.Author],
-  reviews: List[(models.relations.Review,
-  models.entities.Member)],
-  comments: List[(models.relations.Comment,
-  models.entities.Member)], commentForm: Form[models.relations.Comment]
+@*(isEdit: Boolean,
+  paper: models.Paper,
+  authors: List[models.Author],
+  reviews: List[(models.Review,
+  models.Member)],
+  comments: List[(models.Comment,
+  models.Member)], commentForm: Form[models.Comment]
 )
 
 @import helper._
@@ -41,3 +41,4 @@
     <input type="submit" id="submit" value="Add comment">
   }
 }
+*@

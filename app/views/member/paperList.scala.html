@@ -1,4 +1,4 @@
-@(list: List[(models.entities.Paper, List[models.entities.Author])]
+@*(list: List[(models.Paper, List[models.Author])]
 )
 
 @main("Paper list") {
@@ -7,3 +7,4 @@
     by @authors.map(_.firstname).mkString(", ")<br>
   }
 }
+*@

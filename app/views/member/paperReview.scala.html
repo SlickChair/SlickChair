@@ -1,11 +1,11 @@
-@(isEdit: Boolean,
-  paper: models.entities.Paper,
-  authors: List[models.entities.Author],
-  reviewForm: Form[models.relations.Review]
+@*(isEdit: Boolean,
+  paper: models.Paper,
+  authors: List[models.Author],
+  reviewForm: Form[models.Review]
 )
 
 @import helper._
-@import models.relations._
+@import models._
 @import controllers.member._
 
 @main(if(isEdit) "Edit" else "" + "Review of " + paper.title) {
@@ -35,3 +35,4 @@
     <input type="submit" id="submit" value="@if(isEdit) {Save} else {Submit}">
   }
 }
+*@

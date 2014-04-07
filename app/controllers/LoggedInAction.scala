@@ -1,4 +1,5 @@
 // package controllers
+
 // import securesocial.core._
 // import play.api.mvc._
 // import providers.utils.RoutesHelper
@@ -54,7 +55,7 @@
 
 //   override def invokeBlock[A](request: Request[A], block: SecuredRequest[A] => Future[SimpleResult]) = {
 //     def weclomedBlock(re: SecuredRequest[A]): Future[SimpleResult] = {
-//       block(re).withSession(request.session + (WELCOMED -> ""))
+//       null // TODO... block(re).withSession(request.session + (WELCOMED -> ""))
 //     }
 //   }
 // }
@@ -211,6 +212,7 @@
 
 //   def touch(authenticator: Authenticator) {
 //     Authenticator.save(authenticator.touch)
+//     ()
 //   }
 // }
 

@@ -1,19 +1,19 @@
-@(inviteForm: Form[models.utils.Email],
+@* (inviteForm: Form[models.Email],
   invalidateForm: Form[controllers.chair.InvalidateForm],
   promoteForm: Form[controllers.chair.PromoteForm],
   pendingInvitations: List[models.login.MyToken]
     = models.login.LoginTokens.allInvitations,
-  members: List[models.entities.Member]
-    = models.entities.Members.all
+  members: List[models.Member]
+    = models.Persons.all
 )
 
 @import helper._
 @import controllers.chair._
-@import models.entities._
+@import models._
 @import models.login._
 
-@main("Manage Members") {
-  @form(routes.MembersManaging.handle) {
+@main("Manage Persons") {
+  @form(routes.PersonsManaging.handle) {
     <h2>Invite new members:</h2>
     From: @Emailing.fromAddress
     @textarea(
@@ -56,7 +56,7 @@
     </table>
     <button name="action" value="invalidate">Invalidate</button>
     
-    <br><h2>Members:</h2>
+    <br><h2>Persons:</h2>
     <table>
       @for((Member(id, email, invitedas, firstlogindate, lastlogindate, role, firstname, lastname), index) <- members.zipWithIndex) {
         <tr>
@@ -86,3 +86,4 @@
     <button name="action" value="promote">Save</button>
   }
 }
+*@

@@ -1,11 +1,11 @@
 package controllers
 
 import play.api.data.Form
-import play.api.data.Forms.{boolean, default, mapping, nonEmptyText, text}
+import play.api.data.Forms.{ boolean, default, mapping, nonEmptyText, text }
 import play.api.i18n.Messages
-import play.api.mvc.{Action, Controller, Result, SimpleResult, EssentialAction, Request}
-import securesocial.controllers.{ProviderController, Registration}
-import securesocial.core.{SecureSocial, UserService, Identity}
+import play.api.mvc.{ Action, Controller, Result, SimpleResult, EssentialAction, Request }
+import securesocial.controllers.{ ProviderController, Registration }
+import securesocial.core.{ SecureSocial, UserService, Identity }
 import securesocial.core.providers.UsernamePasswordProvider.UsernamePassword
 import securesocial.core.providers.utils.Mailer
 import scala.concurrent.Await
@@ -20,8 +20,7 @@ case class LoginWrapperForm(
 
 /** Wraps the four SecureSocial events into a single handler. Login, signup,
   * change password and forget password are all called using the
-  * loginWrapperForm form.
-  */
+  * loginWrapperForm form. */
 object LoginWrapper extends Controller with SecureSocial {
   val WELCOMED = "welcomed"
   
@@ -33,8 +32,7 @@ object LoginWrapper extends Controller with SecureSocial {
   )(LoginWrapperForm.apply _)(LoginWrapperForm.unapply _))
   
   /** Dispatches to the appropriate action as depending of the `create` field
-    * and the existence of the user in the database.
-    */
+    * and the existence of the user in the database. */
   def dispatch = Action { implicit request =>
     play.api.Logger.info("dispatch")
 
@@ -76,8 +74,7 @@ object LoginWrapper extends Controller with SecureSocial {
   }
     
   /** Copy pasted from securesocial.controllers/Registration.scala, not usable
-    * from here because of the private modifier...
-    */
+    * from here because of the private modifier... */
   import java.util.UUID
   import org.joda.time.DateTime
   import securesocial.core.providers.Token

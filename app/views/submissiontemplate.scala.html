@@ -1,11 +1,11 @@
-@(title: String,
+@*(title: String,
   submissionForm: Form[SubmissionForm],
   user: Option[String],
-  topics: List[models.entities.Topic] = models.entities.Topics.all
+  topics: List[models.Topic]
 )(modal: Html)
 
 @import helper.bootstrap3._
-@import models.entities._
+@import models._
 
 @authors = @{(0 to 2)}
 
@@ -34,7 +34,7 @@
       @bootstrap3.inputCheckboxGroup(
         submissionForm,
         "topics",
-        topics.toSeq.map { t => (t.id, t.name) },
+        topics.toSeq.map { t => (t.id.value, t.name) },
         '_label -> "Topics")
       @bootstrap3.inputFile(
         submissionForm("data"),
@@ -70,3 +70,4 @@
     @bootstrap3.button("Submit")
   }
 }
+*@

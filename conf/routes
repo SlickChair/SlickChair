@@ -9,34 +9,34 @@ GET     /                                    controllers.chair.Doc.umentation
 GET     /assets/*file                        controllers.Assets.at(path="/public", file)
 
 # Submitters
-GET     /submission                          controllers.Submitting.form
-POST    /submission/make                     controllers.Submitting.make
-GET     /submission/edit                     controllers.Submitting.make
-GET     /submission/info                     controllers.Submitting.info
+# GET     /submission                          controllers.Submitting.form
+# POST    /submission/make                     controllers.Submitting.make
+# GET     /submission/edit                     controllers.Submitting.make
+# GET     /submission/info                     controllers.Submitting.info
 
 # Reviewers
-GET     /invitation/:token                   controllers.member.Dashboard.invite(token: String)
-GET     /dashboard                           controllers.member.Dashboard.papers
-#GET    /submissions                         controllers.member.Reviewing.papers
-GET     /bid                                 controllers.member.Bidding.form
-POST    /bid                                 controllers.member.Bidding.make
-GET     /submission/:id                      controllers.member.Reviewing.page(id: Int)
-POST    /submission/:id                      controllers.member.Reviewing.comment(id: Int)
-GET     /review/:id                          controllers.member.Reviewing.form(id: Int)
-POST    /review/:id                          controllers.member.Reviewing.make(id: Int)
+# GET     /invitation/:token                   controllers.member.Dashboard.invite(token: String)
+# GET     /dashboard                           controllers.member.Dashboard.papers
+# GET    /submissions                         controllers.member.Reviewing.papers
+# GET     /bid                                 controllers.member.Bidding.form
+# POST    /bid                                 controllers.member.Bidding.make
+# GET     /submission/:id                      controllers.member.Reviewing.page(id: Int)
+# POST    /submission/:id                      controllers.member.Reviewing.comment(id: Int)
+# GET     /review/:id                          controllers.member.Reviewing.form(id: Int)
+# POST    /review/:id                          controllers.member.Reviewing.make(id: Int)
 
 # Chair
 GET     /sql                                 controllers.chair.Sql.form
 POST    /sql                                 controllers.chair.Sql.runQuery
-GET     /email                               controllers.chair.Emailing.form
-POST    /email                               controllers.chair.Emailing.send
-GET     /manage-members                      controllers.chair.MembersManaging.page
-POST    /manage-members                      controllers.chair.MembersManaging.handle
+# GET     /email                               controllers.chair.Emailing.form
+# POST    /email                               controllers.chair.Emailing.send
+# GET     /manage-members                      controllers.chair.MembersManaging.page
+# POST    /manage-members                      controllers.chair.MembersManaging.handle
 
-GET     /auctions                            controllers.chair.Chair.auctions
-GET     /config                              controllers.chair.Chair.config
-GET     /decisions                           controllers.chair.Chair.decisions
-GET     /dashboard                           controllers.chair.Chair.dashboard
+# GET     /auctions                            controllers.chair.Chair.auctions
+# GET     /config                              controllers.chair.Chair.config
+# GET     /decisions                           controllers.chair.Chair.decisions
+# GET     /dashboard                           controllers.chair.Chair.dashboard
 
 # SecureSocial
 # Login page
