@@ -9,15 +9,16 @@ GET     /                                    controllers.chair.Doc.umentation
 GET     /assets/*file                        controllers.Assets.at(path="/public", file)
 
 # Submitters
-# GET     /submission                          controllers.Submitting.form
-# POST    /submission/make                     controllers.Submitting.make
-# GET     /submission/edit                     controllers.Submitting.make
-# GET     /submission/info                     controllers.Submitting.info
+GET     /submission/make                   controllers.Submitting.make
+POST    /submission/domake                 controllers.Submitting.domake
+# GET     /submission/edit/:id                 controllers.Submitting.edit(id)
+# GET     /submission/info/:id                 controllers.Submitting.info(id)
+# POST    /submission/doedit/:id               controllers.Submitting.doedit(id)
 
 # Reviewers
 # GET     /invitation/:token                   controllers.member.Dashboard.invite(token: String)
 # GET     /dashboard                           controllers.member.Dashboard.papers
-# GET    /submissions                         controllers.member.Reviewing.papers
+# GET     /submissions                         controllers.member.Reviewing.papers
 # GET     /bid                                 controllers.member.Bidding.form
 # POST    /bid                                 controllers.member.Bidding.make
 # GET     /submission/:id                      controllers.member.Reviewing.page(id: Int)
@@ -39,16 +40,13 @@ POST    /sql                                 controllers.chair.Sql.runQuery
 # GET     /dashboard                           controllers.chair.Chair.dashboard
 
 # SecureSocial
-# Login page
 GET     /login                  securesocial.controllers.LoginPage.login
 POST    /login                  controllers.LoginWrapper.dispatch
 GET     /logout                 securesocial.controllers.LoginPage.logout
-# User Registration and password handling 
 GET     /signup/:token          securesocial.controllers.Registration.signUp(token)
 POST    /signup/:token          securesocial.controllers.Registration.handleSignUp(token)
 GET     /reset/:token           securesocial.controllers.Registration.resetPassword(token)
 POST    /reset/:token           securesocial.controllers.Registration.handleResetPassword(token)
-# Providers entry points
 GET     /authenticate/:provider securesocial.controllers.ProviderController.authenticate(provider)
 POST    /authenticate/:provider securesocial.controllers.ProviderController.authenticateByPost(provider)
 GET     /not-authorized         securesocial.controllers.ProviderController.notAuthorized

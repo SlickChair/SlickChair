@@ -2,7 +2,7 @@
 
 // import org.joda.time.DateTime
 // import controllers.{Anyone, MemberOrChair}
-// import models.{Authors, MemberRole, Persons, NewMember, Papers}
+// import models.{Authors, PersonRole, Persons, NewMember, Papers}
 // import models.login.{LoginTokens, User}
 // import play.api.mvc.Controller
 // import securesocial.core.SecureSocial
@@ -29,7 +29,7 @@
 //               token.email,
 //               now,
 //               now,
-//               MemberRole.Member,
+//               PersonRole.Member,
 //               user.firstname,
 //               user.lastname
 //             ))

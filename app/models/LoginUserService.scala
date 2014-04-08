@@ -1,6 +1,6 @@
 package models
 
-import com.github.tototoshi.slick.JdbcJodaSupport._
+import com.github.tototoshi.slick.H2JodaSupport._
 import org.joda.time.DateTime
 import play.api.Application
 import play.api.db.slick.Config.driver.simple._

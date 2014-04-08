@@ -1,4 +1,4 @@
-@*(title: String,
+@(title: String,
   submissionForm: Form[SubmissionForm],
   user: Option[String],
   topics: List[models.Topic]
@@ -11,7 +11,7 @@
 
 @main(title, user, modal) {
   @bootstrap3.form(
-    routes.Submitting.make,
+    routes.Submitting.domake,
     'enctype -> "multipart/form-data") {
   
     <fieldset>
@@ -70,4 +70,3 @@
     @bootstrap3.button("Submit")
   }
 }
-*@

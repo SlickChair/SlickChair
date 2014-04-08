@@ -26,11 +26,11 @@ object Sql extends Controller with SecureSocial {
     )
   ).fill(("", Execute))
   
-  def form = controllers.FakeAuth.FakeAction(ChairOnly) { implicit request =>
+  def form = SecuredAction(ChairOnly) { implicit request =>
     Ok(views.html.chair.sql(None, queryForm, request.user.email.get))
   }
   
-  def runQuery = controllers.FakeAuth.FakeAction(ChairOnly) { implicit request =>
+  def runQuery = SecuredAction(ChairOnly) { implicit request =>
     val filledForm = queryForm.bindFromRequest
     DB.withConnection { implicit session =>
       val (query, method) = filledForm.get

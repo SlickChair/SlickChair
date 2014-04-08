@@ -2,8 +2,7 @@ package models
 
 import org.joda.time.DateTime
 import play.api.db.slick.Config.driver.simple._
-import com.github.tototoshi.slick.JdbcJodaSupport._
-import MetaDataType.MetaData
+import com.github.tototoshi.slick.H2JodaSupport._
 
 trait EnumMapper {
   this: Enumeration =>
@@ -12,21 +11,16 @@ trait EnumMapper {
 
 case class Id[M <: Model[M]](value: Long) extends MappedTo[Long]
 
-object MetaDataType {
-  type MetaData[M <: Model[M]] = (Id[M], DateTime, Id[Person])
-}
-import MetaDataType.MetaData
-
 trait Model[M <: Model[M]] {
   val metadata: MetaData[M]
   lazy val (id: Id[M], updatedAt, updatedBy) = metadata
 }
 
-object MemberRole extends Enumeration with EnumMapper {
-  type MemberRole = Value
-  val Chair, Member, Disabled = Value
+object PersonRole extends Enumeration with EnumMapper {
+  type PersonRole = Value
+  val Chair, Member, Submitter, Disabled = Value
 }
-import MemberRole._
+import PersonRole._
 
 object PaperType extends Enumeration with EnumMapper {
   type PaperType = Value
@@ -56,9 +50,8 @@ case class Person(
   metadata: MetaData[Person],
   firstname: String,
   lastname: String,
-  organization: String,
-  role: MemberRole,
-  invitedas: String,
+  organization: Option[String],
+  role: PersonRole,
   email: String
 ) extends Model[Person]
 
@@ -68,7 +61,8 @@ case class Paper(
   format: PaperType,
   keywords: String,
   abstrct: String,
-  file: Id[File]
+  nauthors: Int,
+  fileid: Id[File]
 ) extends Model[Paper]
 
 case class PaperTopic(

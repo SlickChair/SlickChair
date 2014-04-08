@@ -1,9 +1,9 @@
 package models
 
 import play.api.db.slick.Config.driver.simple._
-import com.github.tototoshi.slick.JdbcJodaSupport._
+import com.github.tototoshi.slick.H2JodaSupport._
 import org.joda.time.DateTime
-import MemberRole._
+import PersonRole._
 import PaperType._
 import ReviewConfidence._
 import ReviewEvaluation._
@@ -24,11 +24,10 @@ class TopicTable(tag: Tag) extends Table[Topic](tag, "Topic") with RepoTable[Top
 class PersonTable(tag: Tag) extends Table[Person](tag, "Person") with RepoTable[Person] {
   def firstname = column[String]("firstname")
   def lastname = column[String]("lastname")
-  def organization = column[String]("organization")
-  def role = column[MemberRole]("role")
-  def invitedas = column[String]("invitedas")
+  def organization = column[Option[String]]("organization")
+  def role = column[PersonRole]("role")
   def email = column[String]("email")
-  def * = ((id, updatedAt, updatedBy), firstname, lastname, organization, role, invitedas, email) <> (Person.tupled, Person.unapply)
+  def * = ((id, updatedAt, updatedBy), firstname, lastname, organization, role, email) <> (Person.tupled, Person.unapply)
 }
 
 class PaperTable(tag: Tag) extends Table[Paper](tag, "Paper") with RepoTable[Paper] {
@@ -36,8 +35,9 @@ class PaperTable(tag: Tag) extends Table[Paper](tag, "Paper") with RepoTable[Pap
   def format = column[PaperType]("format")
   def keywords = column[String]("keywords")
   def abstrct = column[String]("abstrct")
+  def nauthors = column[Int]("nauthors")
   def file = column[Id[File]]("file")
-  def * = ((id, updatedAt, updatedBy), title, format, keywords, abstrct, file) <> (Paper.tupled, Paper.unapply)
+  def * = ((id, updatedAt, updatedBy), title, format, keywords, abstrct, nauthors, file) <> (Paper.tupled, Paper.unapply)
 }
 
 class PaperTopicTable(tag: Tag) extends Table[PaperTopic](tag, "PaperTopic") with RepoTable[PaperTopic] {

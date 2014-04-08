@@ -3,8 +3,8 @@
 // import java.util.UUID
 // import org.joda.time.DateTime
 // import controllers.member
-// import models.MemberRole
-// import models.MemberRole.MemberRole
+// import models.PersonRole
+// import models.PersonRole.PersonRole
 // import models.Persons
 // import models.login.{MyToken, LoginTokens}
 // import models.{Email, NewEmail, SentEmails}
@@ -15,13 +15,13 @@
 // import securesocial.core.SecureSocial
 
 // case class InvalidateForm(candidates: List[String])
-// case class PromoteForm(members: List[Int], newRole: MemberRole)
+// case class PromoteForm(members: List[Int], newRole: PersonRole)
 
 // object PersonsManaging extends Controller with SecureSocial {
 //   val urlTemplateVariable = "@invitationURL"
   
-//   val memberRoleMapping: Mapping[MemberRole] = mapping(
-//     "value" -> nonEmptyText)(MemberRole.withName(_))(Some(_).map(_.toString))
+//   val PersonRoleMapping: Mapping[PersonRole] = mapping(
+//     "value" -> nonEmptyText)(PersonRole.withName(_))(Some(_).map(_.toString))
   
 //   val inviteForm: Form[Email] = Form(
 //     Emailing.emailMapping
@@ -39,9 +39,9 @@
 //   val promoteForm: Form[PromoteForm] = Form(
 //     mapping(
 //       "members" -> list(number).verifying("Please select at least one member.", _.nonEmpty),
-//       "newRole" -> memberRoleMapping
+//       "newRole" -> PersonRoleMapping
 //     )(PromoteForm.apply _)(PromoteForm.unapply _)
-//   ).fill(PromoteForm(Nil, MemberRole.Chair))
+//   ).fill(PromoteForm(Nil, PersonRole.Chair))
   
 //   def page = Action { implicit request =>
 //     Ok(views.html.chair.managePersons(inviteForm, invalidateForm, promoteForm))

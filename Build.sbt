@@ -11,20 +11,16 @@ version      := "0.1"
 scalaVersion := "2.10.2"
 
 libraryDependencies ++= Seq(
-  "com.typesafe.play"       %% "play-json"                   % "2.2.0",
-  "com.typesafe.play"       %% "play-jdbc"                   % "2.2.0",
-  "com.typesafe.play"       %% "anorm"                       % "2.2.0",
-  "com.typesafe.slick" %% "slick" % "2.0.1",
+  "com.typesafe.play" %% "play-json"                   % "2.2.0",
+  "com.typesafe.play" %% "play-jdbc"                   % "2.2.0",
+  "com.typesafe.play" %% "anorm"                       % "2.2.0",
+  "com.typesafe.slick" %% "slick" % "2.0.0",
   "com.typesafe.play" %% "play-slick" % "0.6.0.1",
   "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
-  "ws.securesocial" %% "securesocial" % "2.1.3"
-)
-
-libraryDependencies ++= Seq(
+  "ws.securesocial" %% "securesocial" % "2.1.3",
   "joda-time" % "joda-time" % "2.3",
   "org.joda" % "joda-convert" % "1.5",
-  "com.github.tototoshi" %% "slick-joda-mapper" % "1.0.1",
-  "com.chuusai" % "shapeless" % "2.0.0-M1" cross CrossVersion.full
+  "com.github.tototoshi" %% "slick-joda-mapper" % "1.0.1"
 )
 
 resolvers ++= Seq(
