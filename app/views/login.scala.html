@@ -1,11 +1,12 @@
 @(loginWrapperForm: Form[controllers.LoginWrapperForm],
-  errorMessage: Option[String],
+  submissionForm: Form[controllers.SubmissionForm],
+  errorMessage: Option[String], // TODO: Not used...
   topics: List[models.Topic]
 )
   
 @import helper.bootstrap3._
 
-@submissiontemplate("New Submission", controllers.Submitting.submissionForm, None, topics) {
+@submissiontemplate("New Submission", submissionForm, None, topics, routes.Submitting.domake) {
   @modal("Login to SlickChair", withCloseButton=false) {
     You need to login before sending a new submission.
     Choose your login method:

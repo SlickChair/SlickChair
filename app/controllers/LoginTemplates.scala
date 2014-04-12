@@ -3,7 +3,7 @@ package controllers
 import play.api.mvc.{ RequestHeader, Request }
 import play.api.templates.{ Html, Txt }
 import play.api.{ Logger, Plugin, Application }
-import securesocial.core.{ Identity, SocialUser }
+import securesocial.core.{ SocialUser, SecuredRequest }
 import play.api.data.Form
 import securesocial.controllers.Registration.RegistrationInfo
 import securesocial.controllers.PasswordChange.ChangeInfo
@@ -13,6 +13,7 @@ import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
 import models.Topics
+import org.joda.time.DateTime
 
 class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(application) {
   override def getLoginPage[A](implicit request: Request[A], form: Form[(String, String)], errorMessage: Option[String] = None): Html = {
@@ -21,6 +22,7 @@ class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(ap
         case Some((username, password)) => loginWrapperForm.fillAndValidate(LoginWrapperForm(username, password, false))  
         case None => loginWrapperForm
       },
+      Submitting.submissionForm("", DateTime.now),
       errorMessage,
       DB withSession { implicit s: Session => Topics.all }
     )

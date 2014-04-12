@@ -4,12 +4,7 @@ import org.joda.time.DateTime
 import play.api.db.slick.Config.driver.simple._
 import com.github.tototoshi.slick.H2JodaSupport._
 
-trait EnumMapper {
-  this: Enumeration =>
-  implicit val enumMapper = MappedColumnType.base[Value, Int](_.id, this.apply)
-}
-
-case class Id[M <: Model[M]](value: Long) extends MappedTo[Long]
+case class Id[M <: Model[M]](value: Long)
 
 trait Model[M <: Model[M]] {
   val metadata: MetaData[M]
@@ -62,7 +57,7 @@ case class Paper(
   keywords: String,
   abstrct: String,
   nauthors: Int,
-  fileid: Id[File]
+  fileid: Option[Id[File]]
 ) extends Model[Paper]
 
 case class PaperTopic(

@@ -15,13 +15,14 @@ object Global extends GlobalSettings {
       if(Topics.all.isEmpty) {
         // Passwords = 1234567890
         securesocial.core.UserService.save(User("4@4", "userpass", "4@4", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$i2jZu3F6rty/a0vj8Jbeb.BnZNW7dXutAM8wSXLIdIolJETt8YdWe"), None).toIdentity)
-      
+              
+        val now: DateTime = DateTime.now
         List(
-          Topic(noMetaData(null), "Language design and implementation", "Language extensions, optimization, and performance evaluation."),
-          Topic(noMetaData(null), "Library design and implementation patterns for extending Scala", "Embedded domain-specific languages, combining language features, generic and meta-programming."),
-          Topic(noMetaData(null), "Formal techniques for Scala-like programs", "Formalizations of the language, type system, and semantics, formalizing proposed language extensions and variants, dependent object types, type and effect systems."),
-          Topic(noMetaData(null), "Concurrent and distributed programming", "Libraries, frameworks, language extensions, programming paradigms: (Actors, STM, ...), performance evaluation, experimental results."),
-          Topic(noMetaData(null), "Safety and reliability", "Pluggable type systems, contracts, static analysis and verification, runtime monitoring.")
+          Topic((ignoredId, now, "demo"), "Language design and implementation", "Language extensions, optimization, and performance evaluation."),
+          Topic((ignoredId, now, "demo"), "Library design and implementation patterns for extending Scala", "Embedded domain-specific languages, combining language features, generic and meta-programming."),
+          Topic((ignoredId, now, "demo"), "Formal techniques for Scala-like programs", "Formalizations of the language, type system, and semantics, formalizing proposed language extensions and variants, dependent object types, type and effect systems."),
+          Topic((ignoredId, now, "demo"), "Concurrent and distributed programming", "Libraries, frameworks, language extensions, programming paradigms: (Actors, STM, ...), performance evaluation, experimental results."),
+          Topic((ignoredId, now, "demo"), "Safety and reliability", "Pluggable type systems, contracts, static analysis and verification, runtime monitoring.")
         ).foreach(Topics.insert)
       }
       ()

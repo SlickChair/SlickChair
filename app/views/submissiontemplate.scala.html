@@ -1,7 +1,8 @@
 @(title: String,
   submissionForm: Form[SubmissionForm],
   user: Option[String],
-  topics: List[models.Topic]
+  topics: List[models.Topic],
+  formEndPoint: play.api.mvc.Call
 )(modal: Html)
 
 @import helper.bootstrap3._
@@ -11,7 +12,7 @@
 
 @main(title, user, modal) {
   @bootstrap3.form(
-    routes.Submitting.domake,
+    formEndPoint,
     'enctype -> "multipart/form-data") {
   
     <fieldset>
@@ -40,7 +41,7 @@
         submissionForm("data"),
         '_label -> "File")
       @bootstrap3.select(
-        submissionForm("nauthors"),
+        submissionForm("paper.nauthors"),
         authors.map { i => ((i+1).toString, (i+1).toString) },
         '_label -> "Number of authors",
         '_class -> "hidden")

@@ -8,11 +8,21 @@ import PaperType._
 import ReviewConfidence._
 import ReviewEvaluation._
 
-trait RepoTable[M <: Model[M]] {
+trait ImplicitMappers {
+  implicit def mapper[T <: Model[T]] = MappedColumnType.base[Id[T], Long](_.value, Id[T])
+}
+
+trait EnumMapper {
+  this: Enumeration =>
+  implicit val enumMapper = MappedColumnType.base[Value, Int](_.id, this.apply)
+}
+
+trait RepoTable[M <: Model[M]] extends ImplicitMappers {
   this: Table[M] =>
   def id = column[Id[M]]("ID", O.AutoInc)
   def updatedAt = column[DateTime]("updatedat")
-  def updatedBy = column[Id[Person]]("updatedby")
+  def updatedBy = column[String]("updatedby")
+  def pk = primaryKey("pk", (id, updatedAt))
 }
 
 class TopicTable(tag: Tag) extends Table[Topic](tag, "Topic") with RepoTable[Topic] {
@@ -36,7 +46,7 @@ class PaperTable(tag: Tag) extends Table[Paper](tag, "Paper") with RepoTable[Pap
   def keywords = column[String]("keywords")
   def abstrct = column[String]("abstrct")
   def nauthors = column[Int]("nauthors")
-  def file = column[Id[File]]("file")
+  def file = column[Option[Id[File]]]("file")
   def * = ((id, updatedAt, updatedBy), title, format, keywords, abstrct, nauthors, file) <> (Paper.tupled, Paper.unapply)
 }
 

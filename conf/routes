@@ -9,11 +9,11 @@ GET     /                                    controllers.chair.Doc.umentation
 GET     /assets/*file                        controllers.Assets.at(path="/public", file)
 
 # Submitters
-GET     /submission/make                   controllers.Submitting.make
-POST    /submission/domake                 controllers.Submitting.domake
-# GET     /submission/edit/:id                 controllers.Submitting.edit(id)
-# GET     /submission/info/:id                 controllers.Submitting.info(id)
-# POST    /submission/doedit/:id               controllers.Submitting.doedit(id)
+GET     /submission/make                     controllers.Submitting.make
+POST    /submission/domake                   controllers.Submitting.domake
+GET     /submission/info/:id                 controllers.Submitting.info(id: Long)
+GET     /submission/edit/:id                 controllers.Submitting.edit(id: Long)
+POST    /submission/doedit/:id               controllers.Submitting.doedit(id: Long)
 
 # Reviewers
 # GET     /invitation/:token                   controllers.member.Dashboard.invite(token: String)
