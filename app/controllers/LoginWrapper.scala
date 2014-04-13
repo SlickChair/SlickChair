@@ -22,8 +22,6 @@ case class LoginWrapperForm(
   * change password and forget password are all called using the
   * loginWrapperForm form. */
 object LoginWrapper extends Controller with SecureSocial {
-  val WELCOMED = "welcomed"
-  
   /** "Extends" securesocial.core.providers.UsernamePasswordProvider.loginForm */
   val loginWrapperForm = Form[LoginWrapperForm] (mapping(
     "username" -> nonEmptyText,

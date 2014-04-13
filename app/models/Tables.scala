@@ -22,7 +22,7 @@ trait RepoTable[M <: Model[M]] extends ImplicitMappers {
   def id = column[Id[M]]("ID", O.AutoInc)
   def updatedAt = column[DateTime]("updatedat")
   def updatedBy = column[String]("updatedby")
-  def pk = primaryKey("pk", (id, updatedAt))
+  // def pk = primaryKey("pk", (id, updatedAt)) // https://github.com/slick/slick/issues/763
 }
 
 class TopicTable(tag: Tag) extends Table[Topic](tag, "Topic") with RepoTable[Topic] {

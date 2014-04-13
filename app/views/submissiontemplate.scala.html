@@ -2,72 +2,73 @@
   submissionForm: Form[SubmissionForm],
   user: Option[String],
   topics: List[models.Topic],
-  formEndPoint: play.api.mvc.Call
+  submissionEndPoint: play.api.mvc.Call
 )(modal: Html)
 
 @import helper.bootstrap3._
 @import models._
+@import bootstrap3._
 
-@authors = @{(0 to 2)}
+@authors = @{(0 to 9)}
 
 @main(title, user, modal) {
-  @bootstrap3.form(
-    formEndPoint,
+  @form(
+    submissionEndPoint,
     'enctype -> "multipart/form-data") {
   
     <fieldset>
       <legend>General Informations</legend>
-      @bootstrap3.inputText(
+      @inputText(
         submissionForm("paper.title"),
         '_label -> "Paper title")
-      @bootstrap3.inputRadioGroup(
+      @inputRadioGroup(
         submissionForm("paper.format.value"), 
-        PaperType.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
+        PaperType.values.toSeq map (f => f.toString -> f.toString.replace("_", " ")), 
         '_label -> "Type")
-      @bootstrap3.inputText(
+      @inputText(
         submissionForm("paper.keywords"),
         '_label -> "Keywords")
-      @bootstrap3.textarea(
+      @textarea(
         submissionForm("paper.abstrct"),
         '_label -> "Abstract",
         'placeholder -> "Abstract",
         'rows -> 5)
-      @bootstrap3.inputCheckboxGroup(
+      @inputCheckboxGroup(
         submissionForm,
         "topics",
-        topics.toSeq.map { t => (t.id.value, t.name) },
+        topics.toSeq map (t => (t.id.value, t.name)),
         '_label -> "Topics")
-      @bootstrap3.inputFile(
+      @inputFile(
         submissionForm("data"),
         '_label -> "File")
-      @bootstrap3.select(
+      @select(
         submissionForm("paper.nauthors"),
-        authors.map { i => ((i+1).toString, (i+1).toString) },
+        authors map (i => ((i+1).toString, (i+1).toString)),
         '_label -> "Number of authors",
         '_class -> "hidden")
     </fieldset>
     @authors.map { i =>
       <fieldset @if(i > 0){ class="hidden" } id="author@i">
         <legend>Author @(i+1)</legend>
-        @bootstrap3.inputText(
+        @inputText(
           submissionForm(s"authors[$i].firstname"),
           '_label -> "First Name")
-        @bootstrap3.inputText(
+        @inputText(
           submissionForm(s"authors[$i].lastname"),
           '_label -> "Last Name")
-        @bootstrap3.inputText(
+        @inputText(
           submissionForm(s"authors[$i].organization"), 
           '_label -> "Organization")
-        @bootstrap3.inputText(
+        @inputText(
           submissionForm(s"authors[$i].email"),
           '_label -> "Email")
       </fieldset>
     }
     </fieldset>
-      @bootstrap3.addremove(
-        submissionForm(""), // Hack to prevent repeat of the html form divs.
+      @addremove(
+        submissionForm(""),
         '_label -> "Add/Remove Authors")
     <fieldset>
-    @bootstrap3.button("Submit")
+    @button("Submit")
   }
 }

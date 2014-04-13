@@ -15,8 +15,7 @@ $ ->
         fileInput.click()
 
   ### Handles plus and minus buttons. ###
-  nauthors = $("#nauthors")
-  nauthors.val(1) # JS initialize it, or things could go wrong with previous/next
+  nauthors = $("#paper_nauthors")
   getNauthors = -> Number(nauthors.val())
   setNauthors = (n) ->
     oldn = getNauthors()
@@ -26,6 +25,10 @@ $ ->
       false
     else
       true
+  
+  # Restores state from the value of nauthors.
+  for i in [0..getNauthors()-1]
+    $("#author#{ i }").removeClass("hidden")
   
   disableMinusIfZero = ->
     if getNauthors() == 1

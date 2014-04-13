@@ -6,7 +6,7 @@ import models.PaperType._
 import org.joda.time.{ DateTime, Seconds }
 import play.api.templates.Html
 import play.api.data.Form
-import play.api.data.Forms.{ ignored, list, mapping, nonEmptyText, number, optional, text }
+import play.api.data.Forms._
 import play.api.data.Mapping
 import play.api.mvc.{ Controller, Cookie }
 import securesocial.core.{ SecureSocial, SecuredRequest }
@@ -17,7 +17,7 @@ import play.api.db.slick.DB
 case class SubmissionForm(
   paper: Paper,
   authors: List[Person],
-  topics: List[Int]
+  topics: List[Long]
 )
 
 object Submitting extends Controller with SecureSocial {
@@ -47,7 +47,7 @@ object Submitting extends Controller with SecureSocial {
     mapping(
       "paper" -> paperMapping(email, now),
       "authors" -> list(authorMapping(email, now)),
-      "topics" -> list(number).verifying("Please select at least one topic.", _.nonEmpty)
+      "topics" -> list(longNumber).verifying("Please select at least one topic.", _.nonEmpty)
     )(SubmissionForm.apply _)(SubmissionForm.unapply _)
   )
   
@@ -57,19 +57,6 @@ object Submitting extends Controller with SecureSocial {
   def make = SecuredAction { implicit request =>
     DB withSession { implicit session =>
       Ok(views.html.submissiontemplate("New Submission", submissionForm(email, DateTime.now), Some(email), Topics.all, routes.Submitting.domake)(Html("")))
-      // val page = views.html.submissiontemplate("New Submission", submissionForm(email), Some(email), Topics.all) _
-      // val CookieName = "not-first-login"
-      // request.cookies.get(CookieName) match {
-      //   case None =>
-      //     val now = DateTime.now()
-      //     val maxAge = Some(Seconds.secondsBetween(now, now.plusYears(1)).getSeconds())
-      //     val modal = views.html.modal("First login", withCloseButton=true)(
-      //       Html("Warnning, this is your first login in play")
-      //     )
-      //     Ok(page(modal)).withCookies(Cookie(CookieName, "", maxAge=maxAge))
-      //   case Some(c) =>
-      //     Ok(page(Html("")))
-      // }
     }
   }
   
@@ -104,7 +91,7 @@ object Submitting extends Controller with SecureSocial {
     DB withSession { implicit session =>
       // TODO: Check that request.user.email.get is chair or author...
       val paper: Paper = Papers.withId(Id[Paper](id))
-      Ok(views.html.submissioninfo(paper, Authors.of(paper), Topics.of(paper)))
+      Ok(views.html.submissioninfo(paper, Authors.of(paper), Topics.of(paper), Some(email)))
     }
   }
   
@@ -113,12 +100,13 @@ object Submitting extends Controller with SecureSocial {
     DB withSession { implicit session =>
       // TODO: Check that request.user.email.get is chair or author...
       val paper: Paper = Papers.withId(Id[Paper](id))
-      // TODO: Authors are not populated...
+
       def incBind[T](form: Form[T], data: Map[String, String]) = form.bind(form.data ++ data)
       val existingSubmissionForm = incBind(
         submissionForm(email, DateTime.now).fill(SubmissionForm(paper, Authors.of(paper), List())),
-        Topics.of(paper).map(topic => ("topics[%s]".format(topic.id), topic.id.toString)).toMap
+        Topics.of(paper).map(topic => (s"topics[${topic.id.value}]", topic.id.value.toString)).toMap
       )
+      
       Ok(views.html.submissiontemplate("Edit Submission", existingSubmissionForm, Some(email), Topics.all, routes.Submitting.doedit(id))(Html("")))
     }
   }

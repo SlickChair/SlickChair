@@ -1,9 +1,10 @@
 @(paper: models.Paper,
   authors: List[models.Person],
-  topics: List[models.Topic]
+  topics: List[models.Topic],
+  user: Option[String]
 )
 
-@main("Submission Infos") {
+@main("Submission Infos", user) {
   @Html(paper.toString.replaceAll(",", ",\n<br>"))
   <br>
   <h1>Topic(s):</h1>
