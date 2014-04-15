@@ -36,7 +36,7 @@
       @inputCheckboxGroup(
         submissionForm,
         "topics",
-        topics.toSeq map (t => (t.id.value, t.name)),
+        topics.toSeq map (t => (t.id.value.toString, t.name)),
         '_label -> "Topics")
       @inputFile(
         submissionForm("data"),

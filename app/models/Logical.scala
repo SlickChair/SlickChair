@@ -4,7 +4,7 @@ import org.joda.time.DateTime
 import play.api.db.slick.Config.driver.simple._
 import com.github.tototoshi.slick.H2JodaSupport._
 
-case class Id[M <: Model[M]](value: Long)
+case class Id[M <: Model[M]](value: IdType)
 
 trait Model[M <: Model[M]] {
   val metadata: MetaData[M]

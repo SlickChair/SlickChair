@@ -47,7 +47,6 @@ $ ->
       $("#author#{ getNauthors() }").addClass("hidden")
     disableMinusIfZero()
   
-  
   ### /slq, select the query textarea and submit on ctrl+enter. ###
   $("#query").select()
   $("body").keydown (e) ->
@@ -55,9 +54,9 @@ $ ->
     if e.keyCode == ENTER and e.ctrlKey
       $(".ctrl-enter").find("button").click()
   
-  
   ### Modal login magic. ###
   $(".email").click (e) ->
+    e.preventDefault()
     $(".email-form").toggleClass("hidden")
     $(".note").toggleClass("hidden")
     $(".facebook").toggleClass("half-transparent")

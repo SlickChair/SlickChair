@@ -15,7 +15,7 @@
 //   }
   
 //   def invite(uuid: String) = SecuredAction(Anyone) { implicit request =>
-//     LoginTokens.withUUID(uuid) match {
+//     LoginTokens.withIdType(uuid) match {
 //       case None => BadRequest("Token expired.")
 //       case Some(token) =>
 //         val user = User.fromIdentity(request.user)

@@ -22,7 +22,7 @@ class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(ap
         case Some((username, password)) => loginWrapperForm.fillAndValidate(LoginWrapperForm(username, password, false))  
         case None => loginWrapperForm
       },
-      Submitting.submissionForm("", DateTime.now),
+      Submitting.submissionForm,
       errorMessage,
       DB withSession { implicit s: Session => Topics.all }
     )

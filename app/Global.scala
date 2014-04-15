@@ -18,11 +18,11 @@ object Global extends GlobalSettings {
               
         val now: DateTime = DateTime.now
         List(
-          Topic((ignoredId, now, "demo"), "Language design and implementation", "Language extensions, optimization, and performance evaluation."),
-          Topic((ignoredId, now, "demo"), "Library design and implementation patterns for extending Scala", "Embedded domain-specific languages, combining language features, generic and meta-programming."),
-          Topic((ignoredId, now, "demo"), "Formal techniques for Scala-like programs", "Formalizations of the language, type system, and semantics, formalizing proposed language extensions and variants, dependent object types, type and effect systems."),
-          Topic((ignoredId, now, "demo"), "Concurrent and distributed programming", "Libraries, frameworks, language extensions, programming paradigms: (Actors, STM, ...), performance evaluation, experimental results."),
-          Topic((ignoredId, now, "demo"), "Safety and reliability", "Pluggable type systems, contracts, static analysis and verification, runtime monitoring.")
+          Topic((newId(), now, "demo"), "Language design and implementation", "Language extensions, optimization, and performance evaluation."),
+          Topic((newId(), now, "demo"), "Library design and implementation patterns for extending Scala", "Embedded domain-specific languages, combining language features, generic and meta-programming."),
+          Topic((newId(), now, "demo"), "Formal techniques for Scala-like programs", "Formalizations of the language, type system, and semantics, formalizing proposed language extensions and variants, dependent object types, type and effect systems."),
+          Topic((newId(), now, "demo"), "Concurrent and distributed programming", "Libraries, frameworks, language extensions, programming paradigms: (Actors, STM, ...), performance evaluation, experimental results."),
+          Topic((newId(), now, "demo"), "Safety and reliability", "Pluggable type systems, contracts, static analysis and verification, runtime monitoring.")
         ).foreach(Topics.insert)
       }
       ()
@@ -66,9 +66,9 @@ object Global extends GlobalSettings {
       //   ).foreach(EmailTemplates.insert)
         
       //   List(
-      //     MyToken(java.util.UUID.randomUUID().toString, "1@1", DateTime.now, DateTime.now.plusDays(7), false, true),
-      //     MyToken(java.util.UUID.randomUUID().toString, "2@2", DateTime.now, DateTime.now.plusDays(7), false, true),
-      //     MyToken(java.util.UUID.randomUUID().toString, "3@3", DateTime.now, DateTime.now.plusDays(7), false, true)
+      //     MyToken(java.util.IdType.randomIdType().toString, "1@1", DateTime.now, DateTime.now.plusDays(7), false, true),
+      //     MyToken(java.util.IdType.randomIdType().toString, "2@2", DateTime.now, DateTime.now.plusDays(7), false, true),
+      //     MyToken(java.util.IdType.randomIdType().toString, "3@3", DateTime.now, DateTime.now.plusDays(7), false, true)
       //   ).foreach(LoginTokens.insert)
         
       //   // List(MemberTopic(2, 2)).foreach(MemberTopics.insert)

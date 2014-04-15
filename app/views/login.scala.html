@@ -6,9 +6,9 @@
   
 @import helper.bootstrap3._
 
-@submissiontemplate("New Submission", submissionForm, None, topics, routes.Submitting.domake) {
+@submissiontemplate("New Submission", submissionForm, None, topics, routes.Submitting.doMake) {
   @modal("Login to SlickChair", withCloseButton=false) {
-    You need to login before sending a new submission.
+    You need to login before making a new submission.
     Choose your login method:
     <div class="login">
       <a class="facebook" href="@securesocial.controllers.routes.ProviderController.authenticate("facebook")">Facebook</a>

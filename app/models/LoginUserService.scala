@@ -57,7 +57,7 @@ object User {
   )
 }
 
-class LoginUserTable(tag: Tag) extends Table[User](tag, "LOGIN_USERS") {
+class LoginUserTable(tag: Tag) extends Table[User](tag, "LOGINUSERS") {
   def uid = column[String]("UID", O.DBType("TEXT"))
   def pid = column[String]("PID", O.DBType("TEXT"))
   def email = column[String]("EMAIL", O.DBType("TEXT"))
@@ -124,13 +124,13 @@ object MyToken {
   def fromT(t: Token) = MyToken(t.uuid, t.email, t.creationTime, t.expirationTime, t.isSignUp, false)
 }
 
-class LoginTokenTable(tag: Tag) extends Table[MyToken](tag, "logintokens") {
-  def uuid = column[String]("uuid", O.DBType("text"), O.PrimaryKey)
-  def email = column[String]("email", O.DBType("text"))
-  def creationTime = column[DateTime]("creationtime")
-  def expirationTime = column[DateTime]("expirationtime")
-  def isSignUp = column[Boolean]("issignup")
-  def isInvitation = column[Boolean]("isinvitation")
+class LoginTokenTable(tag: Tag) extends Table[MyToken](tag, "LOGINTOKENS") {
+  def uuid = column[String]("UUID", O.DBType("text"), O.PrimaryKey)
+  def email = column[String]("EMAIL", O.DBType("text"))
+  def creationTime = column[DateTime]("CREATIONTIME")
+  def expirationTime = column[DateTime]("EXPIRATIONTIME")
+  def isSignUp = column[Boolean]("ISSIGNUP")
+  def isInvitation = column[Boolean]("ISINVITATION")
   def * = (uuid, email, creationTime, expirationTime, isSignUp, isInvitation) <> ((MyToken.apply _).tupled, MyToken.unapply)
 }
 
@@ -144,7 +144,7 @@ object LoginTokens extends TableQuery(new LoginTokenTable(_)) {
   def del(uuid: String)(implicit s: Session) =
     this.filter(_.uuid is uuid).delete
   
-  def withUUID(uuid: String)(implicit s: Session): Option[MyToken] =
+  def withIdType(uuid: String)(implicit s: Session): Option[MyToken] =
     this.filter(_.uuid is uuid).firstOption 
 
   trait Queries {
@@ -156,7 +156,7 @@ object LoginTokens extends TableQuery(new LoginTokenTable(_)) {
     
     def findToken(uuid: String): Option[Token] = {
       DB withSession { implicit s: Session =>
-        withUUID(uuid).map(_.toT)
+        withIdType(uuid).map(_.toT)
       }
     }
 

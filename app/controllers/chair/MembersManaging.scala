@@ -1,7 +1,6 @@
 // package controllers.chair
 
-// import java.util.UUID
-// import org.joda.time.DateTime
+// // import org.joda.time.DateTime
 // import controllers.member
 // import models.PersonRole
 // import models.PersonRole.PersonRole
@@ -70,7 +69,7 @@
 //         val now = DateTime.now
 //         SentEmails.ins(NewEmail(to, subject, body, now))
 //         to.split(",").foreach { email =>
-//           val uuid = UUID.randomUUID().toString
+//           val uuid = IdType.randomIdType().toString
 //           val bodyWithLink = body.replaceAll(urlTemplateVariable, member.routes.Dashboard.invite(uuid).absoluteURL())
 //           LoginTokens.ins(MyToken(uuid, email, now, now.plusDays(7), false, true))
 //           Emailing.sendEmail(email, subject, bodyWithLink)

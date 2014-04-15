@@ -4,7 +4,7 @@ import anorm.SQL
 import controllers.ChairOnly
 import play.api.Play.current
 import play.api.data.Form
-import play.api.data.Forms.{mapping, nonEmptyText, text, tuple}
+import play.api.data.Forms.{ mapping, nonEmptyText, text, tuple }
 import play.api.db.DB
 import play.api.mvc.Controller
 import securesocial.core.SecureSocial
@@ -26,18 +26,16 @@ object Sql extends Controller with SecureSocial {
     )
   ).fill(("", Execute))
   
-  def form = SecuredAction(ChairOnly) { implicit request =>
+  def form = SecuredAction { implicit request =>
     Ok(views.html.chair.sql(None, queryForm, request.user.email.get))
   }
   
-  def runQuery = SecuredAction(ChairOnly) { implicit request =>
+  def runQuery = SecuredAction { implicit request =>
     val filledForm = queryForm.bindFromRequest
     DB.withConnection { implicit session =>
       val (query, method) = filledForm.get
       val result: String = try {
         method match {
-          // Fun fact: removing the .toStrings will crash the Scala compiler with a
-          // [error] (compile:compile) java.lang.NullPointerException
           case Execute => SQL(query.toUpperCase).apply().map(_.asList).toList.mkString("\n")
           case Update => SQL(query.toUpperCase).executeUpdate().toString
           case Insert => SQL(query.toUpperCase).executeInsert().toString
