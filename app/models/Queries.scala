@@ -11,23 +11,19 @@ trait RepoQuery[T <: Table[M] with RepoTable[M], M <: Model[M]] extends Implicit
   implicit def dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isAfter _)
   
   def latests(implicit s: Session) = {
-    this.list.groupBy(_.id).flatMap {
-      case (_, xs) => xs sortBy (_.updatedAt) take 1  
-    }.toList
-
-    // Semantically:
-    // this.groupBy (_.id) map {
-    //   case (_, xs) => xs maxBy (_.updatedAt)
-    // }
+    // With scala.collection.immutable.List methods
+    // this.list.groupBy(_.id).flatMap {
+    //   case (_, xs) => xs sortBy (_.updatedAt) take 1  
+    // }.toList
 
     // In Slick:
-    // this.groupBy (_.id) flatMap {
-    //   case (_, xs) => xs sortBy (_.updatedAt) take 1  
-    // }
+    this.groupBy (_.id) flatMap {
+      case (_, xs) => xs sortBy (_.updatedAt) take 1  
+    }
   }
   
-  def withId(id: Id[M])(implicit s: Session): M = latests.filter(_.id == id).head // is .first
-  def all(implicit s: Session): List[M] = latests // .list
+  def withId(id: Id[M])(implicit s: Session): M = latests.filter(_.id is id).first
+  def all(implicit s: Session): List[M] = latests.list
   def count(implicit s: Session): Int = all.size
   def ins(m: M)(implicit s: Session): Id[M] = { this insert m; m.id }
   def updt(m: M)(implicit s: Session): Id[M] = { this forceInsert m; m.id }
@@ -38,8 +34,8 @@ trait RepoQuery[T <: Table[M] with RepoTable[M], M <: Model[M]] extends Implicit
 
 object Topics extends TableQuery(new TopicTable(_)) with RepoQuery[TopicTable, Topic] {
   def of(paper: Paper)(implicit s: Session): List[Topic] = {
-    lastShot(PaperTopics.latests filter (_.paperid == paper.id)) flatMap { p =>
-      Topics.latests filter (_.id == p.topicid)
+    lastShot(PaperTopics.latests.filter(_.paperid is paper.id).list) flatMap { p =>
+      Topics.latests.filter(_.id is p.topicid).list
     }
   }
 }
@@ -64,8 +60,8 @@ object PaperTopics extends TableQuery(new PaperTopicTable(_)) with RepoQuery[Pap
 
 object Authors extends TableQuery(new AuthorTable(_)) with RepoQuery[AuthorTable, Author] {
   def of(paper: Paper)(implicit s: Session): List[Person] =
-    lastShot(Authors.latests filter (_.paperid == paper.id)) flatMap { p =>
-      Persons.latests filter (_.id == p.personid)
+    lastShot(Authors.latests.filter(_.paperid is paper.id).list) flatMap { p =>
+      Persons.latests.filter(_.id is p.personid).list
     }
 }
 

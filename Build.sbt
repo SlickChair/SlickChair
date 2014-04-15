@@ -14,7 +14,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-json"                   % "2.2.0",
   "com.typesafe.play" %% "play-jdbc"                   % "2.2.0",
   "com.typesafe.play" %% "anorm"                       % "2.2.0",
-  "com.typesafe.slick" %% "slick" % "2.0.0",
+  "com.typesafe.slick" %% "slick" % "2.0.1",
   "com.typesafe.play" %% "play-slick" % "0.6.0.1",
   "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
   "ws.securesocial" %% "securesocial" % "2.1.3",
