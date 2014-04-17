@@ -5,6 +5,7 @@ import java.util.UUID
 import play.api.data.Forms._
 import play.api.data.format.Formatter
 import play.api.data.format.Formats._
+import securesocial.core.SecuredRequest
 
 /** Source: https://github.com/guardian/deploy/blob/master/riff-raff/app/utils/Forms.scala */
 object Utils {
@@ -19,4 +20,6 @@ object Utils {
     }
     override def unbind(key: String, value: UUID) = Map(key -> value.toString)
   })
+
+  def uEmail()(implicit request: SecuredRequest[_]): String = request.user.email.get
 }

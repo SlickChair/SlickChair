@@ -1,11 +1,12 @@
 @(title: String,
   user: Option[String],
-  modal: Html = Html(""),
-  conferenceName: String = "SlickChair Demo"
-)(content: Html)
+  menu: List[(play.api.mvc.Call, String)],
+  modal: Html = Html("")
+)(content: Html)(implicit request: play.api.mvc.Request[Any])
 
 @minified = @{ if (play.Play.isProd()) ".min" else "" }
 @modalOpened = @{ !modal.toString.isEmpty }
+@idSize = @{ models.newId.value.toString.size }
 
 @import securesocial.core.providers.utils.RoutesHelper
 
@@ -35,14 +36,14 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a href="/" class="navbar-brand">@conferenceName</a>
+        <a href="@menu.head._1" class="navbar-brand">@menu.head._2</a>
       </div>
       
       <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
-          <li class="active"><a href="#">Random <span class="badge">3</span></a></li>
-          <li><a href="#">Menus</a></li>
-          <li><a href="#">Entries</a></li>
+          @menu.tail.map { case (url, text) =>
+            <li @if(request.uri.takeRight(idSize) equals url.toString.takeRight(idSize)) { class="active" }><a href="@url">@text</a></li>
+          }
         </ul>
       <p class="navbar-text pull-right">
       @if(user.isEmpty) {

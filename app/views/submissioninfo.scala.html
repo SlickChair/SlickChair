@@ -1,10 +1,11 @@
 @(paper: models.Paper,
   authors: List[models.Person],
   topics: List[models.Topic],
-  user: Option[String]
-)
+  user: Option[String],
+  menu: List[(play.api.mvc.Call, String)]
+)(implicit request: play.api.mvc.Request[Any])
 
-@main("Submission Infos", user) {
+@main("Submission " + paper.id.value.toString.take(4).toUpperCase, user, menu) {
   @Html(paper.toString.replaceAll(",", ",\n<br>"))
   <br>
   <h1>Topic(s):</h1>
@@ -17,4 +18,5 @@
     @Html(v.toString.replaceAll(",", ",\n<br>"))
     <br><br>
   }
+  @bootstrap3.linkbutton("Edit", routes.Submitting.edit(paper.id.value))
 }

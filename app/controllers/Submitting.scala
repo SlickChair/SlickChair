@@ -14,6 +14,7 @@ import play.api.Play.current
 import play.api.db.slick.DB
 import play.api.mvc.Call
 import play.api.mvc.MultipartFormData
+import Utils.uEmail
 
 case class SubmissionForm(
   paper: Paper,
@@ -49,6 +50,10 @@ object Submitting extends Controller with SecureSocial {
     "email" -> text
   )(Person.apply _)(Person.unapply _)
 
+  // TODO Check that: 
+  //      - all authors field are populated for author i, i < nauthors
+  //      - authors have different emails
+  //      - user is an author
   val submissionForm: Form[SubmissionForm] = Form(
     mapping(
       "paper" -> paperMapping,
@@ -57,13 +62,12 @@ object Submitting extends Controller with SecureSocial {
     )(SubmissionForm.apply _)(SubmissionForm.unapply _)
   )
   
-  private def email(implicit request: SecuredRequest[_]): String = request.user.email.get
   private def currentTime(): DateTime = new DateTime()
   
   /** Displays new submissions form. */
   def make = SecuredAction { implicit request =>
     DB withSession { implicit session =>
-      Ok(views.html.submissiontemplate("New Submission", submissionForm, Some(email), Topics.all, routes.Submitting.doMake)(Html("")))
+      Ok(views.html.submissiontemplate("New Submission", submissionForm, Some(uEmail()), Topics.all, routes.Submitting.doMake, Menu(uEmail()))(Html("")))
     }
   }
   
@@ -72,7 +76,7 @@ object Submitting extends Controller with SecureSocial {
     DB withSession { implicit session =>
       // TODO: Check that request.user.email.get is chair or author...
       val paper: Paper = Papers.withId(Id[Paper](id))
-      Ok(views.html.submissioninfo(paper, Authors.of(paper), Topics.of(paper), Some(email)))
+      Ok(views.html.submissioninfo(paper, Authors.of(paper), Topics.of(paper), Some(uEmail()), Menu(uEmail())(session)))
     }
   }
   
@@ -89,7 +93,7 @@ object Submitting extends Controller with SecureSocial {
         allTopics.zipWithIndex.filter(paperTopics contains _._1).map(ti =>
           (s"topics[${ti._2}]", ti._1.id.value.toString)).toMap
       )
-      Ok(views.html.submissiontemplate("Editing " + id, existingSubmissionForm, Some(email), allTopics, routes.Submitting.doEdit(id))(Html("")))
+      Ok(views.html.submissiontemplate("Editing Submission " + id.toString.take(4).toUpperCase, existingSubmissionForm, Some(uEmail()), allTopics, routes.Submitting.doEdit(id), Menu(uEmail()))(Html("")))
     }
   }
   
@@ -113,18 +117,18 @@ object Submitting extends Controller with SecureSocial {
       // select it again.
       submissionForm.bindFromRequest.fold(
         errors => Ok(views.html.submissiontemplate(
-          "Submission: Errors found", errors, Some(email), Topics.all, errorEP)(Html(""))),
+          "Submission: Errors found", errors, Some(uEmail()), Topics.all, errorEP, Menu(uEmail()))(Html(""))),
         form => {
           val fileid: Option[Id[File]] = request.body.file("data").map{ file =>
             val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray
-            Files.ins(File((newId(), now, email), file.filename, blob.size, blob))
+            Files.ins(File((newId(), now, uEmail()), file.filename, blob.size, blob))
           }
-          Papers.ins(form.paper.copy(metadata=(paperId, now, email), fileid=fileid))
+          Papers.ins(form.paper.copy(metadata=(paperId, now, uEmail()), fileid=fileid))
           val personsId: List[Id[Person]] = Persons.saveAll(
-            form.authors.take(form.paper.nauthors).map(_.copy(metadata=(newId(), now, email))))
+            form.authors.take(form.paper.nauthors).map(_.copy(metadata=(newId(), now, uEmail()))))
           Authors.insAll(personsId.zipWithIndex.map(pi =>
-            Author((newId(), now, email), paperId, pi._1, pi._2)))
-          PaperTopics.insAll(form.topics.map(i => PaperTopic((newId(), now, email), paperId, Id(i))))
+            Author((newId(), now, uEmail()), paperId, pi._1, pi._2)))
+          PaperTopics.insAll(form.topics.map(i => PaperTopic((newId(), now, uEmail()), paperId, Id(i))))
           Redirect(routes.Submitting.info(paperId.value))
         }
       )

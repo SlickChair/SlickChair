@@ -2,8 +2,9 @@
   submissionForm: Form[SubmissionForm],
   user: Option[String],
   topics: List[models.Topic],
-  submissionEndPoint: play.api.mvc.Call
-)(modal: Html)
+  submissionEndPoint: play.api.mvc.Call,
+  menu: List[(play.api.mvc.Call, String)]
+)(modal: Html)(implicit request: play.api.mvc.Request[Any])
 
 @import helper.bootstrap3._
 @import models._
@@ -11,7 +12,7 @@
 
 @authors = @{(0 to 9)}
 
-@main(title, user, modal) {
+@main(title, user, menu, modal) {
   @form(
     submissionEndPoint,
     'enctype -> "multipart/form-data") {

@@ -24,7 +24,6 @@ trait RepoTable[M <: Model[M]] extends ImplicitMappers {
   def updatedBy = column[String]("UPDATEDBY", O.DBType("TEXT"))
 }
 
-
 class TopicTable(tag: Tag) extends Table[Topic](tag, "TOPIC") with RepoTable[Topic] {
   def name = column[String]("NAME", O.DBType("TEXT"))
   def description = column[String]("DESCRIPTION", O.DBType("TEXT"))

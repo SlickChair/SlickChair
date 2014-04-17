@@ -1,12 +1,13 @@
 @(loginWrapperForm: Form[controllers.LoginWrapperForm],
   submissionForm: Form[controllers.SubmissionForm],
   errorMessage: Option[String], // TODO: Not used...
-  topics: List[models.Topic]
-)
-  
+  topics: List[models.Topic],
+  menu: List[(play.api.mvc.Call, String)]
+)(implicit request: play.api.mvc.Request[Any])
+
 @import helper.bootstrap3._
 
-@submissiontemplate("New Submission", submissionForm, None, topics, routes.Submitting.doMake) {
+@submissiontemplate("New Submission", submissionForm, None, topics, routes.Submitting.doMake, menu) {
   @modal("Login to SlickChair", withCloseButton=false) {
     You need to login before making a new submission.
     Choose your login method:

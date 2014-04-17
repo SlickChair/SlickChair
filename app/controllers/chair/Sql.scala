@@ -6,8 +6,11 @@ import play.api.Play.current
 import play.api.data.Form
 import play.api.data.Forms.{ mapping, nonEmptyText, text, tuple }
 import play.api.db.DB
+import play.api.db.slick.{ DB => SlickDB }
 import play.api.mvc.Controller
 import securesocial.core.SecureSocial
+import controllers.Menu
+import controllers.Utils.uEmail
 
 object SqlMethod extends Enumeration {
   type SqlMethod = Value
@@ -27,12 +30,14 @@ object Sql extends Controller with SecureSocial {
   ).fill(("", Execute))
   
   def form = SecuredAction { implicit request =>
-    Ok(views.html.chair.sql(None, queryForm, request.user.email.get))
+    SlickDB withSession { implicit session =>
+      Ok(views.html.chair.sql(None, queryForm, request.user.email.get, Menu(uEmail())))
+    }
   }
   
   def runQuery = SecuredAction { implicit request =>
     val filledForm = queryForm.bindFromRequest
-    DB.withConnection { implicit session =>
+    DB withConnection { implicit session =>
       val (query, method) = filledForm.get
       val result: String = try {
         method match {
@@ -43,7 +48,9 @@ object Sql extends Controller with SecureSocial {
       } catch {
         case e: Exception => e.toString.replaceFirst(": ", ":\n")
       }
-      Ok(views.html.chair.sql(Some(result), filledForm, request.user.email.get))
+      SlickDB withSession { implicit s =>
+        Ok(views.html.chair.sql(Some(result), filledForm, request.user.email.get, Menu(uEmail())))
+      }
     }
   }
 }

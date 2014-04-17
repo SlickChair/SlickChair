@@ -17,15 +17,18 @@ import org.joda.time.DateTime
 
 class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(application) {
   override def getLoginPage[A](implicit request: Request[A], form: Form[(String, String)], errorMessage: Option[String] = None): Html = {
-    views.html.login(
-      form.value match {
-        case Some((username, password)) => loginWrapperForm.fillAndValidate(LoginWrapperForm(username, password, false))  
-        case None => loginWrapperForm
-      },
-      Submitting.submissionForm,
-      errorMessage,
-      DB withSession { implicit s: Session => Topics.all }
-    )
+    DB withSession { implicit s: Session => 
+      views.html.login(
+        form.value match {
+          case Some((username, password)) => loginWrapperForm.fillAndValidate(LoginWrapperForm(username, password, false))  
+          case None => loginWrapperForm
+        },
+        Submitting.submissionForm,
+        errorMessage,
+        Topics.all,
+        Menu.notLoggedIn
+      )
+    }
   }
 
   // override def getSignUpPage[A](implicit request: Request[A], form: Form[RegistrationInfo], token: String): Html = {

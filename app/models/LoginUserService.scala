@@ -13,8 +13,21 @@ import securesocial.core.{ AuthenticationMethod, Identity, PasswordInfo, SocialU
    * top of Slick. See http://securesocial.ws/guide/user-service.html for more
    * details. */
 class LoginUserService(application: Application) extends UserServicePlugin(application)
-  with LoginUsers.Queries
-  with LoginTokens.Queries
+    with LoginUsers.Queries with LoginTokens.Queries {
+  def saveHook(user: User)(implicit session: Session): Unit = {
+    import models._
+    import PersonRole._
+    Persons.save(Person(
+      (newId(), new DateTime(), user.email),
+      user.firstname,
+      user.lastname,
+      None,
+      Submitter,
+      user.email
+    ))
+    ()
+  }
+}
 
 case class User(
   uid: String,
@@ -83,9 +96,12 @@ object LoginUsers extends TableQuery(new LoginUserTable(_)) {
     this.filter(_.email is email).list.headOption
 
   trait Queries {
+    def saveHook(user: User)(implicit session: Session): Unit
+    
     def save(identity: Identity): Identity = {
       DB withTransaction { implicit s: Session =>
         val user = User.fromIdentity(identity)
+        saveHook(user)
         find(user.id) match {
           case None =>
             LoginUsers.insert(user)
