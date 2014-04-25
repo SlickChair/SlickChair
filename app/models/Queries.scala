@@ -11,26 +11,24 @@ trait RepoQuery[T <: Table[M] with RepoTable[M], M <: Model[M]] extends Implicit
   implicit def dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isAfter _)
   
   def latests(implicit s: Session) = {
-    this.list.groupBy(_.id).flatMap {
-      case (_, xs) => xs sortBy (_.updatedAt) take 1  
-    }.toList
+    val maxDates = this.groupBy (_.id) map { case (_, xs) => xs.map(_.updatedAt).max }
+    this filter (_.updatedAt in maxDates)
   }
   
-  def withId(id: Id[M])(implicit s: Session): M = latests.filter(_.id == id).head // is .first
-  def all(implicit s: Session): List[M] = latests // .list
+  def withId(id: Id[M])(implicit s: Session): M = latests.filter(_.id is id).first
+  def all(implicit s: Session): List[M] = latests.list
   def count(implicit s: Session): Int = all.size
   def ins(m: M)(implicit s: Session): Id[M] = { this insert m; m.id }
   def updt(m: M)(implicit s: Session): Id[M] = { this forceInsert m; m.id }
   def insAll(l: List[M])(implicit s: Session): List[Id[M]] = l map ins
   def updtAll(l: List[M])(implicit s: Session): List[Id[M]] = l map updt
-  def lastShot[T <: Model[T]](l: List[T]): List[T] = l.filter(_.updatedAt == l.minBy(_.updatedAt).updatedAt)
 }
 
 object Topics extends TableQuery(new TopicTable(_)) with RepoQuery[TopicTable, Topic] {
   def of(paper: Paper)(implicit s: Session): List[Topic] = {
-    lastShot(PaperTopics.latests filter (_.paperid == paper.id)) flatMap { p =>
-      Topics.latests filter (_.id == p.topicid)
-    }
+    val allPaperTopics = PaperTopics.filter(_.paperid is paper.id)
+    val lastShotPaperTopics = allPaperTopics filter (_.updatedAt is allPaperTopics.map(_.updatedAt).max)
+    lastShotPaperTopics.flatMap{ p => Topics.latests.filter(_.id is p.topicid) }.list
   }
 }
 
@@ -42,13 +40,13 @@ object Persons extends TableQuery(new PersonTable(_)) with RepoQuery[PersonTable
     }
   }
   def saveAll(l: List[Person])(implicit s: Session): List[Id[Person]] = l map save
-  def withEmail(email: String)(implicit s: Session): Person = Persons.latests.filter(_.email == email).head
+  def withEmail(email: String)(implicit s: Session): Person = Persons.latests.filter(_.email is email).first
 }
 
 object Papers extends TableQuery(new PaperTable(_)) with RepoQuery[PaperTable, Paper] {
   def of(email: String)(implicit s: Session): List[Id[Paper]] = {
     val personId = Persons.withEmail(email).id
-    Authors.filter(_.personid is personId).groupBy(_.paperid).map(_._1).list
+    Authors.latests.filter(_.personid is personId).groupBy(_.paperid).map(_._1).list
   }
 }
 
@@ -56,10 +54,11 @@ object PaperTopics extends TableQuery(new PaperTopicTable(_)) with RepoQuery[Pap
 }
 
 object Authors extends TableQuery(new AuthorTable(_)) with RepoQuery[AuthorTable, Author] {
-  def of(paper: Paper)(implicit s: Session): List[Person] =
-    lastShot(Authors.latests filter (_.paperid == paper.id)) flatMap { p =>
-      Persons.latests filter (_.id == p.personid)
-    }
+  def of(paper: Paper)(implicit s: Session): List[Person] = {
+    val allAuthors = Authors.filter(_.paperid is paper.id)
+    val lastShotAuthors = allAuthors filter (_.updatedAt is allAuthors.map(_.updatedAt).max)
+    lastShotAuthors.flatMap{ p => Persons.latests.filter(_.id is p.personid) }.list
+  }
 }
 
 object Comments extends TableQuery(new CommentTable(_)) with RepoQuery[CommentTable, Comment] {
@@ -70,6 +69,5 @@ object Reviews extends TableQuery(new ReviewTable(_)) with RepoQuery[ReviewTable
 
 object Files extends TableQuery(new FileTable(_)) with RepoQuery[FileTable, File] {
 }
-
 object Emails extends TableQuery(new EmailTable(_)) with RepoQuery[EmailTable, Email] {
 }
