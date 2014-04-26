@@ -26,7 +26,7 @@ class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(ap
         Submitting.submissionForm,
         errorMessage,
         Topics.all,
-        Menu.notLoggedIn
+        Navbar.notLoggedIn
       )
     }
   }

@@ -1,13 +1,12 @@
 @(result: Option[String],
   queryForm: Form[(String, controllers.chair.SqlMethod.Value)],
-  user: models.Person,
-  menu: List[(play.api.mvc.Call, String)]
+  navbar: Html
 )(implicit request: play.api.mvc.Request[Any])
 
 @import controllers.chair._
 @import helper.bootstrap3._
 
-@main("SQL Form", Some(user), menu) {
+@main("SQL Form", navbar) {
   @bootstrap3.form(routes.Sql.runQuery) {
     <legend>Query</legend>
     @bootstrap3.textarea(

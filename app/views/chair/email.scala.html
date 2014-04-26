@@ -1,6 +1,6 @@
 @*(message: Option[String],
   emailForm: Form[models.Email],
-  recipientsCategories: List[(play.api.mvc.Call, String)] =
+  recipientsCategories: Html =
       models.Papers.relevantCategories ::: models.Persons.relevantCategories,
   templates: List[models.EmailTemplate] =
       models.EmailTemplates.all

@@ -68,7 +68,7 @@ object Submitting extends Controller with SecureSocial {
   def make = SecuredAction { implicit request =>
     DB withSession { implicit session =>
       val user = getUser()
-      Ok(views.html.submissiontemplate("New Submission", submissionForm, Some(user), Topics.all, routes.Submitting.doMake, Menu(user))(Html("")))
+      Ok(views.html.submissiontemplate("New Submission", submissionForm, Topics.all, routes.Submitting.doMake, Navbar(user))(Html("")))
     }
   }
   
@@ -78,7 +78,7 @@ object Submitting extends Controller with SecureSocial {
       // TODO: Check that request.user.email.get is chair or author...
       val user = getUser()
       val paper: Paper = Papers.withId(Id[Paper](id))
-      Ok(views.html.submissioninfo(paper, Authors.of(paper), Topics.of(paper), Some(user), Menu(user)(session)))
+      Ok(views.html.submissioninfo(paper, Authors.of(paper), Topics.of(paper), Navbar(user)))
     }
   }
   
@@ -96,7 +96,7 @@ object Submitting extends Controller with SecureSocial {
         allTopics.zipWithIndex.filter(paperTopics contains _._1).map(ti =>
           (s"topics[${ti._2}]", ti._1.id.value.toString)).toMap
       )
-      Ok(views.html.submissiontemplate("Editing Submission " + id.toString.take(4).toUpperCase, existingSubmissionForm, Some(user), allTopics, routes.Submitting.doEdit(id), Menu(user))(Html("")))
+      Ok(views.html.submissiontemplate("Editing Submission " + id.toString.take(4).toUpperCase, existingSubmissionForm, allTopics, routes.Submitting.doEdit(id), Navbar(user))(Html("")))
     }
   }
   
@@ -121,7 +121,7 @@ object Submitting extends Controller with SecureSocial {
       // select it again.
       submissionForm.bindFromRequest.fold(
         errors => Ok(views.html.submissiontemplate(
-          "Submission: Errors found", errors, Some(user), Topics.all, errorEP, Menu(user))(Html(""))),
+          "Submission: Errors found", errors, Topics.all, errorEP, Navbar(user))(Html(""))),
         form => {
           val fileid: Option[Id[File]] = request.body.file("data").map{ file =>
             val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray

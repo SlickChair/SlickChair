@@ -1,11 +1,10 @@
 @(paper: models.Paper,
   authors: List[models.Person],
   topics: List[models.Topic],
-  user: Option[models.Person],
-  menu: List[(play.api.mvc.Call, String)]
+  menu: Html
 )(implicit request: play.api.mvc.Request[Any])
 
-@main("Submission " + paper.id.value.toString.take(4).toUpperCase, user, menu) {
+@main("Submission " + paper.id.value.toString.take(4).toUpperCase, menu) {
   @Html(paper.toString.replaceAll(",", ",\n<br>"))
   <br>
   <h1>Topic(s):</h1>

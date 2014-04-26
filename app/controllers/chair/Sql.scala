@@ -9,7 +9,7 @@ import play.api.db.DB
 import play.api.db.slick.{ DB => SlickDB }
 import play.api.mvc.Controller
 import securesocial.core.SecureSocial
-import controllers.Menu
+import controllers.Navbar
 import controllers.Utils.getUser
 import models.PersonRole._
 
@@ -33,7 +33,7 @@ object Sql extends Controller with SecureSocial {
   def form = SecuredAction { implicit request =>
     SlickDB withSession { implicit session =>
       val user = getUser()
-      Ok(views.html.chair.sql(None, queryForm, user, Menu(user)))
+      Ok(views.html.chair.sql(None, queryForm, Navbar(user)))
     }
   }
   
@@ -52,7 +52,7 @@ object Sql extends Controller with SecureSocial {
       }
       SlickDB withSession { implicit s =>
         val user = getUser()
-        Ok(views.html.chair.sql(Some(result), filledForm, user, Menu(user)))
+        Ok(views.html.chair.sql(Some(result), filledForm, Navbar(user)))
       }
     }
   }
