@@ -78,7 +78,7 @@
     </table>
     
     @select(
-      promoteForm("newRole.value"),
+      promoteForm("newPersonRole.value"),
       PersonRole.values.toSeq.map(f => f.toString -> f.toString),
       '_label -> "Change role of selected to:",
       '_help -> ""

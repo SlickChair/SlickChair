@@ -10,7 +10,8 @@ import play.api.db.slick.{ DB => SlickDB }
 import play.api.mvc.Controller
 import securesocial.core.SecureSocial
 import controllers.Menu
-import controllers.Utils.uEmail
+import controllers.Utils.getUser
+import models.PersonRole._
 
 object SqlMethod extends Enumeration {
   type SqlMethod = Value
@@ -31,7 +32,8 @@ object Sql extends Controller with SecureSocial {
   
   def form = SecuredAction { implicit request =>
     SlickDB withSession { implicit session =>
-      Ok(views.html.chair.sql(None, queryForm, request.user.email.get, Menu(uEmail())))
+      val user = getUser()
+      Ok(views.html.chair.sql(None, queryForm, user, Menu(user)))
     }
   }
   
@@ -49,7 +51,8 @@ object Sql extends Controller with SecureSocial {
         case e: Exception => e.toString.replaceFirst(": ", ":\n")
       }
       SlickDB withSession { implicit s =>
-        Ok(views.html.chair.sql(Some(result), filledForm, request.user.email.get, Menu(uEmail())))
+        val user = getUser()
+        Ok(views.html.chair.sql(Some(result), filledForm, user, Menu(user)))
       }
     }
   }

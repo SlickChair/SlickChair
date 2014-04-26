@@ -19,9 +19,7 @@ trait RepoQuery[T <: Table[M] with RepoTable[M], M <: Model[M]] extends Implicit
   def all(implicit s: Session): List[M] = latests.list
   def count(implicit s: Session): Int = all.size
   def ins(m: M)(implicit s: Session): Id[M] = { this insert m; m.id }
-  def updt(m: M)(implicit s: Session): Id[M] = { this forceInsert m; m.id }
   def insAll(l: List[M])(implicit s: Session): List[Id[M]] = l map ins
-  def updtAll(l: List[M])(implicit s: Session): List[Id[M]] = l map updt
 }
 
 object Topics extends TableQuery(new TopicTable(_)) with RepoQuery[TopicTable, Topic] {

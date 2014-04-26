@@ -1,6 +1,6 @@
 @(title: String,
   submissionForm: Form[SubmissionForm],
-  user: Option[String],
+  user: Option[models.Person],
   topics: List[models.Topic],
   submissionEndPoint: play.api.mvc.Call,
   menu: List[(play.api.mvc.Call, String)]
@@ -18,7 +18,7 @@
     'enctype -> "multipart/form-data") {
   
     <fieldset>
-      <legend>General Informations</legend>
+      <legend>General Information</legend>
       @inputText(
         submissionForm("paper.title"),
         '_label -> "Paper title")

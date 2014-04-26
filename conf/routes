@@ -1,39 +1,31 @@
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# ~~~~
-
 # Home page
 GET     /                                    controllers.chair.Doc.umentation
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                        controllers.Assets.at(path="/public", file)
 
-# Submitters
 GET     /submission                          controllers.Submitting.make
 POST    /submission/make                     controllers.Submitting.doMake
 GET     /submission/info/:id                 controllers.Submitting.info(id: models.IdType)
 GET     /submission/edit/:id                 controllers.Submitting.edit(id: models.IdType)
 POST    /submission/doedit/:id               controllers.Submitting.doEdit(id: models.IdType)
 
-# Reviewers
-# GET     /invitation/:token                   controllers.member.Dashboard.invite(token: String)
-# GET     /dashboard                           controllers.member.Dashboard.papers
-# GET     /submissions                         controllers.member.Reviewing.papers
-# GET     /bid                                 controllers.member.Bidding.form
-# POST    /bid                                 controllers.member.Bidding.make
-# GET     /submission/:id                      controllers.member.Reviewing.page(id: Int)
-# POST    /submission/:id                      controllers.member.Reviewing.comment(id: Int)
-# GET     /review/:id                          controllers.member.Reviewing.form(id: Int)
-# POST    /review/:id                          controllers.member.Reviewing.make(id: Int)
+GET     /pcmember/submissions                controllers.member.Reviewing.papers
+# GET     /pcmember/invitation/:token                   controllers.member.Dashboard.invite(token: String)
+# GET     /pcmember/dashboard                           controllers.member.Dashboard.papers
+# GET     /pcmember/bid                                 controllers.member.Bidding.form
+# POST    /pcmember/bid                                 controllers.member.Bidding.make
+# GET     /pcmember/submission/:id                      controllers.member.Reviewing.page(id: Int)
+# POST    /pcmember/submission/:id                      controllers.member.Reviewing.comment(id: Int)
+# GET     /pcmember/review/:id                          controllers.member.Reviewing.form(id: Int)
+# POST    /pcmember/review/:id                          controllers.member.Reviewing.make(id: Int)
 
-# Chair
-GET     /sql                                 controllers.chair.Sql.form
-POST    /sql                                 controllers.chair.Sql.runQuery
+GET     /chair/sql                           controllers.chair.Sql.form
+POST    /chair/sql                           controllers.chair.Sql.runQuery
 # GET     /email                               controllers.chair.Emailing.form
 # POST    /email                               controllers.chair.Emailing.send
 # GET     /manage-members                      controllers.chair.MembersManaging.page
 # POST    /manage-members                      controllers.chair.MembersManaging.handle
-
 # GET     /auctions                            controllers.chair.Chair.auctions
 # GET     /config                              controllers.chair.Chair.config
 # GET     /decisions                           controllers.chair.Chair.decisions

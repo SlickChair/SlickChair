@@ -6,6 +6,8 @@ import play.api.data.Forms._
 import play.api.data.format.Formatter
 import play.api.data.format.Formats._
 import securesocial.core.SecuredRequest
+import play.api.db.slick.Config.driver.simple._
+import models.{ Persons, Person }
 
 /** Source: https://github.com/guardian/deploy/blob/master/riff-raff/app/utils/Forms.scala */
 object Utils {
@@ -21,5 +23,6 @@ object Utils {
     override def unbind(key: String, value: UUID) = Map(key -> value.toString)
   })
 
-  def uEmail()(implicit request: SecuredRequest[_]): String = request.user.email.get
+  // def uEmail()(implicit request: SecuredRequest[_]): String = request.user.email.get
+  def getUser()(implicit request: SecuredRequest[_], s: Session): Person = Persons.withEmail(request.user.email.get)
 }

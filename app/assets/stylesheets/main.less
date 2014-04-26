@@ -1,7 +1,3 @@
-html {
-  overflow-y: scroll;
-}
-
 // Gray title header.
 .content {
   background-color: #fff;
@@ -159,4 +155,66 @@ span.glyphicon.glyphicon-minus-sign.disabeled.half-transparent:active {
 span.glyphicon:active {
   padding: 0px 0px 0px 1px;
   text-shadow: black 0px 0px 1px;
+}
+
+// Green navbar
+.navbar-green {
+  background-color:#229922;
+  background-image: none;
+  color:#ffffff;
+  border-radius:0;
+  .navbar-nav > li > a {
+    color:#fff;
+    padding-left:20px;
+    padding-right:20px;
+  }
+  .navbar-nav > .active > a, .navbar-nav > .active > a:hover, .navbar-nav > .active > a:focus {
+    color: #ffffff;
+    background-color:transparent;
+  }
+  .navbar-nav > li > a:hover, .nav > li > a:focus {
+    text-decoration: none;
+    background-color: #33aa33;
+  }
+  .navbar-brand {
+    color:#eeeeee;
+  }
+  .navbar-toggle {
+    background-color:#eeeeee;
+  }
+}
+
+// Red navbar
+.navbar-red {
+  background-color:#992222;
+  background-image: none;
+  color:#ffffff;
+  border-radius:0;
+  .navbar-nav > li > a {
+    color:#fff;
+    padding-left:20px;
+    padding-right:20px;
+  }
+  .navbar-nav > .active > a, .navbar-nav > .active > a:hover, .navbar-nav > .active > a:focus {
+    color: #ffffff;
+    background-color:transparent;
+  }
+  .navbar-nav > li > a:hover, .nav > li > a:focus {
+    text-decoration: none;
+    background-color: #aa3333;
+  }
+  .navbar-brand {
+    color:#eeeeee;
+  }
+  .navbar-toggle {
+    background-color:#eeeeee;
+  }
+}
+
+// Neutral dropdown mousehover color
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+  text-decoration: none;
+  background-image: none;
+  color: #262626;
+  background-color: #f5f5f5;
 }

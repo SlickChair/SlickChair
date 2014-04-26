@@ -37,7 +37,6 @@ class PersonTable(tag: Tag) extends Table[Person](tag, "PERSON") with RepoTable[
   def role = column[PersonRole]("ROLE")
   def email = column[String]("EMAIL", O.DBType("TEXT"))
   def * = ((id, updatedAt, updatedBy), firstname, lastname, organization, role, email) <> (Person.tupled, Person.unapply)
-  def pk = primaryKey("pkpersons", (id, updatedAt))
 }
 
 class PaperTable(tag: Tag) extends Table[Paper](tag, "PAPER") with RepoTable[Paper] {
@@ -61,7 +60,6 @@ class AuthorTable(tag: Tag) extends Table[Author](tag, "AUTHOR") with RepoTable[
   def personid = column[Id[Person]]("PERSONID", O.DBType("TEXT"))
   def position = column[Int]("POSITION")
   def * = ((id, updatedAt, updatedBy), paperid, personid, position) <> (Author.tupled, Author.unapply)
-  def pk = primaryKey("pkauthors", (id, updatedAt))
 }
 
 class CommentTable(tag: Tag) extends Table[Comment](tag, "COMMENT") with RepoTable[Comment] {

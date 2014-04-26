@@ -14,7 +14,7 @@
 // import securesocial.core.SecureSocial
 
 // case class InvalidateForm(candidates: List[String])
-// case class PromoteForm(members: List[Int], newRole: PersonRole)
+// case class PromoteForm(members: List[Int], newPersonRole: PersonRole)
 
 // object PersonsManaging extends Controller with SecureSocial {
 //   val urlTemplateVariable = "@invitationURL"
@@ -38,7 +38,7 @@
 //   val promoteForm: Form[PromoteForm] = Form(
 //     mapping(
 //       "members" -> list(number).verifying("Please select at least one member.", _.nonEmpty),
-//       "newRole" -> PersonRoleMapping
+//       "newPersonRole" -> PersonRoleMapping
 //     )(PromoteForm.apply _)(PromoteForm.unapply _)
 //   ).fill(PromoteForm(Nil, PersonRole.Chair))
   
@@ -94,9 +94,9 @@
 //   def promote[T](implicit request: Request[T]) = {
 //     val newPromoteForm = promoteForm.bindFromRequest.fold(
 //       errors => errors,
-//       { case PromoteForm(members, newRole) =>
-//         play.api.Logger.info(members + " w " + newRole)
-//         members.foreach(Persons.promote(_, newRole))
+//       { case PromoteForm(members, newPersonRole) =>
+//         play.api.Logger.info(members + " w " + newPersonRole)
+//         members.foreach(Persons.promote(_, newPersonRole))
 //         promoteForm
 //       }
 //     )

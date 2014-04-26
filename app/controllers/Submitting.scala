@@ -14,7 +14,7 @@ import play.api.Play.current
 import play.api.db.slick.DB
 import play.api.mvc.Call
 import play.api.mvc.MultipartFormData
-import Utils.uEmail
+import Utils.getUser
 
 case class SubmissionForm(
   paper: Paper,
@@ -67,7 +67,8 @@ object Submitting extends Controller with SecureSocial {
   /** Displays new submissions form. */
   def make = SecuredAction { implicit request =>
     DB withSession { implicit session =>
-      Ok(views.html.submissiontemplate("New Submission", submissionForm, Some(uEmail()), Topics.all, routes.Submitting.doMake, Menu(uEmail()))(Html("")))
+      val user = getUser()
+      Ok(views.html.submissiontemplate("New Submission", submissionForm, Some(user), Topics.all, routes.Submitting.doMake, Menu(user))(Html("")))
     }
   }
   
@@ -75,8 +76,9 @@ object Submitting extends Controller with SecureSocial {
   def info(id: IdType) = SecuredAction { implicit request =>
     DB withSession { implicit session =>
       // TODO: Check that request.user.email.get is chair or author...
+      val user = getUser()
       val paper: Paper = Papers.withId(Id[Paper](id))
-      Ok(views.html.submissioninfo(paper, Authors.of(paper), Topics.of(paper), Some(uEmail()), Menu(uEmail())(session)))
+      Ok(views.html.submissioninfo(paper, Authors.of(paper), Topics.of(paper), Some(user), Menu(user)(session)))
     }
   }
   
@@ -84,6 +86,7 @@ object Submitting extends Controller with SecureSocial {
   def edit(id: IdType) = SecuredAction { implicit request =>
     DB withSession { implicit session =>
       // TODO: Check that request.user.email.get is chair or author...
+      val user = getUser()
       val paper: Paper = Papers.withId(Id[Paper](id))
       val allTopics: List[Topic] = Topics.all
       val paperTopics: List[Topic] = Topics.of(paper)
@@ -93,7 +96,7 @@ object Submitting extends Controller with SecureSocial {
         allTopics.zipWithIndex.filter(paperTopics contains _._1).map(ti =>
           (s"topics[${ti._2}]", ti._1.id.value.toString)).toMap
       )
-      Ok(views.html.submissiontemplate("Editing Submission " + id.toString.take(4).toUpperCase, existingSubmissionForm, Some(uEmail()), allTopics, routes.Submitting.doEdit(id), Menu(uEmail()))(Html("")))
+      Ok(views.html.submissiontemplate("Editing Submission " + id.toString.take(4).toUpperCase, existingSubmissionForm, Some(user), allTopics, routes.Submitting.doEdit(id), Menu(user))(Html("")))
     }
   }
   
@@ -111,24 +114,25 @@ object Submitting extends Controller with SecureSocial {
   private type Req = SecuredRequest[MultipartFormData[play.api.libs.Files.TemporaryFile]]
   private def doSave(paperId: Id[Paper], errorEP: Call)(implicit request: Req) = {
     DB withSession { implicit session =>
+      val user = getUser()
       val now: DateTime = currentTime()
       // TODO: if the form is not js validated we might want to save the
       // uploaded file in case of errors. Otherwise the user will have to
       // select it again.
       submissionForm.bindFromRequest.fold(
         errors => Ok(views.html.submissiontemplate(
-          "Submission: Errors found", errors, Some(uEmail()), Topics.all, errorEP, Menu(uEmail()))(Html(""))),
+          "Submission: Errors found", errors, Some(user), Topics.all, errorEP, Menu(user))(Html(""))),
         form => {
           val fileid: Option[Id[File]] = request.body.file("data").map{ file =>
             val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray
-            Files.ins(File((newId(), now, uEmail()), file.filename, blob.size, blob))
+            Files.ins(File((newId(), now, user.email), file.filename, blob.size, blob))
           }
-          Papers.ins(form.paper.copy(metadata=(paperId, now, uEmail()), fileid=fileid))
+          Papers.ins(form.paper.copy(metadata=(paperId, now, user.email), fileid=fileid))
           val personsId: List[Id[Person]] = Persons.saveAll(
-            form.authors.take(form.paper.nauthors).map(_.copy(metadata=(newId(), now, uEmail()))))
+            form.authors.take(form.paper.nauthors).map(_.copy(metadata=(newId(), now, user.email))))
           Authors.insAll(personsId.zipWithIndex.map(pi =>
-            Author((newId(), now, uEmail()), paperId, pi._1, pi._2)))
-          PaperTopics.insAll(form.topics.map(i => PaperTopic((newId(), now, uEmail()), paperId, Id(i))))
+            Author((newId(), now, user.email), paperId, pi._1, pi._2)))
+          PaperTopics.insAll(form.topics.map(i => PaperTopic((newId(), now, user.email), paperId, Id(i))))
           Redirect(routes.Submitting.info(paperId.value))
         }
       )

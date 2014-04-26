@@ -13,7 +13,7 @@ trait Model[M <: Model[M]] {
 
 object PersonRole extends Enumeration with EnumMapper {
   type PersonRole = Value
-  val Chair, Reviewer, Submitter, Disabled = Value
+  val Chair, Reviewer, Submitter = Value
 }
 import PersonRole._
 

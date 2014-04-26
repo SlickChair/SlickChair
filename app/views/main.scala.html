@@ -1,5 +1,5 @@
 @(title: String,
-  user: Option[String],
+  user: Option[models.Person],
   menu: List[(play.api.mvc.Call, String)],
   modal: Html = Html("")
 )(content: Html)(implicit request: play.api.mvc.Request[Any])
@@ -45,22 +45,29 @@
             <li @if(request.uri.takeRight(idSize) equals url.toString.takeRight(idSize)) { class="active" }><a href="@url">@text</a></li>
           }
         </ul>
-      <p class="navbar-text pull-right">
-      @if(user.isEmpty) {
-        <a href="#" class="navbar-link">Disconnected</a>
-      } else {
-        @user.get — <a href="@RoutesHelper.logout()" class="navbar-link">Disconnect</a>
+        
+      @user match {
+        case None => {
+          <p class="navbar-text pull-right">
+            <a href="#" class="navbar-link">Disconnected</a>
+          </p>
+        }
+        case Some(p) => {
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">@p.email <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="@controllers.chair.routes.Sql.form">Change role to Chair</a></li>
+                <li><a href="@controllers.member.routes.Reviewing.papers">Change role to PC Member</a></li>
+                <li><a href="@routes.Submitting.make">Change role to Author</a></li>
+                <li class="divider"></li>
+                <li><a href="@RoutesHelper.logout()">Disconnect</a></li>
+              </ul>
+            </li>
+          </ul>
+        }
       }
-      </p>
       </div>
-          <div class="popover bottom">
-            <div class="arrow"></div>
-            <h3 class="popover-title">Popover bottom</h3>
-
-            <div class="popover-content">
-              <p>Sed posuere consectetur est at lobortis. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.</p>
-            </div>
-          </div>
     </div>
     </div>
   </nav>

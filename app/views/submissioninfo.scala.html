@@ -1,7 +1,7 @@
 @(paper: models.Paper,
   authors: List[models.Person],
   topics: List[models.Topic],
-  user: Option[String],
+  user: Option[models.Person],
   menu: List[(play.api.mvc.Call, String)]
 )(implicit request: play.api.mvc.Request[Any])
 
