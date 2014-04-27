@@ -32,8 +32,7 @@ object Sql extends Controller with SecureSocial {
   
   def form = SecuredAction { implicit request =>
     SlickDB withSession { implicit session =>
-      val user = getUser()
-      Ok(views.html.chair.sql(None, queryForm, Navbar(user)))
+      Ok(views.html.chair.sql(None, queryForm, Navbar(getUser(), Chair)))
     }
   }
   
@@ -50,9 +49,8 @@ object Sql extends Controller with SecureSocial {
       } catch {
         case e: Exception => e.toString.replaceFirst(": ", ":\n")
       }
-      SlickDB withSession { implicit s =>
-        val user = getUser()
-        Ok(views.html.chair.sql(Some(result), filledForm, Navbar(user)))
+      SlickDB withSession { implicit session =>
+        Ok(views.html.chair.sql(Some(result), filledForm, Navbar(getUser(), Chair)))
       }
     }
   }

@@ -7,11 +7,20 @@ import play.api.data.Forms.{ ignored, mapping, nonEmptyText }
 import play.api.data.Mapping
 import play.api.mvc.{ Controller, Result }
 import securesocial.core.SecureSocial
+import play.api.db.slick.DB
+import play.api.Play.current
+import play.api.templates.Html
+import controllers.Utils.getUser
+import controllers.Navbar
+import models.PersonRole.Reviewer
+import models._
 
 object Reviewing extends Controller with SecureSocial {
   
   def papers() = SecuredAction { implicit request =>
-    Ok("")
+    DB withSession { implicit session =>
+      Ok(views.html.main("List of all submissions", Navbar(getUser(), Reviewer))(Html("empty")))
+    }
   }
 
   // val confidenceMapping: Mapping[ReviewConfidence] = mapping(

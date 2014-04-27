@@ -1,7 +1,7 @@
-package controllers
+  package controllers
 
 import models._
-import models.PersonRole._
+import models.PersonRole.Submitter
 import models.PaperType._
 import org.joda.time.{ DateTime, Seconds }
 import play.api.templates.Html
@@ -68,7 +68,7 @@ object Submitting extends Controller with SecureSocial {
   def make = SecuredAction { implicit request =>
     DB withSession { implicit session =>
       val user = getUser()
-      Ok(views.html.submissiontemplate("New Submission", submissionForm, Topics.all, routes.Submitting.doMake, Navbar(user))(Html("")))
+      Ok(views.html.submissiontemplate("New Submission", submissionForm, Topics.all, routes.Submitting.doMake, Navbar(user, Submitter))(Html("")))
     }
   }
   
@@ -76,9 +76,8 @@ object Submitting extends Controller with SecureSocial {
   def info(id: IdType) = SecuredAction { implicit request =>
     DB withSession { implicit session =>
       // TODO: Check that request.user.email.get is chair or author...
-      val user = getUser()
       val paper: Paper = Papers.withId(Id[Paper](id))
-      Ok(views.html.submissioninfo(paper, Authors.of(paper), Topics.of(paper), Navbar(user)))
+      Ok(views.html.submissioninfo(paper, Authors.of(paper), Topics.of(paper), Navbar(getUser(), Submitter)))
     }
   }
   
@@ -96,7 +95,7 @@ object Submitting extends Controller with SecureSocial {
         allTopics.zipWithIndex.filter(paperTopics contains _._1).map(ti =>
           (s"topics[${ti._2}]", ti._1.id.value.toString)).toMap
       )
-      Ok(views.html.submissiontemplate("Editing Submission " + id.toString.take(4).toUpperCase, existingSubmissionForm, allTopics, routes.Submitting.doEdit(id), Navbar(user))(Html("")))
+      Ok(views.html.submissiontemplate("Editing Submission " + id.toString.take(4).toUpperCase, existingSubmissionForm, allTopics, routes.Submitting.doEdit(id), Navbar(user, Submitter))(Html("")))
     }
   }
   
@@ -121,7 +120,7 @@ object Submitting extends Controller with SecureSocial {
       // select it again.
       submissionForm.bindFromRequest.fold(
         errors => Ok(views.html.submissiontemplate(
-          "Submission: Errors found", errors, Topics.all, errorEP, Navbar(user))(Html(""))),
+          "Submission: Errors found", errors, Topics.all, errorEP, Navbar(user, Submitter))(Html(""))),
         form => {
           val fileid: Option[Id[File]] = request.body.file("data").map{ file =>
             val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray

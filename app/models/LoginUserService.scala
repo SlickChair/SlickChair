@@ -14,7 +14,7 @@ import securesocial.core.{ AuthenticationMethod, Identity, PasswordInfo, SocialU
    * details. */
 class LoginUserService(application: Application) extends UserServicePlugin(application)
     with LoginUsers.Queries with LoginTokens.Queries {
-  def saveHook(user: User)(implicit session: Session): Unit = {
+  def saveHook(user: User)(implicit s: Session): Unit = {
     import models._
     import PersonRole._
     Persons.save(Person(
@@ -22,7 +22,7 @@ class LoginUserService(application: Application) extends UserServicePlugin(appli
       user.firstname,
       user.lastname,
       None,
-      Submitter,
+      Chair,
       user.email
     ))
     ()
@@ -86,17 +86,17 @@ class LoginUserTable(tag: Tag) extends Table[User](tag, "LOGINUSERS") {
 }
 
 object LoginUsers extends TableQuery(new LoginUserTable(_)) {
-  def UserByidentityId(identityId: IdentityId)(implicit session: Session) = 
+  def UserByidentityId(identityId: IdentityId)(implicit s: Session) = 
     this.filter(user => (user.uid is identityId.userId) && (user.pid is identityId.providerId))
   
-  def userByEmailAndProvider(email: String, pid: String)(implicit session: Session) = 
+  def userByEmailAndProvider(email: String, pid: String)(implicit s: Session) = 
     this.filter(user => (user.email is email) && (user.pid is pid))
   
-  def withEmail(email: String)(implicit session: Session) =
+  def withEmail(email: String)(implicit s: Session) =
     this.filter(_.email is email).list.headOption
 
   trait Queries {
-    def saveHook(user: User)(implicit session: Session): Unit
+    def saveHook(user: User)(implicit s: Session): Unit
     
     def save(identity: Identity): Identity = {
       DB withTransaction { implicit s: Session =>

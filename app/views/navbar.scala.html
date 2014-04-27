@@ -1,9 +1,19 @@
 @(user: Option[models.Person],
+  currentRole: models.PersonRole.PersonRole,
   menu: List[(play.api.mvc.Call, String)]
 )(implicit request: play.api.mvc.Request[Any])
 
-@idSize = @{ models.newId.value.toString.size }
 @import securesocial.core.providers.utils.RoutesHelper
+@import models.PersonRole._
+
+@idSize = @{ models.newId.value.toString.size }
+@changeRole(to: PersonRole) = {
+  @to match {
+    case Chair => { <li><a href="@controllers.chair.routes.Sql.form">Change role to Chair</a></li> }
+    case Reviewer => { <li><a href="@controllers.member.routes.Reviewing.papers">Change role to PC Member</a></li> }
+    case Submitter => { <li><a href="@routes.Submitting.make">Change role to Author</a></li> }
+  }
+}
 
 <div class="navbar-header">
   <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -30,12 +40,17 @@
   case Some(p) => {
     <ul class="nav navbar-nav navbar-right">
       <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">@p.email <b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">@p.email 
+        @(p.role, currentRole) match {
+          case (Submitter, Submitter) => {}
+          case (_, Chair) => { (Chair) }
+          case (_, Reviewer) => { (PC Member) }
+          case (_, Submitter) => { (Author) }
+        }
+        <b class="caret"></b></a>
         <ul class="dropdown-menu">
-          <li><a href="@controllers.chair.routes.Sql.form">Change role to Chair</a></li>
-          <li><a href="@controllers.member.routes.Reviewing.papers">Change role to PC Member</a></li>
-          <li><a href="@routes.Submitting.make">Change role to Author</a></li>
-          <li class="divider"></li>
+          @List(Chair, Reviewer, Submitter).dropWhile(_ != p.role).filter(_ != currentRole).map(changeRole)
+          @if(p.role != Submitter) { <li class="divider"></li> }
           <li><a href="@RoutesHelper.logout()">Disconnect</a></li>
         </ul>
       </li>
