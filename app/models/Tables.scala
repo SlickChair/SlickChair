@@ -7,6 +7,7 @@ import PersonRole._
 import PaperType._
 import ReviewConfidence._
 import ReviewEvaluation._
+import BidValue._
 
 trait ImplicitMappers {
   implicit def mapper[T <: Model[T]] = MappedColumnType.base[Id[T], IdType](_.value, Id[T])
@@ -90,4 +91,17 @@ class EmailTable(tag: Tag) extends Table[Email](tag, "EMAIL") with RepoTable[Ema
   def subject = column[String]("SUBJECT", O.DBType("TEXT"))
   def content = column[String]("CONTENT", O.DBType("TEXT"))
   def * = ((id, updatedAt, updatedBy), to, subject, content) <> (Email.tupled, Email.unapply)
+}
+
+class BidTable(tag: Tag) extends Table[Bid](tag, "BID") with RepoTable[Bid] {
+  def paperid = column[Id[Paper]]("PAPERID", O.DBType("TEXT"))
+  def personid = column[Id[Person]]("PERSONID", O.DBType("TEXT"))
+  def value = column[BidValue]("VALUE")
+  def * = ((id, updatedAt, updatedBy), paperid, personid, value) <> (Bid.tupled, Bid.unapply)
+}
+
+class AssignmentTable(tag: Tag) extends Table[Assignment](tag, "ASSIGNMENT") with RepoTable[Assignment] {
+  def paperid = column[Id[Paper]]("PAPERID", O.DBType("TEXT"))
+  def personid = column[Id[Person]]("PERSONID", O.DBType("TEXT"))
+  def * = ((id, updatedAt, updatedBy), paperid, personid) <> (Assignment.tupled, Assignment.unapply)
 }

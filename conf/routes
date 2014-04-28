@@ -1,7 +1,4 @@
-# Home page
 GET     /                                    controllers.chair.Doc.umentation
-
-# Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                        controllers.Assets.at(path="/public", file)
 
 GET     /submission                          controllers.Submitting.make
@@ -10,7 +7,7 @@ GET     /submission/info/:id                 controllers.Submitting.info(id: mod
 GET     /submission/edit/:id                 controllers.Submitting.edit(id: models.IdType)
 POST    /submission/doedit/:id               controllers.Submitting.doEdit(id: models.IdType)
 
-GET     /pcmember/submissions                controllers.member.Reviewing.papers
+GET     /pcmember/papers                     controllers.member.Reviewing.papers
 # GET     /pcmember/invitation/:token                   controllers.member.Dashboard.invite(token: String)
 # GET     /pcmember/dashboard                           controllers.member.Dashboard.papers
 # GET     /pcmember/bid                                 controllers.member.Bidding.form

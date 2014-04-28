@@ -35,6 +35,12 @@ object ReviewEvaluation extends Enumeration with EnumMapper {
 }
 import ReviewEvaluation._
 
+object BidValue extends Enumeration with EnumMapper {
+  type BidValue = Value
+  val Conflict, NoBid, Maybe, YesBid = Value
+}
+import BidValue._
+
 case class Topic(
   metadata: MetaData[Topic],
   name: String,
@@ -73,6 +79,26 @@ case class Author(
   position: Int
 ) extends Model[Author]
 
+case class File(
+  metadata: MetaData[File],
+  name: String,
+  size: Long,
+  content: Array[Byte]
+) extends Model[File]
+
+case class Bid(
+  metadata: MetaData[Bid],
+  paperid: Id[Paper],
+  personid: Id[Person],
+  value: BidValue
+) extends Model[Bid]
+
+case class Assignment(
+  metadata: MetaData[Assignment],
+  paperid: Id[Paper],
+  personid: Id[Person]  
+) extends Model[Assignment]
+
 case class Comment(
   metadata: MetaData[Comment],
   paperid: Id[Paper],
@@ -88,13 +114,6 @@ case class Review(
   evaluation: ReviewEvaluation,
   content: String
 ) extends Model[Review]
-
-case class File(
-  metadata: MetaData[File],
-  name: String,
-  size: Long,
-  content: Array[Byte]
-) extends Model[File]
 
 case class Email(
   metadata: MetaData[Email],

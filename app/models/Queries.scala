@@ -66,11 +66,13 @@ object Authors extends TableQuery(new AuthorTable(_)) with RepoQuery[AuthorTable
 
 object Comments extends TableQuery(new CommentTable(_)) with RepoQuery[CommentTable, Comment] {
 }
-
 object Reviews extends TableQuery(new ReviewTable(_)) with RepoQuery[ReviewTable, Review] {
 }
-
 object Files extends TableQuery(new FileTable(_)) with RepoQuery[FileTable, File] {
 }
 object Emails extends TableQuery(new EmailTable(_)) with RepoQuery[EmailTable, Email] {
+}
+object Bids extends TableQuery(new BidTable(_)) with RepoQuery[BidTable, Bid] {
+}
+object Assignments extends TableQuery(new AssignmentTable(_)) with RepoQuery[AssignmentTable, Assignment] {
 }
