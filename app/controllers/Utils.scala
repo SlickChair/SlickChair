@@ -1,16 +1,22 @@
 package controllers
 
 import java.util.UUID
-import models.User
-import models.{ Persons, Person }
 import models.PersonRole._
+import models.{ User, Persons, Person, LoginUsers }
 import play.api.data.format.Formats._
 import play.api.data.format.Formatter
 import play.api.data.Forms._
 import play.api.data.{ FormError, Mapping }
 import play.api.db.slick.Config.driver.simple._
-import play.api.mvc.{ Action, AnyContent, Controller, Result }
-import securesocial.core.{ Authorization, Identity, RequestWithUser, SecuredRequest }
+import play.api.db.slick.{ DB, SlickExecutionContext }
+import play.api.i18n.Messages
+import play.api.mvc.BodyParsers.parse.anyContent
+import play.api.mvc.{ Action, Request, SimpleResult, Results, BodyParser, WrappedRequest }
+import play.api.Play.current
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import securesocial.core.providers.utils.RoutesHelper
+import securesocial.core.{ IdentityProvider, SecureSocial, SecuredRequest, Authenticator, UserService }
 
 object Utils {
   /** Source: https://github.com/guardian/deploy/blob/master/riff-raff/app/utils/Forms.scala */
@@ -26,13 +32,71 @@ object Utils {
     override def unbind(key: String, value: UUID) = Map(key -> value.toString)
   })
 
-  // def uEmail()(implicit request: SecuredRequest[_]): String = request.user.email.get
+  // // def uEmail()(implicit request: SecuredRequest[_]): String = request.user.email.get
   def getUser()(implicit request: SecuredRequest[_], s: Session): Person = Persons.withEmail(request.user.email.get)
 
-  /** Authorization checking that the user is chair. */
-  case class WithRole(role: PersonRole) extends Authorization {
-    def isAuthorized(user: Identity): Boolean =
-      false
-      // Persons.withEmail(user.email.get).filter(_.role == PersonRole.Chair).nonEmpty TODO
+  // /** Authorization checking that the user is chair. */
+  // case class WithRole(role: PersonRole) extends securesocial.core.Authorization {
+  //   def isAuthorized(user: Identity): Boolean = {
+  //     DB withSession { implicit session =>
+  //       Persons.withEmail(user.email.get).role >= role
+  //     }
+  //   }
+  // }
+  
+  case class SlickRequest[A](
+    dbSession: Session,
+    dbExecutionContext: ExecutionContext,
+    user: Person,
+    request: Request[A]
+  ) extends WrappedRequest[A](request)
+
+  implicit def SlickRequestAsSession[_](implicit r: SlickRequest[_]): Session = r.dbSession
+  implicit def myRequestAsExecutionContext[_](implicit r: SlickRequest[_]): ExecutionContext = r.dbExecutionContext
+  
+  /** Custom mix between securesocial.core.SecureSocial and play.api.db.slick.DBAction */
+  object SlickAction {
+    def apply[A](authorization: Authorization, bodyParser: BodyParser[A] = anyContent)(requestHandler: SlickRequest[A] => SimpleResult): Action[A] = {
+      
+      val minConnections = 5
+      val maxConnections = 5
+      val partitionCount = 2
+      val maxQueriesPerRequest = 20
+      val (executionContext, threadPool) = SlickExecutionContext.threadPoolExecutionContext(minConnections, maxConnections)
+
+      if(threadPool.getQueue.size() >= maxConnections * maxQueriesPerRequest) 
+        Action(bodyParser) { _ => Results.ServiceUnavailable }
+      else {
+        Action.async(bodyParser) { implicit request =>
+          Future {
+            DB withSession { implicit session =>
+              getUser match {
+                case Some(user) =>
+                  val myRequest = SlickRequest(session, executionContext, user, request)
+                  if (authorization.isAuthorized(myRequest))
+                    requestHandler(myRequest)
+                  else
+                    Results.Redirect(RoutesHelper.notAuthorized.absoluteURL(IdentityProvider.sslEnabled))
+                case None =>
+                  Results.Redirect(RoutesHelper.login().absoluteURL(IdentityProvider.sslEnabled))
+                    .flashing("error" -> Messages("securesocial.loginRequired"))
+                    .withSession(request.session + (SecureSocial.OriginalUrlKey -> request.uri))
+                    .discardingCookies(Authenticator.discardingCookie)
+              }
+            }
+          }(executionContext)
+        }
+      }
+    }
+    
+    private def getUser[A](implicit session: Session, request: Request[A]): Option[Person] = {
+      for (
+        authenticator <- SecureSocial.authenticatorFromRequest ;
+        secureSocialUser <- LoginUsers.UserByidentityId(authenticator.identityId).firstOption.map(_.toIdentity)
+      ) yield {
+        Authenticator.save(authenticator.touch)
+        Persons.withEmail(secureSocialUser.email.get)
+      }
+    }
   }
 }

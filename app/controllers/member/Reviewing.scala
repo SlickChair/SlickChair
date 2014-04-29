@@ -1,26 +1,21 @@
 package controllers.member
 
 import org.joda.time.DateTime
-import controllers.MemberOrChair
-import play.api.data.Form
+import play.api.data.{ Form, Mapping }
 import play.api.data.Forms.{ ignored, mapping, nonEmptyText }
-import play.api.data.Mapping
 import play.api.mvc.{ Controller, Result }
-import securesocial.core.SecureSocial
 import play.api.db.slick.DB
 import play.api.Play.current
 import play.api.templates.Html
-import controllers.Utils.getUser
-import controllers.Navbar
 import models.PersonRole.Reviewer
 import models._
+import controllers.Utils._
+import controllers.{ IsReviewer, Navbar }
 
-object Reviewing extends Controller with SecureSocial {
+object Reviewing extends Controller {
   
-  def papers() = SecuredAction { implicit request =>
-    DB withSession { implicit session =>
-      Ok(views.html.main("List of all submissions", Navbar(getUser(), Reviewer))(Html("empty")))
-    }
+  def papers() = SlickAction(IsReviewer) { implicit r =>
+    Ok(views.html.main("List of all submissions", Navbar(r.user, Reviewer))(Html("empty")))
   }
 
   // val confidenceMapping: Mapping[ReviewConfidence] = mapping(
@@ -56,7 +51,7 @@ object Reviewing extends Controller with SecureSocial {
   //   case Some(paper) => ifFound(paper)
   // }
     
-  // def page(id: Int) = SecuredAction(MemberOrChair) { implicit request =>
+  // def page(id: Int) = SecuredAction(MemberOrChair) { implicit r =>
   //   paperOrNotFound(id) { paper =>
   //     Ok(views.html.member.paperPage(
   //       Reviews.of(paper, Persons.getFromRequest).nonEmpty,
