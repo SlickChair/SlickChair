@@ -17,11 +17,13 @@ import org.joda.time.DateTime
 
 class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(application) {
   override def getLoginPage[A](implicit request: Request[A], form: Form[(String, String)], errorMessage: Option[String] = None): Html = {
-    DB withSession { implicit s: Session => 
+    DB withSession { implicit s => 
       views.html.login(
         form.value match {
-          case Some((username, password)) => loginWrapperForm.fillAndValidate(LoginWrapperForm(username, password, false))  
-          case None => loginWrapperForm
+          case Some((username, password)) =>
+            loginWrapperForm.fillAndValidate(LoginWrapperForm(username, password, false))  
+          case None =>
+            loginWrapperForm
         },
         Submitting.submissionForm,
         errorMessage,
@@ -51,9 +53,10 @@ class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(ap
   //   securesocial.views.html.passwordChange(form)
   // }
 
-  // override def getNotAuthorizedPage[A](implicit request: Request[A]): Html = {
-  //   securesocial.views.html.notAuthorized()
-  // }
+  override def getNotAuthorizedPage[A](implicit request: Request[A]): Html = {
+    views.html.main("Not Authorized", Navbar.notLoggedIn)(
+      Html("You are not authorized to access that page."))
+  }
 
   // override def getSignUpEmail(token: String)(implicit request: RequestHeader): (Option[Txt], Option[Html]) = {
   //   (None, Some(securesocial.views.html.mails.signUpEmail(token)))

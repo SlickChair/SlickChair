@@ -38,7 +38,7 @@ object Persons extends TableQuery(new PersonTable(_)) with RepoQuery[PersonTable
         val newPerson = p.copy(metadata=(old.id, p.updatedAt, p.updatedBy), role=old.role)
         if(p != newPerson)
           Persons.ins(newPerson)
-        p.id
+        old.id
       }
     }
   }
@@ -57,8 +57,8 @@ object PaperTopics extends TableQuery(new PaperTopicTable(_)) with RepoQuery[Pap
 }
 
 object Authors extends TableQuery(new AuthorTable(_)) with RepoQuery[AuthorTable, Author] {
-  def of(paper: Paper)(implicit s: Session): List[Person] = {
-    val allAuthors = Authors.filter(_.paperid is paper.id)
+  def of(paperId: Id[Paper])(implicit s: Session): List[Person] = {
+    val allAuthors = Authors.filter(_.paperid is paperId)
     val lastShotAuthors = allAuthors filter (_.updatedAt is allAuthors.map(_.updatedAt).max)
     lastShotAuthors.flatMap{ p => Persons.latests.filter(_.id is p.personid) }.list
   }

@@ -12,7 +12,6 @@ object Navbar {
   private val newSubmission = (routes.Submitting.make, "New Submission")  
   private val home = (chair.routes.Doc.umentation, "SlickChair Demo")
   
-  // List[(Call, String)]
   def apply(user: Person, currentRole: PersonRole)(implicit s: Session, r: Request[Any]): Html = {
     val roleSpecificEntries = (currentRole match {
       case Chair =>

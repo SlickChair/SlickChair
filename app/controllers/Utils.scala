@@ -31,18 +31,6 @@ object Utils {
     }
     override def unbind(key: String, value: UUID) = Map(key -> value.toString)
   })
-
-  // // def uEmail()(implicit request: SecuredRequest[_]): String = request.user.email.get
-  def getUser()(implicit request: SecuredRequest[_], s: Session): Person = Persons.withEmail(request.user.email.get)
-
-  // /** Authorization checking that the user is chair. */
-  // case class WithRole(role: PersonRole) extends securesocial.core.Authorization {
-  //   def isAuthorized(user: Identity): Boolean = {
-  //     DB withSession { implicit session =>
-  //       Persons.withEmail(user.email.get).role >= role
-  //     }
-  //   }
-  // }
   
   case class SlickRequest[A](
     dbSession: Session,
@@ -51,8 +39,8 @@ object Utils {
     request: Request[A]
   ) extends WrappedRequest[A](request)
 
-  implicit def SlickRequestAsSession[_](implicit r: SlickRequest[_]): Session = r.dbSession
-  implicit def myRequestAsExecutionContext[_](implicit r: SlickRequest[_]): ExecutionContext = r.dbExecutionContext
+  implicit def slickRequestAsSession[_](implicit r: SlickRequest[_]): Session = r.dbSession
+  implicit def slickRequestAsExecutionContext[_](implicit r: SlickRequest[_]): ExecutionContext = r.dbExecutionContext
   
   /** Custom mix between securesocial.core.SecureSocial and play.api.db.slick.DBAction */
   object SlickAction {
@@ -72,9 +60,9 @@ object Utils {
             DB withSession { implicit session =>
               getUser match {
                 case Some(user) =>
-                  val myRequest = SlickRequest(session, executionContext, user, request)
-                  if (authorization.isAuthorized(myRequest))
-                    requestHandler(myRequest)
+                  val slickRequest = SlickRequest(session, executionContext, user, request)
+                  if (authorization.isAuthorized(slickRequest))
+                    requestHandler(slickRequest)
                   else
                     Results.Redirect(RoutesHelper.notAuthorized.absoluteURL(IdentityProvider.sslEnabled))
                 case None =>
