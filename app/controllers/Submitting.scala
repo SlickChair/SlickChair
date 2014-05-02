@@ -44,7 +44,7 @@ object Submitting extends Controller {
     "metadata" -> curse[MetaData[Person]],
     "firstname" -> text,
     "lastname" -> text,
-    "organization" -> optional(text),
+    "organization" -> text,
     "role" -> ignored(Submitter),
     "email" -> text
   )(Person.apply _)(Person.unapply _)
@@ -113,7 +113,7 @@ object Submitting extends Controller {
           Files.ins(File((newId(), now, r.user.email), file.filename, blob.size, blob))
         }
         Papers.ins(form.paper.copy(metadata=(paperId, now, r.user.email), fileid=fileid))
-        val personsId: List[Id[Person]] = Persons.saveAll(
+        val personsId: List[Id[Person]] = Persons.insAll(
           form.authors.take(form.paper.nauthors).map(_.copy(metadata=(newId(), now, r.user.email))))
         Authors.insAll(personsId.zipWithIndex.map(pi =>
           Author((newId(), now, r.user.email), paperId, pi._1, pi._2)))

@@ -51,7 +51,7 @@ case class Person(
   metadata: MetaData[Person],
   firstname: String,
   lastname: String,
-  organization: Option[String],
+  organization: String,
   role: PersonRole,
   email: String
 ) extends Model[Person]

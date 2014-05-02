@@ -17,11 +17,11 @@ class LoginUserService(application: Application) extends UserServicePlugin(appli
   def saveHook(user: User)(implicit s: Session): Unit = {
     import models._
     import PersonRole._
-    Persons.save(Person(
+    Persons.ins(Person(
       (newId(), new DateTime(), user.email),
       user.firstname,
       user.lastname,
-      None,
+      "",
       Chair,
       user.email
     ))

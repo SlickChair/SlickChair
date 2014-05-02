@@ -7,11 +7,18 @@
 @import models.PersonRole._
 
 @idSize = @{ models.newId.value.toString.size }
+@toString(role: PersonRole) = {
+  @role match {
+    case Chair => { Chair }
+    case Reviewer => { PC Member }
+    case Submitter => { Author }
+  }
+}
 @changeRole(to: PersonRole) = {
   @to match {
-    case Chair => { <li><a href="@controllers.chair.routes.Sql.form">Change role to Chair</a></li> }
-    case Reviewer => { <li><a href="@controllers.member.routes.Reviewing.papers">Change role to PC Member</a></li> }
-    case Submitter => { <li><a href="@routes.Submitting.make">Change role to Author</a></li> }
+    case Chair => { @controllers.chair.routes.Sql.form }
+    case Reviewer => { @controllers.member.routes.Reviewing.papers }
+    case Submitter => { @routes.Submitting.make }
   }
 }
 
@@ -43,14 +50,20 @@
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">@p.email 
         @(p.role, currentRole) match {
           case (Submitter, Submitter) => {}
-          case (_, Chair) => { (Chair) }
-          case (_, Reviewer) => { (PC Member) }
-          case (_, Submitter) => { (Author) }
+          case (_, role) => { (@toString(role).toString.trim) }
         }
         <b class="caret"></b></a>
         <ul class="dropdown-menu">
-          @List(Chair, Reviewer, Submitter).dropWhile(_ != p.role).filter(_ != currentRole).map(changeRole)
-          @if(p.role != Submitter) { <li class="divider"></li> }
+          @if(p.role != Submitter) { 
+            @List(Chair, Reviewer, Submitter).dropWhile(_ != p.role).map { role =>
+              @if(role == currentRole) {
+                <li><a class="disabeled">Change role to @toString(role)</a></li>
+              } else {
+                <li><a href="@changeRole(role)">Change role to @toString(role)</a></li>
+              }
+            }
+            <li class="divider"></li>
+          }
           <li><a href="@RoutesHelper.logout()">Disconnect</a></li>
         </ul>
       </li>

@@ -31,18 +31,17 @@ object Topics extends TableQuery(new TopicTable(_)) with RepoQuery[TopicTable, T
 }
 
 object Persons extends TableQuery(new PersonTable(_)) with RepoQuery[PersonTable, Person] {
-  def save(p: Person)(implicit s: Session): Id[Person] = {
+  override def ins(p: Person)(implicit s: Session): Id[Person] = {
     Persons.filter(_.email is p.email).firstOption match {
-      case None => Persons.ins(p)
+      case None => super.ins(p)
       case Some(old) => {
         val newPerson = p.copy(metadata=(old.id, p.updatedAt, p.updatedBy), role=old.role)
         if(p != newPerson)
-          Persons.ins(newPerson)
+          super.ins(newPerson)
         old.id
       }
     }
   }
-  def saveAll(l: List[Person])(implicit s: Session): List[Id[Person]] = l map save
   def withEmail(email: String)(implicit s: Session): Person = Persons.latests.filter(_.email is email).first
 }
 

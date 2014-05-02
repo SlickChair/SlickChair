@@ -34,7 +34,7 @@ class TopicTable(tag: Tag) extends Table[Topic](tag, "TOPIC") with RepoTable[Top
 class PersonTable(tag: Tag) extends Table[Person](tag, "PERSON") with RepoTable[Person] {
   def firstname = column[String]("FIRSTNAME", O.DBType("TEXT"))
   def lastname = column[String]("LASTNAME", O.DBType("TEXT"))
-  def organization = column[Option[String]]("ORGANIZATION")
+  def organization = column[String]("ORGANIZATION")
   def role = column[PersonRole]("ROLE")
   def email = column[String]("EMAIL", O.DBType("TEXT"))
   def * = ((id, updatedAt, updatedBy), firstname, lastname, organization, role, email) <> (Person.tupled, Person.unapply)
