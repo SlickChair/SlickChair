@@ -1,6 +1,4 @@
-@**
-  * Generate a Bootstrap 3 checkbox group
-  *@
+@** Generate a Bootstrap 3 checkbox group *@
 @(form: Form[_], field: String, options: Seq[(String, String)], args: (Symbol, Any)*)(implicit handler: helper.FieldConstructor, lang: play.api.i18n.Lang)
 
 @input(form(field), args:_*) { (id, name, value, htmlArgs) =>

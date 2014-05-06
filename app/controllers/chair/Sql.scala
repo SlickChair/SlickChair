@@ -28,11 +28,11 @@ object Sql extends Controller {
     )
   ).fill(("", Execute))
   
-  def form = SlickAction(IsChair) { implicit r =>
-    Ok(views.html.chair.sql(None, queryForm, Navbar(r.user, Chair)))
+  def query = SlickAction(IsChair) { implicit r =>
+    Ok(views.html.chair.sql(None, queryForm, Navbar(Chair)))
   }
   
-  def runQuery = SlickAction(IsChair) { implicit r =>
+  def doQuery = SlickAction(IsChair) { implicit r =>
     val filledForm = queryForm.bindFromRequest
     DB withConnection { implicit session =>
       val (query, method) = filledForm.get
@@ -45,7 +45,7 @@ object Sql extends Controller {
       } catch {
         case e: Exception => e.toString.replaceFirst(": ", ":\n")
       }
-      Ok(views.html.chair.sql(Some(result), filledForm, Navbar(r.user, Chair)))
+      Ok(views.html.chair.sql(Some(result), filledForm, Navbar(Chair)))
     }
   }
 }

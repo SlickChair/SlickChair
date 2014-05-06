@@ -16,8 +16,8 @@
 }
 @changeRole(to: PersonRole) = {
   @to match {
-    case Chair => { @controllers.chair.routes.Sql.form }
-    case Reviewer => { @controllers.member.routes.Reviewing.papers }
+    case Chair => { @controllers.chair.routes.Sql.query }
+    case Reviewer => { @routes.Reviewing.papers }
     case Submitter => { @routes.Submitting.make }
   }
 }

@@ -82,8 +82,8 @@ object Files extends TableQuery(new FileTable(_)) with RepoQuery[FileTable, File
 }
 object Emails extends TableQuery(new EmailTable(_)) with RepoQuery[EmailTable, Email] {
 }
-// object Bids extends TableQuery(new BidTable(_)) with RepoQuery[BidTable, Bid] {
-//   def of(id: Id[Person])(implicit s: Session): List[Bid] = latests.filter(_.personid is id).list
-// }
+object Bids extends TableQuery(new BidTable(_)) with RepoQuery[BidTable, Bid] {
+  def of(id: Id[Person])(implicit s: Session): List[Bid] = latests.filter(_.personid is id).list
+}
 object Assignments extends TableQuery(new AssignmentTable(_)) with RepoQuery[AssignmentTable, Assignment] {
 }

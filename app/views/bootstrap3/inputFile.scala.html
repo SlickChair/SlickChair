@@ -1,23 +1,21 @@
-@**
- * Generate an HTML input file.
- *
- * Example:
- * {{{
- * @inputFile(field = myForm("name"), args = 'size -> 10)
- * }}}
- *
- * @param field The form field.
- * @param args Set of extra attributes.
- * @param handler The field constructor.
- *@
-@(field: play.api.data.Field, args: (Symbol,Any)*)(implicit handler: helper.FieldConstructor, lang: play.api.i18n.Lang)
+@** Generate an HTML input file.
+  *
+  * Example:
+  * {{{
+  * @inputFile(field = myForm("name"), args = 'size -> 10)
+  * }}}
+  *
+  * @param field The form field.
+  * @param args Set of extra attributes.
+  * @param handler The field constructor. *@
+@(form: Form[_], inpueName: String, args: (Symbol,Any)*)(implicit handler: helper.FieldConstructor, lang: play.api.i18n.Lang)
 
-@input(field, args:_*) { (id, name, value, htmlArgs) =>
+@input(form(inpueName), args:_*) { (id, name, value, htmlArgs) =>
   <div class="file-selector">
     <div class="input-group">
       <span class="input-group-btn">
         <button class="btn btn-default" type="button">Browse </button>
-        <input type="file" class="btn btn-default hidden">
+        <input type="file" class="btn btn-default hidden" name="@inpueName">
       </span>
       <input type="text" class="form-control" id="@id" name="@name" @toHtmlArgs(htmlArgs) disabled>
     </div>

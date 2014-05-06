@@ -5,9 +5,9 @@
   navbar: Html
 )(modal: Html)
 
-@import helper.bootstrap3._
 @import models._
 @import bootstrap3._
+@import helper.FieldConstructors.horizontalForm
 
 @authors = @{(0 to 9)}
 
@@ -20,7 +20,7 @@
       <legend>General Information</legend>
       @inputText(
         submissionForm("paper.title"),
-        '_label -> "Paper title")
+        '_label -> "Title")
       @inputRadioGroup(
         submissionForm("paper.format.value"), 
         PaperType.values.toSeq map (f => f.toString -> f.toString.replace("_", " ")), 
@@ -39,7 +39,8 @@
         topics.toSeq map (t => (t.id.value.toString, t.name)),
         '_label -> "Topics")
       @inputFile(
-        submissionForm("data"),
+        submissionForm,
+        "data",
         '_label -> "File")
       @select(
         submissionForm("paper.nauthors"),
@@ -69,6 +70,6 @@
         submissionForm(""),
         '_label -> "Add/Remove Authors")
     <fieldset>
-    @button("Submit")
+    @button(submissionForm(""), "Submit")
   }
 }

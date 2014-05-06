@@ -15,7 +15,7 @@ trait ImplicitMappers {
 
 trait EnumMapper {
   this: Enumeration =>
-  implicit val enumMapper = MappedColumnType.base[Value, Int](_.id, this.apply)
+  implicit val slickMapping = MappedColumnType.base[Value, Int](_.id, this.apply)
 }
 
 trait RepoTable[M <: Model[M]] extends ImplicitMappers {

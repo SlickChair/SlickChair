@@ -5,7 +5,8 @@
   navbar: Html
 )
 
-@import helper.bootstrap3._
+@import bootstrap3._
+@import helper.FieldConstructors.horizontalForm
 
 @submissiontemplate("New Submission", submissionForm, topics, routes.Submitting.doMake, navbar) {
   @modal("Login to SlickChair", withCloseButton=false) {
@@ -17,22 +18,22 @@
       <a class="email" href="#">Email</a>
     </div>
     <div class="hidden email-form">
-      @bootstrap3.form(
+      @form(
         routes.LoginWrapper.dispatch) {
           <fieldset>
-            @bootstrap3.inputText(
+            @inputText(
               loginWrapperForm("username"),
               '_label -> "Email")
-            @bootstrap3.inputText(
+            @inputText(
               loginWrapperForm("password"),
               '_label -> "Password",
               'type -> "password")
-            @bootstrap3.checkbox(
+            @checkbox(
               loginWrapperForm("create"),
               '_label -> "Create",
               '_text -> "Create a new password (sign-up or forgot)",
               'value -> true)
-            @bootstrap3.button("Submit")
+            @button(loginWrapperForm(""), "Submit")
           </fieldset>
       }
     </div>

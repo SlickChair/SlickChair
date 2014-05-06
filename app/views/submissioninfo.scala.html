@@ -1,10 +1,13 @@
 @(paper: models.Paper,
   authors: List[models.Person],
   topics: List[models.Topic],
-  menu: Html
+  optionalFile: Option[models.File],
+  navbar: Html
 )(implicit request: play.api.mvc.Request[Any])
 
-@main("Submission " + paper.id.value.toString.take(4).toUpperCase, menu) {
+@import controllers.Utils.shorten
+
+@main("Submission " + shorten(paper.id.value), navbar) {
   @Html(paper.toString.replaceAll(",", ",\n<br>"))
   <br>
   <h1>Topic(s):</h1>
@@ -17,5 +20,8 @@
     @Html(v.toString.replaceAll(",", ",\n<br>"))
     <br><br>
   }
+  <h1>File:</h1>
+  @optionalFile.toString
+  <br><br>
   @bootstrap3.linkbutton("Edit", routes.Submitting.edit(paper.id.value))
 }

@@ -10,11 +10,11 @@
       @if(infos.nonEmpty) {
         <span class="help-block">@infos.mkString(", ")</span>
       }
-    }
+    }*@
     @defining(elements.errors(elements.lang)) { errors =>
       @if(errors.nonEmpty) {
-        <span class="help-block">@errors.mkString(", ")</span>@* or help-inline
+        <span class="help-block">@errors.mkString(", ")</span>
       }
-    }*@
+    }
   </div>
 </div>

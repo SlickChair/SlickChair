@@ -4,24 +4,25 @@
 )(implicit request: play.api.mvc.Request[Any])
 
 @import controllers.chair._
-@import helper.bootstrap3._
+@import bootstrap3._
+@import helper.FieldConstructors.horizontalForm
 
 @main("SQL Form", navbar) {
-  @bootstrap3.form(routes.Sql.runQuery) {
+  @form(routes.Sql.doQuery) {
     <legend>Query</legend>
-    @bootstrap3.textarea(
+    @textarea(
       queryForm("query"),
       'placeholder -> "SELECT * FROM LOGIN_USERS",
       '_label -> "PostgreSQL",
       'rows -> 3)
     
-    @bootstrap3.inputRadioGroup(
+    @inputRadioGroup(
       queryForm("method.m"), 
       SqlMethod.values.toSeq.map(f => f.toString -> f.toString), 
       '_label -> "Query Type")
           
     <div class="ctrl-enter">
-      @bootstrap3.button("Run (Ctrl+Enter)")
+      @button(queryForm(""), "Run (Ctrl+Enter)")
     </div>
   }
   @result.map { output =>

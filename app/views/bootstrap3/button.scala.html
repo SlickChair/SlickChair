@@ -1,11 +1,5 @@
-@(label: String)
+@(field: play.api.data.Field, label: String)(implicit handler: helper.FieldConstructor, lang: play.api.i18n.Lang)
 
-@* Breaks DRY with bootstrap3FieldConstructor.scala.html, addremove.scala.html
-provides an alternative solution.*@
-
-<div class="row control-group">
-  <label class="col-lg-2 control-label"></label>
-  <div class="col-lg-9 controls">
+@input(field) { (_, _, _, _) =>
     <button type="submit" class="btn btn-default">@label</button>
-  </div>
-</div>
+}

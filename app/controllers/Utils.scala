@@ -2,7 +2,7 @@ package controllers
 
 import java.util.UUID
 import models.PersonRole._
-import models.{ User, Persons, Person, LoginUsers }
+import models.{ User, Persons, Person, LoginUsers, Model, Id }
 import play.api.data.format.Formats._
 import play.api.data.format.Formatter
 import play.api.data.Forms._
@@ -17,6 +17,8 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import securesocial.core.providers.utils.RoutesHelper
 import securesocial.core.{ IdentityProvider, SecureSocial, SecuredRequest, Authenticator, UserService }
+import play.api.data.Forms.ignored
+import org.joda.time.DateTime
 
 object Utils {
   /** Source: https://github.com/guardian/deploy/blob/master/riff-raff/app/utils/Forms.scala */
@@ -32,11 +34,25 @@ object Utils {
     override def unbind(key: String, value: UUID) = Map(key -> value.toString)
   })
   
+  def shorten(id: models.IdType): String = id.toString.take(4).toUpperCase
+  
+  /** Semantically, curse values need to be set when handling the POST on a
+    * form before storing the Paper in the database... This could be made
+    * type safe by using new case classes for forms. */
+  def curse[T]: Mapping[T] = ignored(null.asInstanceOf[T])
+
+  def enumMapping(enum: Enumeration): Mapping[enum.Value] = mapping("value" -> nonEmptyText)(enum.withName(_))(Some(_).map(_.toString))
+  
+  def idMapping[M <: Model[M]]: Mapping[Id[M]] = mapping(
+    "value" -> uuid
+  )(Id[M] _)(Id.unapply _)
+
   case class SlickRequest[A](
     dbSession: Session,
     dbExecutionContext: ExecutionContext,
     user: Person,
-    request: Request[A]
+    request: Request[A],
+    now: DateTime = new DateTime()
   ) extends WrappedRequest[A](request)
 
   implicit def slickRequestAsSession[_](implicit r: SlickRequest[_]): Session = r.dbSession
@@ -57,6 +73,7 @@ object Utils {
       else {
         Action.async(bodyParser) { implicit request =>
           Future {
+   
             DB withSession { implicit session =>
               getUser match {
                 case Some(user) =>

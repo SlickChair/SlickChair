@@ -7,23 +7,25 @@ import play.api.templates.Html
 import models._
 import models.PersonRole._
 import securesocial.core.SecuredRequest
+import Utils._
 
 object Navbar {
-  private val newSubmission = (routes.Submitting.make, "New Submission")  
   private val home = (chair.routes.Doc.umentation, "SlickChair Demo")
+  private val newSubmission = (routes.Submitting.make, "New Submission")  
   
-  def apply(user: Person, currentRole: PersonRole)(implicit s: Session, r: Request[Any]): Html = {
+  def apply(currentRole: PersonRole)(implicit r: SlickRequest[_]): Html = {
     val roleSpecificEntries = (currentRole match {
       case Chair =>
-       List((chair.routes.Sql.form, "SQL"))
+        List((chair.routes.Sql.query, "SQL"))
       case Reviewer =>
-        Nil
+        (routes.Reviewing.papers, "Submissions") :: 
+        (routes.Reviewing.bid, "Paper Bidding") :: Nil
       case Submitter =>
-        val papers = Papers of user.email map (id =>
-          (routes.Submitting.info(id.value), "Submission " + id.value.toString.take(4).toUpperCase))
+        val papers = Papers of r.user.email map (id =>
+          (routes.Submitting.info(id.value), "Submission " + shorten(id.value)))
         newSubmission :: papers
     })
-    views.html.navbar(Some(user), currentRole, home :: roleSpecificEntries)
+    views.html.navbar(Some(r.user), currentRole, home :: roleSpecificEntries)
   }
   
   def notLoggedIn(implicit r: Request[Any]): Html =

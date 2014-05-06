@@ -1,47 +1,59 @@
-@*(message: Option[String],
-  bidForm: Form[controllers.member.BidForm],
-  papers: List[models.Paper] = models.Papers.all,
-  topics: List[models.Topic] = models.Topics.all
+@(bidForm: Form[controllers.BidForm],
+  papers: Set[models.Paper],
+  navbar: Html
 )
 
-@import helper._
-@import controllers.member._
-@import models._
-@import models._
-@import models.PaperType._
+@import bootstrap3._
+@import models.BidValue._
+@import controllers.Utils.shorten
+@import helper.FieldConstructors.table
 
-@main("Bid") {
-  @message.map{ m =>
-    <h2>@m</h2>
-  }
-  @form(routes.Bidding.make) {
-    <h2>Topics of interest:</h2>
-    @for(Topic(id, name, description) <- topics) {
-      @checkbox(
-        bidForm(s"topics[$id]"),
-        '_label -> (name + ":").capitalize,
-        'value -> id.toString)
-    }
-    <br>
-    <h2>Paper bidding:</h2>
-    
-    <table>
-    @for(Paper(id, _, _, _, _, _, _, title, forma, keywords, abstrct, _) <- papers) {
-      <tr>  
-        <td>
-        @inputRadioGroup( // or select
-          bidForm(s"memberbids[$id].bid.value"),
-          Bid.values.toSeq.map(b => b.toString -> b.toString),
-          '_label -> "",
-          '_help -> "")
-        <input type="text" id="mb_@{id}__paperid" name="memberbids[@id].paperid" value="@id" style="display: none">
-        </td>
-        <td>@title</td>
-        <td>@keywords</td>
-      </tr>
-    }
+@main("Paper Bidding", navbar) {
+
+  @helper.form(routes.Reviewing.dobid) {    
+    <table class="table table-condensed table-striped">
+      <thead>
+        <tr>
+          <th>Bid</th>
+          <th>Title</th>
+          <th>File</th>
+        </tr>
+      </thead>
+      <tbody>
+        @bidForm.get.bids.zipWithIndex.map { case (bid, index) =>
+          <tr>
+            <td style="min-width: 90px;">
+              @bootstrap3.select(
+                bidForm(s"bids[$index].bid.value"),
+                BidValue.values.toSeq.map { b => b.toString -> (b match {
+                  case Conflict => "Conflict"
+                  case NoBid => "Low"
+                  case Maybe => "Neutral"
+                  case YesBid => "High"
+                })},
+                '_label -> "")
+            </td>
+            <td class="hidden">
+              <input type="text" name="bids[@index].paperid.value" value="@bid.paperid.value">
+            </td>
+            @*<td>
+              <div title="@bid.paperid.value">@shorten(bid.paperid.value)<div>
+            </td>*@
+            @papers.find(_.id == bid.paperid).map { paper =>
+              <td>
+                @paper.title
+              </td>
+              <td>
+                @paper.fileid match {
+                  case Some(fileid) => { @fileid.value }
+                  case None => { - }
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
     </table>
-    <input type="submit" id="submit" value="Save">
+    @button(bidForm(""), "Save")
   }
 }
-*@

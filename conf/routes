@@ -7,18 +7,18 @@ GET     /submission/info/:id                 controllers.Submitting.info(id: mod
 GET     /submission/edit/:id                 controllers.Submitting.edit(id: models.IdType)
 POST    /submission/doedit/:id               controllers.Submitting.doEdit(id: models.IdType)
 
-GET     /pcmember/papers                     controllers.member.Reviewing.papers
+GET     /pcmember/papers                     controllers.Reviewing.papers
 # GET     /pcmember/invitation/:token                   controllers.member.Dashboard.invite(token: String)
 # GET     /pcmember/dashboard                           controllers.member.Dashboard.papers
-# GET     /pcmember/bid                                 controllers.member.Bidding.form
-# POST    /pcmember/bid                                 controllers.member.Bidding.make
+GET     /pcmember/bid                        controllers.Reviewing.bid
+POST    /pcmember/bid                        controllers.Reviewing.dobid
 # GET     /pcmember/submission/:id                      controllers.member.Reviewing.page(id: Int)
 # POST    /pcmember/submission/:id                      controllers.member.Reviewing.comment(id: Int)
 # GET     /pcmember/review/:id                          controllers.member.Reviewing.form(id: Int)
 # POST    /pcmember/review/:id                          controllers.member.Reviewing.make(id: Int)
 
-GET     /chair/sql                           controllers.chair.Sql.form
-POST    /chair/sql                           controllers.chair.Sql.runQuery
+GET     /chair/sql                           controllers.chair.Sql.query
+POST    /chair/sql                           controllers.chair.Sql.doQuery
 # GET     /email                               controllers.chair.Emailing.form
 # POST    /email                               controllers.chair.Emailing.send
 # GET     /manage-members                      controllers.chair.MembersManaging.page
