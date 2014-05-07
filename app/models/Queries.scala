@@ -79,6 +79,11 @@ object Comments extends TableQuery(new CommentTable(_)) with RepoQuery[CommentTa
 object Reviews extends TableQuery(new ReviewTable(_)) with RepoQuery[ReviewTable, Review] {
 }
 object Files extends TableQuery(new FileTable(_)) with RepoQuery[FileTable, File] {
+  /** Files.all does not returns file blobs. An alternative to this hack 
+    * would be to have separated tables for metadata and content. */
+  override def all(implicit s: Session): List[File] = this.map {
+    f => ((f.id, f.updatedAt, f.updatedBy), f.name, f.size, Array[Byte]())
+  }.list map File.tupled
 }
 object Emails extends TableQuery(new EmailTable(_)) with RepoQuery[EmailTable, Email] {
 }

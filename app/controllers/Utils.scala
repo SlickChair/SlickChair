@@ -19,6 +19,7 @@ import securesocial.core.providers.utils.RoutesHelper
 import securesocial.core.{ IdentityProvider, SecureSocial, SecuredRequest, Authenticator, UserService }
 import play.api.data.Forms.ignored
 import org.joda.time.DateTime
+import models._
 
 object Utils {
   /** Source: https://github.com/guardian/deploy/blob/master/riff-raff/app/utils/Forms.scala */

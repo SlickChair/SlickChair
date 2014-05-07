@@ -7,12 +7,10 @@ import org.joda.time.{ DateTime, Seconds }
 import play.api.templates.Html
 import play.api.data.{ Form, Mapping }
 import play.api.data.Forms._
-import play.api.mvc.{ Controller, Cookie }
+import play.api.mvc.{ Controller, Cookie, Call, MultipartFormData }
 import play.api.db.slick.Config.driver.simple._
 import play.api.Play.current
 import play.api.db.slick.DB
-import play.api.mvc.Call
-import play.api.mvc.MultipartFormData
 import Utils._
 import play.api.i18n.Messages
 import play.api.mvc.MultipartFormData.FilePart

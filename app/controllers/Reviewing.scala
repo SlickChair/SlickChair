@@ -37,7 +37,7 @@ object Reviewing extends Controller {
       }
     }
     val form = bidForm fill BidForm(allBids)
-    Ok(views.html.member.bid(form, papers.toSet, Navbar(Reviewer)))
+    Ok(views.html.member.bid(form, papers.toSet, Files.all.toSet, Navbar(Reviewer)))
   }
 
   def dobid() = SlickAction(IsReviewer) { implicit r =>

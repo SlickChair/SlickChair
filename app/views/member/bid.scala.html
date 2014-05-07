@@ -1,8 +1,10 @@
 @(bidForm: Form[controllers.BidForm],
   papers: Set[models.Paper],
+  files: Set[models.File],
   navbar: Html
 )
 
+@import controllers.FileServing.linkToFile
 @import bootstrap3._
 @import models.BidValue._
 @import controllers.Utils.shorten
@@ -45,7 +47,9 @@
               </td>
               <td>
                 @paper.fileid match {
-                  case Some(fileid) => { @fileid.value }
+                  case Some(fileid) => {
+                    @files.find(_.id == fileid).map(linkToFile)
+                  }
                   case None => { - }
                 }
               </td>

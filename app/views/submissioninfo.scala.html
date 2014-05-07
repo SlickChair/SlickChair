@@ -5,7 +5,9 @@
   navbar: Html
 )(implicit request: play.api.mvc.Request[Any])
 
-@import controllers.Utils.shorten
+@import Utils._
+@import controllers.FileServing.linkToFile
+@import org.joda.time.format.DateTimeFormat
 
 @main("Submission " + shorten(paper.id.value), navbar) {
   @Html(paper.toString.replaceAll(",", ",\n<br>"))
@@ -22,6 +24,11 @@
   }
   <h1>File:</h1>
   @optionalFile.toString
+  @optionalFile.map { file =>
+    <br>
+    <br>
+    @linkToFile(file), uploaded on @DateTimeFormat.forPattern("d MMM yyyy, HH:mm z").print(file.updatedAt)
+  }
   <br><br>
   @bootstrap3.linkbutton("Edit", routes.Submitting.edit(paper.id.value))
 }

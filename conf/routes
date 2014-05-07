@@ -28,6 +28,8 @@ POST    /chair/sql                           controllers.chair.Sql.doQuery
 # GET     /decisions                           controllers.chair.Chair.decisions
 # GET     /dashboard                           controllers.chair.Chair.dashboard
 
+GET     /file/:id                            controllers.FileServing.apply(id: models.IdType)
+
 # SecureSocial
 GET     /login                  securesocial.controllers.LoginPage.login
 POST    /login                  controllers.LoginWrapper.dispatch
