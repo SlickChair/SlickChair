@@ -89,6 +89,18 @@ object Emails extends TableQuery(new EmailTable(_)) with RepoQuery[EmailTable, E
 }
 object Bids extends TableQuery(new BidTable(_)) with RepoQuery[BidTable, Bid] {
   def of(id: Id[Person])(implicit s: Session): List[Bid] = latests.filter(_.personid is id).list
+  override def insAll(l: List[Bid])(implicit s: Session): List[Id[Bid]] = {
+    val previous: List[Bid] = this.latests.list
+    l map { bid =>
+      previous.find(b => b.paperid == bid.paperid && b.personid == bid.personid) match {
+        case Some(old) if old.value != bid.value =>
+          this ins bid.copy(metadata=(old.id, bid.updatedAt, bid.updatedBy))
+        case None if bid.value != models.BidValue.Maybe =>
+          this ins bid
+        case _ => bid.id
+      }
+    }
+  }
 }
 object Assignments extends TableQuery(new AssignmentTable(_)) with RepoQuery[AssignmentTable, Assignment] {
 }

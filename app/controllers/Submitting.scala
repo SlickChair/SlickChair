@@ -81,7 +81,7 @@ object Submitting extends Controller {
     Ok(views.html.submissiontemplate("Editing Submission " + shorten(id), existingSubmissionForm, allTopics, routes.Submitting.doEdit(id), Navbar(Submitter))(Html("")))
   }
   
-  // /** Handles a new submission. Creates a database entry with the form data. */
+  /** Handles a new submission. Creates a database entry with the form data. */
   def doMake = SlickAction(IsSubmitter, parse.multipartFormData) { implicit r =>
     doSave(newId[Paper](), routes.Submitting.doMake)
   }
@@ -92,9 +92,7 @@ object Submitting extends Controller {
   }
   
   private type Req = SlickRequest[MultipartFormData[play.api.libs.Files.TemporaryFile]]
-  private def doSave(paperId: Id[Paper], errorEP: Call
-    // , optionalFile: Option[FilePart[TemporaryFile]]
-   )(implicit r: Req) = {
+  private def doSave(paperId: Id[Paper], errorEP: Call)(implicit r: Req) = {
     // TODO: if the form is not js validated we might want to save the
     // uploaded file in case of errors. Otherwise the user will have to
     // select it again.

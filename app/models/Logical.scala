@@ -89,7 +89,7 @@ case class Bid(
   metadata: MetaData[Bid],
   paperid: Id[Paper],
   personid: Id[Person],
-  bid: BidValue
+  value: BidValue
 ) extends Model[Bid]
 
 case class Assignment(

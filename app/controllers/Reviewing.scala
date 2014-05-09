@@ -45,8 +45,13 @@ object Reviewing extends Controller {
       errors => 
         Ok(views.html.member.bid(errors, Papers.all.toSet, Files.all.toSet, Navbar(Reviewer))),
       form => {
-        // Redirect(routes.Reviewing.bid)
-        Ok(views.html.main("TODO", Navbar(Reviewer))(Html(form.toString)))
+        val bids = form.bids map { _ copy (
+          metadata=(newId[Bid](), r.now, r.user.email),
+          personid=r.user.id
+        )}
+        Bids insAll bids
+        Redirect(routes.Reviewing.bid)
+        // Ok(views.html.main("TODO", Navbar(Reviewer))(Html(form.toString)))
       }
     )
   }

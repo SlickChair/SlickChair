@@ -28,7 +28,6 @@ object Global extends GlobalSettings {
           "Case studies, experience reports, and pearls"
         ) foreach (Topics ins Topic((newId(), now, "demo"), _))
         
-        
         val src = Source.fromFile("test/sigplanconf-template.pdf", "ISO8859-1").map(_.toByte).toArray
         val pdf = Files ins File((newId(), now, "demo"), "sigplanconf.pdf", src.length, src)
         
