@@ -37,13 +37,13 @@ object Reviewing extends Controller {
       }
     }
     val form = bidForm fill BidForm(allBids)
-    Ok(views.html.member.bid(form, papers.toSet, Files.all.toSet, Navbar(Reviewer)))
+    Ok(views.html.bid(form, papers.toSet, Files.all.toSet, Navbar(Reviewer)))
   }
 
-  def dobid() = SlickAction(IsReviewer) { implicit r =>
+  def doBid() = SlickAction(IsReviewer) { implicit r =>
     bidForm.bindFromRequest.fold(
       errors => 
-        Ok(views.html.member.bid(errors, Papers.all.toSet, Files.all.toSet, Navbar(Reviewer))),
+        Ok(views.html.bid(errors, Papers.all.toSet, Files.all.toSet, Navbar(Reviewer))),
       form => {
         val bids = form.bids map { _ copy (
           metadata=(newId[Bid](), r.now, r.user.email),
@@ -51,7 +51,6 @@ object Reviewing extends Controller {
         )}
         Bids insAll bids
         Redirect(routes.Reviewing.bid)
-        // Ok(views.html.main("TODO", Navbar(Reviewer))(Html(form.toString)))
       }
     )
   }
@@ -59,5 +58,13 @@ object Reviewing extends Controller {
   def papers() = SlickAction(IsReviewer) { implicit r =>
     Ok(views.html.main("List of all submissions", Navbar(Reviewer))(Html(
       Papers.all.toString.replaceAll(",", ",\n<br>"))))
+  }
+  
+  def make(id: IdType) = SlickAction(IsReviewer) { implicit r =>
+    Ok("")
+  }
+  
+  def doMake(id: IdType) = SlickAction(IsReviewer) { implicit r =>
+    Ok("")
   }
 }

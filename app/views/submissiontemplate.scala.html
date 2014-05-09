@@ -1,12 +1,10 @@
 @(title: String,
   submissionForm: Form[SubmissionForm],
-  topics: List[models.Topic],
+  topics: List[Topic],
   submissionEndPoint: play.api.mvc.Call,
   navbar: Html
 )(modal: Html)
 
-@import models._
-@import bootstrap3._
 @import helper.FieldConstructors.horizontalForm
 
 @authors = @{(0 to 9)}

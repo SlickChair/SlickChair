@@ -37,4 +37,8 @@ resolvers ++= Seq(
   "Mandubian repository releases" at "https://github.com/mandubian/mandubian-mvn/raw/master/releases/"
 )
 
+routesImport += "models.IdType"
+
+templatesImport ++= Seq("models._", "controllers._", "bootstrap3._")
+
 scalacOptions ++= Seq("-deprecation", "-encoding", "UTF-8", "-feature", "-target:jvm-1.6", "-unchecked", "-Ywarn-adapted-args", "-Ywarn-value-discard", "-Xlint")

@@ -1,7 +1,7 @@
-@(paper: models.Paper,
-  authors: List[models.Person],
-  topics: List[models.Topic],
-  optionalFile: Option[models.File],
+@(paper: Paper,
+  authors: List[Person],
+  topics: List[Topic],
+  optionalFile: Option[File],
   navbar: Html
 )(implicit request: play.api.mvc.Request[Any])
 
@@ -30,5 +30,5 @@
     @linkToFile(file), uploaded on @DateTimeFormat.forPattern("d MMM yyyy, HH:mm z").print(file.updatedAt)
   }
   <br><br>
-  @bootstrap3.linkbutton("Edit", routes.Submitting.edit(paper.id.value))
+  @linkbutton("Edit", routes.Submitting.edit(paper.id.value))
 }

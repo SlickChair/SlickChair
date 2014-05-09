@@ -10,13 +10,13 @@ import securesocial.core.SecuredRequest
 import Utils._
 
 object Navbar {
-  private val home = (chair.routes.Doc.umentation, "SlickChair Demo")
+  private val home = (routes.Doc.umentation, "SlickChair Demo")
   private val newSubmission = (routes.Submitting.make, "New Submission")  
   
   def apply(currentRole: PersonRole)(implicit r: SlickRequest[_]): Html = {
     val roleSpecificEntries = (currentRole match {
       case Chair =>
-        List((chair.routes.Sql.query, "SQL"))
+        List((routes.Sql.query, "SQL"))
       case Reviewer =>
         (routes.Reviewing.papers, "Submissions") :: 
         (routes.Reviewing.bid, "Paper Bidding") :: Nil

@@ -1,5 +1,5 @@
-@(user: Option[models.Person],
-  currentRole: models.PersonRole.PersonRole,
+@(user: Option[Person],
+  currentRole: PersonRole.PersonRole,
   menu: List[(play.api.mvc.Call, String)]
 )(implicit request: play.api.mvc.Request[Any])
 
@@ -16,7 +16,7 @@
 }
 @changeRole(to: PersonRole) = {
   @to match {
-    case Chair => { @controllers.chair.routes.Sql.query }
+    case Chair => { @routes.Sql.query }
     case Reviewer => { @routes.Reviewing.papers }
     case Submitter => { @routes.Submitting.make }
   }

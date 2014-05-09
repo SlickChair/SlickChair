@@ -1,11 +1,10 @@
-@(loginWrapperForm: Form[controllers.LoginWrapperForm],
-  submissionForm: Form[controllers.SubmissionForm],
+@(loginWrapperForm: Form[LoginWrapperForm],
+  submissionForm: Form[SubmissionForm],
   errorMessage: Option[String], // TODO: Not used...
-  topics: List[models.Topic],
+  topics: List[Topic],
   navbar: Html
 )
 
-@import bootstrap3._
 @import helper.FieldConstructors.horizontalForm
 
 @submissiontemplate("New Submission", submissionForm, topics, routes.Submitting.doMake, navbar) {
