@@ -43,9 +43,11 @@ object Reviewing extends Controller {
   def dobid() = SlickAction(IsReviewer) { implicit r =>
     bidForm.bindFromRequest.fold(
       errors => 
-       Ok(views.html.main("dobid errors", Navbar(Reviewer))(Html(errors.toString))),
-      form =>
-       Ok(views.html.main("TODO", Navbar(Reviewer))(Html(form.toString)))
+        Ok(views.html.member.bid(errors, Papers.all.toSet, Files.all.toSet, Navbar(Reviewer))),
+      form => {
+        // Redirect(routes.Reviewing.bid)
+        Ok(views.html.main("TODO", Navbar(Reviewer))(Html(form.toString)))
+      }
     )
   }
 

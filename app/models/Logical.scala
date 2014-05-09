@@ -43,8 +43,7 @@ import BidValue._
 
 case class Topic(
   metadata: MetaData[Topic],
-  name: String,
-  description: String
+  name: String
 ) extends Model[Topic]
 
 case class Person(

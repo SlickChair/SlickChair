@@ -34,8 +34,8 @@ trait RepoQuery[T <: Table[M] with RepoTable[M], M <: Model[M]] extends Implicit
 }
 
 object Topics extends TableQuery(new TopicTable(_)) with RepoQuery[TopicTable, Topic] {
-  def of(paper: Paper)(implicit s: Session): List[Topic] = {
-    val allPaperTopics = PaperTopics.filter(_.paperid is paper.id)
+  def of(id: Id[Paper])(implicit s: Session): List[Topic] = {
+    val allPaperTopics = PaperTopics.filter(_.paperid is id)
     val lastShotPaperTopics = allPaperTopics filter (_.updatedAt is allPaperTopics.map(_.updatedAt).max)
     lastShotPaperTopics.flatMap{ p => Topics.latests.filter(_.id is p.topicid) }.list
   }
@@ -67,8 +67,8 @@ object PaperTopics extends TableQuery(new PaperTopicTable(_)) with RepoQuery[Pap
 }
 
 object Authors extends TableQuery(new AuthorTable(_)) with RepoQuery[AuthorTable, Author] {
-  def of(paperId: Id[Paper])(implicit s: Session): List[Person] = {
-    val allAuthors = Authors.latests.filter(_.paperid is paperId)
+  def of(id: Id[Paper])(implicit s: Session): List[Person] = {
+    val allAuthors = Authors.latests.filter(_.paperid is id)
     val lastShotAuthors = allAuthors filter (_.updatedAt is allAuthors.map(_.updatedAt).max)
     lastShotAuthors.flatMap{ p => Persons.latests.filter(_.id is p.personid) }.list
   }

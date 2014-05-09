@@ -64,14 +64,14 @@ object Submitting extends Controller {
   /** Displays the informations of a given submission. */
   def info(id: IdType) = SlickAction(IsAuthorOf(id)) { implicit r =>
     val paper: Paper = Papers.withId(Id[Paper](id))
-    Ok(views.html.submissioninfo(paper, Authors.of(paper.id), Topics.of(paper), paper.fileid.map(Files withId _), Navbar(Submitter)))
+    Ok(views.html.submissioninfo(paper, Authors.of(paper.id), Topics.of(paper.id), paper.fileid.map(Files withId _), Navbar(Submitter)))
   }
   
   /** Displays the form to edit the informations of a given submission. */
   def edit(id: IdType) = SlickAction(IsAuthorOf(id)) { implicit r =>
     val paper: Paper = Papers.withId(Id[Paper](id))
     val allTopics: List[Topic] = Topics.all
-    val paperTopics: List[Topic] = Topics.of(paper)
+    val paperTopics: List[Topic] = Topics.of(paper.id)
     def incBind[T](form: Form[T], data: Map[String, String]) = form.bind(form.data ++ data)
     val existingSubmissionForm  = incBind(
       submissionForm.fill(SubmissionForm(paper, Authors.of(paper.id), List())),

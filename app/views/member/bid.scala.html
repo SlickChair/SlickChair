@@ -30,7 +30,7 @@
                 BidValue.values.toSeq.map { b => b.toString -> (b match {
                   case Conflict => "Conflict"
                   case NoBid => "Low"
-                  case Maybe => "Neutral"
+                  case Maybe => "-"
                   case YesBid => "High"
                 })},
                 '_label -> "")

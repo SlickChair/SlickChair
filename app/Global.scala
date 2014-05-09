@@ -1,14 +1,15 @@
 import org.joda.time.DateTime
 
 import models._
+import models.PaperType._
 import play.api.{ Application, GlobalSettings }
 import play.api.db.slick.Config.driver.simple._
 import play.api.Play.current
 import play.api.db.slick.DB
+import scala.io.Source
 
 /** Populates the database with fake data for testing. Global.onStart() is
-  * called when the application starts.
-  */
+  * called when the application starts. */
 object Global extends GlobalSettings {
   override def onStart(app: Application): Unit = {
     DB withSession { implicit s: Session =>
@@ -18,62 +19,50 @@ object Global extends GlobalSettings {
               
         val now: DateTime = DateTime.now
         List(
-          Topic((newId(), now, "demo"), "Language design and implementation", "Language extensions, optimization, and performance evaluation."),
-          Topic((newId(), now, "demo"), "Library design and implementation patterns for extending Scala", "Embedded domain-specific languages, combining language features, generic and meta-programming."),
-          Topic((newId(), now, "demo"), "Formal techniques for Scala-like programs", "Formalizations of the language, type system, and semantics, formalizing proposed language extensions and variants, dependent object types, type and effect systems."),
-          Topic((newId(), now, "demo"), "Concurrent and distributed programming", "Libraries, frameworks, language extensions, programming paradigms: (Actors, STM, ...), performance evaluation, experimental results."),
-          Topic((newId(), now, "demo"), "Safety and reliability", "Pluggable type systems, contracts, static analysis and verification, runtime monitoring.")
-        ).foreach(Topics.insert)
+          "Language design and implementation",
+          "Library design and implementation patterns for extending Scala",
+          "Formal techniques for Scala-like programs",
+          "Concurrent and distributed programming",
+          "Safety and reliability",
+          "Tools",
+          "Case studies, experience reports, and pearls"
+        ) foreach (Topics ins Topic((newId(), now, "demo"), _))
+        
+        
+        val src = Source.fromFile("test/sigplanconf-template.pdf", "ISO8859-1").map(_.toByte).toArray
+        val pdf = Files ins File((newId(), now, "demo"), "sigplanconf.pdf", src.length, src)
+        
+        List(
+          ("Verification by Translation to Recursive Functions ", Full_Paper),
+          ("CafeSat: A Modern SAT Solver for Scala ", Tool_Demo),
+          ("Scala Macros: Let Our Powers Combine! ", Full_Paper),
+          ("A New Concurrency Model for Scala Based on a Declarative Dataflow Core ", Full_Paper),
+          ("Open GADTs and Declaration-site Variance: A Problem Statement ", Short_Paper),
+          ("Towards a Tight Integration of a Functional Web Client Language into Scala ", Short_Paper),
+          ("Parsing Graphs – Applying Parser Combinators to Graph Traversals ", Short_Paper),
+          ("Scalad: An Interactive Type-Level Debugger ", Tool_Demo),
+          ("An Experimental Study of the Influence of Dynamic Compiler Optimizations on Scala Performance", Full_Paper),
+          ("Bridging Islands of Specialized Code using Macros and Reified Types ", Short_Paper),
+          ("What are the Odds? – Probabilistic Programming in Scala ", Full_Paper),
+          ("Dataflow Constructs for a Language Extension Based on the Algebra of Communicating Processes", Full_Paper)
+        ) foreach { case (title, format) =>
+          Papers ins Paper((newId(), now, "demo"), title, format, "keywords", "abstract", 0, Some(pdf))
+        }
+        
+        // Authors:
+        // Régis Blanc (epfl), etienne kneuss (epfl), viktor kuncak (epfl) and philippe suter (epfl)
+        // régis blanc (epfl)
+        // eugene burmako (epfl)
+        // sébastien doeraene (epfl) and peter van roy (université catholique de louvain
+        // paolo g. giarrusso (university of marburg)
+        // christoph höger (tu berlin) and martin zuber (tu berlin)
+        // daniel kröni (fhnw) and raphael schweizer (fhnw)
+        // hubert plociniczak (epfl)
+        // lukas stadler (johannes kepler university), gilles duboscq (johannes kepler university), hanspeter mössenböck (johannes kepler university), thomas wuerthinger (oracle labs) and doug simon (oracle labs)
+        // nicolas stucki (epfl) and vlad ureche (epfl)
+        // sandro stucki (epfl), nada amin (epfl), manohar jonnalagedda (epfl) and tiark rompf (epfl, oracle labs)
+        // andré van delft
       }
-      ()
-        
-      //   List(
-      //     NewPaper("1@1", "fn", "ln", DateTime.now, DateTime.now, None, "Paper 1", PaperType.Full_Paper, "key words 1", "abstrct 1", None),
-      //     NewPaper("2@2", "fn", "ln", DateTime.now, DateTime.now, None, "Paper 2", PaperType.Full_Paper, "key words 2", "abstrct 2", None),
-      //     NewPaper("3@3", "fn", "ln", DateTime.now, DateTime.now, None, "Paper 3", PaperType.Full_Paper, "key words 3", "abstrct 3", None)
-      //   ).foreach(Papers.insert)
-        
-      //   List(
-      //     PaperTopic(1, 1),
-      //     PaperTopic(2, 2),
-      //     PaperTopic(3, 3)
-      //   ).foreach(PaperTopics.insert)
-        
-      //   Authors insertAll List(
-      //     Author(1, 0, "first name 1", "last name 1", "org 1", "11@11"),
-      //     Author(2, 0, "first name 2", "last name 2", "org 2", "22@22"),
-      //     Author(3, 0, "first name 3", "last name 3", "org 3", "33@33"),
-      //     Author(3, 1, "first name 31", "last name 31", "org 31", "33@331")
-      //   )
-        
-      //   List(
-      //     NewMember("4@4", "4@4.com", DateTime.now, DateTime.now, PersonRole.Member, "membername", "memberlastname"),
-      //     NewMember("olivierblanvillain@gmail.com", "olivier.blanvillain@epfl.ch", DateTime.now, DateTime.now, PersonRole.Chair, "membername", "memberlastname")
-      //   ).foreach(Persons.insert)
-        
-      //   List(
-      //     Review(1, 1, Some(DateTime.now), Some(DateTime.now), ReviewConfidence.Low, ReviewEvaluation.Neutral, "thisismyreview!")
-      //   ).foreach(Reviews.insert)
-        
-      //   List(
-      //     NewComment(1, 1, DateTime.now, "I had to comment on this."),
-      //     NewComment(1, 1, DateTime.now, "Twice.")
-      //   ).foreach(Comments.insert)
-        
-      //   List(
-      //     NewEmailTemplate("Msg", "A message to @fullname", "Dear @firstname, \nThis message is about..."),
-      //     NewEmailTemplate("Warn", "A warrning to @fullname", "Dear @firstname, \nThis writting is about...")
-      //   ).foreach(EmailTemplates.insert)
-        
-      //   List(
-      //     MyToken(java.util.IdType.randomIdType().toString, "1@1", DateTime.now, DateTime.now.plusDays(7), false, true),
-      //     MyToken(java.util.IdType.randomIdType().toString, "2@2", DateTime.now, DateTime.now.plusDays(7), false, true),
-      //     MyToken(java.util.IdType.randomIdType().toString, "3@3", DateTime.now, DateTime.now.plusDays(7), false, true)
-      //   ).foreach(LoginTokens.insert)
-        
-      //   // List(MemberTopic(2, 2)).foreach(MemberTopics.insert)
-      //   // List(MemberBid(2, 2, Bid.High)).foreach(MemberBids.insert)
-      // }
     }
   }
 }
