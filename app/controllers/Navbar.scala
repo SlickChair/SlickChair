@@ -19,7 +19,7 @@ object Navbar {
         List((routes.Sql.query, "SQL"))
       case Reviewer =>
         (routes.Reviewing.papers, "Submissions") :: 
-        (routes.Reviewing.bid, "Paper Bidding") :: Nil
+        (routes.Reviewing.bid, "Bidding") :: Nil
       case Submitter =>
         val papers = Papers of r.user.email map (id =>
           (routes.Submitting.info(id.value), "Submission " + shorten(id.value)))
