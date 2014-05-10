@@ -11,11 +11,8 @@ import java.sql.Timestamp
 
 trait ImplicitMappers {
   implicit def idMapper[T <: Model[T]] = MappedColumnType.base[Id[T], IdType](_.value, Id[T])
-
-  implicit def dateTimeMapper = MappedColumnType.base[DateTime, Timestamp] (
-    dt => new Timestamp(dt.getMillis),
-    ts => new DateTime(ts.getTime)
-  )
+  implicit def dateTimeMapper = MappedColumnType.base[DateTime, Timestamp](
+    dt => new Timestamp(dt.getMillis), ts => new DateTime(ts.getTime))
 }
 
 trait EnumMapper {
