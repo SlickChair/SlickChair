@@ -1,6 +1,5 @@
 package models
 
-import com.github.tototoshi.slick.H2JodaSupport._
 import org.joda.time.DateTime
 import play.api.Application
 import play.api.db.slick.Config.driver.simple._
@@ -10,8 +9,7 @@ import securesocial.core.providers.Token
 import securesocial.core.{ AuthenticationMethod, Identity, PasswordInfo, SocialUser, UserServicePlugin, IdentityId }
 
  /** Implements the UserServicePlugin required to use the SecureSocial plugin on
-   * top of Slick. See http://securesocial.ws/guide/user-service.html for more
-   * details. */
+   * top of Slick. See http://securesocial.ws/guide/user-service.html */
 class LoginUserService(application: Application) extends UserServicePlugin(application)
     with LoginUsers.Queries with LoginTokens.Queries {
   def saveHook(user: User)(implicit s: Session): Unit = {
@@ -140,7 +138,7 @@ object MyToken {
   def fromT(t: Token) = MyToken(t.uuid, t.email, t.creationTime, t.expirationTime, t.isSignUp, false)
 }
 
-class LoginTokenTable(tag: Tag) extends Table[MyToken](tag, "LOGINTOKENS") {
+class LoginTokenTable(tag: Tag) extends Table[MyToken](tag, "LOGINTOKENS") with ImplicitMappers {
   def uuid = column[String]("UUID", O.DBType("text"), O.PrimaryKey)
   def email = column[String]("EMAIL", O.DBType("text"))
   def creationTime = column[DateTime]("CREATIONTIME")
@@ -163,7 +161,7 @@ object LoginTokens extends TableQuery(new LoginTokenTable(_)) {
   def withIdType(uuid: String)(implicit s: Session): Option[MyToken] =
     this.filter(_.uuid is uuid).firstOption 
 
-  trait Queries {
+  trait Queries extends ImplicitMappers {
     def deleteToken(uuid: String): Unit = {
       DB withSession { implicit s: Session =>
         del(uuid)

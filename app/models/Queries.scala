@@ -1,7 +1,6 @@
 package models
 
 import play.api.db.slick.Config.driver.simple._
-import com.github.tototoshi.slick.H2JodaSupport._
 import org.joda.time.DateTime
 import scala.slick.lifted.Query
 
