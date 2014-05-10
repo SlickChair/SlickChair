@@ -61,6 +61,9 @@ object Papers extends TableQuery(new PaperTable(_)) with RepoQuery[PaperTable, P
     val personId = Persons.withEmail(email).id
     Authors.latests.filter(_.personid is personId).groupBy(_.paperid).map(_._1).list
   }
+  def withFile(id: Id[File])(implicit s: Session): Id[Paper] = {
+    this.filter(_.fileid is id).first.id
+  }
 }
 
 object PaperTopics extends TableQuery(new PaperTopicTable(_)) with RepoQuery[PaperTopicTable, PaperTopic] {
@@ -89,6 +92,8 @@ object Emails extends TableQuery(new EmailTable(_)) with RepoQuery[EmailTable, E
 }
 object Bids extends TableQuery(new BidTable(_)) with RepoQuery[BidTable, Bid] {
   def of(id: Id[Person])(implicit s: Session): List[Bid] = latests.filter(_.personid is id).list
+  def of(personId: Id[Person], paperId: Id[Paper])(implicit s: Session): Option[Bid] =
+    latests.filter(b => (b.personid is personId) && (b.paperid is paperId)).firstOption
   override def insAll(l: List[Bid])(implicit s: Session): List[Id[Bid]] = {
     val previous: List[Bid] = this.latests.list
     l map { bid =>

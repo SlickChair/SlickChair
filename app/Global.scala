@@ -29,7 +29,6 @@ object Global extends GlobalSettings {
         ) foreach (Topics ins Topic((newId(), now, "demo"), _))
         
         val src = Source.fromFile("test/sigplanconf-template.pdf", "ISO8859-1").map(_.toByte).toArray
-        val pdf = Files ins File((newId(), now, "demo"), "sigplanconf.pdf", src.length, src)
         
         List(
           ("Verification by Translation to Recursive Functions ", Full_Paper),
@@ -45,6 +44,7 @@ object Global extends GlobalSettings {
           ("What are the Odds? – Probabilistic Programming in Scala ", Full_Paper),
           ("Dataflow Constructs for a Language Extension Based on the Algebra of Communicating Processes", Full_Paper)
         ) foreach { case (title, format) =>
+          val pdf = Files ins File((newId(), now, "demo"), "sigplanconf.pdf", src.length, src)
           Papers ins Paper((newId(), now, "demo"), title, format, "keywords", "abstract", 0, Some(pdf))
         }
         

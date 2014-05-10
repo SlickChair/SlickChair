@@ -83,7 +83,7 @@ object Submitting extends Controller {
   
   /** Handles a new submission. Creates a database entry with the form data. */
   def doMake = SlickAction(IsSubmitter, parse.multipartFormData) { implicit r =>
-    doSave(newId[Paper](), routes.Submitting.doMake)
+    doSave(newId(), routes.Submitting.doMake)
   }
     
   /** Handles edit of a submission. Update the database entry with the form data. */
@@ -102,14 +102,14 @@ object Submitting extends Controller {
       form => {
         val fileid: Option[Id[File]] = r.body.file("data") map { file =>
           val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray
-          Files.ins(File((newId(), r.now, r.user.email), file.filename, blob.size, blob))
+          Files.ins(File(newMetaData(), file.filename, blob.size, blob))
         }
         Papers.ins(form.paper.copy(metadata=(paperId, r.now, r.user.email), fileid=fileid))
         val personsId: List[Id[Person]] = Persons.insAll(
-          form.authors.take(form.paper.nauthors).map(_.copy(metadata=(newId(), r.now, r.user.email))))
+          form.authors.take(form.paper.nauthors).map(_.copy(metadata=newMetaData())))
         Authors.insAll(personsId.zipWithIndex.map(pi =>
-          Author((newId(), r.now, r.user.email), paperId, pi._1, pi._2)))
-        PaperTopics.insAll(form.topics.map(i => PaperTopic((newId(), r.now, r.user.email), paperId, Id(i))))
+          Author(newMetaData(), paperId, pi._1, pi._2)))
+        PaperTopics.insAll(form.topics.map(i => PaperTopic(newMetaData(), paperId, Id[Topic](i))))
         Redirect(routes.Submitting.info(paperId.value))
       }
     )

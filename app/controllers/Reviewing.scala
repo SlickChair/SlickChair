@@ -32,7 +32,7 @@ object Reviewing extends Controller {
     val papers: List[Paper] = Papers.all
     val allBids: List[Bid] = papers map { p =>
       bids.find(_.paperid == p.id) match {
-        case None => Bid((newId[Bid](), r.now, r.user.email), p.id, r.user.id, Maybe)
+        case None => Bid(newMetaData(), p.id, r.user.id, Maybe)
         case Some(b) => b
       }
     }
@@ -45,10 +45,7 @@ object Reviewing extends Controller {
       errors => 
         Ok(views.html.bid(errors, Papers.all.toSet, Files.all.toSet, Navbar(Reviewer))),
       form => {
-        val bids = form.bids map { _ copy (
-          metadata=(newId[Bid](), r.now, r.user.email),
-          personid=r.user.id
-        )}
+        val bids = form.bids map { _ copy (metadata=newMetaData(), personid=r.user.id) }
         Bids insAll bids
         Redirect(routes.Reviewing.bid)
       }
@@ -60,11 +57,11 @@ object Reviewing extends Controller {
       Papers.all.toString.replaceAll(",", ",\n<br>"))))
   }
   
-  def make(id: IdType) = SlickAction(IsReviewer) { implicit r =>
+  def make(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
     Ok("")
   }
   
-  def doMake(id: IdType) = SlickAction(IsReviewer) { implicit r =>
+  def doMake(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
     Ok("")
   }
 }

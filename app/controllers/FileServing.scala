@@ -7,7 +7,8 @@ import play.api.libs.iteratee.Enumerator
 import play.api.templates.Html
 
 object FileServing extends Controller {
-  def apply(id: IdType) = SlickAction(IsChair) { implicit r =>
+  def apply(id: IdType) = SlickAction(AuthorOrNCReviewer(id)) {
+      implicit r =>
     val file = Files.withId(Id[File](id))
     val headers =
       if(file.name endsWith ".pdf") Map(

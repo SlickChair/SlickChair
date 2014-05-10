@@ -13,8 +13,7 @@ import play.api.i18n.Messages
 import play.api.mvc.BodyParsers.parse.anyContent
 import play.api.mvc.{ Action, Request, SimpleResult, Results, BodyParser, WrappedRequest }
 import play.api.Play.current
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 import securesocial.core.providers.utils.RoutesHelper
 import securesocial.core.{ IdentityProvider, SecureSocial, SecuredRequest, Authenticator, UserService }
 import play.api.data.Forms.ignored
@@ -35,7 +34,7 @@ object Utils {
     override def unbind(key: String, value: UUID) = Map(key -> value.toString)
   })
   
-  def shorten(id: models.IdType): String = id.toString.take(4).toUpperCase
+  def shorten(id: IdType): String = id.toString.take(4).toUpperCase
   
   /** Semantically, curse values need to be set when handling the POST on a
     * form before storing the Paper in the database... This could be made
@@ -61,7 +60,7 @@ object Utils {
   
   /** Custom mix between securesocial.core.SecureSocial and play.api.db.slick.DBAction */
   object SlickAction {
-    def apply[A](authorization: Authorization, bodyParser: BodyParser[A] = anyContent)(requestHandler: SlickRequest[A] => SimpleResult): Action[A] = {
+    def apply[A](isAuthorized: Authorization, bodyParser: BodyParser[A] = anyContent)(requestHandler: SlickRequest[A] => SimpleResult): Action[A] = {
       
       val minConnections = 5
       val maxConnections = 5
@@ -79,7 +78,7 @@ object Utils {
               getUser match {
                 case Some(user) =>
                   val slickRequest = SlickRequest(session, executionContext, user, request)
-                  if (authorization.isAuthorized(slickRequest))
+                  if (isAuthorized(slickRequest))
                     requestHandler(slickRequest)
                   else
                     Results.Redirect(RoutesHelper.notAuthorized.absoluteURL(IdentityProvider.sslEnabled))

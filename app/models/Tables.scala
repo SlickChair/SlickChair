@@ -45,8 +45,8 @@ class PaperTable(tag: Tag) extends Table[Paper](tag, "PAPER") with RepoTable[Pap
   def keywords = column[String]("KEYWORDS", O.DBType("TEXT"))
   def abstrct = column[String]("ABSTRCT", O.DBType("TEXT"))
   def nauthors = column[Int]("NAUTHORS")
-  def file = column[Option[Id[File]]]("FILE", O.DBType("TEXT"))
-  def * = ((id, updatedAt, updatedBy), title, format, keywords, abstrct, nauthors, file) <> (Paper.tupled, Paper.unapply)
+  def fileid = column[Option[Id[File]]]("FILE", O.DBType("TEXT"))
+  def * = ((id, updatedAt, updatedBy), title, format, keywords, abstrct, nauthors, fileid) <> (Paper.tupled, Paper.unapply)
 }
 
 class PaperTopicTable(tag: Tag) extends Table[PaperTopic](tag, "PAPERTOPIC") with RepoTable[PaperTopic] {
