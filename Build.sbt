@@ -18,15 +18,12 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "0.6.0.1",
   "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
   "ws.securesocial" %% "securesocial" % "2.1.3",
-  "joda-time" % "joda-time" % "2.3",
-  "org.joda" % "joda-convert" % "1.5",
-  "com.github.tototoshi" %% "slick-joda-mapper" % "1.0.1"
+  "joda-time" % "joda-time" % "2.3"
 )
 
 resolvers ++= Seq(
   "webjars" at "http://webjars.github.com/m2",
   Resolver.url("play-plugin-releases", new URL("http://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/"))(Resolver.ivyStylePatterns),
-  //Resolver.file("Local Repository", file(sys.env.get("PLAY_HOME").map(_ + "/repository/local").getOrElse("")))(Resolver.ivyStylePatterns),
   Resolver.url("play-plugin-releases", new URL("http://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/"))(Resolver.ivyStylePatterns),
   Resolver.url("play-plugin-snapshots", new URL("http://repo.scala-sbt.org/scalasbt/sbt-plugin-snapshots/"))(Resolver.ivyStylePatterns),
   Resolver.url("sbt-plugin-snapshots", new URL("http://repo.scala-sbt.org/scalasbt/sbt-plugin-snapshots/"))(Resolver.ivyStylePatterns),
