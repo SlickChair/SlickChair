@@ -1,0 +1,63 @@
+@(bidForm: Form[BidForm],
+  papers: Set[Paper],
+  files: Set[File],
+  navbar: Html
+)
+
+@import controllers.FileServing.linkToFile
+@import controllers.Utils.shorten
+@import models.BidValue._
+@import helper.FieldConstructors.table
+
+@main("Paper Bidding", navbar) {
+  @helper.form(routes.Reviewing.doBid) {    
+    <table class="table table-condensed table-striped">
+      <thead>
+        <tr>
+          <th>Bid</th>
+          <th>Title</th>
+          <th>File</th>
+        </tr>
+      </thead>
+      <tbody>
+        @bidForm.get.bids.zipWithIndex.map { case (bid, index) =>
+          <tr>
+            <td style="min-width: 90px;">
+              @select(
+                bidForm(s"bids[$index].bid.value"),
+                BidValue.values.toSeq.map { b => b.toString -> (b match {
+                  case Conflict => "Conflict"
+                  case NoBid => "Low"
+                  case Maybe => "-"
+                  case YesBid => "High"
+                })},
+                '_label -> "")
+            </td>
+            <td class="hidden">
+              <input type="text" name="bids[@index].paperid.value" value="@bid.paperid.value">
+            </td>
+            @*<td>
+              <div title="@bid.paperid.value">@shorten(bid.paperid.value)<div>
+            </td>*@
+            @papers.find(_.id == bid.paperid).map { paper =>
+              <td>
+                <a href="@routes.Reviewing.make(bid.paperid.value)">
+                  @paper.title
+                </a>
+              </td>
+              <td>
+                @paper.fileid match {
+                  case Some(fileid) => {
+                    @files.find(_.id == fileid).map(linkToFile)
+                  }
+                  case None => { - }
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+    @button(bidForm(""), "Save")
+  }
+}

@@ -1,0 +1,31 @@
+@(result: Option[String],
+  queryForm: Form[(String, SqlMethod.Value)],
+  navbar: Html
+)(implicit request: play.api.mvc.Request[Any])
+
+@import helper.FieldConstructors.horizontalForm
+
+@main("SQL Form", navbar) {
+  @form(routes.Sql.doQuery) {
+    <legend>Query</legend>
+    @textarea(
+      queryForm("query"),
+      'placeholder -> "SELECT * FROM LOGIN_USERS",
+      '_label -> "PostgreSQL",
+      'rows -> 3)
+    
+    @inputRadioGroup(
+      queryForm("method.m"), 
+      SqlMethod.values.toSeq.map(f => f.toString -> f.toString), 
+      '_label -> "Query Type")
+          
+    <div class="ctrl-enter">
+      @button(queryForm(""), "Run (Ctrl+Enter)")
+    </div>
+  }
+  @result.map { output =>
+    <br>
+    <br>
+    <pre>@output</pre>
+  }
+}
