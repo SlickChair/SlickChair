@@ -1,6 +1,6 @@
-@(field: play.api.data.Field, args: (Symbol,Any)*)(implicit handler: helper.FieldConstructor, lang: play.api.i18n.Lang)
+@(args: (Symbol,Any)*)(implicit handler: helper.FieldConstructor, lang: play.api.i18n.Lang)
 
-@input(field, args:_*) { (_, _, _, _) =>
+@dummy(args: _*) {
   <span class="glyphicon glyphicon-plus-sign"></span>
   <span class="glyphicon glyphicon-minus-sign disabeled"></span>
 }

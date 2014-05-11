@@ -66,3 +66,8 @@ $ ->
   $("#create").on "change", (e) ->
     $("#password").val("")
     $("#password").prop("disabled", not $("#password").prop("disabled"))
+  
+  # Prevent form submit with enter.
+  $(document).keydown (e) ->
+    if e.which == 13 && e.target.nodeName != "TEXTAREA"
+      false

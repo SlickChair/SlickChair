@@ -1,5 +1,5 @@
-@(field: play.api.data.Field, label: String)(implicit handler: helper.FieldConstructor, lang: play.api.i18n.Lang)
+@(label: String)(implicit handler: helper.FieldConstructor, lang: play.api.i18n.Lang)
 
-@input(field) { (_, _, _, _) =>
-    <button type="submit" class="btn btn-default">@label</button>
+@dummy() {
+  <button type="submit" class="btn btn-default">@label</button>
 }

@@ -6,38 +6,43 @@
 )
 
 @import helper.FieldConstructors.horizontalForm
+@import bootstrap3._
 
-@submissiontemplate("New Submission", submissionForm, topics, routes.Submitting.doMake, navbar) {
-  @modal("Login to SlickChair", withCloseButton=false) {
-    You need to login before making a new submission.
-    Choose your login method:
-    <div class="login">
+@main("Login to SlickChair", navbar) {
+  <div class="row">
+    <div class="login col-md-10 col-md-offset-1">
       <a class="facebook" href="@securesocial.controllers.routes.ProviderController.authenticate("facebook")">Facebook</a>
       <a class="google" href="@securesocial.controllers.routes.ProviderController.authenticate("google")">Google</a>
       <a class="email" href="#">Email</a>
     </div>
-    <div class="hidden email-form">
-      @form(
-        routes.LoginWrapper.dispatch) {
-          <fieldset>
-            @inputText(
-              loginWrapperForm("username"),
-              '_label -> "Email")
-            @inputText(
-              loginWrapperForm("password"),
-              '_label -> "Password",
-              'type -> "password")
-            @checkbox(
-              loginWrapperForm("create"),
-              '_label -> "Create",
-              '_text -> "Create a new password (sign-up or forgot)",
-              'value -> true)
-            @button(loginWrapperForm(""), "Submit")
-          </fieldset>
-      }
+  </div>
+  
+  <div class="email-form hidden">
+    @form(routes.LoginWrapper.dispatch) {
+      <fieldset>
+        @inputText(
+          loginWrapperForm("username"),
+          '_label -> "Email")
+        @inputText(
+          loginWrapperForm("password"),
+          '_label -> "Password",
+          'type -> "password")
+        @checkbox(
+          loginWrapperForm("create"),
+          '_label -> "Create",
+          '_text -> "Create a new password (sign-up or forgot)",
+          'value -> true)
+        @button("Submit")
+      </fieldset>
+    }
+  </div>
+
+  <div class="row">
+    <div class="note col-md-10 col-md-offset-1">
+      Login with Facebook/Google allows to skip email validation. Make sure you have access to the associated email addresses as it will be used to send notifications.
+      <br>
+      <br>
+      This version is still <i>work in progress</i> and was tested mostly with Chrome. Send any feedback to <a href="mailto:olivier.blanvillain@@gmail.com">olivier.blanvillain@@gmail.com</a> on on <a href="https://github.com/SlickChair/SlickChair">GitHub</a>.
     </div>
-    <div class="note">
-      The login with Facebook or Google account is only used for authentication purposes, there won't be interactions with the respective networks. Also make sure to have access to the associated email address before you login with a social account.
-    </div>
-  }
+  </div>
 }

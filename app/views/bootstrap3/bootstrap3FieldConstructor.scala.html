@@ -4,7 +4,7 @@
 
 <div class="form-group @elements.args.get('_class) @if(elements.hasErrors) {has-error}" id="@elements.args.get('_id).getOrElse(elements.id + "_field")">
   <label for="@elements.id" class="col-lg-2 control-label">@elements.label(elements.lang)</label>
-  <div class="col-lg-10">
+  <div class="col-lg-9">
     @elements.input
     @*defining(elements.infos(elements.lang)) { infos =>
       @if(infos.nonEmpty) {

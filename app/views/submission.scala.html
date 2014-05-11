@@ -3,13 +3,13 @@
   topics: List[Topic],
   submissionEndPoint: play.api.mvc.Call,
   navbar: Html
-)(modal: Html)
+)
 
 @import helper.FieldConstructors.horizontalForm
 
 @authors = @{(0 to 9)}
 
-@main(title, navbar, modal) {
+@main(title, navbar) {
   @form(
     submissionEndPoint,
     'enctype -> "multipart/form-data") {
@@ -23,9 +23,11 @@
         submissionForm("paper.format.value"), 
         PaperType.values.toSeq map (f => f.toString -> f.toString.replace("_", " ")), 
         '_label -> "Type")
-      @inputText(
+      @textarea(
         submissionForm("paper.keywords"),
-        '_label -> "Keywords")
+        '_label -> "Keywords",
+        'placeholder -> "Keywords",
+        'rows -> 2)
       @textarea(
         submissionForm("paper.abstrct"),
         '_label -> "Abstract",
@@ -64,10 +66,8 @@
       </fieldset>
     }
     </fieldset>
-      @addremove(
-        submissionForm(""),
-        '_label -> "Add/Remove Authors")
+      @addremove('_label -> "Add/Remove Authors")
     <fieldset>
-    @button(submissionForm(""), "Submit")
+    @button("Submit")
   }
 }
