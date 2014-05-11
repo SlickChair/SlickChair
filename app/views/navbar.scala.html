@@ -28,12 +28,12 @@
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
   </button>
-  <a href="@menu.head._1" class="navbar-brand">@menu.head._2</a>
+  <a href="#" class="navbar-brand">SlickChair Demo</a>
 </div>
 
 <div class="collapse navbar-collapse">
   <ul class="nav navbar-nav">
-    @menu.tail.map { case (url, text) =>
+    @menu.map { case (url, text) =>
       <li @if(request.uri.takeRight(idSize) equals url.toString.takeRight(idSize)) { class="active" }><a href="@url">@text</a></li>
     }
   </ul>

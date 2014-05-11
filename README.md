@@ -1,47 +1,57 @@
-Work in progress
-================
+###  Work in progress
 
-SlickChair is an open source conference management system written in Scala
-using the Play Framework. This project uses several modern web technology to
-provide the best experience to both the conference administrators and the end
-users.
-
-Screen-shots
-------------
+SlickChair is an open source conference management system written in Scala using the Play Framework.
 
 
-Getting Started
-===============
+### Run it locally
 
-Requirements
-------------
+To run SlickChair, you need the [Play Framework v2.2.0](http://www.playframework.com/documentation/2.2.0/Installing). Then simply clone this repository and start the application with play: 
 
-To run SlickChair, you need the [Play Framework v2.1.1][1].
+- `git clone https://github.com/SlickChair/SlickChair`
+- `cd SlickChair`
+- `play start`
+- `# open http://localhost:9000`
 
 
-Testing locally
----------------
+### Deploying in production
 
-First download SlickChair sources from the [GitHub repository][2]. If you have
-[Git][3] installed:
+This section describes the steps required to deploy SlickChair production in on Heroku. All configuration must be stored in `conf/prod.conf`.
 
-    git clone https://github.com/SlickChair/SlickChair
+- First create a new Google account (mandatory), and Facebook/Heroku accounts if needed:
 
-After that, move to the SlickChair directory and run the application with
-Play:
+    - <https://accounts.google.com/SignUp?service=mail>
+    - <https://www.facebook.com/r.php>
+    - <https://id.heroku.com/login>
 
-    cd SlickChair
-    play start
+- Enter the new Google credential in `conf/prod.conf` under `smtp` 
 
-Note that the first execution might take a while as Play has to download all
-the dependencies.
+- Change `application.secret` to a randomly generated string; the following command can be used to generate one:
 
-Once started, the application is accessible at [http://localhost:9000/][4].
-The first person to log into SlickChair will obtain the chair privileges
-(administrator). From there you will be able to navigate thought the
-administration pages and get an idea of SlickChair functionalities.
+    - `tr -cd '[:alnum:]' < /dev/urandom | head -c64`
 
-[1]: http://www.playframework.com/documentation/2.1.1/Installing
-[2]: https://github.com/SlickChair/SlickChair
-[3]: http://git-scm.com/downloads
-[4]: http://localhost:9000/
+- Register your instance to login with Facebook accounts:
+
+  - <https://developers.facebook.com/>
+  - Apps; Register as Developer; pass the phone validation 
+  - Apps; Create a New App
+  - Settings; Basic; Provide a "Contact Email"
+  - Settings; Advanced; Set "Valid OAuth redirect URIs" to <http://your-url/authenticate/facebook>
+  - Status & Review; enable "make this app available to the general public?"
+  - Dashboard; Copy "App ID" and "App Secret" to `securesocial.facebook.clientId/clientSecret`
+
+- Register your instance to login with Google accounts:
+
+  - <https://console.developers.google.com>
+  - CREATE PROJECT; open it
+  - APIs & auth; Credentials; CREAT NEW CLIENT ID
+  - Set AUTHORIZED REDIRECT URI to <http://your-url/authenticate/google>
+  - Copy "Client ID" and "Client secret" to `securesocial.google.clientId/clientSecret`
+
+- Deploy to Heroku
+
+  - Install <https://toolbelt.heroku.com/>
+  - `git commit -am Configured`
+  - `heroku login`
+  - `heroku create`
+  - `git push heroku master`
+  - `heroku open`

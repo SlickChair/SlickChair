@@ -1,4 +1,4 @@
-GET     /                                    controllers.Doc.umentation
+GET     /                                    securesocial.controllers.LoginPage.login
 GET     /assets/*file                        controllers.Assets.at(path="/public", file)
 
 GET     /submission                          controllers.Submitting.make

@@ -10,7 +10,6 @@ import securesocial.core.SecuredRequest
 import Utils._
 
 object Navbar {
-  private val home = (routes.Doc.umentation, "SlickChair Demo")
   private val newSubmission = (routes.Submitting.make, "New Submission")  
   
   def apply(currentRole: PersonRole)(implicit r: SlickRequest[_]): Html = {
@@ -25,9 +24,9 @@ object Navbar {
           (routes.Submitting.info(id.value), "Submission " + shorten(id.value)))
         newSubmission :: papers
     })
-    views.html.navbar(Some(r.user), currentRole, home :: roleSpecificEntries)
+    views.html.navbar(Some(r.user), currentRole, roleSpecificEntries)
   }
   
   def notLoggedIn(implicit r: Request[Any]): Html =
-    views.html.navbar(None, Submitter, List(home, newSubmission))
+    views.html.navbar(None, Submitter, List(newSubmission))
 }
