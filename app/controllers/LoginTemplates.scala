@@ -14,47 +14,43 @@ import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
 import models.Topics
 import org.joda.time.DateTime
+import models.PersonRole._
 
 class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(application) {
   override def getLoginPage[A](implicit request: Request[A], form: Form[(String, String)], errorMessage: Option[String] = None): Html = {
-    DB withSession { implicit s => 
-      views.html.login(
-        form.value match {
-          case Some((username, password)) =>
-            loginWrapperForm.fillAndValidate(LoginWrapperForm(username, password, false))  
-          case None =>
-            loginWrapperForm
-        },
-        Submitting.submissionForm,
-        errorMessage,
-        Topics.all,
-        Navbar.notLoggedIn
-      )
-    }
+    views.html.login(
+      form.value match {
+        case Some((username, password)) =>
+          loginWrapperForm.fillAndValidate(LoginWrapperForm(username, password, false))  
+        case None =>
+          loginWrapperForm
+      },
+      errorMessage
+    )
   }
-
-  // override def getSignUpPage[A](implicit request: Request[A], form: Form[RegistrationInfo], token: String): Html = {
-  //   securesocial.views.html.Registration.signUp(form, token)
-  // }
 
   // override def getStartSignUpPage[A](implicit request: Request[A], form: Form[String]): Html = {
   //   securesocial.views.html.Registration.startSignUp(form)
   // }
+  
+  override def getSignUpPage[A](implicit request: Request[A], form: Form[RegistrationInfo], token: String): Html = {
+    views.html.emailSignUp(form, token)
+  }
 
   // override def getStartResetPasswordPage[A](implicit request: Request[A], form: Form[String]): Html = {
   //   securesocial.views.html.Registration.startResetPassword(form)
   // }
 
-  // override def getResetPasswordPage[A](implicit request: Request[A], form: Form[(String, String)], token: String): Html = {
-  //   securesocial.views.html.Registration.resetPasswordPage(form, token)
-  // }
+  override def getResetPasswordPage[A](implicit request: Request[A], form: Form[(String, String)], token: String): Html = {
+    views.html.resetPasswordPage(form, token)
+  }
 
   // override def getPasswordChangePage[A](implicit request: SecuredRequest[A], form: Form[ChangeInfo]):Html = {
   //   securesocial.views.html.passwordChange(form)
   // }
 
   override def getNotAuthorizedPage[A](implicit request: Request[A]): Html = {
-    views.html.main("Not Authorized", Navbar.notLoggedIn)(
+    views.html.main("Not Authorized")(
       Html("You are not authorized to access that page."))
   }
 

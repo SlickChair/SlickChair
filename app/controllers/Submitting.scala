@@ -58,7 +58,7 @@ object Submitting extends Controller {
   
   /** Displays new submissions form. */
   def make = SlickAction(IsSubmitter) { implicit r =>
-    Ok(views.html.submission("New Submission", submissionForm, Topics.all, routes.Submitting.doMake, Navbar(Submitter)))
+    Ok(views.html.submissionform("New Submission", submissionForm, Topics.all, routes.Submitting.doMake, Navbar(Submitter)))
   }
   
   /** Displays the informations of a given submission. */
@@ -78,7 +78,7 @@ object Submitting extends Controller {
       allTopics.zipWithIndex.filter(paperTopics contains _._1).map(ti =>
         (s"topics[${ti._2}]", ti._1.id.value.toString)).toMap
     )
-    Ok(views.html.submission("Editing Submission " + shorten(id), existingSubmissionForm, allTopics, routes.Submitting.doEdit(id), Navbar(Submitter)))
+    Ok(views.html.submissionform("Editing Submission " + shorten(id), existingSubmissionForm, allTopics, routes.Submitting.doEdit(id), Navbar(Submitter)))
   }
   
   /** Handles a new submission. Creates a database entry with the form data. */
@@ -97,7 +97,7 @@ object Submitting extends Controller {
     // uploaded file in case of errors. Otherwise the user will have to
     // select it again.
     submissionForm.bindFromRequest.fold(
-      errors => Ok(views.html.submission(
+      errors => Ok(views.html.submissionform(
         "Submission: Errors found", errors, Topics.all, errorEP, Navbar(Submitter))),
       form => {
         val fileid: Option[Id[File]] = r.body.file("data") map { file =>

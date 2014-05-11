@@ -26,7 +26,4 @@ object Navbar {
     })
     views.html.navbar(Some(r.user), currentRole, roleSpecificEntries)
   }
-  
-  def notLoggedIn(implicit r: Request[Any]): Html =
-    views.html.navbar(None, Submitter, List(newSubmission))
 }

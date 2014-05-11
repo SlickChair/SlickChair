@@ -1,5 +1,5 @@
 @(title: String,
-  navbar: Html,
+  navbar: Html = views.html.navbar(None, models.PersonRole.Submitter, Nil)(null),
   modal: Html = Html("")
 )(content: Html)
 

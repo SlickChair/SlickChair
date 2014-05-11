@@ -1,14 +1,11 @@
 @(loginWrapperForm: Form[LoginWrapperForm],
-  submissionForm: Form[SubmissionForm],
-  errorMessage: Option[String], // TODO: Not used...
-  topics: List[Topic],
-  navbar: Html
+  errorMessage: Option[String] // TODO: Not used...
 )
 
 @import helper.FieldConstructors.horizontalForm
 @import bootstrap3._
 
-@main("Login to SlickChair", navbar) {
+@main("Login to SlickChair") {
   <div class="row">
     <div class="login col-md-10 col-md-offset-1">
       <a class="facebook" href="@securesocial.controllers.routes.ProviderController.authenticate("facebook")">Facebook</a>
