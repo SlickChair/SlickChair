@@ -1,16 +1,19 @@
 import org.joda.time.DateTime
 
 import models._
+import play.api._
+import play.api.mvc.WithFilters
 import models.PaperType._
 import play.api.{ Application, GlobalSettings }
 import play.api.db.slick.Config.driver.simple._
 import play.api.Play.current
 import play.api.db.slick.DB
+import play.filters.gzip.GzipFilter
 import scala.io.Source
 
+object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
 /** Populates the database with fake data for testing. Global.onStart() is
   * called when the application starts. */
-object Global extends GlobalSettings {
   override def onStart(app: Application): Unit = {
     DB withSession { implicit s: Session =>
       if(Topics.all.isEmpty) {

@@ -37,9 +37,9 @@ object Sql extends Controller {
       val (query, method) = filledForm.get
       val result: String = try {
         method match {
-          case Execute => SQL(query.toUpperCase).apply().map(_.asList).toList.mkString("\n")
-          case Update => SQL(query.toUpperCase).executeUpdate().toString
-          case Insert => SQL(query.toUpperCase).executeInsert().toString
+          case Execute => SQL(query).apply().map(_.asList).toList.mkString("\n")
+          case Update => SQL(query).executeUpdate().toString
+          case Insert => SQL(query).executeInsert().toString
         }
       } catch {
         case e: Exception => e.toString.replaceFirst(": ", ":\n")
