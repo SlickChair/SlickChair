@@ -1,4 +1,0 @@
-Phases overview:
-================
-
-wip
