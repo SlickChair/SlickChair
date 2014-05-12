@@ -11,7 +11,7 @@
 
 @main("Bidding", navbar) {
   @helper.form(routes.Reviewing.doBid) {    
-    <table class="table table-condensed table-striped">
+    <table class="table table-condensed">
       <thead>
         <tr>
           <th>Bid</th>
@@ -21,15 +21,22 @@
       </thead>
       <tbody>
         @bidForm.get.bids.zipWithIndex.map { case (bid, index) =>
-          <tr>
+          <tr
+          @bid.value match {
+            case Conflict => { class="danger" }
+            case NoBid => { class="warning" }
+            case Maybe => {}
+            case YesBid => { class="success" }
+          }
+          >
             <td style="min-width: 90px;">
               @select(
                 bidForm(s"bids[$index].bid.value"),
                 BidValue.values.toSeq.map { b => b.toString -> (b match {
                   case Conflict => "Conflict"
-                  case NoBid => "Low"
-                  case Maybe => "-"
-                  case YesBid => "High"
+                  case NoBid => "No"
+                  case Maybe => "Maybe"
+                  case YesBid => "Yes"
                 })},
                 '_label -> "")
             </td>
@@ -40,19 +47,23 @@
               <div title="@bid.paperid.value">@shorten(bid.paperid.value)<div>
             </td>*@
             @papers.find(_.id == bid.paperid).map { paper =>
-              <td>
-                <a href="@routes.Reviewing.make(bid.paperid.value)">
-                  @paper.title
-                </a>
-              </td>
-              <td>
-                @paper.fileid match {
-                  case Some(fileid) => {
-                    @files.find(_.id == fileid).map(linkToFile)
+              @if(bidForm.get.bids.find(bid => bid.paperid == paper.id && bid.value == Conflict)) {
+                <td>@paper.title</td><td>-</td>
+              } else {
+                <td>
+                  <a href="@routes.Reviewing.make(bid.paperid.value)">
+                    @paper.title
+                  </a>
+                </td>
+                <td>
+                  @paper.fileid match {
+                    case Some(fileid) => {
+                      @files.find(_.id == fileid).map(linkToFile)
+                    }
+                    case None => { - }
                   }
-                  case None => { - }
-                }
-              </td>
+                </td>
+              }
             }
           </tr>
         }

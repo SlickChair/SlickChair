@@ -19,7 +19,7 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
       if(Topics.all.isEmpty) {
         // Passwords = 1234567890
         securesocial.core.UserService.save(User("4@4", "userpass", "4@4", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$i2jZu3F6rty/a0vj8Jbeb.BnZNW7dXutAM8wSXLIdIolJETt8YdWe"), None).toIdentity)
-              
+        
         val now: DateTime = DateTime.now
         List(
           "Language design and implementation",
@@ -31,39 +31,38 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
           "Case studies, experience reports, and pearls"
         ) foreach (Topics ins Topic((newId(), now, "demo"), _))
         
+        // Some demo papers.
         val src = Source.fromFile("test/sigplanconf-template.pdf", "ISO8859-1").map(_.toByte).toArray
-        
         List(
+          // Régis Blanc (epfl), etienne kneuss (epfl), viktor kuncak (epfl) and philippe suter (epfl)
           ("Verification by Translation to Recursive Functions ", Full_Paper),
+          // régis blanc (epfl)
           ("CafeSat: A Modern SAT Solver for Scala ", Tool_Demo),
+          // eugene burmako (epfl)
           ("Scala Macros: Let Our Powers Combine! ", Full_Paper),
+          // sébastien doeraene (epfl) and peter van roy (université catholique de louvain
           ("A New Concurrency Model for Scala Based on a Declarative Dataflow Core ", Full_Paper),
+          // paolo g. giarrusso (university of marburg)
           ("Open GADTs and Declaration-site Variance: A Problem Statement ", Short_Paper),
+          // christoph höger (tu berlin) and martin zuber (tu berlin)
           ("Towards a Tight Integration of a Functional Web Client Language into Scala ", Short_Paper),
+          // daniel kröni (fhnw) and raphael schweizer (fhnw)
           ("Parsing Graphs – Applying Parser Combinators to Graph Traversals ", Short_Paper),
+          // hubert plociniczak (epfl)
           ("Scalad: An Interactive Type-Level Debugger ", Tool_Demo),
+          // lukas stadler (johannes kepler university), gilles duboscq (johannes kepler university), hanspeter mössenböck (johannes kepler university), thomas wuerthinger (oracle labs) and doug simon (oracle labs)
           ("An Experimental Study of the Influence of Dynamic Compiler Optimizations on Scala Performance", Full_Paper),
+          // nicolas stucki (epfl) and vlad ureche (epfl)
           ("Bridging Islands of Specialized Code using Macros and Reified Types ", Short_Paper),
+          // sandro stucki (epfl), nada amin (epfl), manohar jonnalagedda (epfl) and tiark rompf (epfl, oracle labs)
           ("What are the Odds? – Probabilistic Programming in Scala ", Full_Paper),
+          // andré van delft
           ("Dataflow Constructs for a Language Extension Based on the Algebra of Communicating Processes", Full_Paper)
         ) foreach { case (title, format) =>
           val pdf = Files ins File((newId(), now, "demo"), "sigplanconf.pdf", src.length, src)
           Papers ins Paper((newId(), now, "demo"), title, format, "keywords", "abstract", 0, Some(pdf))
         }
         
-        // Authors:
-        // Régis Blanc (epfl), etienne kneuss (epfl), viktor kuncak (epfl) and philippe suter (epfl)
-        // régis blanc (epfl)
-        // eugene burmako (epfl)
-        // sébastien doeraene (epfl) and peter van roy (université catholique de louvain
-        // paolo g. giarrusso (university of marburg)
-        // christoph höger (tu berlin) and martin zuber (tu berlin)
-        // daniel kröni (fhnw) and raphael schweizer (fhnw)
-        // hubert plociniczak (epfl)
-        // lukas stadler (johannes kepler university), gilles duboscq (johannes kepler university), hanspeter mössenböck (johannes kepler university), thomas wuerthinger (oracle labs) and doug simon (oracle labs)
-        // nicolas stucki (epfl) and vlad ureche (epfl)
-        // sandro stucki (epfl), nada amin (epfl), manohar jonnalagedda (epfl) and tiark rompf (epfl, oracle labs)
-        // andré van delft
       }
     }
   }
