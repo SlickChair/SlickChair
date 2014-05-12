@@ -15,6 +15,7 @@ import Utils._
 import play.api.i18n.Messages
 import play.api.mvc.MultipartFormData.FilePart
 import play.api.libs.Files.TemporaryFile
+import play.api.data.FormError
 
 case class SubmissionForm(
   paper: Paper,
@@ -23,13 +24,14 @@ case class SubmissionForm(
 )
 
 object Submitting extends Controller {
+  private val required = Messages("error.required")
   val paperMapping: Mapping[Paper] = mapping(
     "metadata" -> curse[MetaData[Paper]],
     "title" -> nonEmptyText,
     "format" -> enumMapping(PaperType),
     "keywords" -> nonEmptyText,
     "abstrct" -> nonEmptyText,
-    "nauthors" -> number,
+    "nauthors" -> number.verifying(required, _ > 0),
     "fileid" -> curse[Option[Id[File]]]
   )(Paper.apply _)(Paper.unapply _)
   
@@ -42,15 +44,11 @@ object Submitting extends Controller {
     "email" -> text
   )(Person.apply _)(Person.unapply _)
 
-  // TODO Check that: 
-  // - all authors field are populated for author i, i < nauthors
-  // - authors have different emails
-  // - user is an author
   val submissionForm: Form[SubmissionForm] = Form(
     mapping(
       "paper" -> paperMapping,
       "authors" -> list(authorMapping),
-      "topics" -> list(Utils.idTypeMapping).verifying(Messages("error.required"), _.nonEmpty)
+      "topics" -> list(Utils.idTypeMapping).verifying(required, _.nonEmpty)
     )(SubmissionForm.apply _)(SubmissionForm.unapply _)
   )
   
@@ -96,7 +94,32 @@ object Submitting extends Controller {
     // TODO: if the form is not js validated we might want to save the
     // uploaded file in case of errors. Otherwise the user will have to
     // select it again.
-    submissionForm.bindFromRequest.fold(
+    val bindedForm = submissionForm.bindFromRequest
+    val authorsWIndex = bindedForm.get.authors.take(bindedForm.get.paper.nauthors).zipWithIndex
+    val customErrors: Seq[FormError] = authorsWIndex.flatMap { 
+      case (Person(_, fn, ln, org, _, email), i) =>
+        // Authors field are populated for author i, i < nauthors
+        def nonEmptyText(string: String, i: Int, field: String) = 
+          if(string.trim().isEmpty) Seq(FormError(s"authors[$i]." + field, required)) else Seq()
+        nonEmptyText(fn, i, "firstname") ++
+        nonEmptyText(ln, i, "lastname") ++
+        nonEmptyText(org, i, "organization") ++
+        nonEmptyText(email, i, "email")
+    } ++ {
+      authorsWIndex.groupBy(_._1.email).map(_._2).flatMap { authorsWSameEmail =>
+        if(authorsWSameEmail.length == 1) Seq() else authorsWSameEmail map {
+          case (_, i) => FormError(s"authors[$i].email", "Authors must have different emails")
+        }
+      }
+    } ++ {
+      if(authorsWIndex.map(_._1.email).exists(_ == r.user.email))
+        Seq()
+      else
+        authorsWIndex.map { case (_, i) =>
+          FormError(s"authors[$i].email", "The person submitting must be an author") }
+    }
+
+    bindedForm.copy(errors = bindedForm.errors ++ customErrors).fold(
       errors => Ok(views.html.submissionform(
         "Submission: Errors found", errors, Topics.all, errorEP, Navbar(Submitter))),
       form => {

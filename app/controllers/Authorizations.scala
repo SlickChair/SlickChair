@@ -24,9 +24,7 @@ object IsChair extends Authorization {
 
 case class IsAuthorOf(paperId: IdType) extends Authorization {
   def apply[A](implicit r: SlickRequest[A]) = {
-    play.api.Logger.error((Authors of Id[Paper](paperId)).toString)
     Authors of Id[Paper](paperId) map (_.id) contains r.user.id
-    true
   }
 }
 

@@ -54,7 +54,12 @@ $ ->
     if e.keyCode == ENTER and e.ctrlKey
       $(".ctrl-enter").find("button").click()
   
-  ### Modal login magic. ###
+  # Prevent form submit with enter.
+  $(document).keydown (e) ->
+    if e.which == 13 && e.target.nodeName != "TEXTAREA"
+      false
+
+  ### Login form magic. ###
   $(".email").click (e) ->
     e.preventDefault()
     $(".email-form").toggleClass("hidden")
@@ -67,7 +72,3 @@ $ ->
     $("#password").val("")
     $("#password").prop("disabled", not $("#password").prop("disabled"))
   
-  # Prevent form submit with enter.
-  $(document).keydown (e) ->
-    if e.which == 13 && e.target.nodeName != "TEXTAREA"
-      false

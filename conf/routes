@@ -2,10 +2,10 @@ GET     /                                    securesocial.controllers.LoginPage.
 GET     /assets/*file                        controllers.Assets.at(path="/public", file)
 
 GET     /submission                          controllers.Submitting.make
-POST    /submission/make                     controllers.Submitting.doMake
+POST    /submission                          controllers.Submitting.doMake
 GET     /submission/info/:id                 controllers.Submitting.info(id: IdType)
 GET     /submission/edit/:id                 controllers.Submitting.edit(id: IdType)
-POST    /submission/doedit/:id               controllers.Submitting.doEdit(id: IdType)
+POST    /submission/edit/:id                 controllers.Submitting.doEdit(id: IdType)
 
 GET     /review/papers                       controllers.Reviewing.papers
 # GET     /review/invitation/:token                   controllers.member.Dashboard.invite(token: String)
