@@ -7,13 +7,13 @@ GET     /submission/info/:id                 controllers.Submitting.info(id: IdT
 GET     /submission/edit/:id                 controllers.Submitting.edit(id: IdType)
 POST    /submission/doedit/:id               controllers.Submitting.doEdit(id: IdType)
 
-GET     /review/papers                     controllers.Reviewing.papers
+GET     /review/papers                       controllers.Reviewing.papers
 # GET     /review/invitation/:token                   controllers.member.Dashboard.invite(token: String)
 # GET     /review/dashboard                           controllers.member.Dashboard.papers
-GET     /review/bid                        controllers.Reviewing.bid
-POST    /review/bid                        controllers.Reviewing.doBid
-GET     /review/:id                        controllers.Reviewing.make(id: IdType)
-POST    /review/:id                        controllers.Reviewing.doMake(id: IdType)
+GET     /review/bid                          controllers.Reviewing.bid
+POST    /review/bid                          controllers.Reviewing.doBid
+GET     /review/:id                          controllers.Reviewing.make(id: IdType)
+POST    /review/:id                          controllers.Reviewing.doMake(id: IdType)
 # GET     /review/review/:id                          controllers.member.Reviewing.form(id: Int)
 # POST    /review/review/:id                          controllers.member.Reviewing.make(id: Int)
 

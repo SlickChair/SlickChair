@@ -7,6 +7,7 @@
 
 @import Utils._
 @import controllers.FileServing.linkToFile
+@import helper.FieldConstructors.horizontalForm
 
 @main("Submission " + shorten(paper.id.value), navbar) {
   
@@ -27,6 +28,11 @@
     @authors.zip(1 to paper.nauthors).map { case (author, index) =>
       <dt>Author @index</dt><dd>@author.firstname @author.lastname, @author.email</dd>
     }
+    <dt></dt><dd></dd>
+    <dt></dt><dd></dd>
+    <dt></dt><dd>
+      <a href="@routes.Submitting.edit(paper.id.value)" class="btn btn-default" role="button">Edit</a>  
+    </dd>
   </dl>
-  @linkbutton("Edit", routes.Submitting.edit(paper.id.value))
+
 }

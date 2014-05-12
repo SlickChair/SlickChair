@@ -28,7 +28,14 @@ trait RepoQuery[T <: Table[M] with RepoTable[M], M <: Model[M]] extends Implicit
   def withId(id: Id[M])(implicit s: Session): M = latests.filter(_.id is id).first
   def all(implicit s: Session): List[M] = latests.list
   def count(implicit s: Session): Int = all.size
-  def ins(m: M)(implicit s: Session): Id[M] = { this insert m; m.id }
+  def ins(m: M)(implicit s: Session): Id[M] = {
+    if(m.id == newId[M])
+      (this returning this.map(_.id)) insert m
+    else {
+      this forceInsert m
+      m.id
+    }
+  }
   def insAll(l: List[M])(implicit s: Session): List[Id[M]] = l map ins
 }
 

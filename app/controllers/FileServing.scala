@@ -38,7 +38,6 @@ object FileServing extends Controller {
     }
     Html(s"""
     <a href="${routes.FileServing(file.id.value)}">
-    ${file.name} (${humanReadableByteCount(file.size)})</a>
-    """)
+    ${file.name} (${humanReadableByteCount(file.size)})</a>""")
   }
 }

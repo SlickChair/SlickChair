@@ -22,7 +22,7 @@ trait EnumMapper {
 
 trait RepoTable[M <: Model[M]] extends ImplicitMappers {
   this: Table[M] =>
-  def id = column[Id[M]]("ID")
+  def id = column[Id[M]]("ID", O.AutoInc)
   def updatedAt = column[DateTime]("UPDATEDAT")
   def updatedBy = column[String]("UPDATEDBY", O.DBType("TEXT"))
 }

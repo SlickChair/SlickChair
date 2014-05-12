@@ -50,7 +50,7 @@ object Submitting extends Controller {
     mapping(
       "paper" -> paperMapping,
       "authors" -> list(authorMapping),
-      "topics" -> list(Utils.uuid).verifying(Messages("error.required"), _.nonEmpty)
+      "topics" -> list(Utils.idTypeMapping).verifying(Messages("error.required"), _.nonEmpty)
     )(SubmissionForm.apply _)(SubmissionForm.unapply _)
   )
   
@@ -92,7 +92,7 @@ object Submitting extends Controller {
   }
   
   private type Req = SlickRequest[MultipartFormData[play.api.libs.Files.TemporaryFile]]
-  private def doSave(paperId: Id[Paper], errorEP: Call)(implicit r: Req) = {
+  private def doSave(toSavePaperId: Id[Paper], errorEP: Call)(implicit r: Req) = {
     // TODO: if the form is not js validated we might want to save the
     // uploaded file in case of errors. Otherwise the user will have to
     // select it again.
@@ -104,7 +104,7 @@ object Submitting extends Controller {
           val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray
           Files.ins(File(newMetaData(), file.filename, blob.size, blob))
         }
-        Papers.ins(form.paper.copy(metadata=(paperId, r.now, r.user.email), fileid=fileid))
+        val paperId = Papers.ins(form.paper.copy(metadata=(toSavePaperId, r.now, r.user.email), fileid=fileid))
         val personsId: List[Id[Person]] = Persons.insAll(
           form.authors.take(form.paper.nauthors).map(_.copy(metadata=newMetaData())))
         Authors.insAll(personsId.zipWithIndex.map(pi =>
