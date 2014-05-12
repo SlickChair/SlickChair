@@ -7,28 +7,26 @@
 
 @import Utils._
 @import controllers.FileServing.linkToFile
-@import org.joda.time.format.DateTimeFormat
 
 @main("Submission " + shorten(paper.id.value), navbar) {
-  @Html(paper.toString.replaceAll(",", ",\n<br>"))
-  <br>
-  <h1>Topic(s):</h1>
-  @topics.map { v =>
-    @Html(v.toString.replaceAll(",", ",\n<br>"))
-    <br><br>
-  }
-  <h1>Author(s):</h1>
-  @authors.map { v =>
-    @Html(v.toString.replaceAll(",", ",\n<br>"))
-    <br><br>
-  }
-  <h1>File:</h1>
-  @optionalFile.toString
-  @optionalFile.map { file =>
-    <br>
-    <br>
-    @linkToFile(file), uploaded on @DateTimeFormat.forPattern("d MMM yyyy, HH:mm z").print(file.updatedAt)
-  }
-  <br><br>
+  
+  <dl class="dl-horizontal">
+    <dt>Title</dt><dd>@paper.title</dd>
+    <dt>Type</dt><dd>@paper.format</dd>
+    <dt>Keywords</dt><dd>@paper.keywords</dd>
+    <dt>Abstract</dt><dd>@paper.abstrct</dd>
+    <dt>Topics</dt><dd>@topics.map(_.name).mkString(", ")</dd>
+    <dt>File</dt><dd>
+      @optionalFile match {
+        case Some(file) => {
+          @linkToFile(file), @date(file.updatedAt)
+        }
+        case None => { - }
+      }
+    </dd>
+    @authors.zip(1 to paper.nauthors).map { case (author, index) =>
+      <dt>Author @index</dt><dd>@author.firstname @author.lastname, @author.email</dd>
+    }
+  </dl>
   @linkbutton("Edit", routes.Submitting.edit(paper.id.value))
 }
