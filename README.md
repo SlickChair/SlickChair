@@ -1,9 +1,11 @@
-###  Work in progress
+Work in progress
+----------------
 
 SlickChair is an open source conference management system written in Scala using the Play Framework.
 
 
-### Run it locally
+Run it locally
+--------------
 
 To run SlickChair, you need the [Play Framework v2.2.0](http://www.playframework.com/documentation/2.2.0/Installing). Then simply clone this repository and start the application with play: 
 
@@ -13,7 +15,8 @@ To run SlickChair, you need the [Play Framework v2.2.0](http://www.playframework
 - `# open http://localhost:9000`
 
 
-### Deploying in production
+Deploying in production
+-----------------------
 
 This section describes the steps required to deploy SlickChair production in on Heroku. All configuration must be stored in `conf/prod.conf`.
 
