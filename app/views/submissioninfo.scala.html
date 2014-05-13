@@ -1,38 +1,35 @@
 @(paper: Paper,
   authors: List[Person],
   topics: List[Topic],
-  optionalFile: Option[File],
-  navbar: Html
-)(implicit request: play.api.mvc.Request[Any])
+  optionalFile: Option[File]
+)
 
 @import Utils._
 @import controllers.FileServing.linkToFile
 @import helper.FieldConstructors.horizontalForm
 
-@main("Submission " + shorten(paper.id.value), navbar) {
-  
-  <dl class="dl-horizontal">
-    <dt>Title</dt><dd>@paper.title</dd>
-    <dt>Type</dt><dd>@paper.format</dd>
-    <dt>Keywords</dt><dd>@paper.keywords</dd>
-    <dt>Abstract</dt><dd>@paper.abstrct</dd>
-    <dt>Topics</dt><dd>@topics.map(_.name).mkString(", ")</dd>
-    <dt>File</dt><dd>
-      @optionalFile match {
-        case Some(file) => {
-          @linkToFile(file), @date(file.updatedAt)
-        }
-        case None => { - }
-      }
-    </dd>
-    @authors.zip(1 to paper.nauthors).map { case (author, index) =>
-      <dt>Author @index</dt><dd>@author.firstname @author.lastname, @author.email</dd>
-    }
-    <dt></dt><dd></dd>
-    <dt></dt><dd></dd>
-    <dt></dt><dd>
-      <a href="@routes.Submitting.edit(paper.id.value)" class="btn btn-default" role="button">Edit</a>  
-    </dd>
-  </dl>
 
-}
+<dl class="dl-horizontal">
+  <dt>Title</dt><dd>@paper.title</dd>
+  <dt>Type</dt><dd>@paper.format</dd>
+  <dt>Keywords</dt><dd>@paper.keywords</dd>
+  <dt>Abstract</dt><dd>@paper.abstrct</dd>
+  <dt>Topics</dt><dd>@topics.map(_.name).mkString(", ")</dd>
+  <dt>File</dt><dd>
+    @optionalFile match {
+      case Some(file) => {
+        @linkToFile(file), @date(file.updatedAt)
+      }
+      case None => { - }
+    }
+  </dd>
+  @authors.zip(1 to paper.nauthors).map { case (author, index) =>
+    <dt>Author @index</dt><dd>@author.firstname @author.lastname, @author.email</dd>
+  }
+  <dt></dt><dd></dd>
+  <dt></dt><dd></dd>
+  <dt></dt><dd>
+    <a href="@routes.Submitting.edit(paper.id.value)" class="btn btn-default" role="button">Edit</a>  
+  </dd>
+</dl>
+

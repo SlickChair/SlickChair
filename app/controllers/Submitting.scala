@@ -62,7 +62,9 @@ object Submitting extends Controller {
   /** Displays the informations of a given submission. */
   def info(id: IdType) = SlickAction(IsAuthorOf(id)) { implicit r =>
     val paper: Paper = Papers.withId(Id[Paper](id))
-    Ok(views.html.submissioninfo(paper, Authors.of(paper.id), Topics.of(paper.id), paper.fileid.map(Files withId _), Navbar(Submitter)))
+    Ok(views.html.main("Submission " + shorten(paper.id.value), Navbar(Submitter)) (
+       views.html.submissioninfo(paper, Authors.of(paper.id), Topics.of(paper.id), paper.fileid.map(Files withId _))
+    ))
   }
   
   /** Displays the form to edit the informations of a given submission. */

@@ -58,7 +58,10 @@ object Reviewing extends Controller {
   }
   
   def make(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
-    Ok("")
+    val paper: Paper = Papers.withId(Id[Paper](id))
+    Ok(views.html.main("Submission " + shorten(paper.id.value), Navbar(Reviewer)) (
+       views.html.review(paper, Authors.of(paper.id), Topics.of(paper.id), paper.fileid.map(Files withId _))
+    ))
   }
   
   def doMake(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
