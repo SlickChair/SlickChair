@@ -96,28 +96,26 @@ object Submitting extends Controller {
     // select it again.
     val bindedForm = submissionForm.bindFromRequest
     val authorsWIndex = bindedForm.get.authors.take(bindedForm.get.paper.nauthors).zipWithIndex
-    val customErrors: Seq[FormError] = authorsWIndex.flatMap { 
+    val emptyFieldErr: Seq[FormError] = authorsWIndex.flatMap { 
       case (Person(_, fn, ln, org, _, email), i) =>
-        // Authors field are populated for author i, i < nauthors
-        def nonEmptyText(string: String, i: Int, field: String) = 
-          if(string.trim().isEmpty) Seq(FormError(s"authors[$i]." + field, required)) else Seq()
-        nonEmptyText(fn, i, "firstname") ++
-        nonEmptyText(ln, i, "lastname") ++
-        nonEmptyText(org, i, "organization") ++
-        nonEmptyText(email, i, "email")
-    } ++ {
-      authorsWIndex.groupBy(_._1.email).map(_._2).flatMap { authorsWSameEmail =>
-        if(authorsWSameEmail.length == 1) Seq() else authorsWSameEmail map {
-          case (_, i) => FormError(s"authors[$i].email", "Authors must have different emails")
-        }
-      }
-    } ++ {
-      if(authorsWIndex.map(_._1.email).exists(_ == r.user.email))
-        Seq()
-      else
-        authorsWIndex.map { case (_, i) =>
-          FormError(s"authors[$i].email", "The person submitting must be an author") }
+        // Author fields are populated for author i; i < nauthors
+        Seq((fn, i, "firstname"), (ln, i, "lastname"), (org, i, "organization"), (email, i, "email"))
+          .filter { _._1.trim().isEmpty }
+          .map { case (_, i, field) => FormError(s"authors[$i]." + field, required) }
     }
+    val sameEmailErr: Seq[FormError] = authorsWIndex.groupBy(_._1.email).map(_._2).flatMap { as =>
+      if(as.length == 1) Seq()
+      else as map { case (_, i) => 
+        FormError(s"authors[$i].email", "Authors must have different emails")
+      }
+    }.toSeq
+    val notAuthorErr: Seq[FormError] = {
+      if(authorsWIndex.map(_._1.email).exists(_ == r.user.email)) Seq()
+      else authorsWIndex.map { case (_, i) =>
+        FormError(s"authors[$i].email", "The person submitting must be an author")
+      }
+    }
+    val customErrors: Seq[FormError] = emptyFieldErr ++ sameEmailErr ++ notAuthorErr
 
     bindedForm.copy(errors = bindedForm.errors ++ customErrors).fold(
       errors => Ok(views.html.submissionform(
