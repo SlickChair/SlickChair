@@ -3,11 +3,29 @@ package models
 import org.joda.time.DateTime
 import play.api.db.slick.Config.driver.simple._
 
-case class Id[M <: Model[M]](value: IdType)
+case class Id[M](value: IdType)
 
-trait Model[M <: Model[M]] {
+trait Model[M] {
+  this: M with Product =>
   val metadata: MetaData[M]
-  lazy val (id: Id[M], updatedAt, updatedBy) = metadata
+  lazy val (id, updatedAt, updatedBy) = metadata
+}
+
+trait Entity[M] extends Model[M] {
+  this: M with Product =>
+  def withId(newId: Id[M]) = (this: M) match {
+    case x: Topic => x.copy(metadata=(Id[Topic](newId.value), x.updatedAt, x.updatedBy))
+    case x: Person => x.copy(metadata=(Id[Person](newId.value), x.updatedAt, x.updatedBy))
+    case x: Paper => x.copy(metadata=(Id[Paper](newId.value), x.updatedAt, x.updatedBy))
+    case x: File => x.copy(metadata=(Id[File](newId.value), x.updatedAt, x.updatedBy))
+    case x: Comment => x.copy(metadata=(Id[Comment](newId.value), x.updatedAt, x.updatedBy))
+  }
+}
+
+trait PaperPersonRelation[M <: PaperPersonRelation[M]] extends Model[M] {
+  this: M with Product =>
+  def paperid: Id[Paper]
+  def personid: Id[Person]
 }
 
 object PersonRole extends Enumeration with EnumMapper {
@@ -41,81 +59,81 @@ object BidValue extends Enumeration with EnumMapper {
 import BidValue._
 
 case class Topic(
-  metadata: MetaData[Topic],
-  name: String
-) extends Model[Topic]
+  name: String,
+  metadata: MetaData[Topic] = noMetaDate
+) extends Entity[Topic]
 
 case class Person(
-  metadata: MetaData[Person],
   firstname: String,
   lastname: String,
   organization: String,
   role: PersonRole,
-  email: String
-) extends Model[Person]
+  email: String,
+  metadata: MetaData[Person] = noMetaDate
+) extends Entity[Person]
 
 case class Paper(
-  metadata: MetaData[Paper],
   title: String,
   format: PaperType,
   keywords: String,
   abstrct: String,
   nauthors: Int,
-  fileid: Option[Id[File]]
-) extends Model[Paper]
+  fileid: Option[Id[File]],
+  metadata: MetaData[Paper] = noMetaDate
+) extends Entity[Paper]
 
 case class PaperTopic(
-  metadata: MetaData[PaperTopic],
   paperid: Id[Paper],
-  topicid: Id[Topic]
+  topicid: Id[Topic],
+  metadata: MetaData[PaperTopic] = noMetaDate
 ) extends Model[PaperTopic]
 
 case class Author(
-  metadata: MetaData[Author],
   paperid: Id[Paper],
   personid: Id[Person],
-  position: Int
-) extends Model[Author]
+  position: Int,
+  metadata: MetaData[Author] = noMetaDate
+) extends PaperPersonRelation[Author]
 
 case class File(
-  metadata: MetaData[File],
   name: String,
   size: Long,
-  content: Array[Byte]
-) extends Model[File]
+  content: Array[Byte],
+  metadata: MetaData[File] = noMetaDate
+) extends Entity[File]
 
 case class Bid(
-  metadata: MetaData[Bid],
   paperid: Id[Paper],
   personid: Id[Person],
-  value: BidValue
-) extends Model[Bid]
+  value: BidValue,
+  metadata: MetaData[Bid] = noMetaDate
+) extends PaperPersonRelation[Bid]
 
 case class Assignment(
-  metadata: MetaData[Assignment],
   paperid: Id[Paper],
-  personid: Id[Person]  
-) extends Model[Assignment]
+  personid: Id[Person]  ,
+  metadata: MetaData[Assignment] = noMetaDate
+) extends PaperPersonRelation[Assignment]
 
 case class Comment(
-  metadata: MetaData[Comment],
   paperid: Id[Paper],
   personid: Id[Person],
-  content: String
-) extends Model[Comment]
+  content: String,
+  metadata: MetaData[Comment] = noMetaDate
+) extends Entity[Comment]
 
 case class Review(
-  metadata: MetaData[Review],
   paperid: Id[Paper],
   personid: Id[Person],
   confidence: ReviewConfidence,
   evaluation: ReviewEvaluation,
-  content: String
-) extends Model[Review]
+  content: String,
+  metadata: MetaData[Review] = noMetaDate
+) extends PaperPersonRelation[Review]
 
 case class Email(
-  metadata: MetaData[Email],
   to: String,
   subject: String,
-  content: String
+  content: String,
+  metadata: MetaData[Email] = noMetaDate
 ) extends Model[Email]

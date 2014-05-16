@@ -29,7 +29,7 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
           "Safety and reliability",
           "Tools",
           "Case studies, experience reports, and pearls"
-        ) foreach (Topics ins Topic((newId(), now, "demo"), _))
+        ) foreach (Topics ins Topic(_))
         
         // Some demo papers.
         val src = Source.fromFile("test/sigplanconf-template.pdf", "ISO8859-1").map(_.toByte).toArray
@@ -59,8 +59,8 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
           // andré van delft
           ("Dataflow Constructs for a Language Extension Based on the Algebra of Communicating Processes", Full_Paper)
         ) foreach { case (title, format) =>
-          val pdf = Files ins File((newId(), now, "demo"), "sigplanconf.pdf", src.length, src)
-          Papers ins Paper((newId(), now, "demo"), title, format, "keywords", "abstract", 0, Some(pdf))
+          val pdf = Files ins File("sigplanconf.pdf", src.length, src)
+          Papers ins Paper(title, format, "keywords", "abstract", 0, Some(pdf))
         }
         
       }

@@ -26,22 +26,22 @@ case class SubmissionForm(
 object Submitting extends Controller {
   private val required = Messages("error.required")
   val paperMapping: Mapping[Paper] = mapping(
-    "metadata" -> curse[MetaData[Paper]],
     "title" -> nonEmptyText,
     "format" -> enumMapping(PaperType),
     "keywords" -> nonEmptyText,
     "abstrct" -> nonEmptyText,
     "nauthors" -> number.verifying(required, _ > 0),
-    "fileid" -> curse[Option[Id[File]]]
+    "fileid" -> curse[Option[Id[File]]],
+    "metadata" -> curse[MetaData[Paper]]
   )(Paper.apply _)(Paper.unapply _)
   
   val authorMapping: Mapping[Person] = mapping(
-    "metadata" -> curse[MetaData[Person]],
     "firstname" -> text,
     "lastname" -> text,
     "organization" -> text,
     "role" -> ignored(Submitter),
-    "email" -> text
+    "email" -> text,
+    "metadata" -> curse[MetaData[Person]]
   )(Person.apply _)(Person.unapply _)
 
   val submissionForm: Form[SubmissionForm] = Form(
@@ -83,7 +83,7 @@ object Submitting extends Controller {
   
   /** Handles a new submission. Creates a database entry with the form data. */
   def doMake = SlickAction(IsSubmitter, parse.multipartFormData) { implicit r =>
-    doSave(newId(), routes.Submitting.doMake)
+    doSave(newId(), routes.Submitting.doMake) // TODO: Use Option
   }
     
   /** Handles edit of a submission. Update the database entry with the form data. */
@@ -99,7 +99,7 @@ object Submitting extends Controller {
     val bindedForm = submissionForm.bindFromRequest
     val authorsWIndex = bindedForm.get.authors.take(bindedForm.get.paper.nauthors).zipWithIndex
     val emptyFieldErr: Seq[FormError] = authorsWIndex.flatMap { 
-      case (Person(_, fn, ln, org, _, email), i) =>
+      case (Person(fn, ln, org, _, email, _), i) =>
         // Author fields are populated for author i; i < nauthors
         Seq((fn, i, "firstname"), (ln, i, "lastname"), (org, i, "organization"), (email, i, "email"))
           .filter { _._1.trim().isEmpty }
@@ -125,14 +125,14 @@ object Submitting extends Controller {
       form => {
         val fileid: Option[Id[File]] = r.body.file("data") map { file =>
           val blob = scalax.io.Resource.fromFile(file.ref.file).byteArray
-          Files.ins(File(newMetaData(), file.filename, blob.size, blob))
+          Files.ins(File(file.filename, blob.size, blob))
         }
         val paperId = Papers.ins(form.paper.copy(metadata=(toSavePaperId, r.now, r.user.email), fileid=fileid))
         val personsId: List[Id[Person]] = Persons.insAll(
-          form.authors.take(form.paper.nauthors).map(_.copy(metadata=newMetaData())))
+          form.authors.take(form.paper.nauthors))
         Authors.insAll(personsId.zipWithIndex.map(pi =>
-          Author(newMetaData(), paperId, pi._1, pi._2)))
-        PaperTopics.insAll(form.topics.map(i => PaperTopic(newMetaData(), paperId, Id[Topic](i))))
+          Author(paperId, pi._1, pi._2)))
+        PaperTopics.insAll(form.topics.map(i => PaperTopic(paperId, Id[Topic](i))))
         Redirect(routes.Submitting.info(paperId.value))
       }
     )

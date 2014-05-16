@@ -16,7 +16,6 @@ class LoginUserService(application: Application) extends UserServicePlugin(appli
     import models._
     import PersonRole._
     Persons.ins(Person(
-      (newId(), new DateTime(), user.email),
       user.firstname,
       user.lastname,
       "",

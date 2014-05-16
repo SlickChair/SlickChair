@@ -16,10 +16,10 @@ case class BidForm(bids: List[Bid])
 
 object Reviewing extends Controller {
   val bidMapping: Mapping[Bid] = mapping(
-    "metadata" -> curse[MetaData[Bid]],
     "paperid" -> idMapping[Paper],
     "personid" -> curse[Id[Person]],
-    "bid" -> enumMapping(BidValue)
+    "bid" -> enumMapping(BidValue),
+    "metadata" -> curse[MetaData[Bid]]
   )(Bid.apply _)(Bid.unapply _)
 
   val bidForm: Form[BidForm] = Form(
@@ -32,7 +32,7 @@ object Reviewing extends Controller {
     val papers: List[Paper] = Papers.all
     val allBids: List[Bid] = papers map { p =>
       bids.find(_.paperid == p.id) match {
-        case None => Bid(newMetaData(), p.id, r.user.id, Maybe)
+        case None => Bid(p.id, r.user.id, Maybe)
         case Some(b) => b
       }
     }
@@ -45,7 +45,7 @@ object Reviewing extends Controller {
       errors => 
         Ok(views.html.bid(errors, Papers.all.toSet, Files.all.toSet, Navbar(Reviewer))),
       form => {
-        val bids = form.bids map { _ copy (metadata=newMetaData(), personid=r.user.id) }
+        val bids = form.bids map { _ copy (personid=r.user.id) }
         Bids insAll bids
         Redirect(routes.Reviewing.bid)
       }
