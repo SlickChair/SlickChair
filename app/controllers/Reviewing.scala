@@ -28,8 +28,8 @@ object Reviewing extends Controller {
   )
 
   def bid() = SlickAction(IsReviewer) { implicit r =>
-    val bids: List[Bid] = Bids.of(r.user.id)
-    val papers: List[Paper] = Papers.all
+    val bids: List[Bid] = Query(r.db) bidsOf r.user.id
+    val papers: List[Paper] = Query(r.db).allPapers
     val allBids: List[Bid] = papers map { p =>
       bids.find(_.paperid == p.id) match {
         case None => Bid(p.id, r.user.id, Maybe)

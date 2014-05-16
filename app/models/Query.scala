@@ -24,6 +24,11 @@ case class Query(db: Database)(implicit s: Session) extends ImplicitMappers {
     db.bids.filter(_.personid is id).list
   def bidsOf(personId: Id[Person], paperId: Id[Paper]): Option[Bid] =
     db.bids.filter(b => (b.personid is personId) && (b.paperid is paperId)).firstOption
+  def fileWithId(id: Id[File]): File =
+    db.files.filter(_.id is id).first
+  def paperWithId(id: Id[Paper]): Paper =
+    db.papers.filter(_.id is id).first
+  def allPapers: List[Paper] = db.papers.list
   // TODO:
   //   /** Files.all does not returns file blobs. An alternative to this hack 
   //     * would be to have separated tables for metadata and content. */

@@ -1,4 +1,5 @@
 package models
+
 import org.joda.time.DateTime
 import play.api.db.slick.Config.driver.simple._
 import PersonRole._
@@ -25,10 +26,10 @@ trait Model[M] {
   }
 }
 
-
-case class Connection(implicit val session: Session) {
-  def database(): Database = Database(new DateTime())
-  def insert(ms: Model[_]*): (Database, Database) = {
+trait Connection {
+  def db(): Database = Database(new DateTime())
+  def insert(ms: Model[_]*)(implicit s: Session): (Database, Database) = insertAll(ms)
+  def insertAll(ms: Seq[_])(implicit s: Session): (Database, Database) = {
     val now: DateTime = new DateTime()
     ms foreach { _ match {
       case m: Topic => TableQuery[TopicTable] insert m.copy(metadata=(m.id, now, ""))
@@ -52,8 +53,8 @@ case class Database(val time: DateTime, val history: Boolean = false) extends Im
   def equals(database: Database): Boolean = this.basis == database.basis
   def basis(): DateTime = ???
     
-  private def timeMod[T <: Table[M] with RepoTable[M], M <: Model[M]](table: TableQuery[T]):
-    Query[T, M] = {
+  private def timeMod[T <: Table[M] with RepoTable[M], M <: Model[M]](table: TableQuery[T]) = {
+    // : Query[T, M] = {
     // TODO: Use this.time
     if(history) {
       val dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isAfter _)

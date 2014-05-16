@@ -2,7 +2,6 @@ package controllers
 
 import java.util.UUID
 import models.PersonRole._
-import models.{ User, Persons, Person, LoginUsers, Model, Id }
 import play.api.data.format.Formats._
 import play.api.data.format.Formatter
 import play.api.data.Forms._
@@ -52,9 +51,8 @@ object Utils {
     dbSession: Session,
     dbExecutionContext: ExecutionContext,
     user: Person,
-    request: Request[A],
-    now: DateTime = new DateTime()
-  ) extends WrappedRequest[A](request)
+    request: Request[A]
+  ) extends WrappedRequest[A](request) with Connection
 
   implicit def slickRequestAsSession[_](implicit r: SlickRequest[_]): Session = r.dbSession
   // implicit def slickRequestAsExecutionContext[_](implicit r: SlickRequest[_]): ExecutionContext = r.dbExecutionContext

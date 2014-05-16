@@ -15,21 +15,22 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
 /** Populates the database with fake data for testing. Global.onStart() is
   * called when the application starts. */
   override def onStart(app: Application): Unit = {
+    val db = models.Database(new DateTime())
+    val connection = new Object() with Connection
     DB withSession { implicit s: Session =>
-      if(Topics.all.isEmpty) {
+      if(db.topics.list.isEmpty) {
         // Passwords = 1234567890
         securesocial.core.UserService.save(User("4@4", "userpass", "4@4", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$i2jZu3F6rty/a0vj8Jbeb.BnZNW7dXutAM8wSXLIdIolJETt8YdWe"), None).toIdentity)
         
-        val now: DateTime = DateTime.now
-        List(
-          "Language design and implementation",
-          "Library design and implementation patterns for extending Scala",
-          "Formal techniques for Scala-like programs",
-          "Concurrent and distributed programming",
-          "Safety and reliability",
-          "Tools",
-          "Case studies, experience reports, and pearls"
-        ) foreach (Topics ins Topic(_))
+        connection insert (
+          Topic("Language design and implementation"),
+          Topic("Library design and implementation patterns for extending Scala"),
+          Topic("Formal techniques for Scala-like programs"),
+          Topic("Concurrent and distributed programming"),
+          Topic("Safety and reliability"),
+          Topic("Tools"),
+          Topic("Case studies, experience reports, and pearls")
+        )
         
         // Some demo papers.
         val src = Source.fromFile("test/sigplanconf-template.pdf", "ISO8859-1").map(_.toByte).toArray
@@ -59,8 +60,8 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
           // andré van delft
           ("Dataflow Constructs for a Language Extension Based on the Algebra of Communicating Processes", Full_Paper)
         ) foreach { case (title, format) =>
-          val pdf = Files ins File("sigplanconf.pdf", src.length, src)
-          Papers ins Paper(title, format, "keywords", "abstract", 0, Some(pdf))
+          val file = File("sigplanconf.pdf", src.length, src)
+          connection insert (file, Paper(title, format, "keywords", "abstract", 0, Some(file.id)))
         }
         
       }
