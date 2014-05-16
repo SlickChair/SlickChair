@@ -25,10 +25,11 @@ trait Model[M] {
   }).asInstanceOf[M]
 }
 
-object Connection {
-  def database(): Database = Database(new DateTime())
-  def insert(ms: Model[_]*)(implicit s: Session): (Database, Database) = insertAll(ms)
-  def insertAll(ms: Seq[_])(implicit s: Session): (Database, Database) = {
+case class Connection(session: Session) {
+  def database(): Database = Database(new DateTime(), session)
+  def insert(ms: Model[_]*): (Database, Database) = insertAll(ms)
+  def insertAll(ms: Seq[_]): (Database, Database) = {
+    implicit val s: Session = session
     val now: DateTime = new DateTime()
     ms foreach { _ match {
       case m: Topic => TableQuery[TopicTable] insert m.copy(metadata=(m.id, now, ""))
@@ -43,11 +44,11 @@ object Connection {
       case m: Bid => TableQuery[BidTable] insert m.copy(metadata=(m.id, now, ""))
       case m: Assignment => TableQuery[AssignmentTable] insert m.copy(metadata=(m.id, now, ""))
     }}
-    (Database(now minusMillis 1), Database(now))
+    (Database(now minusMillis 1, session), Database(now, session))
   }
 }
 
-case class Database(val time: DateTime, val history: Boolean = false) extends ImplicitMappers {
+case class Database(val time: DateTime, val session: Session, val history: Boolean = false) extends ImplicitMappers {
   def asOf(time: DateTime): Database = this copy (time=time)
   def equals(database: Database): Boolean = this.basis == database.basis
   def basis(): DateTime = ???

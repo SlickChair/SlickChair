@@ -15,9 +15,9 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
 /** Populates the database with fake data for testing. Global.onStart() is
   * called when the application starts. */
   override def onStart(app: Application): Unit = {
-    val db = models.Database(new DateTime())
     DB withSession { implicit s: Session =>
-      val connection = Connection
+      val connection = Connection(s)
+      val db = connection.database()
       if(db.topics.list.isEmpty) {
         // Passwords = 1234567890
         securesocial.core.UserService.save(User("4@4", "userpass", "4@4", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$i2jZu3F6rty/a0vj8Jbeb.BnZNW7dXutAM8wSXLIdIolJETt8YdWe"), None).toIdentity)

@@ -3,7 +3,8 @@ package models
 import play.api.db.slick.Config.driver.simple._
 import org.joda.time.DateTime
 
-case class Query(db: Database)(implicit s: Session) extends ImplicitMappers {
+case class Query(db: Database) extends ImplicitMappers {
+  implicit val session: Session = db.session
   def topicsOf(id: Id[Paper]): List[Topic] = {
     val allPaperTopics = db.paperTopics filter (_.paperid is id)
     val lastShotPaperTopics = allPaperTopics filter (_.updatedAt is allPaperTopics.map(_.updatedAt).max)

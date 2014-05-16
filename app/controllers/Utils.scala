@@ -53,11 +53,11 @@ object Utils {
     user: Person,
     request: Request[A]
   ) extends WrappedRequest[A](request) {
-    val connection = Connection
+    val connection = Connection(dbSession)
     val db = connection.database()
   }
 
-  implicit def slickRequestAsSession[_](implicit r: SlickRequest[_]): Session = r.dbSession
+  // implicit def slickRequestAsSession[_](implicit r: SlickRequest[_]): Session = r.dbSession
   // implicit def slickRequestAsExecutionContext[_](implicit r: SlickRequest[_]): ExecutionContext = r.dbExecutionContext
   
   /** Custom mix between securesocial.core.SecureSocial and play.api.db.slick.DBAction */
@@ -102,7 +102,7 @@ object Utils {
         secureSocialUser <- LoginUsers.UserByidentityId(authenticator.identityId).firstOption.map(_.toIdentity)
       ) yield {
         Authenticator.save(authenticator.touch)
-        models.Query(Connection.database).personWithEmail(secureSocialUser.email.get)
+        models.Query(Connection(session).database).personWithEmail(secureSocialUser.email.get)
       }
     }
   }
