@@ -12,7 +12,6 @@ import controllers.LoginWrapper.loginWrapperForm
 import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
-import models.Topics
 import org.joda.time.DateTime
 import models.PersonRole._
 

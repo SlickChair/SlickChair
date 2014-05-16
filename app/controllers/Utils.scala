@@ -52,7 +52,10 @@ object Utils {
     dbExecutionContext: ExecutionContext,
     user: Person,
     request: Request[A]
-  ) extends WrappedRequest[A](request) with Connection
+  ) extends WrappedRequest[A](request) {
+    val connection = Connection
+    val db = connection.database()
+  }
 
   implicit def slickRequestAsSession[_](implicit r: SlickRequest[_]): Session = r.dbSession
   // implicit def slickRequestAsExecutionContext[_](implicit r: SlickRequest[_]): ExecutionContext = r.dbExecutionContext
@@ -99,7 +102,7 @@ object Utils {
         secureSocialUser <- LoginUsers.UserByidentityId(authenticator.identityId).firstOption.map(_.toIdentity)
       ) yield {
         Authenticator.save(authenticator.touch)
-        Persons.withEmail(secureSocialUser.email.get)
+        models.Query(Connection.database).personWithEmail(secureSocialUser.email.get)
       }
     }
   }

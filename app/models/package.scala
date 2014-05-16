@@ -7,4 +7,7 @@ package object models {
   type IdType = UUID
   def newId[M](): Id[M] = Id[M](UUID.randomUUID())
   def noMetadata[M]: MetaData[M] = (newId[M](), null, null)
+  
+  // implicit def databaseSession(implicit database: Database): Session = database.session
+  
 }

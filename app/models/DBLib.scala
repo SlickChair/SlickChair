@@ -16,18 +16,17 @@ trait Model[M] {
   val metadata: MetaData[M]
   lazy val (id, updatedAt, updatedBy) = metadata
 
-  def withId(newId: Id[M]) = (this: M) match {
+  def withId(newId: Id[M]): M = ((this: M) match {
     case x: Topic => x.copy(metadata=(Id[Topic](newId.value), x.updatedAt, x.updatedBy))
     case x: Person => x.copy(metadata=(Id[Person](newId.value), x.updatedAt, x.updatedBy))
     case x: Paper => x.copy(metadata=(Id[Paper](newId.value), x.updatedAt, x.updatedBy))
     case x: File => x.copy(metadata=(Id[File](newId.value), x.updatedAt, x.updatedBy))
     case x: Comment => x.copy(metadata=(Id[Comment](newId.value), x.updatedAt, x.updatedBy))
-    case _ => this
-  }
+  }).asInstanceOf[M]
 }
 
-trait Connection {
-  def db(): Database = Database(new DateTime())
+object Connection {
+  def database(): Database = Database(new DateTime())
   def insert(ms: Model[_]*)(implicit s: Session): (Database, Database) = insertAll(ms)
   def insertAll(ms: Seq[_])(implicit s: Session): (Database, Database) = {
     val now: DateTime = new DateTime()

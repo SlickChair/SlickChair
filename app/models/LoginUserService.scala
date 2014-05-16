@@ -15,13 +15,13 @@ class LoginUserService(application: Application) extends UserServicePlugin(appli
   def saveHook(user: User)(implicit s: Session): Unit = {
     import models._
     import PersonRole._
-    Persons.ins(Person(
+    Connection insert Person(
       user.firstname,
       user.lastname,
       "",
       Chair,
       user.email
-    ))
+    )
     ()
   }
 }

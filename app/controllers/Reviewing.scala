@@ -37,16 +37,16 @@ object Reviewing extends Controller {
       }
     }
     val form = bidForm fill BidForm(allBids)
-    Ok(views.html.bid(form, papers.toSet, Files.all.toSet, Navbar(Reviewer)))
+    Ok(views.html.bid(form, papers.toSet, Query(r.db).allFiles.toSet, Navbar(Reviewer)))
   }
 
   def doBid() = SlickAction(IsReviewer) { implicit r =>
     bidForm.bindFromRequest.fold(
       errors => 
-        Ok(views.html.bid(errors, Papers.all.toSet, Files.all.toSet, Navbar(Reviewer))),
+        Ok(views.html.bid(errors, Query(r.db).allPapers.toSet, Query(r.db).allFiles.toSet, Navbar(Reviewer))),
       form => {
         val bids = form.bids map { _ copy (personid=r.user.id) }
-        Bids insAll bids
+        r.connection.insertAll(bids)
         Redirect(routes.Reviewing.bid)
       }
     )
@@ -54,13 +54,13 @@ object Reviewing extends Controller {
 
   def papers() = SlickAction(IsReviewer) { implicit r =>
     Ok(views.html.main("List of all submissions", Navbar(Reviewer))(Html(
-      Papers.all.toString.replaceAll(",", ",\n<br>"))))
+      Query(r.db).allPapers.toString.replaceAll(",", ",\n<br>"))))
   }
   
   def make(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
-    val paper: Paper = Papers.withId(Id[Paper](id))
+    val paper: Paper = Query(r.db).paperWithId(Id[Paper](id))
     Ok(views.html.main("Submission " + shorten(paper.id.value), Navbar(Reviewer)) (
-       views.html.review(paper, Authors.of(paper.id), Topics.of(paper.id), paper.fileid.map(Files withId _))
+       views.html.review(paper, Query(r.db).authorsOf(paper.id), Query(r.db).topicsOf(paper.id), paper.fileid.map(Query(r.db) fileWithId _))
     ))
   }
   

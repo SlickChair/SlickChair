@@ -29,11 +29,8 @@ case class Query(db: Database)(implicit s: Session) extends ImplicitMappers {
   def paperWithId(id: Id[Paper]): Paper =
     db.papers.filter(_.id is id).first
   def allPapers: List[Paper] = db.papers.list
-  // TODO:
-  //   /** Files.all does not returns file blobs. An alternative to this hack 
-  //     * would be to have separated tables for metadata and content. */
-  //   override def all: List[File] = this.map {
-  //     f => (f.name, f.size, Array[Byte](), (f.id, f.updatedAt, f.updatedBy))
-  //   }.list map File.tupled
-  // }
+  def allTopics: List[Topic] = db.topics.list
+  def allFiles: List[File] = db.files.map { f =>
+    (f.name, f.size, Array[Byte](), (f.id, f.updatedAt, f.updatedBy))
+  }.list map File.tupled
 }
