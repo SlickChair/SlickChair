@@ -2,10 +2,18 @@ package models
 
 import org.joda.time.DateTime
 
-trait PaperPersonRelation[M <: PaperPersonRelation[M]] extends Model[M] {
+trait PaperPersonRelation[M] extends Model[M] {
   this: M with Product =>
   def paperid: Id[Paper]
   def personid: Id[Person]
+  override val id: Id[M] = idFromIds(paperid, personid)
+}
+
+trait PaperTopicRelation[M] extends Model[M] {
+  this: M with Product =>
+  def paperid: Id[Paper]
+  def topicid: Id[Topic]
+  override val id: Id[M] = idFromIds(paperid, topicid)
 }
 
 object PersonRole extends Enumeration with EnumMapper {
@@ -50,7 +58,9 @@ case class Person(
   role: PersonRole,
   email: String,
   metadata: Metadata[Person] = noMetadata
-) extends Model[Person]
+) extends Model[Person] {
+  override val id = idFromString(email)
+}
 
 case class Paper(
   title: String,
@@ -66,7 +76,7 @@ case class PaperTopic(
   paperid: Id[Paper],
   topicid: Id[Topic],
   metadata: Metadata[PaperTopic] = noMetadata
-) extends Model[PaperTopic]
+) extends PaperTopicRelation[PaperTopic]
 
 case class Author(
   paperid: Id[Paper],
@@ -91,7 +101,7 @@ case class Bid(
 
 case class Assignment(
   paperid: Id[Paper],
-  personid: Id[Person]  ,
+  personid: Id[Person],
   metadata: Metadata[Assignment] = noMetadata
 ) extends PaperPersonRelation[Assignment]
 

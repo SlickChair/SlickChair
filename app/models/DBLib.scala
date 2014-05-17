@@ -8,14 +8,26 @@ import ReviewConfidence._
 import ReviewEvaluation._
 import BidValue._
 import java.sql.Timestamp
+import java.util.UUID
+import java.nio.ByteBuffer
 
 case class Id[M](value: IdType)
 
 trait Model[M] {
   this: M with Product =>
   val metadata: Metadata[M]
-  lazy val (id, updatedAt, updatedBy) = metadata
-
+  val (id, updatedAt, updatedBy) = metadata
+  
+  protected def idFromIds(id1: Id[_], id2: Id[_]): Id[M] = Id[M](new UUID(
+    id1.value.getMostSignificantBits() ^ id2.value.getMostSignificantBits(),
+    id1.value.getLeastSignificantBits() ^ id2.value.getLeastSignificantBits() ^ getClass().hashCode
+  ))
+  
+  protected def idFromString(s: String): Id[M] = {
+    val l = s.padTo(16, 'a').toCharArray map (_.toByte) grouped 8 map (ByteBuffer.wrap(_).getLong) take 2
+    Id[M](new UUID(l.next(), l.next() ^ s.hashCode))    
+  }
+  
   def withId(newId: Id[M]): M = ((this: M) match {
     case x: Topic => x.copy(metadata=(Id[Topic](newId.value), x.updatedAt, x.updatedBy))
     case x: Person => x.copy(metadata=(Id[Person](newId.value), x.updatedAt, x.updatedBy))
@@ -52,19 +64,19 @@ case class Database(val time: DateTime, val session: Session, val history: Boole
   def asOf(time: DateTime): Database = this copy (time=time)
   def equals(database: Database): Boolean = this.basis == database.basis
   def basis(): DateTime = ???
-    
+  
   private def timeMod[T <: Table[M] with RepoTable[M], M <: Model[M]](table: TableQuery[T]) = {
     // : Query[T, M] = {
     // TODO: Use this.time
     if(history) {
+      table
+    } else {
       val dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isAfter _)
       val maxDates = table.groupBy (_.id) map { case (id, xs) => (id, xs.map(_.updatedAt).max) }
       for {
         c <- table
         s <- maxDates if ((c.id is s._1) && (c.updatedAt is s._2))
       } yield c
-    } else {
-      table
     }
   }
   
