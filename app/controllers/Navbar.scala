@@ -19,8 +19,9 @@ object Navbar {
         (routes.Reviewing.papers, "Submissions") :: 
         (routes.Reviewing.bid, "Bidding") :: Nil
       case Submitter =>
-        val papers = Query(r.db) papersOf r.user.email map (id =>
-          (routes.Submitting.info(id.value), "Submission " + shorten(id.value)))
+        val papers = Query(r.db) papersOf r.user.id map { p =>
+          (routes.Submitting.info(p.id.value), "Submission " + Query(r.db).indexOf(p.id))
+        }
         newSubmission :: papers
     })
     views.html.navbar(Some(r.user), Some(Query(r.db) roleOf r.user.id), currentRole, roleSpecificEntries)

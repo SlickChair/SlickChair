@@ -28,6 +28,10 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
           Person("Foo", "Bar", "Org", "pcmember")
         )
         
+        // List(Person(Olivier,Blanvillain,EPFL,olivierblanvillain@gmail.com,(Id(20484e20-40e6-4504-bec7-db9464485e2c),null,null)))
+        
+        // List(Role(Id(6f6c6976-5a91-1e95-939e-91898b3ccea0),Chair,(Id(6caf1565-27e2-42cf-b5ca-85f5e324f36f),null,null)))
+        
         connection insert chairs
         connection insert chairs.map(p => Role(p.id, Chair)) 
         connection insert programCommitteeMembers

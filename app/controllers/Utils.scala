@@ -34,8 +34,6 @@ object Utils {
     override def unbind(key: String, value: UUID) = Map(key -> value.toString)
   })
   
-  def shorten(id: IdType): String = id.toString.take(4).toUpperCase
-  
   def enumMapping(enum: Enumeration): Mapping[enum.Value] = mapping("value" -> nonEmptyText)(enum.withName(_))(Some(_).map(_.toString))
   
   def idMapping[M <: Model[M]]: Mapping[Id[M]] = mapping(

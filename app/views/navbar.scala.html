@@ -7,7 +7,7 @@
 @import securesocial.core.providers.utils.RoutesHelper
 @import models.PersonRole._
 
-@idSize = @{ models.newId.value.toString.size }
+@idSize = @{ 1 /* models.newId.value.toString.size */ }
 @toString(role: PersonRole) = {
   @role match {
     case Chair => { Chair }
@@ -39,12 +39,12 @@
     }
   </ul>
   
-@(user, userRole, currentRole) match {
-  case (Some(Person(_, _, _, email, _)), Some(Submitter), Submitter) => {
+  @*case (Some(Person(_, _, _, email, _)), Some(Submitter), Submitter) => {
     <p class="navbar-text pull-right">
       @email — <a href="@RoutesHelper.logout()" class="navbar-link">Sign out</a>
     </p>
-  }
+  }*@
+@(user, userRole, currentRole) match {
   case (Some(Person(_, _, _, email, _)), Some(role), _) => {
     <ul class="nav navbar-nav navbar-right">
       <li class="dropdown">

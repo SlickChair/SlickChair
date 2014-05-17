@@ -24,25 +24,25 @@ case class SubmissionForm(
 
 object Submitting extends Controller {
   private val required = Messages("error.required")
-  val paperMapping: Mapping[Paper] = mapping(
+  def paperMapping: Mapping[Paper] = mapping(
     "title" -> nonEmptyText,
     "format" -> enumMapping(PaperType),
     "keywords" -> nonEmptyText,
     "abstrct" -> nonEmptyText,
     "nauthors" -> number.verifying(required, _ > 0),
     "fileid" -> ignored(Option.empty[Id[File]]),
-    "metadata" -> ignored(noMetadata[Paper])
+    "metadata" -> ignored(newMetadata[Paper])
   )(Paper.apply _)(Paper.unapply _)
   
-  val authorMapping: Mapping[Person] = mapping(
+  def authorMapping: Mapping[Person] = mapping(
     "firstname" -> text,
     "lastname" -> text,
     "organization" -> text,
     "email" -> text,
-    "metadata" -> ignored(noMetadata[Person])
+    "metadata" -> ignored(newMetadata[Person])
   )(Person.apply _)(Person.unapply _)
 
-  val submissionForm: Form[SubmissionForm] = Form(
+  def submissionForm: Form[SubmissionForm] = Form(
     mapping(
       "paper" -> paperMapping,
       "authors" -> list(authorMapping),
@@ -60,7 +60,7 @@ object Submitting extends Controller {
   /** Displays the informations of a given submission. */
   def info(id: IdType) = SlickAction(IsAuthorOf(id)) { implicit r =>
     val paper: Paper = Query(r.db) paperWithId Id[Paper](id)
-    Ok(views.html.main("Submission " + shorten(paper.id.value), Navbar(Submitter)) (
+    Ok(views.html.main("Submission " + Query(r.db).indexOf(paper.id), Navbar(Submitter)) (
        views.html.submissioninfo(paper, Query(r.db).authorsOf(paper.id), Query(r.db).topicsOf(paper.id), paper.fileid.map(Query(r.db) fileWithId _))
     ))
   }
@@ -76,7 +76,7 @@ object Submitting extends Controller {
       allTopics.zipWithIndex.filter(paperTopics contains _._1).map(ti =>
         (s"topics[${ti._2}]", ti._1.id.value.toString)).toMap
     )
-    Ok(views.html.submissionform("Editing Submission " + shorten(id), existingSubmissionForm, allTopics, routes.Submitting.doEdit(id), Navbar(Submitter)))
+    Ok(views.html.submissionform("Editing Submission " + Query(r.db).indexOf(paper.id), existingSubmissionForm, allTopics, routes.Submitting.doEdit(id), Navbar(Submitter)))
   }
   
   /** Handles a new submission. Creates a database entry with the form data. */
@@ -133,7 +133,10 @@ object Submitting extends Controller {
         val paperTopics: List[PaperTopic] = form.topics.map { i =>
           PaperTopic(paper.id, Id[Topic](i))
         }
-        r.connection.insert(paper :: file.toList ::: persons ::: authors ::: paperTopics)
+        val pindex = PaperIndex(paper.id)
+        play.api.Logger.error(paper.toString)
+        
+        r.connection insert (pindex :: paper :: file.toList ::: persons ::: authors ::: paperTopics)
         Redirect(routes.Submitting.info(paper.id.value))
       }
     )

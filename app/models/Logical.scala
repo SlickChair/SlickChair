@@ -34,7 +34,7 @@ import BidValue._
 
 case class Topic(
   name: String,
-  metadata: Metadata[Topic] = noMetadata
+  metadata: Metadata[Topic] = newMetadata
 ) extends Model[Topic]
 
 case class Person(
@@ -42,17 +42,17 @@ case class Person(
   lastname: String,
   organization: String,
   email: String,
-  metadata: Metadata[Person] = noMetadata
+  metadata: Metadata[Person] = newMetadata
 ) extends Model[Person] {
-  override val id = idFromString(email)
+  override val id = pk(email)
 }
 
 case class Role(
   personid: Id[Person],
   value: PersonRole,
-  metadata: Metadata[Role] = noMetadata
+  metadata: Metadata[Role] = newMetadata
 ) extends Model[Role] {
-  override val id = idFromId(personid)
+  override val id = pk(personid)
 }
 
 case class Paper(
@@ -62,55 +62,62 @@ case class Paper(
   abstrct: String,
   nauthors: Int,
   fileid: Option[Id[File]],
-  metadata: Metadata[Paper] = noMetadata
+  metadata: Metadata[Paper] = newMetadata
 ) extends Model[Paper]
+
+case class PaperIndex(
+  paperid: Id[Paper],
+  metadata: Metadata[PaperIndex] = newMetadata
+) extends Model[PaperIndex] {
+  override val id = pk(paperid)
+}
 
 case class PaperTopic(
   paperid: Id[Paper],
   topicid: Id[Topic],
-  metadata: Metadata[PaperTopic] = noMetadata
+  metadata: Metadata[PaperTopic] = newMetadata
 ) extends Model[PaperTopic] {
-  override val id = idFromIds(paperid, topicid)
+  override val id = pk(paperid, topicid)
 }
 
 case class Author(
   paperid: Id[Paper],
   personid: Id[Person],
   position: Int,
-  metadata: Metadata[Author] = noMetadata
+  metadata: Metadata[Author] = newMetadata
 ) extends Model[Author] {
-  override val id = idFromIds(paperid, personid)
+  override val id = pk(paperid, personid)
 }
 
 case class File(
   name: String,
   size: Long,
   content: Array[Byte],
-  metadata: Metadata[File] = noMetadata
+  metadata: Metadata[File] = newMetadata
 ) extends Model[File]
 
 case class Bid(
   paperid: Id[Paper],
   personid: Id[Person],
   value: BidValue,
-  metadata: Metadata[Bid] = noMetadata
+  metadata: Metadata[Bid] = newMetadata
 ) extends Model[Bid] {
-  override val id = idFromIds(paperid, personid)
+  override val id = pk(paperid, personid)
 }
 
 case class Assignment(
   paperid: Id[Paper],
   personid: Id[Person],
-  metadata: Metadata[Assignment] = noMetadata
+  metadata: Metadata[Assignment] = newMetadata
 ) extends Model[Assignment] {
-  override val id = idFromIds(paperid, personid)
+  override val id = pk(paperid, personid)
 }
 
 case class Comment(
   paperid: Id[Paper],
   personid: Id[Person],
   content: String,
-  metadata: Metadata[Comment] = noMetadata
+  metadata: Metadata[Comment] = newMetadata
 ) extends Model[Comment]
 
 case class Review(
@@ -119,14 +126,14 @@ case class Review(
   confidence: ReviewConfidence,
   evaluation: ReviewEvaluation,
   content: String,
-  metadata: Metadata[Review] = noMetadata
+  metadata: Metadata[Review] = newMetadata
 ) extends Model[Review] {
-  override val id = idFromIds(paperid, personid)
+  override val id = pk(paperid, personid)
 }
 
 case class Email(
   to: String,
   subject: String,
   content: String,
-  metadata: Metadata[Email] = noMetadata
+  metadata: Metadata[Email] = newMetadata
 ) extends Model[Email]

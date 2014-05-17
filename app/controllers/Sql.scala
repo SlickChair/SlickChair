@@ -17,7 +17,7 @@ object SqlMethod extends Enumeration {
 import SqlMethod._
 
 object Sql extends Controller {
-  val queryForm = Form(
+  def queryForm = Form(
     tuple(
       "query" -> text,
       "method" -> mapping(

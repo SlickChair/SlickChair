@@ -15,14 +15,14 @@ import Utils._
 case class BidForm(bids: List[Bid])
 
 object Reviewing extends Controller {
-  val bidMapping: Mapping[Bid] = mapping(
+  def bidMapping: Mapping[Bid] = mapping(
     "paperid" -> idMapping[Paper],
-    "personid" -> ignored(noMetadata[Person]._1),
+    "personid" -> ignored(newMetadata[Person]._1),
     "bid" -> enumMapping(BidValue),
-    "metadata" -> ignored(noMetadata[Bid])
+    "metadata" -> ignored(newMetadata[Bid])
   )(Bid.apply _)(Bid.unapply _)
 
-  val bidForm: Form[BidForm] = Form(
+  def bidForm: Form[BidForm] = Form(
     mapping("bids" -> list(bidMapping))
     (BidForm.apply _)(BidForm.unapply _)
   )
@@ -43,7 +43,7 @@ object Reviewing extends Controller {
   def doBid() = SlickAction(IsReviewer) { implicit r =>
     bidForm.bindFromRequest.fold(
       errors => 
-        Ok(views.html.bid(errors, Query(r.db).allPapers.toSet, Query(r.db).allFiles.toSet, Navbar(Reviewer))),
+        Ok(views.html.bid(errors, Query(r.db).allPapers.toSet,  Query(r.db).allFiles.toSet, Navbar(Reviewer))),
       form => {
         val bids = form.bids map { _ copy (personid=r.user.id) }
         r.connection.insert(bids)
@@ -58,8 +58,8 @@ object Reviewing extends Controller {
   }
   
   def make(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
-    val paper: Paper = Query(r.db).paperWithId(Id[Paper](id))
-    Ok(views.html.main("Submission " + shorten(paper.id.value), Navbar(Reviewer)) (
+    val paper: Paper = Query(r.db) paperWithId Id[Paper](id)
+    Ok(views.html.main("Submission " + Query(r.db).indexOf(paper.id), Navbar(Reviewer)) (
        views.html.review(paper, Query(r.db).authorsOf(paper.id), Query(r.db).topicsOf(paper.id), paper.fileid.map(Query(r.db) fileWithId _))
     ))
   }

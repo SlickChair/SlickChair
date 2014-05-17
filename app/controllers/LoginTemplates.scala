@@ -2,7 +2,7 @@ package controllers
 
 import play.api.mvc.{ RequestHeader, Request }
 import play.api.templates.{ Html, Txt }
-import play.api.{ Logger, Plugin, Application }
+import play.api.{ Plugin, Application }
 import securesocial.core.{ SocialUser, SecuredRequest }
 import play.api.data.Form
 import securesocial.controllers.Registration.RegistrationInfo

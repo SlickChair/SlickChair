@@ -32,8 +32,6 @@ object LoginWrapper extends Controller with SecureSocial {
   /** Dispatches to the appropriate action as depending of the `create` field
     * and the existence of the user in the database. */
   def dispatch = Action { implicit request =>
-    play.api.Logger.info("dispatch")
-
     loginWrapperForm.bindFromRequest.fold(
       errors => Ok("LoginWrapper errors: " + errors), // TODO, show in src form? BadRequest(...)
       form => {

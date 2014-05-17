@@ -5,7 +5,6 @@
 )
 
 @import controllers.FileServing.linkToFile
-@import controllers.Utils.shorten
 @import models.BidValue._
 @import helper.FieldConstructors.table
 
@@ -15,6 +14,7 @@
       <thead>
         <tr>
           <th>Bid</th>
+          <th>Id</th>
           <th>Title</th>
           <th>File</th>
         </tr>
@@ -43,10 +43,10 @@
             <td class="hidden">
               <input type="text" name="bids[@index].paperid.value" value="@bid.paperid.value">
             </td>
-            @*<td>
-              <div title="@bid.paperid.value">@shorten(bid.paperid.value)<div>
-            </td>*@
             @papers.find(_.id == bid.paperid).map { paper =>
+              @*<td>
+                <div title="@bid.paperid.value">@indices.find(_.paperid == paper.id).get.value<div>
+              </td>*@
               @if(bidForm.get.bids.find(bid => bid.paperid == paper.id && bid.value == Conflict)) {
                 <td>@paper.title</td><td>-</td>
               } else {
