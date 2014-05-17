@@ -2,20 +2,6 @@ package models
 
 import org.joda.time.DateTime
 
-trait PaperPersonRelation[M] extends Model[M] {
-  this: M with Product =>
-  def paperid: Id[Paper]
-  def personid: Id[Person]
-  override val id: Id[M] = idFromIds(paperid, personid)
-}
-
-trait PaperTopicRelation[M] extends Model[M] {
-  this: M with Product =>
-  def paperid: Id[Paper]
-  def topicid: Id[Topic]
-  override val id: Id[M] = idFromIds(paperid, topicid)
-}
-
 object PersonRole extends Enumeration with EnumMapper {
   type PersonRole = Value
   val Submitter, Reviewer, Chair = Value
@@ -55,11 +41,18 @@ case class Person(
   firstname: String,
   lastname: String,
   organization: String,
-  role: PersonRole,
   email: String,
   metadata: Metadata[Person] = noMetadata
 ) extends Model[Person] {
   override val id = idFromString(email)
+}
+
+case class Role(
+  personid: Id[Person],
+  value: PersonRole,
+  metadata: Metadata[Role] = noMetadata
+) extends Model[Role] {
+  override val id = idFromId(personid)
 }
 
 case class Paper(
@@ -76,14 +69,18 @@ case class PaperTopic(
   paperid: Id[Paper],
   topicid: Id[Topic],
   metadata: Metadata[PaperTopic] = noMetadata
-) extends PaperTopicRelation[PaperTopic]
+) extends Model[PaperTopic] {
+  override val id = idFromIds(paperid, topicid)
+}
 
 case class Author(
   paperid: Id[Paper],
   personid: Id[Person],
   position: Int,
   metadata: Metadata[Author] = noMetadata
-) extends PaperPersonRelation[Author]
+) extends Model[Author] {
+  override val id = idFromIds(paperid, personid)
+}
 
 case class File(
   name: String,
@@ -97,13 +94,17 @@ case class Bid(
   personid: Id[Person],
   value: BidValue,
   metadata: Metadata[Bid] = noMetadata
-) extends PaperPersonRelation[Bid]
+) extends Model[Bid] {
+  override val id = idFromIds(paperid, personid)
+}
 
 case class Assignment(
   paperid: Id[Paper],
   personid: Id[Person],
   metadata: Metadata[Assignment] = noMetadata
-) extends PaperPersonRelation[Assignment]
+) extends Model[Assignment] {
+  override val id = idFromIds(paperid, personid)
+}
 
 case class Comment(
   paperid: Id[Paper],
@@ -119,7 +120,9 @@ case class Review(
   evaluation: ReviewEvaluation,
   content: String,
   metadata: Metadata[Review] = noMetadata
-) extends PaperPersonRelation[Review]
+) extends Model[Review] {
+  override val id = idFromIds(paperid, personid)
+}
 
 case class Email(
   to: String,

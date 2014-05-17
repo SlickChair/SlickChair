@@ -2,6 +2,7 @@ package models
 
 import play.api.db.slick.Config.driver.simple._
 import org.joda.time.DateTime
+import PersonRole._
 
 case class Query(db: Database) extends ImplicitMappers {
   implicit val session: Session = db.session
@@ -12,6 +13,8 @@ case class Query(db: Database) extends ImplicitMappers {
   }
   def personWithEmail(email: String): Person =
     db.persons.filter(_.email is email).first
+  def roleOf(id: Id[Person]): PersonRole =
+    (db.roles.filter(_.personid is id).firstOption map (_.value)) getOrElse Submitter
   def papersOf(email: String): List[Id[Paper]] =
     db.authors.filter(_.personid is personWithEmail(email).id).groupBy(_.paperid).map(_._1).list
   def paperWithFile(id: Id[File]): Id[Paper] =

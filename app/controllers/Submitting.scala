@@ -38,7 +38,6 @@ object Submitting extends Controller {
     "firstname" -> text,
     "lastname" -> text,
     "organization" -> text,
-    "role" -> ignored(Submitter),
     "email" -> text,
     "metadata" -> ignored(noMetadata[Person])
   )(Person.apply _)(Person.unapply _)
@@ -98,7 +97,7 @@ object Submitting extends Controller {
     val bindedForm = submissionForm.bindFromRequest
     val authorsWIndex = bindedForm.get.authors.take(bindedForm.get.paper.nauthors).zipWithIndex
     val emptyFieldErr: Seq[FormError] = authorsWIndex.flatMap { 
-      case (Person(fn, ln, org, _, email, _), i) =>
+      case (Person(fn, ln, org, email, _), i) =>
         // Author fields are populated for author i; i < nauthors
         Seq((fn, i, "firstname"), (ln, i, "lastname"), (org, i, "organization"), (email, i, "email"))
           .filter { _._1.trim().isEmpty }
@@ -134,7 +133,7 @@ object Submitting extends Controller {
         val paperTopics: List[PaperTopic] = form.topics.map { i =>
           PaperTopic(paper.id, Id[Topic](i))
         }
-        r.connection.insertAll(paper :: file.toList ::: persons ::: authors ::: paperTopics)
+        r.connection.insert(paper :: file.toList ::: persons ::: authors ::: paperTopics)
         Redirect(routes.Submitting.info(paper.id.value))
       }
     )

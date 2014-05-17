@@ -46,7 +46,7 @@ object Reviewing extends Controller {
         Ok(views.html.bid(errors, Query(r.db).allPapers.toSet, Query(r.db).allFiles.toSet, Navbar(Reviewer))),
       form => {
         val bids = form.bids map { _ copy (personid=r.user.id) }
-        r.connection.insertAll(bids)
+        r.connection.insert(bids)
         Redirect(routes.Reviewing.bid)
       }
     )

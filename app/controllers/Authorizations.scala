@@ -15,11 +15,14 @@ object IsSubmitter extends Authorization {
 }
 
 object IsReviewer extends Authorization {
-  def apply[A](implicit r: SlickRequest[A]) = r.user.role == Reviewer || r.user.role == Chair
+  def apply[A](implicit r: SlickRequest[A]) = {
+    val role = Query(r.db) roleOf r.user.id
+    role == Reviewer || role == Chair
+  }
 }
 
 object IsChair extends Authorization {
-  def apply[A](implicit r: SlickRequest[A]) = r.user.role == Chair
+  def apply[A](implicit r: SlickRequest[A]) = Query(r.db).roleOf(r.user.id) == Chair
 }
 
 case class IsAuthorOf(paperId: IdType) extends Authorization {

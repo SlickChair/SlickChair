@@ -14,13 +14,16 @@ import java.nio.ByteBuffer
 case class Id[M](value: IdType)
 
 trait Model[M] {
-  this: M with Product =>
-  val metadata: Metadata[M]
+  this: Product with M { def metadata: Metadata[M] } =>
   val (id, updatedAt, updatedBy) = metadata
   
   protected def idFromIds(id1: Id[_], id2: Id[_]): Id[M] = Id[M](new UUID(
     id1.value.getMostSignificantBits() ^ id2.value.getMostSignificantBits(),
     id1.value.getLeastSignificantBits() ^ id2.value.getLeastSignificantBits() ^ getClass().hashCode
+  ))
+
+  protected def idFromId(id: Id[_]): Id[M] = Id[M](new UUID(
+    id.value.getMostSignificantBits(), id.value.getLeastSignificantBits() ^ getClass().hashCode
   ))
   
   protected def idFromString(s: String): Id[M] = {
@@ -39,14 +42,14 @@ trait Model[M] {
 
 case class Connection(session: Session) {
   def database(): Database = Database(new DateTime(), session)
-  def insert(ms: Model[_]*): (Database, Database) = insertAll(ms)
-  def insertAll(ms: Seq[_]): (Database, Database) = {
+  def insert(ms: List[_]): (Database, Database) = {
     implicit val s: Session = session
     val now: DateTime = new DateTime()
     ms foreach { _ match {
       case m: Topic => TableQuery[TopicTable] insert m.copy(metadata=(m.id, now, ""))
       case m: Person => TableQuery[PersonTable] insert m.copy(metadata=(m.id, now, ""))
       case m: Paper => TableQuery[PaperTable] insert m.copy(metadata=(m.id, now, ""))
+      case m: Role => TableQuery[RoleTable] insert m.copy(metadata=(m.id, now, ""))
       case m: PaperTopic => TableQuery[PaperTopicTable] insert m.copy(metadata=(m.id, now, ""))
       case m: Author => TableQuery[AuthorTable] insert m.copy(metadata=(m.id, now, ""))
       case m: Comment => TableQuery[CommentTable] insert m.copy(metadata=(m.id, now, ""))
@@ -82,6 +85,7 @@ case class Database(val time: DateTime, val session: Session, val history: Boole
   
   val topics = timeMod[TopicTable, Topic](TableQuery[TopicTable])
   val persons = timeMod[PersonTable, Person](TableQuery[PersonTable])
+  val roles = timeMod[RoleTable, Role](TableQuery[RoleTable])
   val papers = timeMod[PaperTable, Paper](TableQuery[PaperTable])
   val paperTopics = timeMod[PaperTopicTable, PaperTopic](TableQuery[PaperTopicTable])
   val authors = timeMod[AuthorTable, Author](TableQuery[AuthorTable])
@@ -123,9 +127,14 @@ class PersonTable(tag: Tag) extends Table[Person](tag, "PERSON") with RepoTable[
   def firstname = column[String]("FIRSTNAME", O.DBType("TEXT"))
   def lastname = column[String]("LASTNAME", O.DBType("TEXT"))
   def organization = column[String]("ORGANIZATION")
-  def role = column[PersonRole]("ROLE")
   def email = column[String]("EMAIL", O.DBType("TEXT"))
-  def * = (firstname, lastname, organization, role, email, (id, updatedAt, updatedBy)) <> (Person.tupled, Person.unapply)
+  def * = (firstname, lastname, organization, email, (id, updatedAt, updatedBy)) <> (Person.tupled, Person.unapply)
+}
+
+class RoleTable(tag: Tag) extends Table[Role](tag, "ROLE") with RepoTable[Role] {
+  def personid = column[Id[Person]]("PERSONID")
+  def value = column[PersonRole]("VALUE")
+  def * = (personid, value, (id, updatedAt, updatedBy)) <> (Role.tupled, Role.unapply)
 }
 
 class PaperTable(tag: Tag) extends Table[Paper](tag, "PAPER") with RepoTable[Paper] {

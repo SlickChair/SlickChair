@@ -1,6 +1,7 @@
 import org.joda.time.DateTime
 
 import models._
+import PersonRole._
 import play.api._
 import play.api.mvc.WithFilters
 import models.PaperType._
@@ -17,12 +18,22 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
   override def onStart(app: Application): Unit = {
     DB withSession { implicit s: Session =>
       val connection = Connection(s)
-      val db = connection.database()
-      if(db.topics.list.isEmpty) {
-        // Passwords = 1234567890
-        securesocial.core.UserService.save(User("4@4", "userpass", "4@4", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$i2jZu3F6rty/a0vj8Jbeb.BnZNW7dXutAM8wSXLIdIolJETt8YdWe"), None).toIdentity)
+      if(connection.database().topics.list.isEmpty) {
         
-        connection insert (
+        val chairs = List(
+          Person("Olivier", "Blanvillain", "EPFL", "olivierblanvillain@gmail.com")
+        )
+        
+        val programCommitteeMembers = List(
+          Person("Foo", "Bar", "Org", "pcmember")
+        )
+        
+        connection insert chairs
+        connection insert chairs.map(p => Role(p.id, Chair)) 
+        connection insert programCommitteeMembers
+        connection insert programCommitteeMembers.map(p => Role(p.id, Reviewer))
+        
+        connection insert List(
           Topic("Language design and implementation"),
           Topic("Library design and implementation patterns for extending Scala"),
           Topic("Formal techniques for Scala-like programs"),
@@ -61,9 +72,13 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
           ("Dataflow Constructs for a Language Extension Based on the Algebra of Communicating Processes", Full_Paper)
         ) foreach { case (title, format) =>
           val file = File("sigplanconf.pdf", src.length, src)
-          connection insert (file, Paper(title, format, "keywords", "abstract", 0, Some(file.id)))
+          connection insert List(file, Paper(title, format, "keywords", "abstract", 0, Some(file.id)))
         }
         
+        // Passwords = 1234567890
+        securesocial.core.UserService.save(User("pcmember", "userpass", "pcmember", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$i2jZu3F6rty/a0vj8Jbeb.BnZNW7dXutAM8wSXLIdIolJETt8YdWe"), None).toIdentity)
+        
+        ()
       }
     }
   }

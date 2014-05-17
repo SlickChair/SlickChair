@@ -23,6 +23,8 @@ object Navbar {
           (routes.Submitting.info(id.value), "Submission " + shorten(id.value)))
         newSubmission :: papers
     })
-    views.html.navbar(Some(r.user), currentRole, roleSpecificEntries)
+    views.html.navbar(Some(r.user), Some(Query(r.db) roleOf r.user.id), currentRole, roleSpecificEntries)
   }
+  
+  val empty = views.html.navbar(None, None, models.PersonRole.Submitter, Nil)(null)
 }
