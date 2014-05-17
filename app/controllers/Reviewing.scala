@@ -17,9 +17,9 @@ case class BidForm(bids: List[Bid])
 object Reviewing extends Controller {
   val bidMapping: Mapping[Bid] = mapping(
     "paperid" -> idMapping[Paper],
-    "personid" -> curse[Id[Person]],
+    "personid" -> ignored(noMetadata[Person]._1),
     "bid" -> enumMapping(BidValue),
-    "metadata" -> curse[MetaData[Bid]]
+    "metadata" -> ignored(noMetadata[Bid])
   )(Bid.apply _)(Bid.unapply _)
 
   val bidForm: Form[BidForm] = Form(

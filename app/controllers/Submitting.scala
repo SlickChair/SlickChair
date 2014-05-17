@@ -30,8 +30,8 @@ object Submitting extends Controller {
     "keywords" -> nonEmptyText,
     "abstrct" -> nonEmptyText,
     "nauthors" -> number.verifying(required, _ > 0),
-    "fileid" -> curse[Option[Id[File]]],
-    "metadata" -> curse[MetaData[Paper]]
+    "fileid" -> ignored(Option.empty[Id[File]]),
+    "metadata" -> ignored(noMetadata[Paper])
   )(Paper.apply _)(Paper.unapply _)
   
   val authorMapping: Mapping[Person] = mapping(
@@ -40,7 +40,7 @@ object Submitting extends Controller {
     "organization" -> text,
     "role" -> ignored(Submitter),
     "email" -> text,
-    "metadata" -> curse[MetaData[Person]]
+    "metadata" -> ignored(noMetadata[Person])
   )(Person.apply _)(Person.unapply _)
 
   val submissionForm: Form[SubmissionForm] = Form(

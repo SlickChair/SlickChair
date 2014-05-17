@@ -20,8 +20,8 @@ import org.joda.time.DateTime
 import models._
 
 object Utils {
-  /** Source: https://github.com/guardian/deploy/blob/master/riff-raff/app/utils/Forms.scala */
   // val idTypeMapping: Mapping[models.IdType] = longNumber
+  /** Source: https://github.com/guardian/deploy/blob/master/riff-raff/app/utils/Forms.scala */
   val idTypeMapping: Mapping[models.IdType] = of[UUID](new Formatter[UUID] {
     override val format = Some(("format.uuid", Nil))
     override def bind(key: String, data: Map[String, String]) = {
@@ -36,11 +36,6 @@ object Utils {
   
   def shorten(id: IdType): String = id.toString.take(4).toUpperCase
   
-  /** Semantically, curse values need to be set when handling the POST on a
-    * form before storing the Paper in the database... This could be made
-    * type safe by using new case classes for forms. */
-  def curse[T]: Mapping[T] = ignored(null.asInstanceOf[T])
-
   def enumMapping(enum: Enumeration): Mapping[enum.Value] = mapping("value" -> nonEmptyText)(enum.withName(_))(Some(_).map(_.toString))
   
   def idMapping[M <: Model[M]]: Mapping[Id[M]] = mapping(
@@ -57,8 +52,7 @@ object Utils {
     val db = connection.database()
   }
 
-  // implicit def slickRequestAsSession[_](implicit r: SlickRequest[_]): Session = r.dbSession
-  // implicit def slickRequestAsExecutionContext[_](implicit r: SlickRequest[_]): ExecutionContext = r.dbExecutionContext
+  implicit def slickRequestAsExecutionContext[_](implicit r: SlickRequest[_]): ExecutionContext = r.dbExecutionContext
   
   /** Custom mix between securesocial.core.SecureSocial and play.api.db.slick.DBAction */
   object SlickAction {

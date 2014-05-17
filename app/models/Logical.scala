@@ -40,7 +40,7 @@ import BidValue._
 
 case class Topic(
   name: String,
-  metadata: MetaData[Topic] = noMetadata
+  metadata: Metadata[Topic] = noMetadata
 ) extends Model[Topic]
 
 case class Person(
@@ -49,7 +49,7 @@ case class Person(
   organization: String,
   role: PersonRole,
   email: String,
-  metadata: MetaData[Person] = noMetadata
+  metadata: Metadata[Person] = noMetadata
 ) extends Model[Person]
 
 case class Paper(
@@ -59,47 +59,47 @@ case class Paper(
   abstrct: String,
   nauthors: Int,
   fileid: Option[Id[File]],
-  metadata: MetaData[Paper] = noMetadata
+  metadata: Metadata[Paper] = noMetadata
 ) extends Model[Paper]
 
 case class PaperTopic(
   paperid: Id[Paper],
   topicid: Id[Topic],
-  metadata: MetaData[PaperTopic] = noMetadata
+  metadata: Metadata[PaperTopic] = noMetadata
 ) extends Model[PaperTopic]
 
 case class Author(
   paperid: Id[Paper],
   personid: Id[Person],
   position: Int,
-  metadata: MetaData[Author] = noMetadata
+  metadata: Metadata[Author] = noMetadata
 ) extends PaperPersonRelation[Author]
 
 case class File(
   name: String,
   size: Long,
   content: Array[Byte],
-  metadata: MetaData[File] = noMetadata
+  metadata: Metadata[File] = noMetadata
 ) extends Model[File]
 
 case class Bid(
   paperid: Id[Paper],
   personid: Id[Person],
   value: BidValue,
-  metadata: MetaData[Bid] = noMetadata
+  metadata: Metadata[Bid] = noMetadata
 ) extends PaperPersonRelation[Bid]
 
 case class Assignment(
   paperid: Id[Paper],
   personid: Id[Person]  ,
-  metadata: MetaData[Assignment] = noMetadata
+  metadata: Metadata[Assignment] = noMetadata
 ) extends PaperPersonRelation[Assignment]
 
 case class Comment(
   paperid: Id[Paper],
   personid: Id[Person],
   content: String,
-  metadata: MetaData[Comment] = noMetadata
+  metadata: Metadata[Comment] = noMetadata
 ) extends Model[Comment]
 
 case class Review(
@@ -108,12 +108,12 @@ case class Review(
   confidence: ReviewConfidence,
   evaluation: ReviewEvaluation,
   content: String,
-  metadata: MetaData[Review] = noMetadata
+  metadata: Metadata[Review] = noMetadata
 ) extends PaperPersonRelation[Review]
 
 case class Email(
   to: String,
   subject: String,
   content: String,
-  metadata: MetaData[Email] = noMetadata
+  metadata: Metadata[Email] = noMetadata
 ) extends Model[Email]

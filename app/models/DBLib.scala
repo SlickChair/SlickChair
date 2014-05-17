@@ -13,7 +13,7 @@ case class Id[M](value: IdType)
 
 trait Model[M] {
   this: M with Product =>
-  val metadata: MetaData[M]
+  val metadata: Metadata[M]
   lazy val (id, updatedAt, updatedBy) = metadata
 
   def withId(newId: Id[M]): M = ((this: M) match {
@@ -96,7 +96,8 @@ trait EnumMapper {
 
 trait RepoTable[M <: Model[M]] extends ImplicitMappers {
   this: Table[M] =>
-  def id = column[Id[M]]("ID", O.AutoInc)
+  def id = column[Id[M]]("ID")
+  // def id = column[Id[M]]("ID", O.AutoInc)
   def updatedAt = column[DateTime]("UPDATEDAT")
   def updatedBy = column[String]("UPDATEDBY", O.DBType("TEXT"))
 }
