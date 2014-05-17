@@ -22,7 +22,7 @@ object IsReviewer extends Authorization {
 }
 
 object IsChair extends Authorization {
-  def apply[A](implicit r: SlickRequest[A]) = true || Query(r.db).roleOf(r.user.id) == Chair
+  def apply[A](implicit r: SlickRequest[A]) = Query(r.db).roleOf(r.user.id) == Chair
 }
 
 case class IsAuthorOf(paperId: IdType) extends Authorization {

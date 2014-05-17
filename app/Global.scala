@@ -49,7 +49,7 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
         
         // Some demo papers.
         val src = Source.fromFile("test/sigplanconf-template.pdf", "ISO8859-1").map(_.toByte).toArray
-        List(
+        connection insert (List(
           // Régis Blanc (epfl), etienne kneuss (epfl), viktor kuncak (epfl) and philippe suter (epfl)
           ("Verification by Translation to Recursive Functions ", Full_Paper),
           // régis blanc (epfl)
@@ -74,10 +74,12 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
           ("What are the Odds? – Probabilistic Programming in Scala ", Full_Paper),
           // andré van delft
           ("Dataflow Constructs for a Language Extension Based on the Algebra of Communicating Processes", Full_Paper)
-        ) foreach { case (title, format) =>
+        ) flatMap { case (title, format) =>
           val file = File("sigplanconf.pdf", src.length, src)
-          connection insert List(file, Paper(title, format, "keywords", "abstract", 0, Some(file.id)))
-        }
+          val paper = Paper(title, format, "keywords", "abstract", 0, Some(file.id))
+          val paperIndex = PaperIndex(paper.id)
+          List(file, paper, paperIndex)
+        })
         
         // Passwords = 1234567890
         securesocial.core.UserService.save(User("pcmember", "userpass", "pcmember", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$i2jZu3F6rty/a0vj8Jbeb.BnZNW7dXutAM8wSXLIdIolJETt8YdWe"), None).toIdentity)

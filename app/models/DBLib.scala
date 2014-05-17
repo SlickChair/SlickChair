@@ -19,16 +19,16 @@ trait Model[M] {
   
   protected def pk(id1: Id[_], id2: Id[_]): Id[M] = Id[M](new UUID(
     id1.value.getMostSignificantBits() ^ id2.value.getMostSignificantBits(),
-    id1.value.getLeastSignificantBits() ^ id2.value.getLeastSignificantBits() ^ getClass().hashCode
+    id1.value.getLeastSignificantBits() ^ id2.value.getLeastSignificantBits() ^ getClass().toString.hashCode
   ))
 
   protected def pk(id: Id[_]): Id[M] = Id[M](new UUID(
-    id.value.getMostSignificantBits(), id.value.getLeastSignificantBits() ^ getClass().hashCode
+    id.value.getMostSignificantBits(), id.value.getLeastSignificantBits() ^ getClass().toString.hashCode
   ))
   
   protected def pk(s: String): Id[M] = {
     val l = s.padTo(16, 'a').toCharArray map (_.toByte) grouped 8 map (ByteBuffer.wrap(_).getLong) take 2
-    Id[M](new UUID(l.next(), l.next() ^ s.hashCode))    
+    Id[M](new UUID(l.next() ^ getClass().toString.hashCode, l.next() ^ s.hashCode))    
   }
   
   def withId(newId: Id[M]): M = ((this: M) match {

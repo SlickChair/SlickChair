@@ -134,8 +134,6 @@ object Submitting extends Controller {
           PaperTopic(paper.id, Id[Topic](i))
         }
         val pindex = PaperIndex(paper.id)
-        play.api.Logger.error(paper.toString)
-        
         r.connection insert (pindex :: paper :: file.toList ::: persons ::: authors ::: paperTopics)
         Redirect(routes.Submitting.info(paper.id.value))
       }
