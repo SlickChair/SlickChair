@@ -1,4 +1,5 @@
 @(user: Option[Person],
+  userRole: Option[PersonRole.PersonRole],
   currentRole: PersonRole.PersonRole,
   menu: List[(play.api.mvc.Call, String)]
 )(implicit request: play.api.mvc.Request[Any])
@@ -6,7 +7,7 @@
 @import securesocial.core.providers.utils.RoutesHelper
 @import models.PersonRole._
 
-@idSize = @{ models.newId.value.toString.size }
+@idSize = @{ 1 /* models.newId.value.toString.size */ }
 @toString(role: PersonRole) = {
   @role match {
     case Chair => { Chair }
@@ -38,35 +39,29 @@
     }
   </ul>
   
-@user match {
-  case None => {
+  @*case (Some(Person(_, _, _, email, _)), Some(Submitter), Submitter) => {
     <p class="navbar-text pull-right">
-      <a href="#" class="navbar-link">Disconnected</a>
+      @email — <a href="@RoutesHelper.logout()" class="navbar-link">Sign out</a>
     </p>
-  }
-  case Some(p) => {
+  }*@
+@(user, userRole, currentRole) match {
+  case (Some(Person(_, _, _, email, _)), Some(role), _) => {
     <ul class="nav navbar-nav navbar-right">
       <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">@p.email 
-        @(p.role, currentRole) match {
-          case (Submitter, Submitter) => {}
-          case (_, role) => { (@toString(role).toString.trim) }
-        }
-        <b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">@email (@toString(currentRole).toString.trim) <b class="caret"></b></a>
         <ul class="dropdown-menu">
-          @if(p.role != Submitter) { 
-            @List(Chair, Reviewer, Submitter).dropWhile(_ != p.role).map { role =>
-              @if(role == currentRole) {
-                <li><a class="disabeled">Change role to @toString(role)</a></li>
-              } else {
-                <li><a href="@changeRole(role)">Change role to @toString(role)</a></li>
-              }
+          @List(Chair, Reviewer, Submitter).dropWhile(_ != role).map { role =>
+            @if(role == currentRole) {
+              <li><a class="disabeled">Change role to @toString(role)</a></li>
+            } else {
+              <li><a href="@changeRole(role)">Change role to @toString(role)</a></li>
             }
-            <li class="divider"></li>
           }
-          <li><a href="@RoutesHelper.logout()">Disconnect</a></li>
+          <li class="divider"></li>
+          <li><a href="@RoutesHelper.logout()">Sign out</a></li>
         </ul>
       </li>
     </ul>
   }
+  case _ => {}
 }

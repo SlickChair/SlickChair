@@ -1,10 +1,10 @@
+import play.api.db.slick.Config.driver.simple._
 import org.joda.time.DateTime
 import controllers.Utils.SlickRequest
+import java.util.UUID
 
 package object models {
-  type MetaData[M <: Model[M]] = (Id[M], DateTime, String)
-  type IdType = Long
-  def newId[M <: Model[M]](): Id[M] = Id[M](-1)
-  def newMetaData[M <: Model[M]]()(implicit r: SlickRequest[_]): MetaData[M] =
-    (newId[M](), r.now, r.user.email)
+  type Metadata[M] = (Id[M], DateTime, String)
+  type IdType = UUID
+  def newMetadata[M]: Metadata[M] = (Id[M](UUID.randomUUID()), null, null)
 }

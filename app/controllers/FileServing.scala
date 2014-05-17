@@ -9,7 +9,7 @@ import play.api.templates.Html
 object FileServing extends Controller {
   def apply(id: IdType) = SlickAction(AuthorOrNCReviewer(id)) {
       implicit r =>
-    val file = Files.withId(Id[File](id))
+    val file = Query(r.db) fileWithId Id[File](id)
     val headers =
       if(file.name endsWith ".pdf") Map(
         CONTENT_TYPE -> "application/pdf",

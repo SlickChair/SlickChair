@@ -1,6 +1,5 @@
 package controllers
 
-import play.api.db.slick.Config.driver.simple._
 import play.api.mvc.{ Call, Request }
 import play.api.mvc.Request
 import play.api.templates.Html
@@ -20,10 +19,13 @@ object Navbar {
         (routes.Reviewing.papers, "Submissions") :: 
         (routes.Reviewing.bid, "Bidding") :: Nil
       case Submitter =>
-        val papers = Papers of r.user.email map (id =>
-          (routes.Submitting.info(id.value), "Submission " + shorten(id.value)))
+        val papers = Query(r.db) papersOf r.user.id map { p =>
+          (routes.Submitting.info(p.id.value), "Submission " + Query(r.db).indexOf(p.id))
+        }
         newSubmission :: papers
     })
-    views.html.navbar(Some(r.user), currentRole, roleSpecificEntries)
+    views.html.navbar(Some(r.user), Some(Query(r.db) roleOf r.user.id), currentRole, roleSpecificEntries)
   }
+  
+  val empty = views.html.navbar(None, None, models.PersonRole.Submitter, Nil)(null)
 }

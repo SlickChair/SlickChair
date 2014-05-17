@@ -2,7 +2,7 @@ package controllers
 
 import play.api.mvc.{ RequestHeader, Request }
 import play.api.templates.{ Html, Txt }
-import play.api.{ Logger, Plugin, Application }
+import play.api.{ Plugin, Application }
 import securesocial.core.{ SocialUser, SecuredRequest }
 import play.api.data.Form
 import securesocial.controllers.Registration.RegistrationInfo
@@ -12,7 +12,6 @@ import controllers.LoginWrapper.loginWrapperForm
 import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
-import models.Topics
 import org.joda.time.DateTime
 import models.PersonRole._
 

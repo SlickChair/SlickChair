@@ -1,14 +1,6 @@
 package models
 
 import org.joda.time.DateTime
-import play.api.db.slick.Config.driver.simple._
-
-case class Id[M <: Model[M]](value: IdType)
-
-trait Model[M <: Model[M]] {
-  val metadata: MetaData[M]
-  lazy val (id: Id[M], updatedAt, updatedBy) = metadata
-}
 
 object PersonRole extends Enumeration with EnumMapper {
   type PersonRole = Value
@@ -41,81 +33,107 @@ object BidValue extends Enumeration with EnumMapper {
 import BidValue._
 
 case class Topic(
-  metadata: MetaData[Topic],
-  name: String
+  name: String,
+  metadata: Metadata[Topic] = newMetadata
 ) extends Model[Topic]
 
 case class Person(
-  metadata: MetaData[Person],
   firstname: String,
   lastname: String,
   organization: String,
-  role: PersonRole,
-  email: String
-) extends Model[Person]
+  email: String,
+  metadata: Metadata[Person] = newMetadata
+) extends Model[Person] {
+  override val id = pk(email)
+}
+
+case class Role(
+  personid: Id[Person],
+  value: PersonRole,
+  metadata: Metadata[Role] = newMetadata
+) extends Model[Role] {
+  override val id = pk(personid)
+}
 
 case class Paper(
-  metadata: MetaData[Paper],
   title: String,
   format: PaperType,
   keywords: String,
   abstrct: String,
   nauthors: Int,
-  fileid: Option[Id[File]]
+  fileid: Option[Id[File]],
+  metadata: Metadata[Paper] = newMetadata
 ) extends Model[Paper]
 
-case class PaperTopic(
-  metadata: MetaData[PaperTopic],
+case class PaperIndex(
   paperid: Id[Paper],
-  topicid: Id[Topic]
-) extends Model[PaperTopic]
+  metadata: Metadata[PaperIndex] = newMetadata
+) extends Model[PaperIndex] {
+  override val id = pk(paperid)
+}
+
+case class PaperTopic(
+  paperid: Id[Paper],
+  topicid: Id[Topic],
+  metadata: Metadata[PaperTopic] = newMetadata
+) extends Model[PaperTopic] {
+  override val id = pk(paperid, topicid)
+}
 
 case class Author(
-  metadata: MetaData[Author],
   paperid: Id[Paper],
   personid: Id[Person],
-  position: Int
-) extends Model[Author]
+  position: Int,
+  metadata: Metadata[Author] = newMetadata
+) extends Model[Author] {
+  override val id = pk(paperid, personid)
+}
 
 case class File(
-  metadata: MetaData[File],
   name: String,
   size: Long,
-  content: Array[Byte]
+  content: Array[Byte],
+  metadata: Metadata[File] = newMetadata
 ) extends Model[File]
 
 case class Bid(
-  metadata: MetaData[Bid],
   paperid: Id[Paper],
   personid: Id[Person],
-  value: BidValue
-) extends Model[Bid]
+  value: BidValue,
+  metadata: Metadata[Bid] = newMetadata
+) extends Model[Bid] {
+  override val id = pk(paperid, personid)
+}
 
 case class Assignment(
-  metadata: MetaData[Assignment],
-  paperid: Id[Paper],
-  personid: Id[Person]  
-) extends Model[Assignment]
-
-case class Comment(
-  metadata: MetaData[Comment],
   paperid: Id[Paper],
   personid: Id[Person],
-  content: String
+  metadata: Metadata[Assignment] = newMetadata
+) extends Model[Assignment] {
+  override val id = pk(paperid, personid)
+}
+
+case class Comment(
+  paperid: Id[Paper],
+  personid: Id[Person],
+  content: String,
+  metadata: Metadata[Comment] = newMetadata
 ) extends Model[Comment]
 
 case class Review(
-  metadata: MetaData[Review],
   paperid: Id[Paper],
   personid: Id[Person],
   confidence: ReviewConfidence,
   evaluation: ReviewEvaluation,
-  content: String
-) extends Model[Review]
+  content: String,
+  metadata: Metadata[Review] = newMetadata
+) extends Model[Review] {
+  override val id = pk(paperid, personid)
+}
 
 case class Email(
-  metadata: MetaData[Email],
   to: String,
   subject: String,
-  content: String
+  content: String,
+  metadata: Metadata[Email] = newMetadata
 ) extends Model[Email]

@@ -1,6 +1,7 @@
 import org.joda.time.DateTime
 
 import models._
+import PersonRole._
 import play.api._
 import play.api.mvc.WithFilters
 import models.PaperType._
@@ -16,20 +17,35 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
   * called when the application starts. */
   override def onStart(app: Application): Unit = {
     DB withSession { implicit s: Session =>
-      if(Topics.all.isEmpty) {
-        // Passwords = 1234567890
-        securesocial.core.UserService.save(User("4@4", "userpass", "4@4", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$i2jZu3F6rty/a0vj8Jbeb.BnZNW7dXutAM8wSXLIdIolJETt8YdWe"), None).toIdentity)
+      val connection = Connection(s)
+      if(connection.database().topics.list.isEmpty) {
         
-        val now: DateTime = DateTime.now
-        List(
-          "Language design and implementation",
-          "Library design and implementation patterns for extending Scala",
-          "Formal techniques for Scala-like programs",
-          "Concurrent and distributed programming",
-          "Safety and reliability",
-          "Tools",
-          "Case studies, experience reports, and pearls"
-        ) foreach (Topics ins Topic((newId(), now, "demo"), _))
+        val chairs = List(
+          Person("Olivier", "Blanvillain", "EPFL", "olivierblanvillain@gmail.com")
+        )
+        
+        val programCommitteeMembers = List(
+          Person("Foo", "Bar", "Org", "pcmember")
+        )
+        
+        // List(Person(Olivier,Blanvillain,EPFL,olivierblanvillain@gmail.com,(Id(20484e20-40e6-4504-bec7-db9464485e2c),null,null)))
+        
+        // List(Role(Id(6f6c6976-5a91-1e95-939e-91898b3ccea0),Chair,(Id(6caf1565-27e2-42cf-b5ca-85f5e324f36f),null,null)))
+        
+        connection insert chairs
+        connection insert chairs.map(p => Role(p.id, Chair)) 
+        connection insert programCommitteeMembers
+        connection insert programCommitteeMembers.map(p => Role(p.id, Reviewer))
+        
+        connection insert List(
+          Topic("Language design and implementation"),
+          Topic("Library design and implementation patterns for extending Scala"),
+          Topic("Formal techniques for Scala-like programs"),
+          Topic("Concurrent and distributed programming"),
+          Topic("Safety and reliability"),
+          Topic("Tools"),
+          Topic("Case studies, experience reports, and pearls")
+        )
         
         // Some demo papers.
         val src = Source.fromFile("test/sigplanconf-template.pdf", "ISO8859-1").map(_.toByte).toArray
@@ -59,10 +75,14 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
           // andré van delft
           ("Dataflow Constructs for a Language Extension Based on the Algebra of Communicating Processes", Full_Paper)
         ) foreach { case (title, format) =>
-          val pdf = Files ins File((newId(), now, "demo"), "sigplanconf.pdf", src.length, src)
-          Papers ins Paper((newId(), now, "demo"), title, format, "keywords", "abstract", 0, Some(pdf))
+          val file = File("sigplanconf.pdf", src.length, src)
+          connection insert List(file, Paper(title, format, "keywords", "abstract", 0, Some(file.id)))
         }
         
+        // Passwords = 1234567890
+        securesocial.core.UserService.save(User("pcmember", "userpass", "pcmember", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$i2jZu3F6rty/a0vj8Jbeb.BnZNW7dXutAM8wSXLIdIolJETt8YdWe"), None).toIdentity)
+        
+        ()
       }
     }
   }
