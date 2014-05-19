@@ -1,37 +1,38 @@
-GET     /                                    controllers.About.login
-GET     /about                               controllers.About.about
-GET     /assets/*file                        controllers.Assets.at(path="/public", file)
+GET     /                              controllers.About.login
+GET     /about                         controllers.About.about
+GET     /assets/*file                  controllers.Assets.at(path="/public", file)
 
-GET     /submission                          controllers.Submitting.submit
-POST    /submission                          controllers.Submitting.doSubmit
-GET     /submission/info/:id                 controllers.Submitting.info(id: IdType)
-GET     /submission/edit/:id                 controllers.Submitting.edit(id: IdType)
-POST    /submission/edit/:id                 controllers.Submitting.doEdit(id: IdType)
+GET     /submission                    controllers.Submitting.submit
+POST    /submission                    controllers.Submitting.doSubmit
+GET     /submission/info/:id           controllers.Submitting.info(id: IdType)
+GET     /submission/edit/:id           controllers.Submitting.edit(id: IdType)
+POST    /submission/edit/:id           controllers.Submitting.doEdit(id: IdType)
 
-GET     /review/papers                       controllers.Reviewing.papers
-# GET     /review/invitation/:token                   controllers.member.Dashboard.invite(token: String)
-# GET     /review/dashboard                           controllers.member.Dashboard.papers
-GET     /review/bid                          controllers.Reviewing.bid
-POST    /review/bid                          controllers.Reviewing.doBid
-GET     /review/:id                          controllers.Reviewing.review(id: IdType)
-POST    /review/:id                          controllers.Reviewing.doReview(id: IdType)
-POST    /review/:id/comment                  controllers.Reviewing.doComment(id: IdType)
-POST    /review/:pid/comment/:cid            controllers.Reviewing.doEdit(pid: IdType, cid: IdType)
-# GET     /review/review/:id                          controllers.member.Reviewing.form(id: Int)
-# POST    /review/review/:id                          controllers.member.Reviewing.make(id: Int)
+GET     /review/papers                 controllers.Reviewing.papers
+# GET     /review/invitation/:token             controllers.member.Dashboard.invite(token: String)
+# GET     /review/dashboard                     controllers.member.Dashboard.papers
+GET     /review/bid                    controllers.Reviewing.bid
+POST    /review/bid                    controllers.Reviewing.doBid
+GET     /review/:id                    controllers.Reviewing.review(id: IdType)
+POST    /review/:id                    controllers.Reviewing.doReview(id: IdType)
+POST    /review/:pid/edit/:rid         controllers.Reviewing.editReview(pid: IdType, rid: IdType)
+POST    /review/:id/comment            controllers.Reviewing.doComment(id: IdType)
+POST    /review/:pid/comment/:cid      controllers.Reviewing.editComment(pid: IdType, cid: IdType)
+# GET     /review/review/:id                    controllers.member.Reviewing.form(id: Int)
+# POST    /review/review/:id                    controllers.member.Reviewing.make(id: Int)
 
-GET     /chair/sql                           controllers.Sql.query
-POST    /chair/sql                           controllers.Sql.doQuery
-# GET     /email                               controllers.Emailing.form
-# POST    /email                               controllers.Emailing.send
-# GET     /manage-members                      controllers.MembersManaging.page
-# POST    /manage-members                      controllers.MembersManaging.handle
-# GET     /auctions                            controllers.Chair.auctions
-# GET     /config                              controllers.Chair.config
-# GET     /decisions                           controllers.Chair.decisions
-# GET     /dashboard                           controllers.Chair.dashboard
+GET     /chair/sql                     controllers.Sql.query
+POST    /chair/sql                     controllers.Sql.doQuery
+# GET     /email                         controllers.Emailing.form
+# POST    /email                         controllers.Emailing.send
+# GET     /manage-members                controllers.MembersManaging.page
+# POST    /manage-members                controllers.MembersManaging.handle
+# GET     /auctions                      controllers.Chair.auctions
+# GET     /config                        controllers.Chair.config
+# GET     /decisions                     controllers.Chair.decisions
+# GET     /dashboard                     controllers.Chair.dashboard
 
-GET     /file/:id                            controllers.FileServing.apply(id: IdType)
+GET     /file/:id                      controllers.FileServing.apply(id: IdType)
 
 # SecureSocial
 GET     /login                  securesocial.controllers.LoginPage.login

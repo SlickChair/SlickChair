@@ -1,39 +1,59 @@
 @(title: String,
-  reviewForm: Form[Review],
+  commentForm: Form[Comment],
+  comments: List[Comment],
+  reviews: List[Review],
   paper: Paper,
-  authors: List[Person],
-  topics: List[Topic],
-  optionalFile: Option[File],
+  staff: Set[Person],
   navbar: Html
-)
+)(summary: Html)
 
 @import helper.FieldConstructors.horizontalForm
 @import ReviewConfidence._ 
 @import ReviewEvaluation._
+@import eu.henkelmann.actuarius.ActuariusTransformer
 
 @main(title, navbar) {
-  @submissionsummary(paper, authors, topics, optionalFile)
+  @summary
 
   <hr>
-  @form(routes.Reviewing.doReview(paper.id.value)) {
+  
+  <form class="form-horizontal">
+    @reviews.map { review =>
+      @staff.find(_.id == review.personid).map { p =>
+  @*      <b title="@p.email">@p.firstname @p.lastname</b> reviewed @date(review.updatedAt) *@
+        <div class="form-group  " id="_field">
+          <label class="col-lg-2 control-label markdown-label">
+            <b title="@p.email">@p.firstname.capitalize @p.lastname.capitalize</b><br>@date(review.updatedAt)
+          </label>
+          <div class="col-lg-9">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                Evaluation: @review.evaluation.toString.replace("_", " ")&emsp;
+                Confidence: @review.confidence.toString.replace("_", " ")
+                <div class="pull-right edit">
+                  <a href="#" class="glyphicon glyphicon-pencil"></a>
+                </div>
+              </div>
+              <div class="panel-body markdown-body">
+                @Html(new ActuariusTransformer()(review.content))
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    }
+  </form>
+  @form(routes.Reviewing.doComment(paper.id.value)) {
     @textarea(
-      reviewForm("content"),
-      '_label -> "Review",
+      commentForm("content"),
+      '_label -> "Comment",
+      'placeholder -> "Leave a comment",
       'rows -> 3)
-
-    @inputRadioGroup(
-      reviewForm("evaluation.value"),
-      ReviewEvaluation.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
-      '_label -> "Evaluation")
-
-    @inputRadioGroup(
-      reviewForm("confidence.value"),
-      ReviewConfidence.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
-      '_label -> "Confidence")  
-
-    <div class="ctrl-enter">
-      @button("Submit")
-    </div>
+      
+    @inputText(
+      commentForm("personid"),
+      '_label -> "hidden")
+    
+    @button("Submit")
   }
-  @* <div class="well well-sm">Look, I'm in a well!</div> *@
 }

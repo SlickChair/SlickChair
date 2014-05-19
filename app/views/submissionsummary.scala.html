@@ -8,9 +8,8 @@
 @import controllers.FileServing.linkToFile
 @import helper.FieldConstructors.horizontalForm
 
-
 <dl class="dl-horizontal">
-  <dt>Title</dt><dd>@paper.title</dd>
+  <legend>@paper.title</legend>
   <dt>Type</dt><dd>@paper.format.toString.replace("_", " ")</dd>
   <dt>Keywords</dt><dd>@paper.keywords</dd>
   <dt>Abstract</dt><dd>@paper.abstrct</dd>

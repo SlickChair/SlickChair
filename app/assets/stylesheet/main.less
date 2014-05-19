@@ -255,8 +255,33 @@ tr.danger > td {
     width: 120px;
   }
   .dl-horizontal dd {
-    margin-left: 150px;
+    margin-left: 156px;
     margin-bottom: 6px;
     margin-right: 75px;
   }
+}
+
+.markdown-body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+.markdown-body>*:first-child {
+  margin-top: 0 !important;
+}
+
+.form-horizontal .markdown-label {
+  font-weight: normal;
+  padding-top: 0px;
+}
+
+.glyphicon-pencil:before {
+  font-size: 13px;
+  float: right;
+  right: 0px;
+  color: #777;
+  text-shadow: black 0px 0px 0px;
+}
+
+.edit:hover a, .edit:hover a:before {
+  color: black;
 }

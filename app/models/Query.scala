@@ -23,8 +23,16 @@ case class Query(db: Database) extends ImplicitMappers {
     bids filter (_.personid is id) list
   def bidsOf(personId: Id[Person], paperId: Id[Paper]): Option[Bid] =
     bids filter { b => (b.personid is personId) && (b.paperid is paperId) } firstOption
-  def reviewOf(personId: Id[Person], paperId: Id[Paper]): Option[Review] =
-    reviews filter { r => (r.personid is personId) && (r.paperid is paperId) } firstOption
+  def commentsOf(id: Id[Paper]): List[Comment] =
+    comments filter (_.paperid is id) list
+  def reviewsOf(id: Id[Paper]): List[Review] =
+    reviews filter (_.paperid is id) list
+  def notReviewed(personId: Id[Person], paperId: Id[Paper]): Boolean =
+    (reviews filter { r => (r.personid is personId) && (r.paperid is paperId) }).firstOption.isEmpty
+  def allStaff: List[Person] =
+    roles filter (r => (r.value is Reviewer) || (r.value is Chair)) flatMap { r =>
+      persons filter (_.id is r.personid)
+    } list
   
   def personWithEmail(email: String): Person = persons filter (_.email is email) first
   def paperWithFile(id: Id[File]): Paper = papers filter (_.fileid is id) first

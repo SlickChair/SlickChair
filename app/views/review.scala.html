@@ -21,6 +21,7 @@
     @inputRadioGroup(
       reviewForm("evaluation.value"),
       ReviewEvaluation.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
+      'placeholder -> "Leave a review",
       '_label -> "Evaluation")
 
     @inputRadioGroup(

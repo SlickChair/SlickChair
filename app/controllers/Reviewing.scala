@@ -79,12 +79,10 @@ object Reviewing extends Controller {
   def review(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
     val paperId: Id[Paper] = Id[Paper](id)
     val paper: Paper = Query(r.db) paperWithId paperId
-    Query(r.db).reviewOf(r.user.id, paperId) match {
-      case None =>
-        Ok(views.html.review("Submission " + Query(r.db).indexOf(paper.id), reviewForm, paper, Navbar(Reviewer))(Submitting.summary(paper.id)))
-      case Some(r) =>
-        Ok(r.toString)
-    }
+    if(Query(r.db).notReviewed(r.user.id, paperId))
+      Ok(views.html.review("Submission " + Query(r.db).indexOf(paper.id), reviewForm, paper, Navbar(Reviewer))(Submitting.summary(paper.id)))
+    else
+      Ok(views.html.comment("Submission " + Query(r.db).indexOf(paper.id), commentForm, Query(r.db).commentsOf(paper.id), Query(r.db).reviewsOf(paper.id), paper, Query(r.db).allStaff.toSet, Navbar(Reviewer))(Submitting.summary(paper.id)))
   }
   
   def doReview(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
@@ -105,7 +103,12 @@ object Reviewing extends Controller {
     Ok("")
   }
 
-  def doEdit(pid: IdType, cid: IdType) = SlickAction(NonConflictingReviewer(pid)) {
+  def editComment(pid: IdType, cid: IdType) = SlickAction(NonConflictingReviewer(pid)) {
+    implicit r =>
+    Ok("")
+  }
+
+  def editReview(pid: IdType, rid: IdType) = SlickAction(NonConflictingReviewer(pid)) {
     implicit r =>
     Ok("")
   }
