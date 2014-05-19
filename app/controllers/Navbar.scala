@@ -16,7 +16,7 @@ object Navbar {
       case Chair =>
         List((routes.Sql.query, "SQL"))
       case Reviewer =>
-        (routes.Reviewing.papers, "Submissions") :: 
+        // (routes.Reviewing.papers, "Submissions") :: 
         (routes.Reviewing.bid, "Bidding") :: Nil
       case Submitter =>
         val papers = Query(r.db) papersOf r.user.id map { p =>

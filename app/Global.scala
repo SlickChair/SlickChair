@@ -13,24 +13,26 @@ import play.filters.gzip.GzipFilter
 import scala.io.Source
 
 object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
-/** Populates the database with fake data for testing. Global.onStart() is
-  * called when the application starts. */
   override def onStart(app: Application): Unit = {
     DB withSession { implicit s: Session =>
       val connection = Connection(s)
       if(connection.database().topics.list.isEmpty) {
         
         val chairs = List(
+          Person("Viktor", "Kuncak", "EPFL", "viktor.kuncak@epfl.ch"),
           Person("Olivier", "Blanvillain", "EPFL", "olivierblanvillain@gmail.com")
         )
         
         val programCommitteeMembers = List(
-          Person("Foo", "Bar", "Org", "pcmember")
+          Person("Tihomir", "Gvero", "EPFL", "tihomir.gvero@epfl.ch"),
+          Person("Etienne", "Kneuss", "EPFL", "etienne.kneuss@epfl.ch"),
+          Person("Eva", "Darulova", "EPFL", "eva.darulova@epfl.ch"),
+          Person("Regis", "Blanc", "EPFL", "regis.blanc@epfl.ch"),
+          Person("Mikael", "Mayer", "EPFL", "mikael.mayer@epfl.ch"),
+          Person("Ravi", "Kandhadai", "EPFL", "ravi.kandhadai@epfl.ch"),
+          Person("Ivan", "Kuraj", "EPFL", "ivan.kuraj@epfl.ch"),
+          Person("Andrew", "Reynolds", "EPFL", "andrew.reynolds@epfl.ch")
         )
-        
-        // List(Person(Olivier,Blanvillain,EPFL,olivierblanvillain@gmail.com,(Id(20484e20-40e6-4504-bec7-db9464485e2c),null,null)))
-        
-        // List(Role(Id(6f6c6976-5a91-1e95-939e-91898b3ccea0),Chair,(Id(6caf1565-27e2-42cf-b5ca-85f5e324f36f),null,null)))
         
         connection insert chairs
         connection insert chairs.map(p => Role(p.id, Chair)) 
@@ -47,7 +49,7 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
           Topic("Case studies, experience reports, and pearls")
         )
         
-        // Some demo papers.
+        // Some demo papers
         val src = Source.fromFile("test/sigplanconf-template.pdf", "ISO8859-1").map(_.toByte).toArray
         connection insert (List(
           // Régis Blanc (epfl), etienne kneuss (epfl), viktor kuncak (epfl) and philippe suter (epfl)
@@ -81,9 +83,13 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
           List(file, paper, paperIndex)
         })
         
-        // Passwords = 1234567890
+        // Fake users with email login, passwords = 1234567890
+        connection insert List(
+          Person("Foo", "Bar", "Org", "chair"),
+          Person("Foo", "Bar", "Org", "pcmember"))
+
+        securesocial.core.UserService.save(User("chair", "userpass", "chair", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$i2jZu3F6rty/a0vj8Jbeb.BnZNW7dXutAM8wSXLIdIolJETt8YdWe"), None).toIdentity)
         securesocial.core.UserService.save(User("pcmember", "userpass", "pcmember", "firstname", "lastname", "userPassword", Some("bcrypt"), Some("$2a$10$i2jZu3F6rty/a0vj8Jbeb.BnZNW7dXutAM8wSXLIdIolJETt8YdWe"), None).toIdentity)
-        
         ()
       }
     }
