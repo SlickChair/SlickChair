@@ -40,7 +40,7 @@ object Reviewing extends Controller {
   
   def commentForm: Form[Comment] = Form(mapping(
     "paperid" -> ignored(newMetadata[Paper]._1),
-    "personid" -> idMapping[Person],
+    "personid" -> ignored(newMetadata[Person]._1),
     "content" -> nonEmptyText,
     "metadata" -> ignored(newMetadata[Comment])
   )(Comment.apply _)(Comment.unapply _))
@@ -82,7 +82,7 @@ object Reviewing extends Controller {
     if(Query(r.db).notReviewed(r.user.id, paperId))
       Ok(views.html.review("Submission " + Query(r.db).indexOf(paper.id), reviewForm, paper, Navbar(Reviewer))(Submitting.summary(paper.id)))
     else
-      Ok(views.html.comment("Submission " + Query(r.db).indexOf(paper.id), commentForm.fill(Comment(paperId, r.user.id, "")), Query(r.db).commentsOf(paper.id), Query(r.db).reviewsOf(paper.id), paper, Query(r.db).allStaff.toSet, Navbar(Reviewer))(Submitting.summary(paper.id)))
+      Ok(views.html.comment("Submission " + Query(r.db).indexOf(paper.id), commentForm.fill(Comment(paperId, r.user.id, "")), reviewForm, Query(r.db).commentsOf(paper.id), Query(r.db).reviewsOf(paper.id), paper, Query(r.db).allStaff.toSet, Navbar(Reviewer))(Submitting.summary(paper.id)))
   }
   
   def doReview(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
@@ -108,13 +108,22 @@ object Reviewing extends Controller {
     Redirect(routes.Reviewing.review(id))
   }
 
-  def editComment(pid: IdType, cid: IdType) = SlickAction(NonConflictingReviewer(pid)) {
-    implicit r =>
-    Ok("")
+  def editComment(paperId: IdType, commentId: IdType, personId: IdType) = SlickAction(NonConflictingReviewer(paperId)) { implicit r =>
+    commentForm.bindFromRequest.fold(_ => (),
+      comment => {
+        r.connection insert List(comment.copy(paperid=Id[Paper](paperId), personid=Id[Person](personId), metadata=withId(Id[Comment](commentId))))
+      }
+    )
+    Redirect(routes.Reviewing.review(paperId))
   }
 
-  def editReview(pid: IdType, rid: IdType) = SlickAction(NonConflictingReviewer(pid)) {
-    implicit r =>
-    Ok("")
+  def editReview(paperId: IdType, personId: IdType) = SlickAction(NonConflictingReviewer(paperId)) {
+      implicit r =>
+    reviewForm.bindFromRequest.fold(_ => (),
+      review => {
+        r.connection insert List(review.copy(paperid=Id[Paper](paperId), personid=Id[Person](personId)))
+      }
+    )
+    Redirect(routes.Reviewing.review(paperId))
   }
 }

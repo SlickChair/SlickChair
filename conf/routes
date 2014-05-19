@@ -9,17 +9,13 @@ GET     /submission/edit/:id           controllers.Submitting.edit(id: IdType)
 POST    /submission/edit/:id           controllers.Submitting.doEdit(id: IdType)
 
 GET     /review/papers                 controllers.Reviewing.papers
-# GET     /review/invitation/:token             controllers.member.Dashboard.invite(token: String)
-# GET     /review/dashboard                     controllers.member.Dashboard.papers
 GET     /review/bid                    controllers.Reviewing.bid
 POST    /review/bid                    controllers.Reviewing.doBid
 GET     /review/:id                    controllers.Reviewing.review(id: IdType)
 POST    /review/:id                    controllers.Reviewing.doReview(id: IdType)
-POST    /review/:pid/edit/:rid         controllers.Reviewing.editReview(pid: IdType, rid: IdType)
+POST    /review/:id/edit/:pid          controllers.Reviewing.editReview(id: IdType, pid: IdType)
 POST    /review/:id/comment            controllers.Reviewing.doComment(id: IdType)
-POST    /review/:pid/comment/:cid      controllers.Reviewing.editComment(pid: IdType, cid: IdType)
-# GET     /review/review/:id                    controllers.member.Reviewing.form(id: Int)
-# POST    /review/review/:id                    controllers.member.Reviewing.make(id: Int)
+POST    /review/:paperId/edit/:commentId/:personId  controllers.Reviewing.editComment(paperId: IdType, commentId: IdType, personId: IdType)
 
 GET     /chair/sql                     controllers.Sql.query
 POST    /chair/sql                     controllers.Sql.doQuery

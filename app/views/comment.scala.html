@@ -1,5 +1,6 @@
 @(title: String,
   commentForm: Form[Comment],
+  reviewForm: Form[Review],
   comments: List[Comment],
   reviews: List[Review],
   paper: Paper,
@@ -7,10 +8,16 @@
   navbar: Html
 )(summary: Html)
 
-@import helper.FieldConstructors.horizontalForm
+@import helper.FieldConstructors.empty
 @import ReviewConfidence._ 
 @import ReviewEvaluation._
 @import eu.henkelmann.actuarius.ActuariusTransformer
+
+@editIcon(index: Int) = {
+  <div class="pull-right edit">
+    <a href="#" class="glyphicon glyphicon-pencil toggle-edit" toggle="@index" title="Edit review"></a>
+  </div>
+}
 
 @main(title, navbar) {
   @summary
@@ -19,7 +26,7 @@
   
   @reviews.zipWithIndex.map { case (review, index) =>
     @staff.find(_.id == review.personid).map { p =>
-      <form class="form-horizontal">
+      @form(routes.Reviewing.editReview(paper.id.value, p.id.value)) {
         <div class="form-group">
           <label class="col-lg-2 control-label markdown-label">
             <b>@p.name</b><br>@date(review.updatedAt)
@@ -28,51 +35,84 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <b>Review @{index + 1}</b>&emsp;
-                Evaluation: @review.evaluation.toString.replace("_", " ")&emsp;
-                Confidence: @review.confidence.toString.replace("_", " ")
-                <div class="pull-right edit">
-                  <a href="#" class="glyphicon glyphicon-pencil" title="Edit review"></a>
-                </div>
+                <span class="toggle@index">
+                  Evaluation: @review.evaluation.toString.replace("_", " ")&emsp;
+                  Confidence: @review.confidence.toString.replace("_", " ")
+                </span>
+                @editIcon(index)
               </div>
-              <div class="panel-body">
+              
+              <div class="panel-body toggle@index hidden">
+                @textarea(reviewForm("content").copy(value=Some(review.content)), 'rows -> 3)
+                @inputRadioGroup(
+                  reviewForm("evaluation.value").copy(value=Some(review.evaluation.toString)),
+                  ReviewEvaluation.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")))
+                <br>
+                @inputRadioGroup(
+                  reviewForm("confidence.value").copy(value=Some(review.confidence.toString)),
+                  ReviewConfidence.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
+                  '_label -> "Confidence")
+                <br>
+                <button href="#" class="btn btn-default toggle-edit" toggle="@index">Cancel</button>
+                <button type="submit" class="btn btn-default">Update Review</button>
+              </div>
+              
+              <div class="panel-body toggle@index">
                 @Html(new ActuariusTransformer()(review.content))
               </div>
             </div>
           </div>
         </div>
-      </form>
+        
+      }
     }
   }
   
   <hr>
   
-  @comments.map { comment =>
+  @comments.zip(reviews.length to (reviews.length + comments.length)).map { case (comment, index) =>
     @staff.find(_.id == comment.personid).map { p =>
-      <form class="form-horizontal">
+      @form(routes.Reviewing.editComment(paper.id.value, comment.id.value, p.id.value)) {
         <div class="form-group">
           <label class="col-lg-2 control-label markdown-label">
             <b>@p.name</b><br>@date(comment.updatedAt)
           </label>
           <div class="col-lg-9">
-            <div class="well well-sm">
-              <div class="pull-right edit">
-                <a href="#" class="glyphicon glyphicon-pencil" title="Edit comment"></a>
+            <div class="well well-sm toggle@index hidden">
+              @editIcon(index)
+              <div class="row">
+                <div class="col-lg-11">
+                  @textarea(commentForm("content").copy(value=Some(comment.content)), 'rows -> 3)
+                  <button href="#" class="btn btn-default toggle-edit" toggle="@index">Cancel</button>
+                  <button type="submit" class="btn btn-default">Update Comment</button>
+                </div>
               </div>
+            </div>
+            <div class="well well-sm toggle@index">
+              @editIcon(index)
               @Html(new ActuariusTransformer()(comment.content))
             </div>
           </div>
         </div>
-      </form>
+      }
     }
   }
   
   @form(routes.Reviewing.doComment(paper.id.value)) {
-    @textarea(
-      commentForm("content"),
-      '_label -> "Comment",
-      'placeholder -> "Leave a comment",
-      'rows -> 3)
-    <div class="hidden">@inputText(commentForm("personid.value"))</div>
-    @button("Submit")
+   <div class="form-group">
+      <label for="content" class="col-lg-2 control-label">Comment</label>
+      <div class="col-lg-9">
+        @textarea(
+          commentForm("content"),
+          'placeholder -> "Leave a comment",
+          'rows -> 3)
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-lg-2"></div>
+      <div class="col-lg-9">
+        @button("Submit")
+      </div>
+    </div>
   }
 }

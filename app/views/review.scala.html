@@ -16,12 +16,12 @@
     @textarea(
       reviewForm("content"),
       '_label -> "Review",
+      'placeholder -> "Leave a review",
       'rows -> 3)
 
     @inputRadioGroup(
       reviewForm("evaluation.value"),
       ReviewEvaluation.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
-      'placeholder -> "Leave a review",
       '_label -> "Evaluation")
 
     @inputRadioGroup(

@@ -5,7 +5,7 @@ object FieldConstructors {
     def apply(e: FieldElements) = views.html.bootstrap3.bootstrap3FieldConstructor(e)
   }
 
-  implicit val table = new FieldConstructor {
+  implicit val empty = new FieldConstructor {
     def apply(e: FieldElements) = e.input
   }
 }

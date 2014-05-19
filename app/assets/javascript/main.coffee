@@ -14,7 +14,7 @@ $ ->
         e.preventDefault()
         fileInput.click()
 
-  ### Handles plus and minus buttons. ###
+  ### Handles plus and minus buttons ###
   nauthors = $("#paper_nauthors")
   getNauthors = -> Number(nauthors.val())
   setNauthors = (n) ->
@@ -26,7 +26,7 @@ $ ->
     else
       true
   
-  # Restores state from the value of nauthors.
+  # Restores state from the value of nauthors
   for i in [0..getNauthors()-1]
     $("#author#{ i }").removeClass("hidden")
   
@@ -47,7 +47,7 @@ $ ->
       $("#author#{ getNauthors() }").addClass("hidden")
     disableMinusIfZero()
   
-  ### /slq, select the query textarea and submit on ctrl+enter. ###
+  ### /slq, select the query textarea and submit on ctrl+enter ###
   $("#query").select()
   $("body").keydown (e) ->
     ENTER = 13
@@ -59,7 +59,7 @@ $ ->
     if e.which == 13 && e.target.nodeName != "TEXTAREA"
       false
 
-  ### Login form magic. ###
+  ### Login form magic ###
   $(".email").click (e) ->
     e.preventDefault()
     $(".email-form").toggleClass("hidden")
@@ -72,3 +72,8 @@ $ ->
     $("#password").val("")
     $("#password").prop("disabled", not $("#password").prop("disabled"))
   
+  # Review comment toggle magic
+  $(".toggle-edit").click (e) ->
+    e.preventDefault()
+    id = e.target.getAttribute("toggle")
+    $(".toggle" + id).toggleClass("hidden")
