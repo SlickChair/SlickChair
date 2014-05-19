@@ -15,6 +15,5 @@
   }
   p.formatUnrounded(at.toDate())
 }
-
-<span title="@at">@niceDate</span>
+<span title="@org.joda.time.format.DateTimeFormat.forPattern("yyyy-MM-dd HH:mm z").print(at)">@niceDate</span>
 

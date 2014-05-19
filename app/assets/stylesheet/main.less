@@ -261,12 +261,20 @@ tr.danger > td {
   }
 }
 
-.markdown-body>*:last-child {
+.panel-body>*:last-child, .well.well-sm>*:last-child {
   margin-bottom: 0 !important;
 }
 
-.markdown-body>*:first-child {
+.panel-body>*:first-child, .well.well-sm>*:first-child {
   margin-top: 0 !important;
+}
+
+.panel-heading {
+  padding-right: 9px;
+}
+
+.well.well-sm {
+  padding-left: 15px;
 }
 
 .form-horizontal .markdown-label {
@@ -276,9 +284,10 @@ tr.danger > td {
 
 .glyphicon-pencil:before {
   font-size: 13px;
+  margin-left: 3px;
   float: right;
   right: 0px;
-  color: #777;
+  color: #AAA;
   text-shadow: black 0px 0px 0px;
 }
 

@@ -1,6 +1,7 @@
 package models
 
 import org.joda.time.DateTime
+import play.api.templates.Html
 
 object PersonRole extends Enumeration with EnumMapper {
   type PersonRole = Value
@@ -45,6 +46,7 @@ case class Person(
   metadata: Metadata[Person] = newMetadata
 ) extends Model[Person] {
   override val id = pk(email)
+  def name = Html(s"""<span title="$email"> ${firstname.capitalize} ${lastname.capitalize}</span>""")
 }
 
 case class Role(

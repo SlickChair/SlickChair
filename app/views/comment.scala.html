@@ -17,43 +17,62 @@
 
   <hr>
   
-  <form class="form-horizontal">
-    @reviews.map { review =>
-      @staff.find(_.id == review.personid).map { p =>
-  @*      <b title="@p.email">@p.firstname @p.lastname</b> reviewed @date(review.updatedAt) *@
-        <div class="form-group  " id="_field">
+  @reviews.zipWithIndex.map { case (review, index) =>
+    @staff.find(_.id == review.personid).map { p =>
+      <form class="form-horizontal">
+        <div class="form-group">
           <label class="col-lg-2 control-label markdown-label">
-            <b title="@p.email">@p.firstname.capitalize @p.lastname.capitalize</b><br>@date(review.updatedAt)
+            <b>@p.name</b><br>@date(review.updatedAt)
           </label>
           <div class="col-lg-9">
             <div class="panel panel-default">
               <div class="panel-heading">
+                <b>Review @{index + 1}</b>&emsp;
                 Evaluation: @review.evaluation.toString.replace("_", " ")&emsp;
                 Confidence: @review.confidence.toString.replace("_", " ")
                 <div class="pull-right edit">
-                  <a href="#" class="glyphicon glyphicon-pencil"></a>
+                  <a href="#" class="glyphicon glyphicon-pencil" title="Edit review"></a>
                 </div>
               </div>
-              <div class="panel-body markdown-body">
+              <div class="panel-body">
                 @Html(new ActuariusTransformer()(review.content))
               </div>
             </div>
           </div>
         </div>
-      }
+      </form>
     }
-  </form>
+  }
+  
+  <hr>
+  
+  @comments.map { comment =>
+    @staff.find(_.id == comment.personid).map { p =>
+      <form class="form-horizontal">
+        <div class="form-group">
+          <label class="col-lg-2 control-label markdown-label">
+            <b>@p.name</b><br>@date(comment.updatedAt)
+          </label>
+          <div class="col-lg-9">
+            <div class="well well-sm">
+              <div class="pull-right edit">
+                <a href="#" class="glyphicon glyphicon-pencil" title="Edit comment"></a>
+              </div>
+              @Html(new ActuariusTransformer()(comment.content))
+            </div>
+          </div>
+        </div>
+      </form>
+    }
+  }
+  
   @form(routes.Reviewing.doComment(paper.id.value)) {
     @textarea(
       commentForm("content"),
       '_label -> "Comment",
       'placeholder -> "Leave a comment",
       'rows -> 3)
-      
-    @inputText(
-      commentForm("personid"),
-      '_label -> "hidden")
-    
+    <div class="hidden">@inputText(commentForm("personid.value"))</div>
     @button("Submit")
   }
 }

@@ -22,8 +22,10 @@
       case None => { - }
     }
   </dd>
+  <dt>Authors</dt><dd>
   @authors.zip(1 to paper.nauthors).map { case (author, index) =>
-    <dt>Author @index</dt><dd>@author.firstname @author.lastname, @author.email</dd>
+    @author.name @if(index != paper.nauthors){ , }
   }
+  </dd>
 </dl>
 

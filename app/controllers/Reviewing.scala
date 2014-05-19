@@ -82,7 +82,7 @@ object Reviewing extends Controller {
     if(Query(r.db).notReviewed(r.user.id, paperId))
       Ok(views.html.review("Submission " + Query(r.db).indexOf(paper.id), reviewForm, paper, Navbar(Reviewer))(Submitting.summary(paper.id)))
     else
-      Ok(views.html.comment("Submission " + Query(r.db).indexOf(paper.id), commentForm, Query(r.db).commentsOf(paper.id), Query(r.db).reviewsOf(paper.id), paper, Query(r.db).allStaff.toSet, Navbar(Reviewer))(Submitting.summary(paper.id)))
+      Ok(views.html.comment("Submission " + Query(r.db).indexOf(paper.id), commentForm.fill(Comment(paperId, r.user.id, "")), Query(r.db).commentsOf(paper.id), Query(r.db).reviewsOf(paper.id), paper, Query(r.db).allStaff.toSet, Navbar(Reviewer))(Submitting.summary(paper.id)))
   }
   
   def doReview(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
@@ -100,7 +100,12 @@ object Reviewing extends Controller {
   }
   
   def doComment(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
-    Ok("")
+    commentForm.bindFromRequest.fold(_ => (),
+      comment => {
+        r.connection insert List(comment.copy(paperid=Id[Paper](id), personid=r.user.id))
+      }
+    )
+    Redirect(routes.Reviewing.review(id))
   }
 
   def editComment(pid: IdType, cid: IdType) = SlickAction(NonConflictingReviewer(pid)) {
