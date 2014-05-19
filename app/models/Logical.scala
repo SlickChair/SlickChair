@@ -8,29 +8,29 @@ object PersonRole extends Enumeration with EnumMapper {
 }
 import PersonRole._
 
-object PaperType extends Enumeration with EnumMapper {
-  type PaperType = Value
-  val Full_Paper, Short_Paper, Tool_Demo, Presentation = Value
-}
-import PaperType._
-
-object ReviewConfidence extends Enumeration with EnumMapper {
-  type ReviewConfidence = Value
-  val Very_Low, Low, Medium, High, Very_High = Value
-}
-import ReviewConfidence._
-
-object ReviewEvaluation extends Enumeration with EnumMapper {
-  type ReviewEvaluation = Value
-  val Strong_Reject, Reject, Neutral, Accept, Strong_Accept = Value
-}
-import ReviewEvaluation._
-
 object BidValue extends Enumeration with EnumMapper {
   type BidValue = Value
   val Conflict, NoBid, Maybe, YesBid = Value
 }
 import BidValue._
+
+object PaperType extends Enumeration with EnumMapper {
+  type PaperType = Value
+  val Full_paper, Short_paper, Tool_demo, Presentation = Value
+}
+import PaperType._
+
+object ReviewConfidence extends Enumeration with EnumMapper {
+  type ReviewConfidence = Value
+  val Expert, High, Medium, Low, None_ = Value
+}
+import ReviewConfidence._
+
+object ReviewEvaluation extends Enumeration with EnumMapper {
+  type ReviewEvaluation = Value
+  val Strong_accept, Accept, Weak_accept, Weak_reject, Reject, Strong_reject = Value
+}
+import ReviewEvaluation._
 
 case class Topic(
   name: String,

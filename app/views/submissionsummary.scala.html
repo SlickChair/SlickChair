@@ -11,7 +11,7 @@
 
 <dl class="dl-horizontal">
   <dt>Title</dt><dd>@paper.title</dd>
-  <dt>Type</dt><dd>@paper.format</dd>
+  <dt>Type</dt><dd>@paper.format.toString.replace("_", " ")</dd>
   <dt>Keywords</dt><dd>@paper.keywords</dd>
   <dt>Abstract</dt><dd>@paper.abstrct</dd>
   <dt>Topics</dt><dd>@topics.map(_.name).mkString(", ")</dd>

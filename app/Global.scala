@@ -51,29 +51,29 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
         val src = Source.fromFile("test/sigplanconf-template.pdf", "ISO8859-1").map(_.toByte).toArray
         connection insert (List(
           // Régis Blanc (epfl), etienne kneuss (epfl), viktor kuncak (epfl) and philippe suter (epfl)
-          ("Verification by Translation to Recursive Functions ", Full_Paper),
+          ("Verification by Translation to Recursive Functions ", Full_paper),
           // régis blanc (epfl)
-          ("CafeSat: A Modern SAT Solver for Scala ", Tool_Demo),
+          ("CafeSat: A Modern SAT Solver for Scala ", Tool_demo),
           // eugene burmako (epfl)
-          ("Scala Macros: Let Our Powers Combine! ", Full_Paper),
+          ("Scala Macros: Let Our Powers Combine! ", Full_paper),
           // sébastien doeraene (epfl) and peter van roy (université catholique de louvain
-          ("A New Concurrency Model for Scala Based on a Declarative Dataflow Core ", Full_Paper),
+          ("A New Concurrency Model for Scala Based on a Declarative Dataflow Core ", Full_paper),
           // paolo g. giarrusso (university of marburg)
-          ("Open GADTs and Declaration-site Variance: A Problem Statement ", Short_Paper),
+          ("Open GADTs and Declaration-site Variance: A Problem Statement ", Short_paper),
           // christoph höger (tu berlin) and martin zuber (tu berlin)
-          ("Towards a Tight Integration of a Functional Web Client Language into Scala ", Short_Paper),
+          ("Towards a Tight Integration of a Functional Web Client Language into Scala ", Short_paper),
           // daniel kröni (fhnw) and raphael schweizer (fhnw)
-          ("Parsing Graphs – Applying Parser Combinators to Graph Traversals ", Short_Paper),
+          ("Parsing Graphs – Applying Parser Combinators to Graph Traversals ", Short_paper),
           // hubert plociniczak (epfl)
-          ("Scalad: An Interactive Type-Level Debugger ", Tool_Demo),
+          ("Scalad: An Interactive Type-Level Debugger ", Tool_demo),
           // lukas stadler (johannes kepler university), gilles duboscq (johannes kepler university), hanspeter mössenböck (johannes kepler university), thomas wuerthinger (oracle labs) and doug simon (oracle labs)
-          ("An Experimental Study of the Influence of Dynamic Compiler Optimizations on Scala Performance", Full_Paper),
+          ("An Experimental Study of the Influence of Dynamic Compiler Optimizations on Scala Performance", Full_paper),
           // nicolas stucki (epfl) and vlad ureche (epfl)
-          ("Bridging Islands of Specialized Code using Macros and Reified Types ", Short_Paper),
+          ("Bridging Islands of Specialized Code using Macros and Reified Types ", Short_paper),
           // sandro stucki (epfl), nada amin (epfl), manohar jonnalagedda (epfl) and tiark rompf (epfl, oracle labs)
-          ("What are the Odds? – Probabilistic Programming in Scala ", Full_Paper),
+          ("What are the Odds? – Probabilistic Programming in Scala ", Full_paper),
           // andré van delft
-          ("Dataflow Constructs for a Language Extension Based on the Algebra of Communicating Processes", Full_Paper)
+          ("Dataflow Constructs for a Language Extension Based on the Algebra of Communicating Processes", Full_paper)
         ) flatMap { case (title, format) =>
           val file = File("sigplanconf.pdf", src.length, src)
           val paper = Paper(title, format, "keywords", "abstract", 0, Some(file.id))

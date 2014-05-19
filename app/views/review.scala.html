@@ -4,5 +4,32 @@
   optionalFile: Option[File]
 )
 
-@submissioninfo(paper, authors, topics, optionalFile)
+@submissionsummary(paper, authors, topics, optionalFile)
 
+@import helper.FieldConstructors.horizontalForm
+@import ReviewConfidence._ 
+@import ReviewEvaluation._
+
+<hr>
+@form(routes.Sql.doQuery) {
+  @textarea(
+    controllers.Submitting.submissionForm(""),
+    '_label -> "Review",
+    'rows -> 3)
+
+  @inputRadioGroup(
+    controllers.Submitting.submissionForm(""),
+    ReviewEvaluation.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
+    '_label -> "Evaluation")
+
+  @inputRadioGroup(
+    controllers.Submitting.submissionForm(""),
+    ReviewConfidence.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
+    '_label -> "Confidence")
+
+  <div class="ctrl-enter">
+    @button("Submit")
+  </div>
+}
+
+<div class="well well-sm">Look, I'm in a well!</div>
