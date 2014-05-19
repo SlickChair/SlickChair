@@ -53,16 +53,23 @@ object Submitting extends Controller {
   private def currentTime(): DateTime = new DateTime()
   
   /** Displays new submissions form. */
-  def make = SlickAction(IsSubmitter) { implicit r =>
-    Ok(views.html.submissionform("New Submission", submissionForm, Query(r.db).allTopics, routes.Submitting.doMake, Navbar(Submitter)))
+  def submit = SlickAction(IsSubmitter) { implicit r =>
+    Ok(views.html.submissionform("New Submission", submissionForm, Query(r.db).allTopics, routes.Submitting.doSubmit, Navbar(Submitter)))
   }
   
   /** Displays the informations of a given submission. */
   def info(id: IdType) = SlickAction(IsAuthorOf(id)) { implicit r =>
     val paper: Paper = Query(r.db) paperWithId Id[Paper](id)
-    Ok(views.html.main("Submission " + Query(r.db).indexOf(paper.id), Navbar(Submitter)) (
-       views.html.submissioninfo(paper, Query(r.db).authorsOf(paper.id), Query(r.db).topicsOf(paper.id), paper.fileid.map(Query(r.db) fileWithId _))
-    ))
+    Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paper.id), paper, Navbar(Submitter))(summary(paper.id)))
+  }
+  
+  def summary(paperId: Id[Paper])(implicit r: SlickRequest[_]) = {
+    val paper: Paper = Query(r.db) paperWithId paperId
+    views.html.submissionsummary(
+      paper,
+      Query(r.db) authorsOf paperId,
+      Query(r.db) topicsOf paperId,
+      paper.fileid.map(Query(r.db) fileWithId _))
   }
   
   /** Displays the form to edit the informations of a given submission. */
@@ -80,8 +87,8 @@ object Submitting extends Controller {
   }
   
   /** Handles a new submission. Creates a database entry with the form data. */
-  def doMake = SlickAction(IsSubmitter, parse.multipartFormData) { implicit r =>
-    doSave(None, routes.Submitting.doMake) // TODO: Use Option
+  def doSubmit = SlickAction(IsSubmitter, parse.multipartFormData) { implicit r =>
+    doSave(None, routes.Submitting.doSubmit) // TODO: Use Option
   }
     
   /** Handles edit of a submission. Update the database entry with the form data. */
@@ -131,7 +138,7 @@ object Submitting extends Controller {
           val blob = scalax.io.Resource.fromFile(f.ref.file).byteArray
           File(f.filename, blob.size, blob)
         }
-        val paper: Paper = optionalPaperId.map(form.paper.withId(_)).getOrElse(form.paper).copy(fileid=file map (_.id))
+        val paper: Paper = optionalPaperId.map(id => form.paper.copy(metadata=withId(id))).getOrElse(form.paper).copy(fileid=file.map(_.id))
         val persons: List[Person] = form.authors.take(form.paper.nauthors)
         val authors: List[Author] = persons.zipWithIndex.map { pi =>
           Author(paper.id, pi._1.id, pi._2)

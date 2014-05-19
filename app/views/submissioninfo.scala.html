@@ -1,15 +1,15 @@
-@(paper: Paper,
-  authors: List[Person],
-  topics: List[Topic],
-  optionalFile: Option[File]
-)
+@(title: String,
+  paper: Paper,
+  navbar: Html
+)(summary: Html)
 
-@submissionsummary(paper, authors, topics, optionalFile)
-
-<dl class="dl-horizontal">
-  <dt></dt><dd></dd>
-  <dt></dt><dd></dd>
-  <dt></dt><dd>
-    <a href="@routes.Submitting.edit(paper.id.value)" class="btn btn-default" role="button">Edit</a>  
-  </dd>
-</dl>
+@main(title, navbar) {
+  @summary
+  <dl class="dl-horizontal">
+    <dt></dt><dd></dd>
+    <dt></dt><dd></dd>
+    <dt></dt><dd>
+      <a href="@routes.Submitting.edit(paper.id.value)" class="btn btn-default" role="button">Edit</a>  
+    </dd>
+  </dl>
+}

@@ -30,14 +30,6 @@ trait Model[M] {
     val l = s.padTo(16, 'a').toCharArray map (_.toByte) grouped 8 map (ByteBuffer.wrap(_).getLong) take 2
     Id[M](new UUID(l.next() ^ getClass().toString.hashCode, l.next() ^ s.hashCode))    
   }
-  
-  def withId(newId: Id[M]): M = ((this: M) match {
-    case x: Topic => x.copy(metadata=(Id[Topic](newId.value), x.updatedAt, x.updatedBy))
-    case x: Person => x.copy(metadata=(Id[Person](newId.value), x.updatedAt, x.updatedBy))
-    case x: Paper => x.copy(metadata=(Id[Paper](newId.value), x.updatedAt, x.updatedBy))
-    case x: File => x.copy(metadata=(Id[File](newId.value), x.updatedAt, x.updatedBy))
-    case x: Comment => x.copy(metadata=(Id[Comment](newId.value), x.updatedAt, x.updatedBy))
-  }).asInstanceOf[M]
 }
 
 case class Connection(session: Session) {

@@ -9,7 +9,7 @@ import securesocial.core.SecuredRequest
 import Utils._
 
 object Navbar {
-  private val newSubmission = (routes.Submitting.make, "New Submission")  
+  private val newSubmission = (routes.Submitting.submit, "New Submission")  
   
   def apply(currentRole: PersonRole)(implicit r: SlickRequest[_]): Html = {
     val roleSpecificEntries = (currentRole match {

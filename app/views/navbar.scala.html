@@ -19,7 +19,7 @@
   @to match {
     case Chair => { @routes.Sql.query }
     case Reviewer => { @routes.Reviewing.papers }
-    case Submitter => { @routes.Submitting.make }
+    case Submitter => { @routes.Submitting.submit }
   }
 }
 
@@ -29,7 +29,8 @@
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
   </button>
-  <a href="@routes.About.about" class="navbar-brand">SlickChair Demo</a>
+  <a href="#" class="navbar-brand">SlickChair Demo</a>
+  @* <a href="@routes.About.about" class="navbar-brand">SlickChair Demo</a> *@
 </div>
 
 <div class="collapse navbar-collapse">

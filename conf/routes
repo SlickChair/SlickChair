@@ -2,8 +2,8 @@ GET     /                                    controllers.About.login
 GET     /about                               controllers.About.about
 GET     /assets/*file                        controllers.Assets.at(path="/public", file)
 
-GET     /submission                          controllers.Submitting.make
-POST    /submission                          controllers.Submitting.doMake
+GET     /submission                          controllers.Submitting.submit
+POST    /submission                          controllers.Submitting.doSubmit
 GET     /submission/info/:id                 controllers.Submitting.info(id: IdType)
 GET     /submission/edit/:id                 controllers.Submitting.edit(id: IdType)
 POST    /submission/edit/:id                 controllers.Submitting.doEdit(id: IdType)
@@ -13,8 +13,10 @@ GET     /review/papers                       controllers.Reviewing.papers
 # GET     /review/dashboard                           controllers.member.Dashboard.papers
 GET     /review/bid                          controllers.Reviewing.bid
 POST    /review/bid                          controllers.Reviewing.doBid
-GET     /review/:id                          controllers.Reviewing.make(id: IdType)
-POST    /review/:id                          controllers.Reviewing.doMake(id: IdType)
+GET     /review/:id                          controllers.Reviewing.review(id: IdType)
+POST    /review/:id                          controllers.Reviewing.doReview(id: IdType)
+POST    /review/:id/comment                  controllers.Reviewing.doComment(id: IdType)
+POST    /review/:pid/comment/:cid            controllers.Reviewing.doEdit(pid: IdType, cid: IdType)
 # GET     /review/review/:id                          controllers.member.Reviewing.form(id: Int)
 # POST    /review/review/:id                          controllers.member.Reviewing.make(id: Int)
 

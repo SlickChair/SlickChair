@@ -1,15 +1,18 @@
 @(title: String,
   reviewForm: Form[Review],
   paper: Paper,
+  authors: List[Person],
+  topics: List[Topic],
+  optionalFile: Option[File],
   navbar: Html
-)(summary: Html)
+)
 
 @import helper.FieldConstructors.horizontalForm
 @import ReviewConfidence._ 
 @import ReviewEvaluation._
 
 @main(title, navbar) {
-  @summary
+  @submissionsummary(paper, authors, topics, optionalFile)
 
   <hr>
   @form(routes.Reviewing.doReview(paper.id.value)) {

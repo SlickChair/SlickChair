@@ -10,6 +10,8 @@ import play.api.templates.Html
 import models.PersonRole.Reviewer
 import models._
 import models.BidValue._
+import models.ReviewConfidence._
+import models.ReviewEvaluation._
 import Utils._
 
 case class BidForm(bids: List[Bid])
@@ -26,6 +28,22 @@ object Reviewing extends Controller {
     mapping("bids" -> list(bidMapping))
     (BidForm.apply _)(BidForm.unapply _)
   )
+  
+  def reviewForm: Form[Review] = Form(mapping(
+    "paperid" -> ignored(newMetadata[Paper]._1),
+    "personid" -> ignored(newMetadata[Person]._1),
+    "confidence" -> enumMapping(ReviewConfidence),
+    "evaluation" -> enumMapping(ReviewEvaluation),
+    "content" -> nonEmptyText,
+    "metadata" -> ignored(newMetadata[Review])
+  )(Review.apply _)(Review.unapply _))
+  
+  def commentForm: Form[Comment] = Form(mapping(
+    "paperid" -> ignored(newMetadata[Paper]._1),
+    "personid" -> idMapping[Person],
+    "content" -> nonEmptyText,
+    "metadata" -> ignored(newMetadata[Comment])
+  )(Comment.apply _)(Comment.unapply _))
 
   def bid() = SlickAction(IsReviewer) { implicit r =>
     val bids: List[Bid] = Query(r.db) bidsOf r.user.id
@@ -57,14 +75,38 @@ object Reviewing extends Controller {
       Query(r.db).allPapers.toString.replaceAll(",", ",\n<br>"))))
   }
   
-  def make(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
-    val paper: Paper = Query(r.db) paperWithId Id[Paper](id)
-    Ok(views.html.main("Submission " + Query(r.db).indexOf(paper.id), Navbar(Reviewer)) (
-       views.html.review(paper, Query(r.db).authorsOf(paper.id), Query(r.db).topicsOf(paper.id), paper.fileid.map(Query(r.db) fileWithId _))
-    ))
+  // def review(id: IdType, form: Form[Review] = reviewForm) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
+  def review(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
+    val paperId: Id[Paper] = Id[Paper](id)
+    val paper: Paper = Query(r.db) paperWithId paperId
+    Query(r.db).reviewOf(r.user.id, paperId) match {
+      case None =>
+        Ok(views.html.review("Submission " + Query(r.db).indexOf(paper.id), reviewForm, paper, Navbar(Reviewer))(Submitting.summary(paper.id)))
+      case Some(r) =>
+        Ok(r.toString)
+    }
   }
   
-  def doMake(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
+  def doReview(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
+    reviewForm.bindFromRequest.fold(
+      errors => {
+        // review(id, errors)(r), // TODO: DRY with this, use Action.async everywhere...
+        val paper: Paper = Query(r.db) paperWithId Id[Paper](id)
+        Ok(views.html.review("Submission " + Query(r.db).indexOf(paper.id), errors, paper, Navbar(Reviewer))(Submitting.summary(paper.id)))
+      },
+      review => {
+        r.connection insert List(review.copy(paperid=Id[Paper](id), personid=r.user.id))
+        Redirect(routes.Reviewing.review(id))
+      }
+    )
+  }
+  
+  def doComment(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
+    Ok("")
+  }
+
+  def doEdit(pid: IdType, cid: IdType) = SlickAction(NonConflictingReviewer(pid)) {
+    implicit r =>
     Ok("")
   }
 }
