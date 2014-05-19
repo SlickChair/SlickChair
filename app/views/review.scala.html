@@ -12,7 +12,7 @@
   @summary
 
   <hr>
-  @form(routes.Reviewing.doReview(paper.id.value)) {
+  @form(routes.Reviewing.doReview(paper.id)) {
     @textarea(
       reviewForm("content"),
       '_label -> "Review",

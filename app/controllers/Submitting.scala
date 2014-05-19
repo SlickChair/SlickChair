@@ -58,9 +58,9 @@ object Submitting extends Controller {
   }
   
   /** Displays the informations of a given submission. */
-  def info(id: IdType) = SlickAction(IsAuthorOf(id)) { implicit r =>
-    val paper: Paper = Query(r.db) paperWithId Id[Paper](id)
-    Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paper.id), paper, Navbar(Submitter))(summary(paper.id)))
+  def info(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId)) { implicit r =>
+    val paper: Paper = Query(r.db) paperWithId paperId
+    Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paperId), paper, Navbar(Submitter))(summary(paperId)))
   }
   
   def summary(paperId: Id[Paper])(implicit r: SlickRequest[_]) = {
@@ -73,27 +73,27 @@ object Submitting extends Controller {
   }
   
   /** Displays the form to edit the informations of a given submission. */
-  def edit(id: IdType) = SlickAction(IsAuthorOf(id)) { implicit r =>
-    val paper: Paper = Query(r.db) paperWithId Id[Paper](id)
+  def edit(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId)) { implicit r =>
+    val paper: Paper = Query(r.db) paperWithId paperId
     val allTopics: List[Topic] = Query(r.db).allTopics
-    val paperTopics: List[Topic] = Query(r.db) topicsOf paper.id
+    val paperTopics: List[Topic] = Query(r.db) topicsOf paperId
     def incBind[T](form: Form[T], data: Map[String, String]) = form.bind(form.data ++ data)
     val existingSubmissionForm  = incBind(
-      submissionForm.fill(SubmissionForm(paper, Query(r.db) authorsOf paper.id, Nil)),
+      submissionForm.fill(SubmissionForm(paper, Query(r.db) authorsOf paperId, Nil)),
       allTopics.zipWithIndex.filter(paperTopics contains _._1).map(ti =>
         (s"topics[${ti._2}]", ti._1.id.value.toString)).toMap
     )
-    Ok(views.html.submissionform("Editing Submission " + Query(r.db).indexOf(paper.id), existingSubmissionForm, allTopics, routes.Submitting.doEdit(id), Navbar(Submitter)))
+    Ok(views.html.submissionform("Editing Submission " + Query(r.db).indexOf(paperId), existingSubmissionForm, allTopics, routes.Submitting.doEdit(paperId), Navbar(Submitter)))
   }
   
   /** Handles a new submission. Creates a database entry with the form data. */
   def doSubmit = SlickAction(IsSubmitter, parse.multipartFormData) { implicit r =>
-    doSave(None, routes.Submitting.doSubmit) // TODO: Use Option
+    doSave(None, routes.Submitting.doSubmit)
   }
     
   /** Handles edit of a submission. Update the database entry with the form data. */
-  def doEdit(id: IdType) = SlickAction(IsAuthorOf(id), parse.multipartFormData) { implicit r =>
-    doSave(Some(Id[Paper](id)), routes.Submitting.doEdit(id))
+  def doEdit(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), parse.multipartFormData) {
+    implicit r => doSave(Some(paperId), routes.Submitting.doEdit(paperId))
   }
   
   private type Req = SlickRequest[MultipartFormData[play.api.libs.Files.TemporaryFile]]
@@ -148,7 +148,7 @@ object Submitting extends Controller {
         }
         val pindex = PaperIndex(paper.id)
         r.connection insert (pindex :: paper :: file.toList ::: persons ::: authors ::: paperTopics)
-        Redirect(routes.Submitting.info(paper.id.value))
+        Redirect(routes.Submitting.info(paper.id))
       }
     )
   }

@@ -33,7 +33,7 @@ object LoginWrapper extends Controller with SecureSocial {
     * and the existence of the user in the database. */
   def dispatch = Action { implicit request =>
     loginWrapperForm.bindFromRequest.fold(
-      errors => Ok("LoginWrapper errors: " + errors), // TODO, show in src form? BadRequest(...)
+      errors => Ok(views.html.login(errors)),
       form => {
         if(!form.create) {
           val req = ProviderController.authenticateByPost(UsernamePassword)(request)

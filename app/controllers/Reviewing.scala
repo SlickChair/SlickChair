@@ -75,53 +75,53 @@ object Reviewing extends Controller {
       Query(r.db).allPapers.toString.replaceAll(",", ",\n<br>"))))
   }
   
-  // def review(id: IdType, form: Form[Review] = reviewForm) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
-  def review(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
-    val paperId: Id[Paper] = Id[Paper](id)
+  def review(paperId: Id[Paper]) = SlickAction(NonConflictingReviewer(paperId)) { implicit r =>
     val paper: Paper = Query(r.db) paperWithId paperId
     if(Query(r.db).notReviewed(r.user.id, paperId))
-      Ok(views.html.review("Submission " + Query(r.db).indexOf(paper.id), reviewForm, paper, Navbar(Reviewer))(Submitting.summary(paper.id)))
+      Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), reviewForm, paper, Navbar(Reviewer))(Submitting.summary(paperId)))
     else
-      Ok(views.html.comment("Submission " + Query(r.db).indexOf(paper.id), commentForm.fill(Comment(paperId, r.user.id, "")), reviewForm, Query(r.db).commentsOf(paper.id), Query(r.db).reviewsOf(paper.id), paper, Query(r.db).allStaff.toSet, Navbar(Reviewer))(Submitting.summary(paper.id)))
+      Ok(views.html.comment("Submission " + Query(r.db).indexOf(paperId), commentForm.fill(Comment(paperId, r.user.id, "")), reviewForm, Query(r.db).commentsOf(paperId), Query(r.db).reviewsOf(paperId), paper, Query(r.db).allStaff.toSet, Navbar(Reviewer))(Submitting.summary(paperId)))
   }
   
-  def doReview(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
+  def doReview(paperId: Id[Paper]) = SlickAction(NonConflictingReviewer(paperId)) { implicit r =>
     reviewForm.bindFromRequest.fold(
       errors => {
         // review(id, errors)(r), // TODO: DRY with this, use Action.async everywhere...
-        val paper: Paper = Query(r.db) paperWithId Id[Paper](id)
-        Ok(views.html.review("Submission " + Query(r.db).indexOf(paper.id), errors, paper, Navbar(Reviewer))(Submitting.summary(paper.id)))
+        val paper: Paper = Query(r.db) paperWithId paperId
+        Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), errors, paper, Navbar(Reviewer))(Submitting.summary(paperId)))
       },
       review => {
-        r.connection insert List(review.copy(paperid=Id[Paper](id), personid=r.user.id))
-        Redirect(routes.Reviewing.review(id))
+        r.connection insert List(review.copy(paperid=paperId, personid=r.user.id))
+        Redirect(routes.Reviewing.review(paperId))
       }
     )
   }
   
-  def doComment(id: IdType) = SlickAction(NonConflictingReviewer(id)) { implicit r =>
+  def doComment(paperId: Id[Paper]) = SlickAction(NonConflictingReviewer(paperId)) { implicit r =>
     commentForm.bindFromRequest.fold(_ => (),
       comment => {
-        r.connection insert List(comment.copy(paperid=Id[Paper](id), personid=r.user.id))
-      }
-    )
-    Redirect(routes.Reviewing.review(id))
-  }
-
-  def editComment(paperId: IdType, commentId: IdType, personId: IdType) = SlickAction(NonConflictingReviewer(paperId)) { implicit r =>
-    commentForm.bindFromRequest.fold(_ => (),
-      comment => {
-        r.connection insert List(comment.copy(paperid=Id[Paper](paperId), personid=Id[Person](personId), metadata=withId(Id[Comment](commentId))))
+        r.connection insert List(comment.copy(paperid=paperId, personid=r.user.id))
       }
     )
     Redirect(routes.Reviewing.review(paperId))
   }
 
-  def editReview(paperId: IdType, personId: IdType) = SlickAction(NonConflictingReviewer(paperId)) {
+  def editComment(paperId: Id[Paper], commentId: Id[Comment], personId: Id[Person]) = SlickAction(NonConflictingReviewer(paperId)) { implicit r =>
+    commentForm.bindFromRequest.fold(_ => (),
+      comment => {
+        r.connection insert List(
+          comment.copy(paperid=paperId, personid=personId, metadata=withId(commentId))
+        )
+      }
+    )
+    Redirect(routes.Reviewing.review(paperId))
+  }
+
+  def editReview(paperId: Id[Paper], personId: Id[Person]) = SlickAction(NonConflictingReviewer(paperId)) {
       implicit r =>
     reviewForm.bindFromRequest.fold(_ => (),
       review => {
-        r.connection insert List(review.copy(paperid=Id[Paper](paperId), personid=Id[Person](personId)))
+        r.connection insert List(review.copy(paperid=paperId, personid=personId))
       }
     )
     Redirect(routes.Reviewing.review(paperId))

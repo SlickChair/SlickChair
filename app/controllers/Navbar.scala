@@ -20,7 +20,7 @@ object Navbar {
         (routes.Reviewing.bid, "Bidding") :: Nil
       case Submitter =>
         val papers = Query(r.db) papersOf r.user.id map { p =>
-          (routes.Submitting.info(p.id.value), "Submission " + Query(r.db).indexOf(p.id))
+          (routes.Submitting.info(p.id), "Submission " + Query(r.db).indexOf(p.id))
         }
         newSubmission :: papers
     })

@@ -23,8 +23,7 @@ class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(ap
           loginWrapperForm.fillAndValidate(LoginWrapperForm(username, password, false))  
         case None =>
           loginWrapperForm
-      },
-      errorMessage
+      }
     )
   }
 

@@ -26,7 +26,7 @@
   
   @reviews.zipWithIndex.map { case (review, index) =>
     @staff.find(_.id == review.personid).map { p =>
-      @form(routes.Reviewing.editReview(paper.id.value, p.id.value)) {
+      @form(routes.Reviewing.editReview(paper.id, p.id)) {
         <div class="form-group">
           <label class="col-lg-2 control-label markdown-label">
             <b>@p.name</b><br>@date(review.updatedAt)
@@ -72,7 +72,7 @@
   
   @comments.zip(reviews.length to (reviews.length + comments.length)).map { case (comment, index) =>
     @staff.find(_.id == comment.personid).map { p =>
-      @form(routes.Reviewing.editComment(paper.id.value, comment.id.value, p.id.value)) {
+      @form(routes.Reviewing.editComment(paper.id, comment.id, p.id)) {
         <div class="form-group">
           <label class="col-lg-2 control-label markdown-label">
             <b>@p.name</b><br>@date(comment.updatedAt)
@@ -98,7 +98,7 @@
     }
   }
   
-  @form(routes.Reviewing.doComment(paper.id.value)) {
+  @form(routes.Reviewing.doComment(paper.id)) {
    <div class="form-group">
       <label for="content" class="col-lg-2 control-label">Comment</label>
       <div class="col-lg-9">

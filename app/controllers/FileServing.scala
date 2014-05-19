@@ -7,9 +7,9 @@ import play.api.libs.iteratee.Enumerator
 import play.api.templates.Html
 
 object FileServing extends Controller {
-  def apply(id: IdType) = SlickAction(AuthorOrNCReviewer(id)) {
+  def apply(fileId: Id[File]) = SlickAction(AuthorOrNCReviewer(fileId)) {
       implicit r =>
-    val file = Query(r.db) fileWithId Id[File](id)
+    val file = Query(r.db) fileWithId fileId
     val headers =
       if(file.name endsWith ".pdf") Map(
         CONTENT_TYPE -> "application/pdf",
@@ -37,7 +37,7 @@ object FileServing extends Controller {
       }
     }
     Html(s"""
-    <a href="${routes.FileServing(file.id.value)}">
+    <a href="${routes.FileServing(file.id)}">
     ${file.name} (${humanReadableByteCount(file.size)})</a>""")
   }
 }

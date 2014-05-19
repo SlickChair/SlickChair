@@ -21,8 +21,7 @@ libraryDependencies ++= Seq(
   "joda-time" % "joda-time" % "2.3",
   "eu.henkelmann" % "actuarius_2.10.0" % "0.2.6",
   "org.ocpsoft.prettytime" % "prettytime" % "3.2.5.Final",
-  filters
-)
+  filters)
 
 resolvers ++= Seq(
   "webjars" at "http://webjars.github.com/m2",
@@ -34,11 +33,24 @@ resolvers ++= Seq(
   Resolver.url("Objectify Play Repository", url("http://schaloner.github.com/releases/"))(Resolver.ivyStylePatterns),
   Resolver.url("Objectify Play Snapshot Repository", url("http://schaloner.github.com/snapshots/"))(Resolver.ivyStylePatterns),
   "Mandubian repository snapshots" at "https://github.com/mandubian/mandubian-mvn/raw/master/snapshots/",
-  "Mandubian repository releases" at "https://github.com/mandubian/mandubian-mvn/raw/master/releases/"
-)
+  "Mandubian repository releases" at "https://github.com/mandubian/mandubian-mvn/raw/master/releases/")
 
-routesImport += "models.IdType"
+routesImport ++= Seq(
+  "models._",
+  "controllers.Utils.IdBindable")
 
-templatesImport ++= Seq("models._", "controllers._", "bootstrap3._")
+templatesImport ++= Seq(
+  "models._",
+  "controllers._",
+  "bootstrap3._")
 
-scalacOptions ++= Seq("-deprecation", "-encoding", "UTF-8", "-feature", "-target:jvm-1.6", "-unchecked", "-Ywarn-adapted-args", "-Ywarn-value-discard", "-Xlint")
+scalacOptions ++= Seq(
+  "-deprecation",
+  "-encoding",
+  "UTF-8",
+  "-feature",
+  "-target:jvm-1.6",
+  "-unchecked",
+  "-Ywarn-adapted-args",
+  "-Ywarn-value-discard",
+  "-Xlint")

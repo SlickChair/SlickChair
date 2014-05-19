@@ -18,6 +18,7 @@ import securesocial.core.{ IdentityProvider, SecureSocial, SecuredRequest, Authe
 import play.api.data.Forms.ignored
 import org.joda.time.DateTime
 import models._
+import play.api.mvc.PathBindable
 
 object Utils {
   // val idTypeMapping: Mapping[models.IdType] = longNumber
@@ -36,10 +37,17 @@ object Utils {
   
   def enumMapping(enum: Enumeration): Mapping[enum.Value] = mapping("value" -> nonEmptyText)(enum.withName(_))(Some(_).map(_.toString))
   
-  def idMapping[M <: Model[M]]: Mapping[Id[M]] = mapping(
+  def idMapping[M]: Mapping[Id[M]] = mapping(
     "value" -> idTypeMapping
   )(Id[M] _)(Id.unapply _)
-
+  
+  implicit def IdBindable[M](implicit longBinder: PathBindable[IdType]) = new PathBindable[Id[M]] {
+    def bind(key: String, value: String): Either[String, Id[M]] =
+      longBinder.bind(key, value).right map (Id[M](_))
+    def unbind(key: String, id: Id[M]): String =
+      longBinder.unbind(key, id.value)
+  }
+  
   case class SlickRequest[A](
     dbSession: Session,
     dbExecutionContext: ExecutionContext,
