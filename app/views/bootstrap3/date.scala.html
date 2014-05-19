@@ -1,3 +1,20 @@
 @(at: org.joda.time.DateTime)
 
-@org.joda.time.format.DateTimeFormat.forPattern("MMM dd, HH:mm z").print(at)
+@import org.ocpsoft.prettytime.PrettyTime
+@import org.ocpsoft.prettytime.units.JustNow
+@import org.joda.time.format.DateTimeFormat
+
+@niceDate = @{
+  val p = new PrettyTime()
+  import scala.collection.JavaConversions._
+  p.getUnits() foreach {
+    _ match {
+      case j: JustNow => j setMaxQuantity 3000
+      case _ =>
+    }
+  }
+  p.formatUnrounded(at.toDate())
+}
+
+<span title="@at">@niceDate</span>
+

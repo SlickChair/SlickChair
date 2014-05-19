@@ -20,6 +20,7 @@ libraryDependencies ++= Seq(
   "ws.securesocial" %% "securesocial" % "2.1.3",
   "joda-time" % "joda-time" % "2.3",
   "eu.henkelmann" % "actuarius_2.10.0" % "0.2.6",
+  "org.ocpsoft.prettytime" % "prettytime" % "3.2.5.Final",
   filters
 )
 
