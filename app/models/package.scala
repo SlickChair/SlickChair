@@ -1,6 +1,6 @@
-import play.api.db.slick.Config.driver.simple._
-import org.joda.time.DateTime
 import java.util.UUID
+import org.joda.time.DateTime
+import models.Id
 
 package object models {
   type Metadata[M] = (Id[M], DateTime, String)

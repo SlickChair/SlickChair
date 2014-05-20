@@ -1,38 +1,32 @@
 package models
 
-import Mappers._
-import org.joda.time.DateTime
+import Mappers.EnumSlickMapper
 import play.api.templates.Html
 
 object PersonRole extends Enumeration with EnumSlickMapper {
   type PersonRole = Value
   val Submitter, Reviewer, Chair = Value
 }
-import PersonRole._
 
 object BidValue extends Enumeration with EnumSlickMapper {
   type BidValue = Value
   val Conflict, NoBid, Maybe, YesBid = Value
 }
-import BidValue._
 
 object PaperType extends Enumeration with EnumSlickMapper {
   type PaperType = Value
   val Full_paper, Short_paper, Tool_demo, Presentation = Value
 }
-import PaperType._
 
 object ReviewConfidence extends Enumeration with EnumSlickMapper {
   type ReviewConfidence = Value
   val Expert, High, Medium, Low, None_ = Value
 }
-import ReviewConfidence._
 
 object ReviewEvaluation extends Enumeration with EnumSlickMapper {
   type ReviewEvaluation = Value
   val Strong_accept, Accept, Weak_accept, Weak_reject, Reject, Strong_reject = Value
 }
-import ReviewEvaluation._
 
 case class Topic(
   name: String,
@@ -52,7 +46,7 @@ case class Person(
 
 case class Role(
   personid: Id[Person],
-  value: PersonRole,
+  value: PersonRole.PersonRole,
   metadata: Metadata[Role] = newMetadata
 ) extends Model[Role] {
   override val id = pk(personid)
@@ -60,7 +54,7 @@ case class Role(
 
 case class Paper(
   title: String,
-  format: PaperType,
+  format: PaperType.PaperType,
   keywords: String,
   abstrct: String,
   nauthors: Int,
@@ -102,7 +96,7 @@ case class File(
 case class Bid(
   paperid: Id[Paper],
   personid: Id[Person],
-  value: BidValue,
+  value: BidValue.BidValue,
   metadata: Metadata[Bid] = newMetadata
 ) extends Model[Bid] {
   override val id = pk(paperid, personid)
@@ -126,8 +120,8 @@ case class Comment(
 case class Review(
   paperid: Id[Paper],
   personid: Id[Person],
-  confidence: ReviewConfidence,
-  evaluation: ReviewEvaluation,
+  confidence: ReviewConfidence.ReviewConfidence,
+  evaluation: ReviewEvaluation.ReviewEvaluation,
   content: String,
   metadata: Metadata[Review] = newMetadata
 ) extends Model[Review] {

@@ -1,19 +1,12 @@
 package controllers
 
-import play.api.mvc.{ RequestHeader, Request }
-import play.api.templates.{ Html, Txt }
-import play.api.{ Plugin, Application }
-import securesocial.core.{ SocialUser, SecuredRequest }
-import play.api.data.Form
-import securesocial.controllers.Registration.RegistrationInfo
-import securesocial.controllers.PasswordChange.ChangeInfo
-import securesocial.controllers.DefaultTemplatesPlugin
 import controllers.LoginWrapper.loginWrapperForm
-import play.api.Play.current
-import play.api.db.slick.Config.driver.simple._
-import play.api.db.slick.DB
-import org.joda.time.DateTime
-import models.PersonRole._
+import play.api.Application
+import play.api.data.Form
+import play.api.mvc.Request
+import play.api.templates.Html
+import securesocial.controllers.DefaultTemplatesPlugin
+import securesocial.controllers.Registration.RegistrationInfo
 
 class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(application) {
   override def getLoginPage[A](implicit request: Request[A], form: Form[(String, String)], errorMessage: Option[String] = None): Html = {

@@ -1,30 +1,15 @@
 package models
 
-import BidValue._
-import java.nio.ByteBuffer
 import java.sql.Timestamp
 import java.util.UUID
-import models._
-import models.PersonRole._
 import org.joda.time.DateTime
-import PaperType._
-import PersonRole._
-import play.api.data.format.Formats._
+import play.api.data.FormError
+import play.api.data.Forms.{mapping, nonEmptyText, of}
+import play.api.data.Mapping
+import play.api.data.format.Formats.stringFormat
 import play.api.data.format.Formatter
-import play.api.data.Forms._
-import play.api.data.Forms.ignored
-import play.api.data.{ FormError, Mapping }
 import play.api.db.slick.Config.driver.simple._
-import play.api.db.slick.{ DB, SlickExecutionContext }
-import play.api.i18n.Messages
-import play.api.mvc.BodyParsers.parse.anyContent
-import play.api.mvc.{ PathBindable, Action, Request, SimpleResult, Results, BodyParser, WrappedRequest }
-import play.api.Play.current
-import ReviewConfidence._
-import ReviewEvaluation._
-import scala.concurrent.{ ExecutionContext, Future }
-import securesocial.core.providers.utils.RoutesHelper
-import securesocial.core.{ IdentityProvider, SecureSocial, SecuredRequest, Authenticator, UserService }
+import play.api.mvc.PathBindable
 
 object Mappers {
   implicit def dateTimeSlickMapper = MappedColumnType.base[DateTime, Timestamp](

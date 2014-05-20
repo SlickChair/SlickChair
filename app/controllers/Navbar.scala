@@ -1,12 +1,8 @@
 package controllers
 
-import play.api.mvc.{ Call, Request }
-import play.api.mvc.Request
+import models.PersonRole.{Chair, PersonRole, Reviewer, Submitter}
+import models.Query
 import play.api.templates.Html
-import models._
-import models.PersonRole._
-import securesocial.core.SecuredRequest
-import models.Mappers._
 
 object Navbar {
   private val newSubmission = (routes.Submitting.submit, "New Submission")  

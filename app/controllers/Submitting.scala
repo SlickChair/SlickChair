@@ -1,20 +1,14 @@
 package controllers
 
+import org.joda.time.DateTime
 import models._
+import Mappers.{enumFormMapping, idTypeFormMapping}
 import models.PersonRole.Submitter
-import models.PaperType._
-import org.joda.time.{ DateTime, Seconds }
-import play.api.templates.Html
-import play.api.data.{ Form, Mapping }
-import play.api.data.Forms._
-import play.api.mvc.{ Controller, Cookie, Call, MultipartFormData }
-import play.api.Play.current
-import play.api.db.slick.DB
-import models.Mappers._
+import play.api.data.{Form, FormError}
+import play.api.data.Forms.{ignored, list, mapping, nonEmptyText, number, text}
+import play.api.data.Mapping
 import play.api.i18n.Messages
-import play.api.mvc.MultipartFormData.FilePart
-import play.api.libs.Files.TemporaryFile
-import play.api.data.FormError
+import play.api.mvc.{Call, Controller, MultipartFormData}
 
 case class SubmissionForm(
   paper: Paper,

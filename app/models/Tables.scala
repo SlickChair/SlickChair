@@ -1,16 +1,12 @@
 package models
 
-import org.joda.time.DateTime
+import BidValue.BidValue
+import Mappers.idSlickMapper
+import PaperType.PaperType
+import PersonRole.PersonRole
+import ReviewConfidence.ReviewConfidence
+import ReviewEvaluation.ReviewEvaluation
 import play.api.db.slick.Config.driver.simple._
-import PersonRole._
-import PaperType._
-import ReviewConfidence._
-import ReviewEvaluation._
-import BidValue._
-import java.sql.Timestamp
-import java.util.UUID
-import java.nio.ByteBuffer
-import Mappers._
 
 class TopicTable(tag: Tag) extends Table[Topic](tag, "TOPIC") with RepoTable[Topic] {
   def name = column[String]("NAME", O.DBType("TEXT"))

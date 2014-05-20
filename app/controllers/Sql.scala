@@ -1,14 +1,12 @@
 package controllers
 
 import anorm.SQL
+import models.PersonRole.Chair
 import play.api.Play.current
 import play.api.data.Form
-import play.api.data.Forms.{ mapping, nonEmptyText, text, tuple }
+import play.api.data.Forms.{mapping, nonEmptyText, text, tuple}
 import play.api.db.DB
-import play.api.db.slick.{ DB => SlickDB }
 import play.api.mvc.Controller
-import models.PersonRole._
-import models.Mappers._
 
 object SqlMethod extends Enumeration {
   type SqlMethod = Value

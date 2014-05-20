@@ -1,17 +1,15 @@
 package controllers
 
+import eu.henkelmann.actuarius.ActuariusTransformer
+import models.PersonRole.Submitter
 import play.api.mvc.{Action, Controller}
 import play.api.templates.Html
-import scala.io.Source
-import models.Mappers._
-import models.PersonRole.Submitter
-import eu.henkelmann.actuarius.ActuariusTransformer
 
 object About extends Controller {
   def about = SlickAction(IsSubmitter) { implicit r =>
     Ok(views.html.main("About SlickChair", Navbar(Submitter))(Html(
       "<div class='row'><div class='col-md-10 col-sm-offset-1'>" +
-      new ActuariusTransformer()(Source fromFile "README.md" mkString "") +
+      new ActuariusTransformer()(io.Source fromFile "README.md" mkString "") +
       "</div></div>"
     )))
   }

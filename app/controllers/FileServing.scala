@@ -1,9 +1,9 @@
 package controllers
 
-import models._
-import models.Mappers._
-import play.api.mvc.{ SimpleResult, Controller, ResponseHeader }
+import java.lang.Math.{log, pow}
+import models.{File, Id, Query}
 import play.api.libs.iteratee.Enumerator
+import play.api.mvc.{Controller, ResponseHeader, SimpleResult}
 import play.api.templates.Html
 
 object FileServing extends Controller {

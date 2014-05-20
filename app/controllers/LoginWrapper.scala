@@ -1,16 +1,18 @@
 package controllers
 
+import java.util.UUID
+import concurrent.Await
+import concurrent.duration.Duration
+import org.joda.time.DateTime
 import play.api.data.Form
-import play.api.data.Forms.{ boolean, default, mapping, nonEmptyText, text }
+import play.api.data.Forms.{boolean, default, mapping, nonEmptyText, text}
 import play.api.i18n.Messages
-import play.api.mvc.{ Action, Controller, Result, SimpleResult, EssentialAction, Request }
-import securesocial.controllers.{ ProviderController, Registration }
-import securesocial.core.{ SecureSocial, UserService, Identity }
+import play.api.mvc.{Action, Controller, Request}
+import securesocial.controllers.{ProviderController, Registration}
+import securesocial.core.{Identity, SecureSocial, UserService}
+import securesocial.core.providers.Token
 import securesocial.core.providers.UsernamePasswordProvider.UsernamePassword
 import securesocial.core.providers.utils.Mailer
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
-import scala.concurrent.ExecutionContext.Implicits.global
 
 case class LoginWrapperForm(
   username: String,

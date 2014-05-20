@@ -1,24 +1,16 @@
 package controllers
 
-import java.util.UUID
-import models.PersonRole._
-import play.api.data.format.Formats._
-import play.api.data.format.Formatter
-import play.api.data.Forms._
-import play.api.data.{ FormError, Mapping }
-import play.api.db.slick.Config.driver.simple._
-import play.api.db.slick.{ DB, SlickExecutionContext }
-import play.api.i18n.Messages
-import play.api.mvc.BodyParsers.parse.anyContent
-import play.api.mvc.{ Action, Request, SimpleResult, Results, BodyParser, WrappedRequest }
-import play.api.Play.current
-import scala.concurrent.{ ExecutionContext, Future }
-import securesocial.core.providers.utils.RoutesHelper
-import securesocial.core.{ IdentityProvider, SecureSocial, SecuredRequest, Authenticator, UserService }
-import play.api.data.Forms.ignored
-import org.joda.time.DateTime
+import concurrent.{ExecutionContext, Future}
 import models._
-import play.api.mvc.PathBindable
+import play.api.Play.current
+import play.api.db.slick.{DB, SlickExecutionContext}
+import play.api.db.slick.Config.driver.simple._
+import play.api.i18n.Messages
+import play.api.mvc.{Action, BodyParser}
+import play.api.mvc.{Request, Results, SimpleResult, WrappedRequest}
+import play.api.mvc.BodyParsers.parse.anyContent
+import securesocial.core.{Authenticator, IdentityProvider, SecureSocial}
+import securesocial.core.providers.utils.RoutesHelper
 
 case class SlickRequest[A](
   dbSession: Session,

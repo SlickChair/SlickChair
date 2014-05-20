@@ -1,13 +1,14 @@
 package models
 
+import scala.slick.lifted.ProvenShape.proveShapeOf
 import org.joda.time.DateTime
+import models.Mappers.dateTimeSlickMapper
 import play.api.Application
+import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
-import play.api.Play.current
+import securesocial.core._
 import securesocial.core.providers.Token
-import securesocial.core.{ AuthenticationMethod, Identity, PasswordInfo, SocialUser, UserServicePlugin, IdentityId }
-import models.Mappers._
 
  /** Implements the UserServicePlugin required to use the SecureSocial plugin on
    * top of Slick. See http://securesocial.ws/guide/user-service.html */

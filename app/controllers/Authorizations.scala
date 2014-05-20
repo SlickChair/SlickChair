@@ -1,10 +1,8 @@
 package controllers
 
-import models.PersonRole._
-import play.api.mvc.{ Action, AnyContent, Controller, Result }
-import models.Mappers._
 import models._
-import models.BidValue._
+import BidValue._
+import PersonRole._
 
 trait Authorization {
   def apply[A](implicit r: SlickRequest[A]): Boolean

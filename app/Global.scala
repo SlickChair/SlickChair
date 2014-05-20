@@ -1,16 +1,14 @@
-import org.joda.time.DateTime
+import io.Source
 
 import models._
 import PersonRole._
-import play.api._
-import play.api.mvc.WithFilters
-import models.PaperType._
-import play.api.{ Application, GlobalSettings }
-import play.api.db.slick.Config.driver.simple._
+import PaperType._
+import play.api.{Application, GlobalSettings}
 import play.api.Play.current
+import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DB
+import play.api.mvc.WithFilters
 import play.filters.gzip.GzipFilter
-import scala.io.Source
 
 object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
   override def onStart(app: Application): Unit = {

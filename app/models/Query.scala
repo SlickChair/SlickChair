@@ -1,10 +1,9 @@
 package models
 
-import play.api.db.slick.Config.driver.simple._
-import org.joda.time.DateTime
+import Mappers.idSlickMapper
 import PersonRole._
-import language.postfixOps
-import Mappers._
+import play.api.db.slick.Config.driver.simple._
+import scala.language.postfixOps
 
 case class Query(db: Database) {
   implicit val session: Session = db.session

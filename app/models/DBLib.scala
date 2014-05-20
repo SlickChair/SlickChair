@@ -1,16 +1,12 @@
 package models
 
-import org.joda.time.DateTime
-import play.api.db.slick.Config.driver.simple._
-import PersonRole._
-import PaperType._
-import ReviewConfidence._
-import ReviewEvaluation._
-import BidValue._
-import java.sql.Timestamp
-import java.util.UUID
 import java.nio.ByteBuffer
-import Mappers._
+import java.util.UUID
+import Array.canBuildFrom
+import org.joda.time.DateTime
+import Mappers.{dateTimeSlickMapper, idSlickMapper}
+import scala.slick.lifted.TableQuery
+import play.api.db.slick.Config.driver.simple._
 
 case class Id[M](value: IdType)
 

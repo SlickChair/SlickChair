@@ -1,18 +1,14 @@
 package controllers
 
-import org.joda.time.DateTime
-import play.api.data.{ Form, Mapping }
-import play.api.data.Forms.{ ignored, mapping, nonEmptyText, list }
-import play.api.mvc.{ Controller, Result }
-import play.api.db.slick.DB
-import play.api.Play.current
-import play.api.templates.Html
-import models.PersonRole.Reviewer
 import models._
-import models.BidValue._
-import models.ReviewConfidence._
-import models.ReviewEvaluation._
-import models.Mappers._
+import BidValue._
+import PersonRole.Reviewer
+import Mappers.{enumFormMapping, idFormMapping}
+import play.api.data.Form
+import play.api.data.Forms.{ignored, list, mapping, nonEmptyText}
+import play.api.data.Mapping
+import play.api.mvc.Controller
+import play.api.templates.Html
 
 case class BidForm(bids: List[Bid])
 
