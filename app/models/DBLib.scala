@@ -10,6 +10,7 @@ import BidValue._
 import java.sql.Timestamp
 import java.util.UUID
 import java.nio.ByteBuffer
+import Mappers._
 
 case class Id[M](value: IdType)
 
@@ -56,7 +57,8 @@ case class Connection(session: Session) {
   }
 }
 
-case class Database(val time: DateTime, val session: Session, val history: Boolean = false) extends ImplicitMappers {
+case class Database(val time: DateTime, val session: Session, val history: Boolean = false) {
+  
   def asOf(time: DateTime): Database = this copy (time=time)
   def equals(database: Database): Boolean = this.basis == database.basis
   def basis(): DateTime = ???
@@ -91,18 +93,7 @@ case class Database(val time: DateTime, val session: Session, val history: Boole
   val assignments = timeMod[AssignmentTable, Assignment](TableQuery[AssignmentTable])
 }
 
-trait ImplicitMappers {
-  implicit def idMapper[T <: Model[T]] = MappedColumnType.base[Id[T], IdType](_.value, Id[T])
-  implicit def dateTimeMapper = MappedColumnType.base[DateTime, Timestamp](
-    dt => new Timestamp(dt.getMillis), ts => new DateTime(ts.getTime))
-}
-
-trait EnumMapper {
-  this: Enumeration =>
-  implicit val slickMapping = MappedColumnType.base[Value, Int](_.id, this.apply)
-}
-
-trait RepoTable[M <: Model[M]] extends ImplicitMappers {
+trait RepoTable[M <: Model[M]] {
   this: Table[M] =>
   def id = column[Id[M]]("ID")
   // def id = column[Id[M]]("ID", O.AutoInc)

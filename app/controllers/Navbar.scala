@@ -6,7 +6,7 @@ import play.api.templates.Html
 import models._
 import models.PersonRole._
 import securesocial.core.SecuredRequest
-import Utils._
+import models.Mappers._
 
 object Navbar {
   private val newSubmission = (routes.Submitting.submit, "New Submission")  

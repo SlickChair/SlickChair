@@ -4,8 +4,9 @@ import play.api.db.slick.Config.driver.simple._
 import org.joda.time.DateTime
 import PersonRole._
 import language.postfixOps
+import Mappers._
 
-case class Query(db: Database) extends ImplicitMappers {
+case class Query(db: Database) {
   implicit val session: Session = db.session
   import db._
   

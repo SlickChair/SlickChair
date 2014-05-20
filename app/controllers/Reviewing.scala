@@ -12,28 +12,28 @@ import models._
 import models.BidValue._
 import models.ReviewConfidence._
 import models.ReviewEvaluation._
-import Utils._
+import models.Mappers._
 
 case class BidForm(bids: List[Bid])
 
 object Reviewing extends Controller {
-  def bidMapping: Mapping[Bid] = mapping(
-    "paperid" -> idMapping[Paper],
+  def bidFormMapping: Mapping[Bid] = mapping(
+    "paperid" -> idFormMapping[Paper],
     "personid" -> ignored(newMetadata[Person]._1),
-    "bid" -> enumMapping(BidValue),
+    "bid" -> enumFormMapping(BidValue),
     "metadata" -> ignored(newMetadata[Bid])
   )(Bid.apply _)(Bid.unapply _)
 
   def bidForm: Form[BidForm] = Form(
-    mapping("bids" -> list(bidMapping))
+    mapping("bids" -> list(bidFormMapping))
     (BidForm.apply _)(BidForm.unapply _)
   )
   
   def reviewForm: Form[Review] = Form(mapping(
     "paperid" -> ignored(newMetadata[Paper]._1),
     "personid" -> ignored(newMetadata[Person]._1),
-    "confidence" -> enumMapping(ReviewConfidence),
-    "evaluation" -> enumMapping(ReviewEvaluation),
+    "confidence" -> enumFormMapping(ReviewConfidence),
+    "evaluation" -> enumFormMapping(ReviewEvaluation),
     "content" -> nonEmptyText,
     "metadata" -> ignored(newMetadata[Review])
   )(Review.apply _)(Review.unapply _))

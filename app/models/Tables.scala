@@ -10,6 +10,7 @@ import BidValue._
 import java.sql.Timestamp
 import java.util.UUID
 import java.nio.ByteBuffer
+import Mappers._
 
 class TopicTable(tag: Tag) extends Table[Topic](tag, "TOPIC") with RepoTable[Topic] {
   def name = column[String]("NAME", O.DBType("TEXT"))

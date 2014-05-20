@@ -1,6 +1,5 @@
 import play.api.db.slick.Config.driver.simple._
 import org.joda.time.DateTime
-import controllers.Utils.SlickRequest
 import java.util.UUID
 
 package object models {

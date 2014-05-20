@@ -37,7 +37,7 @@ resolvers ++= Seq(
 
 routesImport ++= Seq(
   "models._",
-  "controllers.Utils.IdBindable")
+  "models.Mappers.idPathBindable")
 
 templatesImport ++= Seq(
   "models._",

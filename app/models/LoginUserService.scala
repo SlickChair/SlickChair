@@ -7,6 +7,7 @@ import play.api.db.slick.DB
 import play.api.Play.current
 import securesocial.core.providers.Token
 import securesocial.core.{ AuthenticationMethod, Identity, PasswordInfo, SocialUser, UserServicePlugin, IdentityId }
+import models.Mappers._
 
  /** Implements the UserServicePlugin required to use the SecureSocial plugin on
    * top of Slick. See http://securesocial.ws/guide/user-service.html */
@@ -131,7 +132,7 @@ object MyToken {
   def fromT(t: Token) = MyToken(t.uuid, t.email, t.creationTime, t.expirationTime, t.isSignUp, false)
 }
 
-class LoginTokenTable(tag: Tag) extends Table[MyToken](tag, "LOGINTOKENS") with ImplicitMappers {
+class LoginTokenTable(tag: Tag) extends Table[MyToken](tag, "LOGINTOKENS") {
   def uuid = column[String]("UUID", O.DBType("text"), O.PrimaryKey)
   def email = column[String]("EMAIL", O.DBType("text"))
   def creationTime = column[DateTime]("CREATIONTIME")
@@ -154,7 +155,7 @@ object LoginTokens extends TableQuery(new LoginTokenTable(_)) {
   def withIdType(uuid: String)(implicit s: Session): Option[MyToken] =
     this.filter(_.uuid is uuid).firstOption 
 
-  trait Queries extends ImplicitMappers {
+  trait Queries {
     def deleteToken(uuid: String): Unit = {
       DB withSession { implicit s: Session =>
         del(uuid)

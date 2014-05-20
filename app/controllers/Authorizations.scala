@@ -2,7 +2,7 @@ package controllers
 
 import models.PersonRole._
 import play.api.mvc.{ Action, AnyContent, Controller, Result }
-import Utils._
+import models.Mappers._
 import models._
 import models.BidValue._
 

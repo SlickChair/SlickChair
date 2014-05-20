@@ -1,7 +1,7 @@
 package controllers
 
 import models._
-import Utils._
+import models.Mappers._
 import play.api.mvc.{ SimpleResult, Controller, ResponseHeader }
 import play.api.libs.iteratee.Enumerator
 import play.api.templates.Html

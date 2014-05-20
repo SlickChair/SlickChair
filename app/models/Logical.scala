@@ -1,33 +1,34 @@
 package models
 
+import Mappers._
 import org.joda.time.DateTime
 import play.api.templates.Html
 
-object PersonRole extends Enumeration with EnumMapper {
+object PersonRole extends Enumeration with EnumSlickMapper {
   type PersonRole = Value
   val Submitter, Reviewer, Chair = Value
 }
 import PersonRole._
 
-object BidValue extends Enumeration with EnumMapper {
+object BidValue extends Enumeration with EnumSlickMapper {
   type BidValue = Value
   val Conflict, NoBid, Maybe, YesBid = Value
 }
 import BidValue._
 
-object PaperType extends Enumeration with EnumMapper {
+object PaperType extends Enumeration with EnumSlickMapper {
   type PaperType = Value
   val Full_paper, Short_paper, Tool_demo, Presentation = Value
 }
 import PaperType._
 
-object ReviewConfidence extends Enumeration with EnumMapper {
+object ReviewConfidence extends Enumeration with EnumSlickMapper {
   type ReviewConfidence = Value
   val Expert, High, Medium, Low, None_ = Value
 }
 import ReviewConfidence._
 
-object ReviewEvaluation extends Enumeration with EnumMapper {
+object ReviewEvaluation extends Enumeration with EnumSlickMapper {
   type ReviewEvaluation = Value
   val Strong_accept, Accept, Weak_accept, Weak_reject, Reject, Strong_reject = Value
 }

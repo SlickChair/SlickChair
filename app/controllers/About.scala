@@ -3,7 +3,7 @@ package controllers
 import play.api.mvc.{Action, Controller}
 import play.api.templates.Html
 import scala.io.Source
-import Utils._
+import models.Mappers._
 import models.PersonRole.Submitter
 import eu.henkelmann.actuarius.ActuariusTransformer
 

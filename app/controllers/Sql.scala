@@ -8,7 +8,7 @@ import play.api.db.DB
 import play.api.db.slick.{ DB => SlickDB }
 import play.api.mvc.Controller
 import models.PersonRole._
-import Utils._
+import models.Mappers._
 
 object SqlMethod extends Enumeration {
   type SqlMethod = Value

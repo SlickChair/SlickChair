@@ -10,7 +10,7 @@ import play.api.data.Forms._
 import play.api.mvc.{ Controller, Cookie, Call, MultipartFormData }
 import play.api.Play.current
 import play.api.db.slick.DB
-import Utils._
+import models.Mappers._
 import play.api.i18n.Messages
 import play.api.mvc.MultipartFormData.FilePart
 import play.api.libs.Files.TemporaryFile
@@ -26,7 +26,7 @@ object Submitting extends Controller {
   private val required = Messages("error.required")
   def paperMapping: Mapping[Paper] = mapping(
     "title" -> nonEmptyText,
-    "format" -> enumMapping(PaperType),
+    "format" -> enumFormMapping(PaperType),
     "keywords" -> nonEmptyText,
     "abstrct" -> nonEmptyText,
     "nauthors" -> number.verifying(required, _ > 0),
@@ -46,7 +46,7 @@ object Submitting extends Controller {
     mapping(
       "paper" -> paperMapping,
       "authors" -> list(authorMapping),
-      "topics" -> list(Utils.idTypeMapping).verifying(required, _.nonEmpty)
+      "topics" -> list(idTypeFormMapping).verifying(required, _.nonEmpty)
     )(SubmissionForm.apply _)(SubmissionForm.unapply _)
   )
   
