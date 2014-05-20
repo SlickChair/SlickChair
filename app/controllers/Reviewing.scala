@@ -80,7 +80,7 @@ object Reviewing extends Controller {
     if(Query(r.db).notReviewed(r.user.id, paperId))
       Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), reviewForm, paper, Navbar(Reviewer))(Submitting.summary(paperId)))
     else
-      Ok(views.html.comment("Submission " + Query(r.db).indexOf(paperId), commentForm.fill(Comment(paperId, r.user.id, "")), reviewForm, Query(r.db).commentsOf(paperId), Query(r.db).reviewsOf(paperId), paper, Query(r.db).allStaff.toSet, Navbar(Reviewer))(Submitting.summary(paperId)))
+      Ok(views.html.comment("Submission " + Query(r.db).indexOf(paperId), commentForm.fill(Comment(paperId, r.user.id, "")), reviewForm, Query(r.db).commentsOf(paperId), Query(r.db).reviewsOf(paperId), paper, r.user, Query(r.db).allStaff.toSet, Navbar(Reviewer))(Submitting.summary(paperId)))
   }
   
   def doReview(paperId: Id[Paper]) = SlickAction(NonConflictingReviewer(paperId)) { implicit r =>

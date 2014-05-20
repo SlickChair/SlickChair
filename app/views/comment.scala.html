@@ -4,6 +4,7 @@
   comments: List[Comment],
   reviews: List[Review],
   paper: Paper,
+  self: Person,
   staff: Set[Person],
   navbar: Html
 )(summary: Html)
@@ -39,23 +40,25 @@
                   Evaluation: @review.evaluation.toString.replace("_", " ")&emsp;
                   Confidence: @review.confidence.toString.replace("_", " ")
                 </span>
-                @editIcon(index)
+                @if(p == self) { @editIcon(index) }
               </div>
               
-              <div class="panel-body toggle@index hidden">
-                @textarea(reviewForm("content").copy(value=Some(review.content)), 'rows -> 3)
-                @inputRadioGroup(
-                  reviewForm("evaluation.value").copy(value=Some(review.evaluation.toString)),
-                  ReviewEvaluation.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")))
-                <br>
-                @inputRadioGroup(
-                  reviewForm("confidence.value").copy(value=Some(review.confidence.toString)),
-                  ReviewConfidence.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
-                  '_label -> "Confidence")
-                <br>
-                <button href="#" class="btn btn-default toggle-edit" toggle="@index">Cancel</button>
-                <button type="submit" class="btn btn-default">Update Review</button>
-              </div>
+              @if(p == self) { 
+                <div class="panel-body toggle@index hidden">
+                  @textarea(reviewForm("content").copy(value=Some(review.content)), 'rows -> 3)
+                  @inputRadioGroup(
+                    reviewForm("evaluation.value").copy(value=Some(review.evaluation.toString)),
+                    ReviewEvaluation.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")))
+                  <br>
+                  @inputRadioGroup(
+                    reviewForm("confidence.value").copy(value=Some(review.confidence.toString)),
+                    ReviewConfidence.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
+                    '_label -> "Confidence")
+                  <br>
+                  <button href="#" class="btn btn-default toggle-edit" toggle="@index">Cancel</button>
+                  <button type="submit" class="btn btn-default">Update Review</button>
+                </div>
+              }
               
               <div class="panel-body toggle@index">
                 @Html(new ActuariusTransformer()(review.content))
@@ -78,18 +81,19 @@
             <b>@p.name</b><br>@date(comment.updatedAt)
           </label>
           <div class="col-lg-9">
-            <div class="well well-sm toggle@index hidden">
-              @editIcon(index)
-              <div class="row">
-                <div class="col-lg-11">
-                  @textarea(commentForm("content").copy(value=Some(comment.content)), 'rows -> 3)
-                  <button href="#" class="btn btn-default toggle-edit" toggle="@index">Cancel</button>
-                  <button type="submit" class="btn btn-default">Update Comment</button>
+            @if(p == self) {
+              <div class="well well-sm toggle@index hidden">
+                <div class="row">
+                  <div class="col-lg-11">
+                    @textarea(commentForm("content").copy(value=Some(comment.content)), 'rows -> 3)
+                    <button href="#" class="btn btn-default toggle-edit" toggle="@index">Cancel</button>
+                    <button type="submit" class="btn btn-default">Update Comment</button>
+                  </div>
                 </div>
               </div>
-            </div>
+            }
             <div class="well well-sm toggle@index">
-              @editIcon(index)
+              @if(p == self) { @editIcon(index) }
               @Html(new ActuariusTransformer()(comment.content))
             </div>
           </div>
