@@ -40,12 +40,12 @@
     }
   </ul>
   
-  @*case (Some(Person(_, _, _, email, _)), Some(Submitter), Submitter) => {
+@(user, userRole, currentRole) match {
+  case (Some(Person(_, _, _, email, _)), Some(Submitter), Submitter) => {
     <p class="navbar-text pull-right">
       @email — <a href="@RoutesHelper.logout()" class="navbar-link">Sign out</a>
     </p>
-  }*@
-@(user, userRole, currentRole) match {
+  }
   case (Some(Person(_, _, _, email, _)), Some(role), _) => {
     <ul class="nav navbar-nav navbar-right">
       <li class="dropdown">
@@ -53,7 +53,7 @@
         <ul class="dropdown-menu">
           @List(Chair, Reviewer, Submitter).dropWhile(_ != role).map { role =>
             @if(role == currentRole) {
-              <li><a class="disabeled">Change role to @toString(role)</a></li>
+              @* <li><a class="disabeled">Change role to @toString(role)</a></li> *@
             } else {
               <li><a href="@changeRole(role)">Change role to @toString(role)</a></li>
             }

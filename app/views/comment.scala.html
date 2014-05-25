@@ -81,7 +81,7 @@
             <b>@p.name</b><br>@date(comment.updatedAt)
           </label>
           <div class="col-lg-9">
-            @if(p == self) {
+            @if(false) {
               <div class="well well-sm toggle@index hidden">
                 <div class="row">
                   <div class="col-lg-11">
@@ -93,7 +93,7 @@
               </div>
             }
             <div class="well well-sm toggle@index">
-              @if(p == self) { @editIcon(index) }
+              @if(false) { @editIcon(index) }
               @Html(new ActuariusTransformer()(comment.content))
             </div>
           </div>

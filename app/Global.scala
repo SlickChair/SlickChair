@@ -18,6 +18,7 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
         
         val chairs = List(
           Person("Viktor", "Kuncak", "EPFL", "viktor.kuncak@epfl.ch"),
+          Person("Viktor", "Kuncak", "EPFL", "vkuncak@gmail.com"),
           Person("Olivier", "Blanvillain", "EPFL", "olivierblanvillain@gmail.com")
         )
         
