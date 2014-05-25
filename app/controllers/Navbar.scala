@@ -10,7 +10,7 @@ object Navbar {
   def apply(currentRole: PersonRole)(implicit r: SlickRequest[_]): Html = {
     val roleSpecificEntries = (currentRole match {
       case Chair =>
-        List((routes.Sql.query, "SQL"))
+        List((routes.Chairing.assignmentList, "Assignment"), (routes.Sql.query, "SQL"))
       case Reviewer =>
         // (routes.Reviewing.papers, "Submissions") :: 
         (routes.Reviewing.bid, "Bidding") :: Nil

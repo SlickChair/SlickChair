@@ -95,5 +95,6 @@ class BidTable(tag: Tag) extends Table[Bid](tag, "BID") with RepoTable[Bid] {
 class AssignmentTable(tag: Tag) extends Table[Assignment](tag, "ASSIGNMENT") with RepoTable[Assignment] {
   def paperid = column[Id[Paper]]("PAPERID")
   def personid = column[Id[Person]]("PERSONID")
-  def * = (paperid, personid, (id, updatedAt, updatedBy)) <> (Assignment.tupled, Assignment.unapply)
+  def value = column[Boolean]("VALUE")
+  def * = (paperid, personid, value, (id, updatedAt, updatedBy)) <> (Assignment.tupled, Assignment.unapply)
 }

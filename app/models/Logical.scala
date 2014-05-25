@@ -105,6 +105,7 @@ case class Bid(
 case class Assignment(
   paperid: Id[Paper],
   personid: Id[Person],
+  value: Boolean,
   metadata: Metadata[Assignment] = newMetadata
 ) extends Model[Assignment] {
   override val id = pk(paperid, personid)

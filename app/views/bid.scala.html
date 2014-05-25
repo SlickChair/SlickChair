@@ -4,8 +4,8 @@
   navbar: Html
 )
 
-@import controllers.FileServing.linkToFile
-@import models.BidValue._
+@import FileServing.linkToFile
+@import BidValue._
 @import helper.FieldConstructors.empty
 
 @main("Bidding", navbar) {
@@ -21,12 +21,12 @@
       <tbody>
         @bidForm.get.bids.zipWithIndex.map { case (bid, index) =>
           <tr
-          @bid.value match {
-            case Conflict => { class="danger" }
-            case NoBid => { class="warning" }
-            case Maybe => {}
-            case YesBid => { class="success" }
-          }
+            @bid.value match {
+              case Conflict => { class="danger" }
+              case NoBid => { class="warning" }
+              case Maybe => {}
+              case YesBid => { class="success" }
+            }
           >
             <td style="min-width: 90px;">
               @select(

@@ -1,0 +1,30 @@
+@(papers: List[Paper],
+  indices: List[PaperIndex],
+  assignments: List[Assignment],
+  navbar: Html
+)
+
+@import helper.FieldConstructors.empty
+
+@main("Submission assignment", navbar) {
+  <table class="table table-condensed">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Assigned</th>
+      </tr>
+    </thead>
+    <tbody>
+      @indices.zipWithIndex.map { case (paperIndex, index) => 
+        @papers.find(_.id == paperIndex.paperid).map { paper =>
+          <tr>
+            <td>@{ index + 1 }</td>
+            <td><a href="@routes.Chairing.assign(paper.id)">@paper.title</a></td>
+            <td>@assignments.filter(_.paperid == paper.id).length</td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+}

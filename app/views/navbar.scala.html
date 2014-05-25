@@ -7,7 +7,7 @@
 @import securesocial.core.providers.utils.RoutesHelper
 @import models.PersonRole._
 
-@idSize = @{ 1 /* models.newId.value.toString.size */ }
+@idSize = @{ newMetadata._1.value.toString.size }
 @toString(role: PersonRole) = {
   @role match {
     case Chair => { Chair }
@@ -17,7 +17,7 @@
 }
 @changeRole(to: PersonRole) = {
   @to match {
-    case Chair => { @routes.Sql.query }
+    case Chair => { @routes.Chairing.assignmentList }
     case Reviewer => { @routes.Reviewing.bid }
     case Submitter => { @routes.Submitting.submit }
   }

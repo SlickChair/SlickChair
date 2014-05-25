@@ -1,0 +1,54 @@
+@(paperId: Id[Paper],
+  index: Int,
+  staff: List[Person],
+  form: Form[AssignmentForm],
+  bids: List[Bid],
+  navbar: Html
+)(summary: Html)
+
+@import helper.FieldConstructors.empty
+@import BidValue._
+
+@main("Submission " + index, navbar) {
+  @summary
+  <hr>
+  @helper.form(routes.Chairing.doAssign(paperId)) {    
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Bid</th>
+          <th>Assign</th>
+        </tr>
+      </thead>
+      <tbody>
+        @form.get.assignments.zipWithIndex.map { case (assignment, index) =>
+          @staff.find(_.id == assignment.personid).map { person =>
+            @bids.find(_.personid == person.id).map { b =>
+            <tr
+              @b.value match {
+                case Conflict => { class="danger" }
+                case NoBid => { class="warning" }
+                case Maybe => {}
+                case YesBid => { class="success" }
+              }
+            >
+              <td>@person.name</td>
+              <td>
+                @b.value match {
+                  case Conflict => { Conflict }
+                  case NoBid => { No }
+                  case Maybe => { Maybe }
+                  case YesBid => { Yes }
+                }
+              </td>
+              <td>@checkbox(form("assignments[$index].value"))</td>
+            </tr>
+            }
+          }
+        }
+      </tbody>
+    </table>
+    @button("Save")
+  }
+}

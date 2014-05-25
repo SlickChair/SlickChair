@@ -19,6 +19,9 @@ POST    /review/:paperId/edit/:commentId/:personId  controllers.Reviewing.editCo
 
 GET     /chair/sql              controllers.Sql.query
 POST    /chair/sql              controllers.Sql.doQuery
+GET     /chair/assignment       controllers.Chairing.assignmentList
+GET     /chair/assign/:id       controllers.Chairing.assign(id: Id[Paper])
+POST    /chair/assign/:id       controllers.Chairing.doAssign(id: Id[Paper])
 # GET     /email                 controllers.Emailing.form
 # POST    /email                 controllers.Emailing.send
 # GET     /manage-members        controllers.MembersManaging.page
