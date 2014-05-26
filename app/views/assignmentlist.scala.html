@@ -21,7 +21,7 @@
           <tr>
             <td>@{ index + 1 }</td>
             <td><a href="@routes.Chairing.assign(paper.id)">@paper.title</a></td>
-            <td>@assignments.filter(_.paperid == paper.id).length</td>
+            <td>@assignments.filter(_.paperid == paper.id).filter(_.value).length</td>
           </tr>
         }
       }

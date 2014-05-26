@@ -1,8 +1,9 @@
 @(paperId: Id[Paper],
   index: Int,
   staff: List[Person],
-  form: Form[AssignmentForm],
+  assignmentForm: Form[AssignmentForm],
   bids: List[Bid],
+  assignments: List[Assignment],
   navbar: Html
 )(summary: Html)
 
@@ -18,11 +19,12 @@
         <tr>
           <th>Name</th>
           <th>Bid</th>
+          <th>Assigned</th>
           <th>Assign</th>
         </tr>
       </thead>
       <tbody>
-        @form.get.assignments.zipWithIndex.map { case (assignment, index) =>
+        @assignmentForm.get.assignments.zipWithIndex.map { case (assignment, index) =>
           @staff.find(_.id == assignment.personid).map { person =>
             @bids.find(_.personid == person.id).map { b =>
             <tr
@@ -42,7 +44,11 @@
                   case YesBid => { Yes }
                 }
               </td>
-              <td>@checkbox(form("assignments[$index].value"))</td>
+              <td>@assignments.filter(_.personid == person.id).filter(_.value).length</td>
+              <td>@checkbox(assignmentForm(s"assignments[$index].value"))</td>
+              <td class="hidden">
+                <input type="text" name="assignments[@index].personid.value" value="@b.personid.value">
+              </td>
             </tr>
             }
           }

@@ -49,18 +49,27 @@ object Chairing extends Controller {
       }
     }
     val form = assignmentForm fill AssignmentForm(allAssignments)
+    play.api.Logger.error(form.toString)
     Ok(views.html.assignment(
       paperId,
       Query(r.db).indexOf(paperId),
       sortedStaff,
       form,
       allBids,
+      Query(r.db).allAssignments,
       Navbar(Chair)
     )(Submitting.summary(paperId)))
   }
 
-  def doAssign(paperId: Id[Paper]) = TODO
-  // SlickAction(IsChair) { implicit r =>
-  //   Ok("doAssign")
-  // }
+  def doAssign(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r =>
+    assignmentForm.bindFromRequest.fold(
+      errors => 
+        Redirect(routes.Chairing.assign(paperId)),
+      form => {
+        val assignments = form.assignments map { _ copy (paperid=paperId) }
+        r.connection.insert(assignments)
+        Redirect(routes.Chairing.assign(paperId))
+      }
+    )
+  }
 }
