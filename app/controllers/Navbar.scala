@@ -1,13 +1,13 @@
 package controllers
 
-import models.PersonRole.{Chair, PersonRole, Reviewer, Author}
+import models.Role.{Chair, Role, Reviewer, Author}
 import models.Query
 import play.api.templates.Html
 
 object Navbar {
   private val newSubmission = (routes.Submitting.submit, "New Submission")  
   
-  def apply(currentRole: PersonRole)(implicit r: SlickRequest[_]): Html = {
+  def apply(currentRole: Role)(implicit r: SlickRequest[_]): Html = {
     val roleSpecificEntries = (currentRole match {
       case Chair =>
         List((routes.Chairing.assignmentList, "Assignment"), (routes.Sql.query, "SQL"))

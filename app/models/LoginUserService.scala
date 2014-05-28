@@ -16,7 +16,7 @@ class LoginUserService(application: Application) extends UserServicePlugin(appli
     with LoginUsers.Queries with LoginTokens.Queries {
   def saveHook(user: User)(implicit s: Session): Unit = {
     import models._
-    import PersonRole._
+    import Role._
     Connection(s) insert List(Person(user.firstname, user.lastname, "", user.email))
     ()
   }

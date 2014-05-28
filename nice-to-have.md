@@ -1,0 +1,3 @@
+- Some message to confirm every action, such as "Your submission has be edited.", "Your bids have been saved" and so, http://getbootstrap.com/javascript/#alerts
+- Authors should bid on topics, submissions picking topic is useless ATM
+- Forms could be nicer with some javascript, such as by replacing the save buttons by ajax calls and do client side validation (probably a lot of work now, and will come for free when play/scala.js get more mature)

@@ -1,21 +1,21 @@
 @(user: Option[Person],
-  userRole: Option[PersonRole.PersonRole],
-  currentRole: PersonRole.PersonRole,
+  userPersonRole: Option[Role.Role],
+  currentPersonRole: Role.Role,
   menu: List[(play.api.mvc.Call, String)]
 )(implicit request: play.api.mvc.Request[Any])
 
 @import securesocial.core.providers.utils.RoutesHelper
-@import models.PersonRole._
+@import models.Role._
 
 @idSize = @{ newMetadata._1.value.toString.size }
-@toString(role: PersonRole) = {
+@toString(role: Role) = {
   @role match {
     case Chair => { Chair }
     case Reviewer => { PC Member }
     case Author => { Author }
   }
 }
-@changeRole(to: PersonRole) = {
+@changePersonRole(to: Role) = {
   @to match {
     case Chair => { @routes.Chairing.assignmentList }
     case Reviewer => { @routes.Reviewing.bid }
@@ -40,7 +40,7 @@
     }
   </ul>
   
-@(user, userRole, currentRole) match {
+@(user, userPersonRole, currentPersonRole) match {
   case (Some(Person(_, _, _, email, _)), Some(Author), Author) => {
     <p class="navbar-text pull-right">
       @email — <a href="@RoutesHelper.logout()" class="navbar-link">Sign out</a>
@@ -49,13 +49,13 @@
   case (Some(Person(_, _, _, email, _)), Some(role), _) => {
     <ul class="nav navbar-nav navbar-right">
       <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">@email (@toString(currentRole).toString.trim) <b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">@email (@toString(currentPersonRole).toString.trim) <b class="caret"></b></a>
         <ul class="dropdown-menu">
           @List(Chair, Reviewer, Author).dropWhile(_ != role).map { role =>
-            @if(role == currentRole) {
+            @if(role == currentPersonRole) {
               @* <li><a class="disabeled">Change role to @toString(role)</a></li> *@
             } else {
-              <li><a href="@changeRole(role)">Change role to @toString(role)</a></li>
+              <li><a href="@changePersonRole(role)">Change role to @toString(role)</a></li>
             }
           }
           <li class="divider"></li>

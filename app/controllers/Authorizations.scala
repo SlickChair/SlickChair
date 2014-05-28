@@ -2,7 +2,7 @@ package controllers
 
 import models._
 import BidValue._
-import PersonRole._
+import Role._
 
 trait Authorization {
   def apply[A](implicit r: SlickRequest[A]): Boolean

@@ -38,7 +38,7 @@ case class Connection(session: Session) {
       case m: Topic => TableQuery[TopicTable] insert m.copy(metadata=(m.id, now, ""))
       case m: Person => TableQuery[PersonTable] insert m.copy(metadata=(m.id, now, ""))
       case m: Paper => TableQuery[PaperTable] insert m.copy(metadata=(m.id, now, ""))
-      case m: Role => TableQuery[RoleTable] insert m.copy(metadata=(m.id, now, ""))
+      case m: PersonRole => TableQuery[PersonRoleTable] insert m.copy(metadata=(m.id, now, ""))
       case m: PaperIndex => TableQuery[PaperIndexTable] insert m.copy(metadata=(m.id, now, ""))
       case m: PaperTopic => TableQuery[PaperTopicTable] insert m.copy(metadata=(m.id, now, ""))
       case m: PaperAuthor => TableQuery[PaperAuthorTable] insert m.copy(metadata=(m.id, now, ""))
@@ -76,7 +76,7 @@ case class Database(val time: DateTime, val session: Session, val history: Boole
   
   val topics = timeMod[TopicTable, Topic](TableQuery[TopicTable])
   val persons = timeMod[PersonTable, Person](TableQuery[PersonTable])
-  val roles = timeMod[RoleTable, Role](TableQuery[RoleTable])
+  val roles = timeMod[PersonRoleTable, PersonRole](TableQuery[PersonRoleTable])
   val papers = timeMod[PaperTable, Paper](TableQuery[PaperTable])
   val paperIndices = timeMod[PaperIndexTable, PaperIndex](TableQuery[PaperIndexTable])
   val paperTopics = timeMod[PaperTopicTable, PaperTopic](TableQuery[PaperTopicTable])

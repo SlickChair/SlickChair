@@ -1,7 +1,7 @@
 package controllers
 
 import eu.henkelmann.actuarius.ActuariusTransformer
-import models.PersonRole.Author
+import models.Role.Author
 import play.api.mvc.{Action, Controller}
 import play.api.templates.Html
 

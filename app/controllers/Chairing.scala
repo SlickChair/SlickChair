@@ -1,7 +1,7 @@
 package controllers
 
 import models._
-import PersonRole.Chair
+import Role.Chair
 import play.api.mvc.Controller
 import Mappers.idFormMapping
 import play.api.data.Mapping
@@ -71,5 +71,18 @@ object Chairing extends Controller {
         Redirect(routes.Chairing.assign(paperId))
       }
     )
+  }
+  
+  def decision = SlickAction(IsChair) { implicit r =>
+    ???
+  }
+  def doDecision = SlickAction(IsChair) { implicit r =>
+    ???
+  }
+  def decide = SlickAction(IsChair) { implicit r => 
+    ???
+  }
+  def doDecide = SlickAction(IsChair) { implicit r => 
+    ???
   }
 }

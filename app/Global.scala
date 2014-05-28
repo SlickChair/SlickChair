@@ -1,7 +1,7 @@
 import io.Source
 
 import models._
-import PersonRole._
+import Role._
 import PaperType._
 import play.api.{Application, GlobalSettings}
 import play.api.Play.current
@@ -34,9 +34,9 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
         )
         
         connection insert chairs
-        connection insert chairs.map(p => Role(p.id, Chair)) 
+        connection insert chairs.map(p => PersonRole(p.id, Chair)) 
         connection insert programCommitteeMembers
-        connection insert programCommitteeMembers.map(p => Role(p.id, Reviewer))
+        connection insert programCommitteeMembers.map(p => PersonRole(p.id, Reviewer))
         
         connection insert List(
           Topic("Language design and implementation"),

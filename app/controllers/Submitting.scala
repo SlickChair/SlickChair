@@ -3,7 +3,7 @@ package controllers
 import org.joda.time.DateTime
 import models._
 import Mappers.{enumFormMapping, idTypeFormMapping}
-import models.PersonRole.Author
+import models.Role.Author
 import play.api.data.{Form, FormError}
 import play.api.data.Forms.{ignored, list, mapping, nonEmptyText, number, text}
 import play.api.data.Mapping

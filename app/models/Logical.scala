@@ -3,8 +3,8 @@ package models
 import Mappers.EnumSlickMapper
 import play.api.templates.Html
 
-object PersonRole extends Enumeration with EnumSlickMapper {
-  type PersonRole = Value
+object Role extends Enumeration with EnumSlickMapper {
+  type Role = Value
   val Author, Reviewer, Chair = Value
 }
 
@@ -44,11 +44,11 @@ case class Person(
   def name = Html(s"""<span title="$email"> ${firstname.capitalize} ${lastname.capitalize}</span>""")
 }
 
-case class Role(
+case class PersonRole(
   personid: Id[Person],
-  value: PersonRole.PersonRole,
-  metadata: Metadata[Role] = newMetadata
-) extends Model[Role] {
+  value: Role.Role,
+  metadata: Metadata[PersonRole] = newMetadata
+) extends Model[PersonRole] {
   override val id = pk(personid)
 }
 

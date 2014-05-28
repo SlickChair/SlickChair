@@ -3,7 +3,7 @@ package models
 import BidValue.BidValue
 import Mappers.idSlickMapper
 import PaperType.PaperType
-import PersonRole.PersonRole
+import Role.Role
 import ReviewConfidence.ReviewConfidence
 import ReviewEvaluation.ReviewEvaluation
 import play.api.db.slick.Config.driver.simple._
@@ -21,10 +21,10 @@ class PersonTable(tag: Tag) extends Table[Person](tag, "PERSON") with RepoTable[
   def * = (firstname, lastname, organization, email, (id, updatedAt, updatedBy)) <> (Person.tupled, Person.unapply)
 }
 
-class RoleTable(tag: Tag) extends Table[Role](tag, "ROLE") with RepoTable[Role] {
+class PersonRoleTable(tag: Tag) extends Table[PersonRole](tag, "ROLE") with RepoTable[PersonRole] {
   def personid = column[Id[Person]]("PERSONID")
-  def value = column[PersonRole]("VALUE")
-  def * = (personid, value, (id, updatedAt, updatedBy)) <> (Role.tupled, Role.unapply)
+  def value = column[Role]("VALUE")
+  def * = (personid, value, (id, updatedAt, updatedBy)) <> (PersonRole.tupled, PersonRole.unapply)
 }
 
 class PaperTable(tag: Tag) extends Table[Paper](tag, "PAPER") with RepoTable[Paper] {

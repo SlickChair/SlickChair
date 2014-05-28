@@ -1,7 +1,7 @@
 package controllers
 
 import anorm.SQL
-import models.PersonRole.Chair
+import models.Role.Chair
 import play.api.Play.current
 import play.api.data.Form
 import play.api.data.Forms.{mapping, nonEmptyText, text, tuple}

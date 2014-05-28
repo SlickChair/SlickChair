@@ -2,7 +2,7 @@ package controllers
 
 import models._
 import BidValue._
-import PersonRole.Reviewer
+import Role.Reviewer
 import Mappers.{enumFormMapping, idFormMapping}
 import play.api.data.Form
 import play.api.data.Forms.{ignored, list, mapping, nonEmptyText}
