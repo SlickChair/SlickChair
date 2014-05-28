@@ -18,7 +18,7 @@ case class Query(db: Database) {
   def indexOf(id: Id[Paper]): Int =
     (paperIndices sortBy (_.updatedAt) map(_.paperid) list).indexOf(id) + 1
   def authorsOf(id: Id[Paper]): List[Person] =
-    authors filter (_.paperid is id) flatMap { a => persons.filter(_.id is a.personid) } list
+    authors filter (_.paperid is id) flatMap { a => persons filter (_.id is a.personid) } list
   def commentsOf(id: Id[Paper]): List[Comment] =
     comments filter (_.paperid is id) list
   def reviewsOf(id: Id[Paper]): List[Review] =
@@ -29,8 +29,12 @@ case class Query(db: Database) {
     roles filter (r => (r.value is Reviewer) || (r.value is Chair)) flatMap { r =>
       persons filter (_.id is r.personid)
     } list
-  def assignmentOn(id: Id[Paper]): List[Assignment] =
+  def assignmentsOn(id: Id[Paper]): List[Assignment] =
     assignments filter (_.paperid is id) filter (_.value is true) list
+  def assignedTo(id: Id[Person]): List[Paper] =
+    assignments filter (_.personid is id) filter (_.value is true) flatMap { a =>
+      papers filter (_.id is a.paperid)
+    } list
   def bidsOf(id: Id[Person]): List[Bid] =
     bids filter (_.personid is id) list
   def bidsOf(personId: Id[Person], paperId: Id[Paper]): Option[Bid] =

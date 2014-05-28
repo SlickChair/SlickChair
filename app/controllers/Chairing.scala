@@ -31,7 +31,7 @@ object Chairing extends Controller {
   
   def assign(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r =>
     val bids = Query(r.db) bidsOn paperId
-    val assignments = Query(r.db) assignmentOn paperId
+    val assignments = Query(r.db) assignmentsOn paperId
     val sortedStaff = Query(r.db).allStaff
       .sortBy { s => bids find (_.personid == s.id) map (_.value.id) getOrElse Maybe.id }
       .sortBy { s => assignments exists (_.personid == s.id) }
