@@ -12,8 +12,7 @@ import play.api.mvc.{Call, Controller, MultipartFormData}
 
 case class SubmissionForm(
   paper: Paper,
-  authors: List[Person],
-  topics: List[IdType]
+  authors: List[Person]
 )
 
 object Submitting extends Controller {
@@ -39,8 +38,7 @@ object Submitting extends Controller {
   def submissionForm: Form[SubmissionForm] = Form(
     mapping(
       "paper" -> paperMapping,
-      "authors" -> list(authorMapping),
-      "topics" -> list(idTypeFormMapping).verifying(required, _.nonEmpty)
+      "authors" -> list(authorMapping)
     )(SubmissionForm.apply _)(SubmissionForm.unapply _)
   )
   
@@ -48,7 +46,7 @@ object Submitting extends Controller {
   
   /** Displays new submissions form. */
   def submit = SlickAction(IsAuthor) { implicit r =>
-    Ok(views.html.submissionform("New Submission", submissionForm, Query(r.db).allTopics, routes.Submitting.doSubmit, Navbar(Author)))
+    Ok(views.html.submissionform("New Submission", submissionForm, routes.Submitting.doSubmit, Navbar(Author)))
   }
   
   /** Displays the informations of a given submission. */
@@ -62,22 +60,16 @@ object Submitting extends Controller {
     views.html.submissionsummary(
       paper,
       Query(r.db) authorsOf paperId,
-      Query(r.db) topicsOf paperId,
       paper.fileid.map(Query(r.db) fileWithId _))
   }
   
   /** Displays the form to edit the informations of a given submission. */
   def edit(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId)) { implicit r =>
     val paper: Paper = Query(r.db) paperWithId paperId
-    val allTopics: List[Topic] = Query(r.db).allTopics
-    val paperTopics: List[Topic] = Query(r.db) topicsOf paperId
-    def incBind[T](form: Form[T], data: Map[String, String]) = form.bind(form.data ++ data)
-    val existingSubmissionForm  = incBind(
-      submissionForm.fill(SubmissionForm(paper, Query(r.db) authorsOf paperId, Nil)),
-      allTopics.zipWithIndex.filter(paperTopics contains _._1).map(ti =>
-        (s"topics[${ti._2}]", ti._1.id.value.toString)).toMap
+    val existingSubmissionForm = submissionForm.fill(
+      SubmissionForm(paper, Query(r.db) authorsOf paperId)
     )
-    Ok(views.html.submissionform("Editing Submission " + Query(r.db).indexOf(paperId), existingSubmissionForm, allTopics, routes.Submitting.doEdit(paperId), Navbar(Author)))
+    Ok(views.html.submissionform("Editing Submission " + Query(r.db).indexOf(paperId), existingSubmissionForm, routes.Submitting.doEdit(paperId), Navbar(Author)))
   }
   
   /** Handles a new submission. Creates a database entry with the form data. */
@@ -126,7 +118,7 @@ object Submitting extends Controller {
 
     bindedForm.copy(errors = bindedForm.errors ++ customErrors).fold(
       errors => Ok(views.html.submissionform(
-        "Submission: Errors found", errors, Query(r.db).allTopics, errorEP, Navbar(Author))),
+        "Submission: Errors found", errors, errorEP, Navbar(Author))),
       form => {
         val file: Option[File] = r.body.file("data") map { f =>
           val blob = scalax.io.Resource.fromFile(f.ref.file).byteArray
@@ -137,11 +129,8 @@ object Submitting extends Controller {
         val authors: List[PaperAuthor] = persons.zipWithIndex.map { pi =>
           PaperAuthor(paper.id, pi._1.id, pi._2)
         }
-        val paperTopics: List[PaperTopic] = form.topics.map { i =>
-          PaperTopic(paper.id, Id[Topic](i))
-        }
         val pindex = PaperIndex(paper.id)
-        r.connection insert (pindex :: paper :: file.toList ::: persons ::: authors ::: paperTopics)
+        r.connection insert (pindex :: paper :: file.toList ::: persons ::: authors)
         Redirect(routes.Submitting.info(paper.id))
       }
     )

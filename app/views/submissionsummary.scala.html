@@ -1,6 +1,5 @@
 @(paper: Paper,
   authors: List[Person],
-  topics: List[Topic],
   optionalFile: Option[File]
 )
 
@@ -13,7 +12,6 @@
   <dt>Type</dt><dd>@paper.format.toString.replace("_", " ")</dd>
   <dt>Keywords</dt><dd>@paper.keywords</dd>
   <dt>Abstract</dt><dd>@paper.abstrct</dd>
-  <dt>Topics</dt><dd>@topics.map(_.name).mkString(", ")</dd>
   <dt>File</dt><dd>
     @optionalFile match {
       case Some(file) => {

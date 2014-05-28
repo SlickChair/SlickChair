@@ -2,15 +2,18 @@ package controllers
 
 import models._
 import Role.Chair
+import Decision.Decision
 import play.api.mvc.Controller
-import Mappers.idFormMapping
+import Mappers.{enumFormMapping, idFormMapping}
 import play.api.data.Mapping
 import play.api.data.Form
 import play.api.data.Forms.{ignored, list, mapping, boolean}
 import play.api.data.Mapping
 import BidValue.Maybe
 
+
 case class AssignmentForm(assignments: List[Assignment])
+case class DecisionForm(aecisions: List[PaperDecision])
 
 object Chairing extends Controller {
   def assignmentFormMapping: Mapping[Assignment] = mapping(
@@ -23,6 +26,17 @@ object Chairing extends Controller {
   def assignmentForm: Form[AssignmentForm] = Form(
     mapping("assignments" -> list(assignmentFormMapping))
     (AssignmentForm.apply _)(AssignmentForm.unapply _)
+  )
+  
+  def decisionFormMapping: Mapping[PaperDecision] = mapping(
+    "paperid" -> ignored(newMetadata[Paper]._1),
+    "value" -> enumFormMapping(Decision),
+    "metadata" -> ignored(newMetadata[PaperDecision])
+  )(PaperDecision.apply _)(PaperDecision.unapply _)
+  
+  def decisionForm: Form[DecisionForm] = Form(
+    mapping("decisions" -> list(decisionFormMapping))
+    (DecisionForm.apply _)(DecisionForm.unapply _)
   )
   
   def assignmentList() = SlickAction(IsChair) { implicit r =>

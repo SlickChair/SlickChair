@@ -6,6 +6,8 @@
 
 @import securesocial.core.providers.utils.RoutesHelper
 @import models.Role._
+@import play.api.Play.current
+@import play.api.Play.configuration
 
 @idSize = @{ newMetadata._1.value.toString.size }
 @toString(role: Role) = {
@@ -29,8 +31,7 @@
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
   </button>
-  <a href="#" class="navbar-brand">SlickChair Demo</a>
-  @* <a href="@routes.About.about" class="navbar-brand">SlickChair Demo</a> *@
+  <a href="#" class="navbar-brand">@configuration.getString("application.name").get</a>
 </div>
 
 <div class="collapse navbar-collapse">

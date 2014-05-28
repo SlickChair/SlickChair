@@ -1,6 +1,5 @@
 @(title: String,
   submissionForm: Form[SubmissionForm],
-  topics: List[Topic],
   submissionEndPoint: play.api.mvc.Call,
   navbar: Html
 )
@@ -31,11 +30,6 @@
         '_label -> "Abstract",
         'placeholder -> "Abstract",
         'rows -> 5)
-      @inputCheckboxGroup(
-        submissionForm,
-        "topics",
-        topics.toSeq map (t => (t.id.value.toString, t.name)),
-        '_label -> "Topics")
       @inputFile(
         submissionForm,
         "data",

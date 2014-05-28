@@ -4,14 +4,10 @@ import BidValue.BidValue
 import Mappers.idSlickMapper
 import PaperType.PaperType
 import Role.Role
+import Decision.Decision
 import ReviewConfidence.ReviewConfidence
 import ReviewEvaluation.ReviewEvaluation
 import play.api.db.slick.Config.driver.simple._
-
-class TopicTable(tag: Tag) extends Table[Topic](tag, "TOPIC") with RepoTable[Topic] {
-  def name = column[String]("NAME", O.DBType("TEXT"))
-  def * = (name, (id, updatedAt, updatedBy)) <> (Topic.tupled, Topic.unapply)
-}
 
 class PersonTable(tag: Tag) extends Table[Person](tag, "PERSON") with RepoTable[Person] {
   def firstname = column[String]("FIRSTNAME", O.DBType("TEXT"))
@@ -42,17 +38,17 @@ class PaperIndexTable(tag: Tag) extends Table[PaperIndex](tag, "PAPERINDEX") wit
   def * = (paperid, (id, updatedAt, updatedBy)) <> (PaperIndex.tupled, PaperIndex.unapply)
 }
 
-class PaperTopicTable(tag: Tag) extends Table[PaperTopic](tag, "PAPERTOPIC") with RepoTable[PaperTopic] {
-  def paperid = column[Id[Paper]]("PAPERID")
-  def topicid = column[Id[Topic]]("TOPICID")
-  def * = (paperid, topicid, (id, updatedAt, updatedBy)) <> (PaperTopic.tupled, PaperTopic.unapply)
-}
-
 class PaperAuthorTable(tag: Tag) extends Table[PaperAuthor](tag, "PAPERAUTHOR") with RepoTable[PaperAuthor] {
   def paperid = column[Id[Paper]]("PAPERID")
   def personid = column[Id[Person]]("PERSONID")
   def position = column[Int]("POSITION")
   def * = (paperid, personid, position, (id, updatedAt, updatedBy)) <> (PaperAuthor.tupled, PaperAuthor.unapply)
+}
+
+class PaperDecisionTable(tag: Tag) extends Table[PaperDecision](tag, "PAPERDECISION") with RepoTable[PaperDecision] {
+  def paperid = column[Id[Paper]]("PAPERID")
+  def decision = column[Decision]("DECISION")
+  def * = (paperid, decision, (id, updatedAt, updatedBy)) <> (PaperDecision.tupled, PaperDecision.unapply)
 }
 
 class CommentTable(tag: Tag) extends Table[Comment](tag, "COMMENT") with RepoTable[Comment] {

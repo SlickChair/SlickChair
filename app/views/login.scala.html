@@ -2,8 +2,10 @@
 
 @import helper.FieldConstructors.horizontalForm
 @import bootstrap3._
+@import play.api.Play.current
+@import play.api.Play.configuration
 
-@main("Login to SlickChair") {
+@main("Login to " + configuration.getString("application.name").get) {
   <div class="row">
     <div class="login col-md-10 col-md-offset-1">
       <a class="facebook" href="@securesocial.controllers.routes.ProviderController.authenticate("facebook")">Facebook</a>
@@ -37,7 +39,7 @@
       Login with Facebook/Google allows to skip email validation. Make sure you have access to the associated email addresses as it will be used to send notifications.
       <br>
       <br>
-      This version is still <i>work in progress</i> and was tested mostly with Chrome. Send any feedback to <a href="mailto:olivier.blanvillain@@gmail.com">olivier.blanvillain@@gmail.com</a> or on <a href="https://github.com/SlickChair/SlickChair">GitHub</a>.
+      Report any issue to <a href="mailto:olivier.blanvillain@@gmail.com">olivier.blanvillain@@gmail.com</a>.
     </div>
   </div>
 }

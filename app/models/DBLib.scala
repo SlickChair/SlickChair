@@ -35,13 +35,12 @@ case class Connection(session: Session) {
     implicit val s: Session = session
     val now: DateTime = new DateTime()
     ms foreach { _ match {
-      case m: Topic => TableQuery[TopicTable] insert m.copy(metadata=(m.id, now, ""))
       case m: Person => TableQuery[PersonTable] insert m.copy(metadata=(m.id, now, ""))
       case m: Paper => TableQuery[PaperTable] insert m.copy(metadata=(m.id, now, ""))
       case m: PersonRole => TableQuery[PersonRoleTable] insert m.copy(metadata=(m.id, now, ""))
       case m: PaperIndex => TableQuery[PaperIndexTable] insert m.copy(metadata=(m.id, now, ""))
-      case m: PaperTopic => TableQuery[PaperTopicTable] insert m.copy(metadata=(m.id, now, ""))
       case m: PaperAuthor => TableQuery[PaperAuthorTable] insert m.copy(metadata=(m.id, now, ""))
+      case m: PaperDecision => TableQuery[PaperDecisionTable] insert m.copy(metadata=(m.id, now, ""))
       case m: Comment => TableQuery[CommentTable] insert m.copy(metadata=(m.id, now, ""))
       case m: Review => TableQuery[ReviewTable] insert m.copy(metadata=(m.id, now, ""))
       case m: File => TableQuery[FileTable] insert m.copy(metadata=(m.id, now, ""))
@@ -74,13 +73,12 @@ case class Database(val time: DateTime, val session: Session, val history: Boole
     }
   }
   
-  val topics = timeMod[TopicTable, Topic](TableQuery[TopicTable])
   val persons = timeMod[PersonTable, Person](TableQuery[PersonTable])
   val roles = timeMod[PersonRoleTable, PersonRole](TableQuery[PersonRoleTable])
   val papers = timeMod[PaperTable, Paper](TableQuery[PaperTable])
   val paperIndices = timeMod[PaperIndexTable, PaperIndex](TableQuery[PaperIndexTable])
-  val paperTopics = timeMod[PaperTopicTable, PaperTopic](TableQuery[PaperTopicTable])
-  val authors = timeMod[PaperAuthorTable, PaperAuthor](TableQuery[PaperAuthorTable])
+  val paperAuthors = timeMod[PaperAuthorTable, PaperAuthor](TableQuery[PaperAuthorTable])
+  val paperDecision = timeMod[PaperDecisionTable, PaperDecision](TableQuery[PaperDecisionTable])
   val comments = timeMod[CommentTable, Comment](TableQuery[CommentTable])
   val reviews = timeMod[ReviewTable, Review](TableQuery[ReviewTable])
   val files = timeMod[FileTable, File](TableQuery[FileTable])

@@ -15,7 +15,8 @@ object BidValue extends Enumeration with EnumSlickMapper {
 
 object PaperType extends Enumeration with EnumSlickMapper {
   type PaperType = Value
-  val Full_paper, Short_paper, Tool_demo, Presentation = Value
+  val Student_paper = Value
+  // val Full_paper, Short_paper, Tool_demo, Presentation = Value
 }
 
 object ReviewConfidence extends Enumeration with EnumSlickMapper {
@@ -28,10 +29,10 @@ object ReviewEvaluation extends Enumeration with EnumSlickMapper {
   val Strong_accept, Accept, Weak_accept, Weak_reject, Reject, Strong_reject = Value
 }
 
-case class Topic(
-  name: String,
-  metadata: Metadata[Topic] = newMetadata
-) extends Model[Topic]
+object Decision extends Enumeration with EnumSlickMapper {
+  type Decision = Value
+  val Reject, Temporary_reject, Undecided, Temporary_accept, Accept = Value
+}
 
 case class Person(
   firstname: String,
@@ -68,15 +69,6 @@ case class PaperIndex(
 ) extends Model[PaperIndex] {
   override val id = pk(paperid)
 }
-
-case class PaperTopic(
-  paperid: Id[Paper],
-  topicid: Id[Topic],
-  metadata: Metadata[PaperTopic] = newMetadata
-) extends Model[PaperTopic] {
-  override val id = pk(paperid, topicid)
-}
-
 case class PaperAuthor(
   paperid: Id[Paper],
   personid: Id[Person],
@@ -84,6 +76,14 @@ case class PaperAuthor(
   metadata: Metadata[PaperAuthor] = newMetadata
 ) extends Model[PaperAuthor] {
   override val id = pk(paperid, personid)
+}
+
+case class PaperDecision(
+  paperid: Id[Paper],
+  value: Decision.Decision,
+  metadata: Metadata[PaperDecision] = newMetadata
+) extends Model[PaperDecision] {
+  override val id = pk(paperid)
 }
 
 case class File(
