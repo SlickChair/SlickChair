@@ -12,14 +12,14 @@
   @role match {
     case Chair => { Chair }
     case Reviewer => { PC Member }
-    case Submitter => { Author }
+    case Author => { Author }
   }
 }
 @changeRole(to: PersonRole) = {
   @to match {
     case Chair => { @routes.Chairing.assignmentList }
     case Reviewer => { @routes.Reviewing.bid }
-    case Submitter => { @routes.Submitting.submit }
+    case Author => { @routes.Submitting.submit }
   }
 }
 
@@ -41,7 +41,7 @@
   </ul>
   
 @(user, userRole, currentRole) match {
-  case (Some(Person(_, _, _, email, _)), Some(Submitter), Submitter) => {
+  case (Some(Person(_, _, _, email, _)), Some(Author), Author) => {
     <p class="navbar-text pull-right">
       @email — <a href="@RoutesHelper.logout()" class="navbar-link">Sign out</a>
     </p>
@@ -51,7 +51,7 @@
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">@email (@toString(currentRole).toString.trim) <b class="caret"></b></a>
         <ul class="dropdown-menu">
-          @List(Chair, Reviewer, Submitter).dropWhile(_ != role).map { role =>
+          @List(Chair, Reviewer, Author).dropWhile(_ != role).map { role =>
             @if(role == currentRole) {
               @* <li><a class="disabeled">Change role to @toString(role)</a></li> *@
             } else {

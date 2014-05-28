@@ -8,7 +8,7 @@ trait Authorization {
   def apply[A](implicit r: SlickRequest[A]): Boolean
 }
 
-object IsSubmitter extends Authorization {
+object IsAuthor extends Authorization {
   def apply[A](implicit r: SlickRequest[A]) = true
 }
 

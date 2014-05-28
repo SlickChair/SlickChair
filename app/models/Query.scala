@@ -12,7 +12,7 @@ case class Query(db: Database) {
   def topicsOf(id: Id[Paper]): List[Topic] =
     paperTopics filter (_.paperid is id) flatMap { pt => topics filter (_.id is pt.topicid) } list
   def roleOf(id: Id[Person]): PersonRole =
-    roles.filter(_.personid is id).firstOption map (_.value) getOrElse Submitter
+    roles.filter(_.personid is id).firstOption map (_.value) getOrElse Author
   def papersOf(id: Id[Person]): List[Paper] =
     authors filter (_.personid is id) flatMap { a => papers.filter(_.id is a.paperid) } list
   def indexOf(id: Id[Paper]): Int =

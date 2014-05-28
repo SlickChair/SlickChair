@@ -1,6 +1,6 @@
 package controllers
 
-import models.PersonRole.{Chair, PersonRole, Reviewer, Submitter}
+import models.PersonRole.{Chair, PersonRole, Reviewer, Author}
 import models.Query
 import play.api.templates.Html
 
@@ -14,7 +14,7 @@ object Navbar {
       case Reviewer =>
         // (routes.Reviewing.papers, "Submissions") :: 
         (routes.Reviewing.bid, "Bidding") :: Nil
-      case Submitter =>
+      case Author =>
         val papers = Query(r.db) papersOf r.user.id map { p =>
           (routes.Submitting.info(p.id), "Submission " + Query(r.db).indexOf(p.id))
         }
@@ -23,5 +23,5 @@ object Navbar {
     views.html.navbar(Some(r.user), Some(Query(r.db).roleOf(r.user.id)), currentRole, roleSpecificEntries)
   }
   
-  val empty = views.html.navbar(None, None, models.PersonRole.Submitter, Nil)(null)
+  val empty = views.html.navbar(None, None, Author, Nil)(null)
 }

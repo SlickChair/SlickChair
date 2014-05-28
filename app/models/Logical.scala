@@ -5,7 +5,7 @@ import play.api.templates.Html
 
 object PersonRole extends Enumeration with EnumSlickMapper {
   type PersonRole = Value
-  val Submitter, Reviewer, Chair = Value
+  val Author, Reviewer, Chair = Value
 }
 
 object BidValue extends Enumeration with EnumSlickMapper {
@@ -77,12 +77,12 @@ case class PaperTopic(
   override val id = pk(paperid, topicid)
 }
 
-case class Author(
+case class PaperAuthor(
   paperid: Id[Paper],
   personid: Id[Person],
   position: Int,
-  metadata: Metadata[Author] = newMetadata
-) extends Model[Author] {
+  metadata: Metadata[PaperAuthor] = newMetadata
+) extends Model[PaperAuthor] {
   override val id = pk(paperid, personid)
 }
 

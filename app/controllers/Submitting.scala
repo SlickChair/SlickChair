@@ -3,7 +3,7 @@ package controllers
 import org.joda.time.DateTime
 import models._
 import Mappers.{enumFormMapping, idTypeFormMapping}
-import models.PersonRole.Submitter
+import models.PersonRole.Author
 import play.api.data.{Form, FormError}
 import play.api.data.Forms.{ignored, list, mapping, nonEmptyText, number, text}
 import play.api.data.Mapping
@@ -47,14 +47,14 @@ object Submitting extends Controller {
   private def currentTime(): DateTime = new DateTime()
   
   /** Displays new submissions form. */
-  def submit = SlickAction(IsSubmitter) { implicit r =>
-    Ok(views.html.submissionform("New Submission", submissionForm, Query(r.db).allTopics, routes.Submitting.doSubmit, Navbar(Submitter)))
+  def submit = SlickAction(IsAuthor) { implicit r =>
+    Ok(views.html.submissionform("New Submission", submissionForm, Query(r.db).allTopics, routes.Submitting.doSubmit, Navbar(Author)))
   }
   
   /** Displays the informations of a given submission. */
   def info(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId)) { implicit r =>
     val paper: Paper = Query(r.db) paperWithId paperId
-    Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paperId), paper, Navbar(Submitter))(summary(paperId)))
+    Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paperId), paper, Navbar(Author))(summary(paperId)))
   }
   
   def summary(paperId: Id[Paper])(implicit r: SlickRequest[_]) = {
@@ -77,11 +77,11 @@ object Submitting extends Controller {
       allTopics.zipWithIndex.filter(paperTopics contains _._1).map(ti =>
         (s"topics[${ti._2}]", ti._1.id.value.toString)).toMap
     )
-    Ok(views.html.submissionform("Editing Submission " + Query(r.db).indexOf(paperId), existingSubmissionForm, allTopics, routes.Submitting.doEdit(paperId), Navbar(Submitter)))
+    Ok(views.html.submissionform("Editing Submission " + Query(r.db).indexOf(paperId), existingSubmissionForm, allTopics, routes.Submitting.doEdit(paperId), Navbar(Author)))
   }
   
   /** Handles a new submission. Creates a database entry with the form data. */
-  def doSubmit = SlickAction(IsSubmitter, parse.multipartFormData) { implicit r =>
+  def doSubmit = SlickAction(IsAuthor, parse.multipartFormData) { implicit r =>
     doSave(None, routes.Submitting.doSubmit)
   }
     
@@ -126,7 +126,7 @@ object Submitting extends Controller {
 
     bindedForm.copy(errors = bindedForm.errors ++ customErrors).fold(
       errors => Ok(views.html.submissionform(
-        "Submission: Errors found", errors, Query(r.db).allTopics, errorEP, Navbar(Submitter))),
+        "Submission: Errors found", errors, Query(r.db).allTopics, errorEP, Navbar(Author))),
       form => {
         val file: Option[File] = r.body.file("data") map { f =>
           val blob = scalax.io.Resource.fromFile(f.ref.file).byteArray
@@ -134,8 +134,8 @@ object Submitting extends Controller {
         }
         val paper: Paper = optionalPaperId.map(id => form.paper.copy(metadata=withId(id))).getOrElse(form.paper).copy(fileid=file.map(_.id))
         val persons: List[Person] = form.authors.take(form.paper.nauthors)
-        val authors: List[Author] = persons.zipWithIndex.map { pi =>
-          Author(paper.id, pi._1.id, pi._2)
+        val authors: List[PaperAuthor] = persons.zipWithIndex.map { pi =>
+          PaperAuthor(paper.id, pi._1.id, pi._2)
         }
         val paperTopics: List[PaperTopic] = form.topics.map { i =>
           PaperTopic(paper.id, Id[Topic](i))

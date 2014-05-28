@@ -48,11 +48,11 @@ class PaperTopicTable(tag: Tag) extends Table[PaperTopic](tag, "PAPERTOPIC") wit
   def * = (paperid, topicid, (id, updatedAt, updatedBy)) <> (PaperTopic.tupled, PaperTopic.unapply)
 }
 
-class AuthorTable(tag: Tag) extends Table[Author](tag, "AUTHOR") with RepoTable[Author] {
+class PaperAuthorTable(tag: Tag) extends Table[PaperAuthor](tag, "PAPERAUTHOR") with RepoTable[PaperAuthor] {
   def paperid = column[Id[Paper]]("PAPERID")
   def personid = column[Id[Person]]("PERSONID")
   def position = column[Int]("POSITION")
-  def * = (paperid, personid, position, (id, updatedAt, updatedBy)) <> (Author.tupled, Author.unapply)
+  def * = (paperid, personid, position, (id, updatedAt, updatedBy)) <> (PaperAuthor.tupled, PaperAuthor.unapply)
 }
 
 class CommentTable(tag: Tag) extends Table[Comment](tag, "COMMENT") with RepoTable[Comment] {
