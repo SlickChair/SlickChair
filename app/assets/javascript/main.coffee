@@ -77,3 +77,5 @@ $ ->
     e.preventDefault()
     id = e.target.getAttribute("toggle")
     $(".toggle" + id).toggleClass("hidden")
+
+  $('form').areYouSure()
