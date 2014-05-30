@@ -78,7 +78,7 @@ case class Database(val time: DateTime, val session: Session, val history: Boole
   val papers = timeMod[PaperTable, Paper](TableQuery[PaperTable])
   val paperIndices = timeMod[PaperIndexTable, PaperIndex](TableQuery[PaperIndexTable])
   val paperAuthors = timeMod[PaperAuthorTable, PaperAuthor](TableQuery[PaperAuthorTable])
-  val paperDecision = timeMod[PaperDecisionTable, PaperDecision](TableQuery[PaperDecisionTable])
+  val paperDecisions = timeMod[PaperDecisionTable, PaperDecision](TableQuery[PaperDecisionTable])
   val comments = timeMod[CommentTable, Comment](TableQuery[CommentTable])
   val reviews = timeMod[ReviewTable, Review](TableQuery[ReviewTable])
   val files = timeMod[FileTable, File](TableQuery[FileTable])

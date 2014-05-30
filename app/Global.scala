@@ -28,14 +28,25 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
         
         // A demo paper
         val src = Source.fromFile("test/sigplanconf-template.pdf", "ISO8859-1").map(_.toByte).toArray
-        connection insert {
-          val title = "Test paper"
-          val format = Student_paper
+        connection insert (List(
+          ("Verification by Translation to Recursive Functions ", Student_paper),
+          ("CafeSat: A Modern SAT Solver for Scala ", Student_paper),
+          ("Scala Macros: Let Our Powers Combine! ", Student_paper),
+          ("A New Concurrency Model for Scala Based on a Declarative Dataflow Core ", Student_paper),
+          ("Open GADTs and Declaration-site Variance: A Problem Statement ", Student_paper),
+          ("Towards a Tight Integration of a Functional Web Client Language into Scala ", Student_paper),
+          ("Parsing Graphs – Applying Parser Combinators to Graph Traversals ", Student_paper),
+          ("Scalad: An Interactive Type-Level Debugger ", Student_paper),
+          ("An Experimental Study of the Influence of Dynamic Compiler Optimizations on Scala Performance", Student_paper),
+          ("Bridging Islands of Specialized Code using Macros and Reified Types ", Student_paper),
+          ("What are the Odds? – Probabilistic Programming in Scala ", Student_paper),
+          ("Dataflow Constructs for a Language Extension Based on the Algebra of Communicating Processes", Student_paper)
+        ) flatMap { case (title, format) =>
           val file = File("sigplanconf.pdf", src.length, src)
           val paper = Paper(title, format, "keywords", "abstract", 0, Some(file.id))
           val paperIndex = PaperIndex(paper.id)
           List(file, paper, paperIndex)
-        }
+        })
         
         ()
       }

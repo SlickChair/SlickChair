@@ -36,28 +36,27 @@
                   case NoBid => "No"
                   case Maybe => "Maybe"
                   case YesBid => "Yes"
-                })},
-                '_label -> "")
+                })})
             </td>
             <td class="hidden">
-              <input type="text" name="bids[@index].paperid.value" value="@bid.paperid.value">
+              <input type="text" name="bids[@index].paperId.value" value="@bid.paperId.value">
             </td>
-            @papers.find(_.id == bid.paperid).map { paper =>
+            @papers.find(_.id == bid.paperId).map { paper =>
               @*<td>
-                <div title="@bid.paperid.value">@indices.find(_.paperid == paper.id).get.value<div>
+                <div title="@bid.paperId.value">@indices.find(_.paperId == paper.id).get.value<div>
               </td>*@
-              @if(bidForm.get.bids.find(bid => bid.paperid == paper.id && bid.value == Conflict)) {
+              @if(bidForm.get.bids.find(bid => bid.paperId == paper.id && bid.value == Conflict)) {
                 <td>@paper.title</td><td>-</td>
               } else {
                 <td>
-                  <a href="@routes.Reviewing.review(bid.paperid)">
+                  <a href="@routes.Reviewing.review(bid.paperId)">
                     @paper.title
                   </a>
                 </td>
                 <td>
-                  @paper.fileid match {
-                    case Some(fileid) => {
-                      @files.find(_.id == fileid).map(linkToFile)
+                  @paper.fileId match {
+                    case Some(fileId) => {
+                      @files.find(_.id == fileId).map(linkToFile)
                     }
                     case None => { - }
                   }

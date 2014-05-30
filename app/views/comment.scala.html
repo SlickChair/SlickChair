@@ -10,8 +10,8 @@
 )(summary: Html)
 
 @import helper.FieldConstructors.empty
-@import ReviewConfidence._ 
-@import ReviewEvaluation._
+@import Confidence._ 
+@import Evaluation._
 @import eu.henkelmann.actuarius.ActuariusTransformer
 
 @editIcon(index: Int) = {
@@ -26,7 +26,7 @@
   <hr>
   
   @reviews.zipWithIndex.map { case (review, index) =>
-    @staff.find(_.id == review.personid).map { p =>
+    @staff.find(_.id == review.personId).map { p =>
       @form(routes.Reviewing.editReview(paper.id, p.id)) {
         <div class="form-group">
           <label class="col-lg-2 control-label markdown-label">
@@ -48,11 +48,11 @@
                   @textarea(reviewForm("content").copy(value=Some(review.content)), 'rows -> 3)
                   @inputRadioGroup(
                     reviewForm("evaluation.value").copy(value=Some(review.evaluation.toString)),
-                    ReviewEvaluation.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")))
+                    Evaluation.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")))
                   <br>
                   @inputRadioGroup(
                     reviewForm("confidence.value").copy(value=Some(review.confidence.toString)),
-                    ReviewConfidence.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
+                    Confidence.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
                     '_label -> "Confidence")
                   <br>
                   <button href="#" class="btn btn-default toggle-edit" toggle="@index">Cancel</button>
@@ -74,7 +74,7 @@
   <hr>
   
   @comments.zip(reviews.length to (reviews.length + comments.length)).map { case (comment, index) =>
-    @staff.find(_.id == comment.personid).map { p =>
+    @staff.find(_.id == comment.personId).map { p =>
       @form(routes.Reviewing.editComment(paper.id, comment.id, p.id)) {
         <div class="form-group">
           <label class="col-lg-2 control-label markdown-label">

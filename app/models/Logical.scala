@@ -19,14 +19,14 @@ object PaperType extends Enumeration with EnumSlickMapper {
   // val Full_paper, Short_paper, Tool_demo, Presentation = Value
 }
 
-object ReviewConfidence extends Enumeration with EnumSlickMapper {
-  type ReviewConfidence = Value
+object Confidence extends Enumeration with EnumSlickMapper {
+  type Confidence = Value
   val Expert, High, Medium, Low, None_ = Value
 }
 
-object ReviewEvaluation extends Enumeration with EnumSlickMapper {
-  type ReviewEvaluation = Value
-  val Strong_accept, Accept, Weak_accept, Weak_reject, Reject, Strong_reject = Value
+object Evaluation extends Enumeration with EnumSlickMapper {
+  type Evaluation = Value
+  val Strong_reject, Reject, Weak_reject, Weak_accept, Accept, Strong_accept = Value
 }
 
 object Decision extends Enumeration with EnumSlickMapper {
@@ -46,11 +46,11 @@ case class Person(
 }
 
 case class PersonRole(
-  personid: Id[Person],
+  personId: Id[Person],
   value: Role.Role,
   metadata: Metadata[PersonRole] = newMetadata
 ) extends Model[PersonRole] {
-  override val id = pk(personid)
+  override val id = pk(personId)
 }
 
 case class Paper(
@@ -58,32 +58,32 @@ case class Paper(
   format: PaperType.PaperType,
   keywords: String,
   abstrct: String,
-  nauthors: Int,
-  fileid: Option[Id[File]],
+  nAuthors: Int,
+  fileId: Option[Id[File]],
   metadata: Metadata[Paper] = newMetadata
 ) extends Model[Paper]
 
 case class PaperIndex(
-  paperid: Id[Paper],
+  paperId: Id[Paper],
   metadata: Metadata[PaperIndex] = newMetadata
 ) extends Model[PaperIndex] {
-  override val id = pk(paperid)
+  override val id = pk(paperId)
 }
 case class PaperAuthor(
-  paperid: Id[Paper],
-  personid: Id[Person],
+  paperId: Id[Paper],
+  personId: Id[Person],
   position: Int,
   metadata: Metadata[PaperAuthor] = newMetadata
 ) extends Model[PaperAuthor] {
-  override val id = pk(paperid, personid)
+  override val id = pk(paperId, personId)
 }
 
 case class PaperDecision(
-  paperid: Id[Paper],
+  paperId: Id[Paper],
   value: Decision.Decision,
   metadata: Metadata[PaperDecision] = newMetadata
 ) extends Model[PaperDecision] {
-  override val id = pk(paperid)
+  override val id = pk(paperId)
 }
 
 case class File(
@@ -94,39 +94,39 @@ case class File(
 ) extends Model[File]
 
 case class Bid(
-  paperid: Id[Paper],
-  personid: Id[Person],
+  paperId: Id[Paper],
+  personId: Id[Person],
   value: BidValue.BidValue,
   metadata: Metadata[Bid] = newMetadata
 ) extends Model[Bid] {
-  override val id = pk(paperid, personid)
+  override val id = pk(paperId, personId)
 }
 
 case class Assignment(
-  paperid: Id[Paper],
-  personid: Id[Person],
+  paperId: Id[Paper],
+  personId: Id[Person],
   value: Boolean,
   metadata: Metadata[Assignment] = newMetadata
 ) extends Model[Assignment] {
-  override val id = pk(paperid, personid)
+  override val id = pk(paperId, personId)
 }
 
 case class Comment(
-  paperid: Id[Paper],
-  personid: Id[Person],
+  paperId: Id[Paper],
+  personId: Id[Person],
   content: String,
   metadata: Metadata[Comment] = newMetadata
 ) extends Model[Comment]
 
 case class Review(
-  paperid: Id[Paper],
-  personid: Id[Person],
-  confidence: ReviewConfidence.ReviewConfidence,
-  evaluation: ReviewEvaluation.ReviewEvaluation,
+  paperId: Id[Paper],
+  personId: Id[Person],
+  confidence: Confidence.Confidence,
+  evaluation: Evaluation.Evaluation,
   content: String,
   metadata: Metadata[Review] = newMetadata
 ) extends Model[Review] {
-  override val id = pk(paperid, personid)
+  override val id = pk(paperId, personId)
 }
 
 case class Email(

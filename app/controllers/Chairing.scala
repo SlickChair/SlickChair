@@ -2,7 +2,8 @@ package controllers
 
 import models._
 import Role.Chair
-import Decision.Decision
+import Evaluation.Evaluation
+import Decision.{Decision, Undecided}
 import play.api.mvc.Controller
 import Mappers.{enumFormMapping, idFormMapping}
 import play.api.data.Mapping
@@ -11,14 +12,13 @@ import play.api.data.Forms.{ignored, list, mapping, boolean}
 import play.api.data.Mapping
 import BidValue.Maybe
 
-
 case class AssignmentForm(assignments: List[Assignment])
-case class DecisionForm(aecisions: List[PaperDecision])
+case class DecisionForm(decisions: List[PaperDecision])
 
 object Chairing extends Controller {
   def assignmentFormMapping: Mapping[Assignment] = mapping(
-    "paperid" -> ignored(newMetadata[Paper]._1),
-    "personid" -> idFormMapping[Person],
+    "paperId" -> ignored(newMetadata[Paper]._1),
+    "personId" -> idFormMapping[Person],
     "value" -> boolean,
     "metadata" -> ignored(newMetadata[Assignment])
   )(Assignment.apply _)(Assignment.unapply _)
@@ -29,7 +29,7 @@ object Chairing extends Controller {
   )
   
   def decisionFormMapping: Mapping[PaperDecision] = mapping(
-    "paperid" -> ignored(newMetadata[Paper]._1),
+    "paperId" -> idFormMapping[Paper],
     "value" -> enumFormMapping(Decision),
     "metadata" -> ignored(newMetadata[PaperDecision])
   )(PaperDecision.apply _)(PaperDecision.unapply _)
@@ -47,17 +47,17 @@ object Chairing extends Controller {
     val bids = Query(r.db) bidsOn paperId
     val assignments = Query(r.db) assignmentsOn paperId
     val sortedStaff = Query(r.db).allStaff
-      .sortBy { s => bids find (_.personid == s.id) map (_.value.id) getOrElse Maybe.id }
-      .sortBy { s => assignments exists (_.personid == s.id) }
+      .sortBy { s => bids find (_.personId == s.id) map (_.value.id) getOrElse Maybe.id }
+      .sortBy { s => assignments exists (_.personId == s.id) }
       .reverse
     val allBids = sortedStaff map { p => 
-      bids.find(_.personid == p.id) match {
+      bids.find(_.personId == p.id) match {
         case None => Bid(paperId, p.id, Maybe)
         case Some(b) => b
       }
     }
     val allAssignments = sortedStaff map { s =>
-      assignments.find(_.personid == s.id) match {
+      assignments.find(_.personId == s.id) match {
         case None => Assignment(paperId, s.id, false)
         case Some(a) => a
       }
@@ -80,7 +80,7 @@ object Chairing extends Controller {
       errors => 
         Redirect(routes.Chairing.assign(paperId)),
       form => {
-        val assignments = form.assignments map { _ copy (paperid=paperId) }
+        val assignments = form.assignments map { _ copy (paperId=paperId) }
         r.connection.insert(assignments)
         Redirect(routes.Chairing.assign(paperId))
       }
@@ -88,15 +88,34 @@ object Chairing extends Controller {
   }
   
   def decision = SlickAction(IsChair) { implicit r =>
-    ???
+    val decisions: List[PaperDecision] = Query(r.db).allPaperDecisions
+    val papers: List[Paper] = Query(r.db).allPapers
+    val allPaperDecisions: List[PaperDecision] = papers map { p =>
+      decisions.find(_.paperId == p.id) match {
+        case None => PaperDecision(p.id, Undecided)
+        case Some(d) => d
+      }
+    }
+    val form = decisionForm fill DecisionForm(allPaperDecisions)
+
+    val indices: List[PaperIndex] = Query(r.db).allPaperIndices
+    val reviews: List[Review] = Query(r.db).allReviews
+    val paperIndexEvaluations: Id[Paper] => Option[(Paper, Int, List[Evaluation])] = paperId => 
+      for(
+        paper <- papers.find(_.id == paperId);
+        index <- indices.zipWithIndex.find(_._1.paperId == paperId).map(_._2)
+      ) yield (paper, index, reviews.filter(_.paperId == paperId).map(_.evaluation))
+      
+    Ok(views.html.decision(form, paperIndexEvaluations, Navbar(Chair)))
   }
   def doDecision = SlickAction(IsChair) { implicit r =>
+    decisionForm.bindFromRequest.fold(_ => (), form => r.connection.insert(form.decisions))
+    Redirect(routes.Chairing.decision)
+  }
+  def decide(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
     ???
   }
-  def decide = SlickAction(IsChair) { implicit r => 
-    ???
-  }
-  def doDecide = SlickAction(IsChair) { implicit r => 
+  def doDecide(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
     ???
   }
 }

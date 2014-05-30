@@ -22,6 +22,10 @@ POST    /chair/sql              controllers.Sql.doQuery
 GET     /chair/assignment       controllers.Chairing.assignmentList
 GET     /chair/assign/:id       controllers.Chairing.assign(id: Id[Paper])
 POST    /chair/assign/:id       controllers.Chairing.doAssign(id: Id[Paper])
+GET     /chair/decision         controllers.Chairing.decision
+POST    /chair/doDecision       controllers.Chairing.doDecision
+GET     /chair/decide/:id       controllers.Chairing.decide(id: Id[Paper])
+POST    /chair/doDecide/:id     controllers.Chairing.doDecide(id: Id[Paper])
 # GET     /email                 controllers.Emailing.form
 # POST    /email                 controllers.Emailing.send
 # GET     /manage-members        controllers.MembersManaging.page

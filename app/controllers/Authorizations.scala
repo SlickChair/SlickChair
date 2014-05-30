@@ -36,7 +36,7 @@ case class NonConflictingReviewer(paperId: Id[Paper]) extends Authorization {
 
 case class AuthorOrNCReviewer(fileId: Id[File]) extends Authorization {
   def apply[A](implicit r: SlickRequest[A]) = {
-    val paperid = Query(r.db).paperWithFile(fileId).id
-    IsAuthorOf(paperid)(r) || NonConflictingReviewer(paperid)(r)
+    val paperId = Query(r.db).paperWithFile(fileId).id
+    IsAuthorOf(paperId)(r) || NonConflictingReviewer(paperId)(r)
   }
 }

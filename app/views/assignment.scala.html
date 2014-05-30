@@ -25,8 +25,8 @@
       </thead>
       <tbody>
         @assignmentForm.get.assignments.zipWithIndex.map { case (assignment, index) =>
-          @staff.find(_.id == assignment.personid).map { person =>
-            @bids.find(_.personid == person.id).map { b =>
+          @staff.find(_.id == assignment.personId).map { person =>
+            @bids.find(_.personId == person.id).map { b =>
             <tr
               @b.value match {
                 case Conflict => { class="danger" }
@@ -44,10 +44,10 @@
                   case YesBid => { Yes }
                 }
               </td>
-              <td>@assignments.filter(_.personid == person.id).filter(_.value).length</td>
+              <td>@assignments.filter(_.personId == person.id).filter(_.value).length</td>
               <td>@checkbox(assignmentForm(s"assignments[$index].value"))</td>
               <td class="hidden">
-                <input type="text" name="assignments[@index].personid.value" value="@b.personid.value">
+                <input type="text" name="assignments[@index].personId.value" value="@b.personId.value">
               </td>
             </tr>
             }

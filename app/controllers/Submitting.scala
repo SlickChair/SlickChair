@@ -22,8 +22,8 @@ object Submitting extends Controller {
     "format" -> enumFormMapping(PaperType),
     "keywords" -> nonEmptyText,
     "abstrct" -> nonEmptyText,
-    "nauthors" -> number.verifying(required, _ > 0),
-    "fileid" -> ignored(Option.empty[Id[File]]),
+    "nAuthors" -> number.verifying(required, _ > 0),
+    "fileId" -> ignored(Option.empty[Id[File]]),
     "metadata" -> ignored(newMetadata[Paper])
   )(Paper.apply _)(Paper.unapply _)
   
@@ -60,7 +60,7 @@ object Submitting extends Controller {
     views.html.submissionsummary(
       paper,
       Query(r.db) authorsOf paperId,
-      paper.fileid.map(Query(r.db) fileWithId _))
+      paper.fileId.map(Query(r.db) fileWithId _))
   }
   
   /** Displays the form to edit the informations of a given submission. */
@@ -92,10 +92,10 @@ object Submitting extends Controller {
     val customErrors = bindedForm.fold(
       errors => Nil,
       form => {
-        val authorsWIndex = form.authors.take(form.paper.nauthors).zipWithIndex
+        val authorsWIndex = form.authors.take(form.paper.nAuthors).zipWithIndex
         val emptyFieldErr: Seq[FormError] = authorsWIndex.flatMap { 
           case (Person(fn, ln, org, email, _), i) =>
-            // Author fields are populated for author i; i < nauthors
+            // Author fields are populated for author i; i < nAuthors
             Seq((fn, i, "firstname"), (ln, i, "lastname"), (org, i, "organization"), (email, i, "email"))
               .filter { _._1.trim().isEmpty }
               .map { case (_, i, field) => FormError(s"authors[$i]." + field, required) }
@@ -124,8 +124,8 @@ object Submitting extends Controller {
           val blob = scalax.io.Resource.fromFile(f.ref.file).byteArray
           File(f.filename, blob.size, blob)
         }
-        val paper: Paper = optionalPaperId.map(id => form.paper.copy(metadata=withId(id))).getOrElse(form.paper).copy(fileid=file.map(_.id))
-        val persons: List[Person] = form.authors.take(form.paper.nauthors)
+        val paper: Paper = optionalPaperId.map(id => form.paper.copy(metadata=withId(id))).getOrElse(form.paper).copy(fileId=file.map(_.id))
+        val persons: List[Person] = form.authors.take(form.paper.nAuthors)
         val authors: List[PaperAuthor] = persons.zipWithIndex.map { pi =>
           PaperAuthor(paper.id, pi._1.id, pi._2)
         }

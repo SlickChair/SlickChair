@@ -16,12 +16,12 @@
       </tr>
     </thead>
     <tbody>
-      @indices.zipWithIndex.map { case (paperIndex, index) => 
-        @papers.find(_.id == paperIndex.paperid).map { paper =>
+      @indices.zipWithIndex.map { case (PaperIndex(paperId, _), index) => 
+        @papers.find(_.id == paperId).map { paper =>
           <tr>
             <td>@{ index + 1 }</td>
-            <td><a href="@routes.Chairing.assign(paper.id)">@paper.title</a></td>
-            <td>@assignments.filter(_.paperid == paper.id).filter(_.value).length</td>
+            <td><a href="@routes.Chairing.assign(paperId)">@paper.title</a></td>
+            <td>@assignments.filter(_.paperId == paperId).filter(_.value).length</td>
           </tr>
         }
       }

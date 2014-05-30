@@ -1,0 +1,64 @@
+@(decisionform: Form[DecisionForm],
+  paperIndexEvaluations: Id[Paper] => Option[(Paper, Int, List[Evaluation.Evaluation])],
+  navbar: Html
+)
+
+@import FileServing.linkToFile
+@import Decision._
+@import helper.FieldConstructors.empty
+@import java.text.DecimalFormat
+
+@main("Decision", navbar) {
+  @helper.form(routes.Chairing.doDecision) {    
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Title</th>
+          <th>Reviews</th>
+          <th>Score</th>
+          <th>Decision</th>
+        </tr>
+      </thead>
+      <tbody>
+        @decisionform.get.decisions.map { decision =>
+          @paperIndexEvaluations(decision.paperId).map { case (paper, index, evaluations) =>
+            <tr
+              @decision.value match {
+                case Reject => { class="danger" }
+                case Temporary_reject => { class="warning" }
+                case Undecided => {}
+                case Temporary_accept => { class="warning" }
+                case Accept => { class="success" }
+              }
+            >
+              <td>@{ index + 1 }</td>
+              <td><a href="@routes.Chairing.decide(paper.id)">@paper.title</a></td>
+              <td>@if(evaluations.isEmpty) {-} else {@evaluations.size}</td>
+              <td>
+                <div title="@evaluations.map(_.toString.replace("_", " ")).mkString(", ")">
+                  @{ evaluations match {
+                    case Nil => "-"
+                    case xs => 
+                      new DecimalFormat("#.##").format(
+                        xs.map(_.id).sum.toDouble / (evaluations.size.toDouble)
+                      ) + " / " + (Evaluation.maxId - 1)
+                  }}
+                </div>
+              </td>
+              <td>
+                @select(
+                  decisionform(s"decisions[$index].value.value"),
+                  Decision.values.toSeq.map { b => b.toString -> b.toString.replace("_", " ")})
+              </td>
+              <td class="hidden">
+                <input type="text" name="decisions[@index].paperId.value" value="@decision.paperId.value">
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+    <div style="margin-left:5px;">@button("Save")</div>
+  }
+}

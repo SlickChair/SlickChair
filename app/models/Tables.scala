@@ -5,8 +5,8 @@ import Mappers.idSlickMapper
 import PaperType.PaperType
 import Role.Role
 import Decision.Decision
-import ReviewConfidence.ReviewConfidence
-import ReviewEvaluation.ReviewEvaluation
+import Confidence.Confidence
+import Evaluation.Evaluation
 import play.api.db.slick.Config.driver.simple._
 
 class PersonTable(tag: Tag) extends Table[Person](tag, "PERSON") with RepoTable[Person] {
@@ -18,9 +18,9 @@ class PersonTable(tag: Tag) extends Table[Person](tag, "PERSON") with RepoTable[
 }
 
 class PersonRoleTable(tag: Tag) extends Table[PersonRole](tag, "ROLE") with RepoTable[PersonRole] {
-  def personid = column[Id[Person]]("PERSONID")
+  def personId = column[Id[Person]]("PERSONID")
   def value = column[Role]("VALUE")
-  def * = (personid, value, (id, updatedAt, updatedBy)) <> (PersonRole.tupled, PersonRole.unapply)
+  def * = (personId, value, (id, updatedAt, updatedBy)) <> (PersonRole.tupled, PersonRole.unapply)
 }
 
 class PaperTable(tag: Tag) extends Table[Paper](tag, "PAPER") with RepoTable[Paper] {
@@ -28,43 +28,43 @@ class PaperTable(tag: Tag) extends Table[Paper](tag, "PAPER") with RepoTable[Pap
   def format = column[PaperType]("FORMAT")
   def keywords = column[String]("KEYWORDS", O.DBType("TEXT"))
   def abstrct = column[String]("ABSTRCT", O.DBType("TEXT"))
-  def nauthors = column[Int]("NAUTHORS")
-  def fileid = column[Option[Id[File]]]("FILE")
-  def * = (title, format, keywords, abstrct, nauthors, fileid, (id, updatedAt, updatedBy)) <> (Paper.tupled, Paper.unapply)
+  def nAuthors = column[Int]("nAuthors")
+  def fileId = column[Option[Id[File]]]("FILE")
+  def * = (title, format, keywords, abstrct, nAuthors, fileId, (id, updatedAt, updatedBy)) <> (Paper.tupled, Paper.unapply)
 }
 
 class PaperIndexTable(tag: Tag) extends Table[PaperIndex](tag, "PAPERINDEX") with RepoTable[PaperIndex] {
-  def paperid = column[Id[Paper]]("PAPERID")
-  def * = (paperid, (id, updatedAt, updatedBy)) <> (PaperIndex.tupled, PaperIndex.unapply)
+  def paperId = column[Id[Paper]]("PAPERID")
+  def * = (paperId, (id, updatedAt, updatedBy)) <> (PaperIndex.tupled, PaperIndex.unapply)
 }
 
 class PaperAuthorTable(tag: Tag) extends Table[PaperAuthor](tag, "PAPERAUTHOR") with RepoTable[PaperAuthor] {
-  def paperid = column[Id[Paper]]("PAPERID")
-  def personid = column[Id[Person]]("PERSONID")
+  def paperId = column[Id[Paper]]("PAPERID")
+  def personId = column[Id[Person]]("PERSONID")
   def position = column[Int]("POSITION")
-  def * = (paperid, personid, position, (id, updatedAt, updatedBy)) <> (PaperAuthor.tupled, PaperAuthor.unapply)
+  def * = (paperId, personId, position, (id, updatedAt, updatedBy)) <> (PaperAuthor.tupled, PaperAuthor.unapply)
 }
 
 class PaperDecisionTable(tag: Tag) extends Table[PaperDecision](tag, "PAPERDECISION") with RepoTable[PaperDecision] {
-  def paperid = column[Id[Paper]]("PAPERID")
+  def paperId = column[Id[Paper]]("PAPERID")
   def decision = column[Decision]("DECISION")
-  def * = (paperid, decision, (id, updatedAt, updatedBy)) <> (PaperDecision.tupled, PaperDecision.unapply)
+  def * = (paperId, decision, (id, updatedAt, updatedBy)) <> (PaperDecision.tupled, PaperDecision.unapply)
 }
 
 class CommentTable(tag: Tag) extends Table[Comment](tag, "COMMENT") with RepoTable[Comment] {
-  def paperid = column[Id[Paper]]("PAPERID")
-  def personid = column[Id[Person]]("PERSONID")
+  def paperId = column[Id[Paper]]("PAPERID")
+  def personId = column[Id[Person]]("PERSONID")
   def content = column[String]("CONTENT", O.DBType("TEXT"))
-  def * = (paperid, personid, content, (id, updatedAt, updatedBy)) <> (Comment.tupled, Comment.unapply)
+  def * = (paperId, personId, content, (id, updatedAt, updatedBy)) <> (Comment.tupled, Comment.unapply)
 }
 
 class ReviewTable(tag: Tag) extends Table[Review](tag, "REVIEW") with RepoTable[Review] {
-  def paperid = column[Id[Paper]]("PAPERID")
-  def personid = column[Id[Person]]("PERSONID")
-  def confidence = column[ReviewConfidence]("CONFIDENCE")
-  def evaluation = column[ReviewEvaluation]("EVALUATION")
+  def paperId = column[Id[Paper]]("PAPERID")
+  def personId = column[Id[Person]]("PERSONID")
+  def confidence = column[Confidence]("CONFIDENCE")
+  def evaluation = column[Evaluation]("EVALUATION")
   def content = column[String]("CONTENT", O.DBType("TEXT"))
-  def * = (paperid, personid, confidence, evaluation, content, (id, updatedAt, updatedBy)) <> (Review.tupled, Review.unapply)
+  def * = (paperId, personId, confidence, evaluation, content, (id, updatedAt, updatedBy)) <> (Review.tupled, Review.unapply)
 }
 
 class FileTable(tag: Tag) extends Table[File](tag, "FILE") with RepoTable[File] {
@@ -82,15 +82,15 @@ class EmailTable(tag: Tag) extends Table[Email](tag, "EMAIL") with RepoTable[Ema
 }
 
 class BidTable(tag: Tag) extends Table[Bid](tag, "BID") with RepoTable[Bid] {
-  def paperid = column[Id[Paper]]("PAPERID")
-  def personid = column[Id[Person]]("PERSONID")
+  def paperId = column[Id[Paper]]("PAPERID")
+  def personId = column[Id[Person]]("PERSONID")
   def value = column[BidValue]("VALUE")
-  def * = (paperid, personid, value, (id, updatedAt, updatedBy)) <> (Bid.tupled, Bid.unapply)
+  def * = (paperId, personId, value, (id, updatedAt, updatedBy)) <> (Bid.tupled, Bid.unapply)
 }
 
 class AssignmentTable(tag: Tag) extends Table[Assignment](tag, "ASSIGNMENT") with RepoTable[Assignment] {
-  def paperid = column[Id[Paper]]("PAPERID")
-  def personid = column[Id[Person]]("PERSONID")
+  def paperId = column[Id[Paper]]("PAPERID")
+  def personId = column[Id[Person]]("PERSONID")
   def value = column[Boolean]("VALUE")
-  def * = (paperid, personid, value, (id, updatedAt, updatedBy)) <> (Assignment.tupled, Assignment.unapply)
+  def * = (paperId, personId, value, (id, updatedAt, updatedBy)) <> (Assignment.tupled, Assignment.unapply)
 }

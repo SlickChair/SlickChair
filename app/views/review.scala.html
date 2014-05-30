@@ -5,8 +5,8 @@
 )(summary: Html)
 
 @import helper.FieldConstructors.horizontalForm
-@import ReviewConfidence._ 
-@import ReviewEvaluation._
+@import Confidence._ 
+@import Evaluation._
 
 @main(title, navbar) {
   @summary
@@ -21,12 +21,12 @@
 
     @inputRadioGroup(
       reviewForm("evaluation.value"),
-      ReviewEvaluation.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
+      Evaluation.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
       '_label -> "Evaluation")
 
     @inputRadioGroup(
       reviewForm("confidence.value"),
-      ReviewConfidence.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
+      Confidence.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")), 
       '_label -> "Confidence")  
 
     <div class="ctrl-enter">

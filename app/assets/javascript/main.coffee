@@ -15,36 +15,36 @@ $ ->
         fileInput.click()
 
   ### Handles plus and minus buttons ###
-  nauthors = $("#paper_nauthors")
-  getNauthors = -> Number(nauthors.val())
-  setNauthors = (n) ->
-    oldn = getNauthors()
-    nauthors.val(n)
-    if nauthors.val() == null
-      nauthors.val(oldn)
+  nAuthors = $("#paper_nAuthors")
+  getnAuthors = -> Number(nAuthors.val())
+  setnAuthors = (n) ->
+    oldn = getnAuthors()
+    nAuthors.val(n)
+    if nAuthors.val() == null
+      nAuthors.val(oldn)
       false
     else
       true
   
-  # Restores state from the value of nauthors
-  for i in [0..getNauthors()-1]
+  # Restores state from the value of nAuthors
+  for i in [0..getnAuthors()-1]
     $("#author#{ i }").removeClass("hidden")
   
   disableMinusIfZero = ->
-    if getNauthors() == 1
+    if getnAuthors() == 1
       $(".glyphicon-minus-sign").addClass("half-transparent")
     else
       $(".glyphicon-minus-sign").removeClass("half-transparent")
   disableMinusIfZero()
   
   $(".glyphicon-plus-sign").click (e) ->
-    if setNauthors(getNauthors() + 1)
-      $("#author#{ getNauthors() - 1 }").removeClass("hidden")
+    if setnAuthors(getnAuthors() + 1)
+      $("#author#{ getnAuthors() - 1 }").removeClass("hidden")
     disableMinusIfZero()
   
   $(".glyphicon-minus-sign").click (e) ->
-    if setNauthors(getNauthors() - 1)
-      $("#author#{ getNauthors() }").addClass("hidden")
+    if setnAuthors(getnAuthors() - 1)
+      $("#author#{ getnAuthors() }").addClass("hidden")
     disableMinusIfZero()
   
   ### /slq, select the query textarea and submit on ctrl+enter ###

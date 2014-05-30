@@ -49,6 +49,8 @@ Register your instance to login with Google accounts:
 - APIs & auth; Credentials; CREAT NEW CLIENT ID
 - Set AUTHORIZED REDIRECT URI to <http://your-url/authenticate/google>
 - Copy "Client ID" and "Client secret" to `securesocial.google.clientId/clientSecret`
+- <https://accounts.google.com/>
+- click /!\ next to Phone; Verify number now; verify now
 
 Deploy to Heroku:
 

@@ -14,8 +14,8 @@ case class BidForm(bids: List[Bid])
 
 object Reviewing extends Controller {
   def bidFormMapping: Mapping[Bid] = mapping(
-    "paperid" -> idFormMapping[Paper],
-    "personid" -> ignored(newMetadata[Person]._1),
+    "paperId" -> idFormMapping[Paper],
+    "personId" -> ignored(newMetadata[Person]._1),
     "bid" -> enumFormMapping(BidValue),
     "metadata" -> ignored(newMetadata[Bid])
   )(Bid.apply _)(Bid.unapply _)
@@ -26,17 +26,17 @@ object Reviewing extends Controller {
   )
   
   def reviewForm: Form[Review] = Form(mapping(
-    "paperid" -> ignored(newMetadata[Paper]._1),
-    "personid" -> ignored(newMetadata[Person]._1),
-    "confidence" -> enumFormMapping(ReviewConfidence),
-    "evaluation" -> enumFormMapping(ReviewEvaluation),
+    "paperId" -> ignored(newMetadata[Paper]._1),
+    "personId" -> ignored(newMetadata[Person]._1),
+    "confidence" -> enumFormMapping(Confidence),
+    "evaluation" -> enumFormMapping(Evaluation),
     "content" -> nonEmptyText,
     "metadata" -> ignored(newMetadata[Review])
   )(Review.apply _)(Review.unapply _))
   
   def commentForm: Form[Comment] = Form(mapping(
-    "paperid" -> ignored(newMetadata[Paper]._1),
-    "personid" -> ignored(newMetadata[Person]._1),
+    "paperId" -> ignored(newMetadata[Paper]._1),
+    "personId" -> ignored(newMetadata[Person]._1),
     "content" -> nonEmptyText,
     "metadata" -> ignored(newMetadata[Comment])
   )(Comment.apply _)(Comment.unapply _))
@@ -45,7 +45,7 @@ object Reviewing extends Controller {
     val bids: List[Bid] = Query(r.db) bidsOf r.user.id
     val papers: List[Paper] = Query(r.db).allPapers
     val allBids: List[Bid] = papers map { p =>
-      bids.find(_.paperid == p.id) match {
+      bids.find(_.paperId == p.id) match {
         case None => Bid(p.id, r.user.id, Maybe)
         case Some(b) => b
       }
@@ -59,7 +59,7 @@ object Reviewing extends Controller {
       errors => 
         Ok(views.html.bid(errors, Query(r.db).allPapers.toSet,  Query(r.db).allFiles.toSet, Navbar(Reviewer))),
       form => {
-        val bids = form.bids map { _ copy (personid=r.user.id) }
+        val bids = form.bids map { _ copy (personId=r.user.id) }
         r.connection.insert(bids)
         Redirect(routes.Reviewing.bid)
       }
@@ -87,7 +87,7 @@ object Reviewing extends Controller {
         Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), errors, paper, Navbar(Reviewer))(Submitting.summary(paperId)))
       },
       review => {
-        r.connection insert List(review.copy(paperid=paperId, personid=r.user.id))
+        r.connection insert List(review.copy(paperId=paperId, personId=r.user.id))
         Redirect(routes.Reviewing.review(paperId))
       }
     )
@@ -96,7 +96,7 @@ object Reviewing extends Controller {
   def doComment(paperId: Id[Paper]) = SlickAction(NonConflictingReviewer(paperId)) { implicit r =>
     commentForm.bindFromRequest.fold(_ => (),
       comment => {
-        r.connection insert List(comment.copy(paperid=paperId, personid=r.user.id))
+        r.connection insert List(comment.copy(paperId=paperId, personId=r.user.id))
       }
     )
     Redirect(routes.Reviewing.review(paperId))
@@ -106,7 +106,7 @@ object Reviewing extends Controller {
     commentForm.bindFromRequest.fold(_ => (),
       comment => {
         r.connection insert List(
-          comment.copy(paperid=paperId, personid=personId, metadata=withId(commentId))
+          comment.copy(paperId=paperId, personId=personId, metadata=withId(commentId))
         )
       }
     )
@@ -117,7 +117,7 @@ object Reviewing extends Controller {
       implicit r =>
     reviewForm.bindFromRequest.fold(_ => (),
       review => {
-        r.connection insert List(review.copy(paperid=paperId, personid=personId))
+        r.connection insert List(review.copy(paperId=paperId, personId=personId))
       }
     )
     Redirect(routes.Reviewing.review(paperId))
