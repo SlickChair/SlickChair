@@ -1,7 +1,7 @@
 @(user: Option[Person],
   userPersonRole: Option[Role.Role],
   currentPersonRole: Role.Role,
-  menu: List[(play.api.mvc.Call, String)]
+  menu: List[(Call, String)]
 )(implicit request: play.api.mvc.Request[Any])
 
 @import securesocial.core.providers.utils.RoutesHelper
@@ -19,7 +19,7 @@
 }
 @changePersonRole(to: Role) = {
   @to match {
-    case Chair => { @routes.Chairing.assignmentList }
+    case Chair => { @routes.Chairing.submissions }
     case Reviewer => { @routes.Reviewing.bid }
     case Author => { @routes.Submitting.submit }
   }

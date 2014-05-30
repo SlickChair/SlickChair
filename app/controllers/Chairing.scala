@@ -63,15 +63,7 @@ object Chairing extends Controller {
       }
     }
     val form = assignmentForm fill AssignmentForm(allAssignments)
-    play.api.Logger.error(form.toString)
-    Ok(views.html.assignment(
-      paperId,
-      Query(r.db).indexOf(paperId),
-      sortedStaff,
-      form,
-      allBids,
-      Query(r.db).allAssignments,
-      Navbar(Chair)
+    Ok(views.html.assignment(paperId, Query(r.db).indexOf(paperId), sortedStaff, form, allBids, Query(r.db).allAssignments, Navbar(Chair)
     )(Submitting.summary(paperId)))
   }
 
@@ -112,10 +104,36 @@ object Chairing extends Controller {
     decisionForm.bindFromRequest.fold(_ => (), form => r.connection.insert(form.decisions))
     Redirect(routes.Chairing.decision)
   }
-  def decide(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
+  
+  def submissions = SlickAction(IsChair) { implicit r => 
+    val files: List[File] = Query(r.db).allFiles
+    val papers: List[Paper] = Query(r.db).allPapers
+    val indexOf: Id[Paper] => Int = paperId =>
+      Query(r.db).allPaperIndices.map(_.paperId).zipWithIndex.find(_._1 == paperId).get._2
+    val rows: List[(Paper, Int, Option[File])] = papers map { paper =>
+      (paper, indexOf(paper.id), paper.fileId.map(id => files.find(_.id == id).get))
+    }
+    Ok(views.html.submissionlist(rows, Navbar(Chair)))
+  }
+
+  def info(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
+    Ok(views.html.submissioninfo(
+      "Submission " + Query(r.db).indexOf(paperId),
+      Query(r.db) paperWithId paperId,
+      routes.Chairing.edit(paperId),
+      Navbar(Chair))(Submitting.summary(paperId)))
+  }
+  def edit(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
+    val form = Submitting.submissionForm.fill(SubmissionForm(Query(r.db) paperWithId paperId, Query(r.db) authorsOf paperId))
+    Ok(views.html.submissionform("Editing Submission " + Query(r.db).indexOf(paperId), form, routes.Chairing.doEdit(paperId), Navbar(Chair)))
+  }
+  def doEdit(paperId: Id[Paper]) = SlickAction(IsChair, parse.multipartFormData) { implicit r => 
+    Submitting.doSave(Some(paperId), routes.Chairing.doEdit(paperId), routes.Chairing.info, false)
+  }
+  def review(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
     ???
   }
-  def doDecide(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
+  def doComment(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
     ???
   }
 }

@@ -51,39 +51,32 @@ object Submitting extends Controller {
   
   /** Displays the informations of a given submission. */
   def info(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId)) { implicit r =>
-    val paper: Paper = Query(r.db) paperWithId paperId
-    Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paperId), paper, Navbar(Author))(summary(paperId)))
+    Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paperId), Query(r.db) paperWithId paperId, routes.Submitting.edit(paperId), Navbar(Author))(summary(paperId)))
   }
   
   def summary(paperId: Id[Paper])(implicit r: SlickRequest[_]) = {
-    val paper: Paper = Query(r.db) paperWithId paperId
-    views.html.submissionsummary(
-      paper,
-      Query(r.db) authorsOf paperId,
-      paper.fileId.map(Query(r.db) fileWithId _))
+    val paper = Query(r.db) paperWithId paperId
+    views.html.submissionsummary(paper, Query(r.db) authorsOf paperId, paper.fileId.map(Query(r.db) fileWithId _))
   }
   
   /** Displays the form to edit the informations of a given submission. */
   def edit(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId)) { implicit r =>
-    val paper: Paper = Query(r.db) paperWithId paperId
-    val existingSubmissionForm = submissionForm.fill(
-      SubmissionForm(paper, Query(r.db) authorsOf paperId)
-    )
-    Ok(views.html.submissionform("Editing Submission " + Query(r.db).indexOf(paperId), existingSubmissionForm, routes.Submitting.doEdit(paperId), Navbar(Author)))
+    val form = submissionForm.fill(SubmissionForm(Query(r.db) paperWithId paperId, Query(r.db) authorsOf paperId))
+    Ok(views.html.submissionform("Editing Submission " + Query(r.db).indexOf(paperId), form, routes.Submitting.doEdit(paperId), Navbar(Author)))
   }
   
   /** Handles a new submission. Creates a database entry with the form data. */
   def doSubmit = SlickAction(IsAuthor, parse.multipartFormData) { implicit r =>
-    doSave(None, routes.Submitting.doSubmit)
+    doSave(None, routes.Submitting.doSubmit, routes.Submitting.info, true)
   }
     
   /** Handles edit of a submission. Update the database entry with the form data. */
-  def doEdit(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), parse.multipartFormData) {
-    implicit r => doSave(Some(paperId), routes.Submitting.doEdit(paperId))
+  def doEdit(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), parse.multipartFormData) {implicit r =>
+    doSave(Some(paperId), routes.Submitting.doEdit(paperId), routes.Submitting.info, true)
   }
   
   private type Req = SlickRequest[MultipartFormData[play.api.libs.Files.TemporaryFile]]
-  private def doSave(optionalPaperId: Option[Id[Paper]], errorEP: Call)(implicit r: Req) = {
+  def doSave(optionalPaperId: Option[Id[Paper]], errorEP: Call, okEP: Id[Paper] => Call, checkSelfAuthor: Boolean)(implicit r: Req) = {
     // TODO: if the form is not js validated we might want to save the
     // uploaded file in case of errors. Otherwise the user will have to
     // select it again.
@@ -112,7 +105,10 @@ object Submitting extends Controller {
             FormError(s"authors[$i].email", "The person submitting must be an author")
           }
         }
-        emptyFieldErr ++ sameEmailErr ++ notAuthorErr
+        
+        emptyFieldErr ++ sameEmailErr ++ (
+          if(checkSelfAuthor) notAuthorErr else Seq()
+        )
       }
     )
 
@@ -131,7 +127,7 @@ object Submitting extends Controller {
         }
         val pindex = PaperIndex(paper.id)
         r.connection insert (pindex :: paper :: file.toList ::: persons ::: authors)
-        Redirect(routes.Submitting.info(paper.id))
+        Redirect(okEP(paper.id))
       }
     )
   }

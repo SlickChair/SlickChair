@@ -41,7 +41,7 @@ class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(ap
   // }
 
   override def getNotAuthorizedPage[A](implicit request: Request[A]): Html = {
-    views.html.main("Not Authorized")(
+    views.html.main("Not Authorized", Navbar.empty)(
       Html("You are not authorized to access that page."))
   }
 

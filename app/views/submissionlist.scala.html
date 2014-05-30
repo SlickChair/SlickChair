@@ -1,0 +1,32 @@
+@(rows: List[(Paper, Int, Option[File])],
+  navbar: Html
+)
+
+@import helper.FieldConstructors.empty
+@import FileServing.linkToFile
+
+@main("All Submissions", navbar) {
+  <table class="table table-condensed">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>File</th>
+      </tr>
+    </thead>
+    <tbody>
+      @rows.map { case (paper, index, optionalFile) =>
+        <tr>
+          <td>@{ index + 1 }</td>
+          <td><a href="@routes.Chairing.info(paper.id)">@paper.title</a></td>
+          <td>
+            @optionalFile match {
+              case Some(file) => { @linkToFile(file) }
+              case None => { - }
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

@@ -10,8 +10,8 @@
   * @param action The submit action.
   * @param args Set of extra HTML attributes.
   * @param body The form body. *@
-@(action: play.api.mvc.Call, args: (Symbol,String)*)(body: => Html) 
+@(action: Call, args: (Symbol,String)*)(body: => Html) 
 
 <form action="@action.url" method="@action.method" class="form-horizontal" @toHtmlArgs(args.toMap)>
-    @body
+  @body
 </form>

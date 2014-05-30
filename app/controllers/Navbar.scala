@@ -11,6 +11,7 @@ object Navbar {
     val roleSpecificEntries = (currentRole match {
       case Chair =>
         List(
+          (routes.Chairing.submissions, "Submissions"),
           (routes.Chairing.assignmentList, "Assignment"),
           (routes.Chairing.decision, "Decision"),
           (routes.Sql.query, "SQL"))

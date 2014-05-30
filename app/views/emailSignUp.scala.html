@@ -7,7 +7,7 @@
 @import helper.FieldConstructors.horizontalForm
 @import bootstrap3._
 
-@main("Sign up") {
+@main("Sign up", Navbar.empty) {
   <div style="height:27px;"></div>
   @form(securesocial.core.providers.utils.RoutesHelper.handleSignUp(token)) {
     <fieldset>

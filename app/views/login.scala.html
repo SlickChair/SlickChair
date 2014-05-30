@@ -5,7 +5,7 @@
 @import play.api.Play.current
 @import play.api.Play.configuration
 
-@main("Login to " + configuration.getString("application.name").get) {
+@main("Login to " + configuration.getString("application.name").get, Navbar.empty) {
   <div class="row">
     <div class="login col-md-10 col-md-offset-1">
       <a class="facebook" href="@securesocial.controllers.routes.ProviderController.authenticate("facebook")">Facebook</a>
