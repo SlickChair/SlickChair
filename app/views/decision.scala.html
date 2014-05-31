@@ -33,7 +33,7 @@
               }
             >
               <td>@{ index + 1 }</td>
-              <td><a href="@routes.Chairing.review(paper.id)">@paper.title</a></td>
+              <td><a href="@routes.Chairing.comment(paper.id)">@paper.title</a></td>
               <td>@if(evaluations.isEmpty) {-} else {@evaluations.size}</td>
               <td>
                 <div title="@evaluations.map(_.toString.replace("_", " ")).mkString(", ")">

@@ -6,7 +6,7 @@
   paper: Paper,
   self: Person,
   staff: Set[Person],
-  canEditAll: Boolean,
+  doCommentEP: Call,
   navbar: Html
 )(summary: Html)
 
@@ -41,10 +41,10 @@
                   Evaluation: @review.evaluation.toString.replace("_", " ")&emsp;
                   Confidence: @review.confidence.toString.replace("_", " ")
                 </span>
-                @if(p == self || canEditAll) { @editIcon(index) }
+                @if(p == self) { @editIcon(index) }
               </div>
               
-              @if(p == self || canEditAll) {
+              @if(p == self) {
                 <div class="panel-body toggle@index hidden">
                   @textarea(reviewForm("content").copy(value=Some(review.content)), 'rows -> 3)
                   @inputRadioGroup(
@@ -76,13 +76,14 @@
   
   @comments.zip(reviews.length to (reviews.length + comments.length)).map { case (comment, index) =>
     @staff.find(_.id == comment.personId).map { p =>
-      @form(routes.Reviewing.editComment(paper.id, comment.id, p.id)) {
+      @*form(routes.Reviewing.editComment(paper.id, comment.id, p.id)) {*@
+      <form class="form-horizontal">
         <div class="form-group">
           <label class="col-lg-2 control-label markdown-label">
             <b>@p.name</b><br>@date(comment.updatedAt)
           </label>
           <div class="col-lg-9">
-            @if(canEditAll) {
+            @*if(false) {
               <div class="well well-sm toggle@index hidden">
                 <div class="row">
                   <div class="col-lg-11">
@@ -92,18 +93,19 @@
                   </div>
                 </div>
               </div>
-            }
+            }*@
             <div class="well well-sm toggle@index">
-              @if(canEditAll) { @editIcon(index) }
+              @*if(false) { @editIcon(index) }*@
               @Html(new ActuariusTransformer()(comment.content))
             </div>
           </div>
         </div>
-      }
+      </form>
+      @*}*@
     }
   }
   
-  @form(routes.Reviewing.doComment(paper.id)) {
+  @form(doCommentEP) {
    <div class="form-group">
       <label for="content" class="col-lg-2 control-label">Comment</label>
       <div class="col-lg-9">

@@ -123,17 +123,23 @@ object Chairing extends Controller {
       routes.Chairing.edit(paperId),
       Navbar(Chair))(Submitting.summary(paperId)))
   }
+  
   def edit(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
     val form = Submitting.submissionForm.fill(SubmissionForm(Query(r.db) paperWithId paperId, Query(r.db) authorsOf paperId))
     Ok(views.html.submissionform("Editing Submission " + Query(r.db).indexOf(paperId), form, routes.Chairing.doEdit(paperId), Navbar(Chair)))
   }
+  
   def doEdit(paperId: Id[Paper]) = SlickAction(IsChair, parse.multipartFormData) { implicit r => 
     Submitting.doSave(Some(paperId), routes.Chairing.doEdit(paperId), routes.Chairing.info, false)
   }
-  def review(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
-    ???
+  
+  def comment(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
+    Reviewing.comment(paperId, routes.Chairing.doComment(paperId), Navbar(Chair))
   }
+  
   def doComment(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
-    ???
+    Reviewing.commentForm.bindFromRequest.fold(_ => (),
+      comment => r.connection insert List(comment.copy(paperId=paperId, personId=r.user.id)))
+    Redirect(routes.Chairing.comment(paperId))
   }
 }

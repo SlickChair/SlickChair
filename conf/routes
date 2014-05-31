@@ -15,7 +15,7 @@ GET     /review/:id             controllers.Reviewing.review(id: Id[Paper])
 POST    /review/:id             controllers.Reviewing.doReview(id: Id[Paper])
 POST    /review/:id/edit/:pid   controllers.Reviewing.editReview(id: Id[Paper], pid: Id[Person])
 POST    /review/:id/comment     controllers.Reviewing.doComment(id: Id[Paper])
-POST    /review/:paperId/edit/:commentId/:personId  controllers.Reviewing.editComment(paperId: Id[Paper], commentId: Id[Comment], personId: Id[Person])
+# POST    /review/:paperId/edit/:commentId/:personId  controllers.Reviewing.editComment(paperId: Id[Paper], commentId: Id[Comment], personId: Id[Person])
 
 GET     /chair/sql              controllers.Sql.query
 POST    /chair/sql              controllers.Sql.doQuery
@@ -29,8 +29,8 @@ POST    /chair/assign/:id       controllers.Chairing.doAssign(id: Id[Paper])
 GET     /chair/info/:id         controllers.Chairing.info(id: Id[Paper])
 GET     /chair/edit/:id         controllers.Chairing.edit(id: Id[Paper])
 POST    /chair/edit/:id         controllers.Chairing.doEdit(id: Id[Paper])
-GET     /chair/review/:id       controllers.Chairing.review(id: Id[Paper])
-POST    /chair/review/:id       controllers.Chairing.doComment(id: Id[Paper])
+GET     /chair/comment/:id      controllers.Chairing.comment(id: Id[Paper])
+POST    /chair/comment/:id      controllers.Chairing.doComment(id: Id[Paper])
 
 # GET     /email                 controllers.Emailing.form
 # POST    /email                 controllers.Emailing.send
