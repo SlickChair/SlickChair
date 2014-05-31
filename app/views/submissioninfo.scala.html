@@ -1,16 +1,22 @@
 @(title: String,
   paper: Paper,
   editEP: Call,
+  withdrawEP: Call,
   navbar: Html
 )(summary: Html)
 
-@main(title, navbar) {
+@main(title + (if(paper.withdrawn) " (withdrawn)" else ""), navbar) {
   @summary
   <dl class="dl-horizontal">
     <dt></dt><dd></dd>
     <dt></dt><dd></dd>
     <dt></dt><dd>
-      <a href="@editEP" class="btn btn-default" role="button">Edit</a>  
+      @if(paper.withdrawn) {
+        <a href="@withdrawEP" class="btn btn-default" role="button">Resubmit</a>
+      } else {
+        <a href="@editEP" class="btn btn-default" role="button">Edit</a>
+        <a href="@withdrawEP" class="btn btn-default" role="button" onclick="return confirm('Are you sure?');">Withdraw</a>
+      }
     </dd>
   </dl>
 }

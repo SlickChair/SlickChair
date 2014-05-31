@@ -30,7 +30,8 @@ class PaperTable(tag: Tag) extends Table[Paper](tag, "PAPER") with RepoTable[Pap
   def abstrct = column[String]("ABSTRCT", O.DBType("TEXT"))
   def nAuthors = column[Int]("nAuthors")
   def fileId = column[Option[Id[File]]]("FILE")
-  def * = (title, format, keywords, abstrct, nAuthors, fileId, (id, updatedAt, updatedBy)) <> (Paper.tupled, Paper.unapply)
+  def withdrawn = column[Boolean]("WITHDRAWN")
+  def * = (title, format, keywords, abstrct, nAuthors, fileId, withdrawn, (id, updatedAt, updatedBy)) <> (Paper.tupled, Paper.unapply)
 }
 
 class PaperIndexTable(tag: Tag) extends Table[PaperIndex](tag, "PAPERINDEX") with RepoTable[PaperIndex] {

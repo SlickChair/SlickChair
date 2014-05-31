@@ -24,6 +24,7 @@ object Submitting extends Controller {
     "abstrct" -> nonEmptyText,
     "nAuthors" -> number.verifying(required, _ > 0),
     "fileId" -> ignored(Option.empty[Id[File]]),
+    "withdrawn" -> ignored(false),
     "metadata" -> ignored(newMetadata[Paper])
   )(Paper.apply _)(Paper.unapply _)
   
@@ -51,7 +52,13 @@ object Submitting extends Controller {
   
   /** Displays the informations of a given submission. */
   def info(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId)) { implicit r =>
-    Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paperId), Query(r.db) paperWithId paperId, routes.Submitting.edit(paperId), Navbar(Author))(summary(paperId)))
+    Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paperId), Query(r.db) paperWithId paperId, routes.Submitting.edit(paperId), routes.Submitting.toggleWithdraw(paperId), Navbar(Author))(summary(paperId)))
+  }
+
+  def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId)) { implicit r =>
+    val paper: Paper = Query(r.db).paperWithId(paperId)
+    r.connection insert List(paper.copy(withdrawn=(!paper.withdrawn)))
+    Redirect(routes.Submitting.info(paperId))
   }
   
   def summary(paperId: Id[Paper])(implicit r: SlickRequest[_]) = {

@@ -48,7 +48,8 @@ case class Query(db: Database) {
   def allPaperDecisions: List[PaperDecision] = paperDecisions list
   def allPaperIndices: List[PaperIndex] = paperIndices list
   def allAssignments: List[Assignment] = assignments list
-  def allPapers: List[Paper] = papers list
+  def allPapers: List[Paper] = papers filter (!_.withdrawn) list
+  def allPapersAndWithdrawn: List[Paper] = papers list
   def allReviews: List[Review] = reviews list
   def allFiles: List[File] = files.map { f =>
     (f.name, f.size, Array[Byte](), (f.id, f.updatedAt, f.updatedBy))

@@ -60,6 +60,7 @@ case class Paper(
   abstrct: String,
   nAuthors: Int,
   fileId: Option[Id[File]],
+  withdrawn: Boolean,
   metadata: Metadata[Paper] = newMetadata
 ) extends Model[Paper]
 
@@ -69,6 +70,7 @@ case class PaperIndex(
 ) extends Model[PaperIndex] {
   override val id = pk(paperId)
 }
+
 case class PaperAuthor(
   paperId: Id[Paper],
   personId: Id[Person],

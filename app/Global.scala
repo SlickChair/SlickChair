@@ -43,7 +43,7 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
           ("Dataflow Constructs for a Language Extension Based on the Algebra of Communicating Processes", Student_paper)
         ) flatMap { case (title, format) =>
           val file = File("sigplanconf.pdf", src.length, src)
-          val paper = Paper(title, format, "keywords", "abstract", 0, Some(file.id))
+          val paper = Paper(title, format, "keywords", "abstract", 0, Some(file.id), false)
           val paperIndex = PaperIndex(paper.id)
           List(file, paper, paperIndex)
         })
