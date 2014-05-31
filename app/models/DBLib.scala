@@ -74,7 +74,7 @@ case class Database(val time: DateTime, val session: Session, val history: Boole
   }
   
   val persons = timeMod[PersonTable, Person](TableQuery[PersonTable])
-  val roles = timeMod[PersonRoleTable, PersonRole](TableQuery[PersonRoleTable])
+  val personRoles = timeMod[PersonRoleTable, PersonRole](TableQuery[PersonRoleTable])
   val papers = timeMod[PaperTable, Paper](TableQuery[PaperTable])
   val paperIndices = timeMod[PaperIndexTable, PaperIndex](TableQuery[PaperIndexTable])
   val paperAuthors = timeMod[PaperAuthorTable, PaperAuthor](TableQuery[PaperAuthorTable])

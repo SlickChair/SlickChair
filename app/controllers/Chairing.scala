@@ -14,6 +14,7 @@ import BidValue.Maybe
 
 case class AssignmentForm(assignments: List[Assignment])
 case class DecisionForm(decisions: List[PaperDecision])
+case class RolesForm(roles: List[PersonRole])
 
 object Chairing extends Controller {
   def assignmentFormMapping: Mapping[Assignment] = mapping(
@@ -37,6 +38,17 @@ object Chairing extends Controller {
   def decisionForm: Form[DecisionForm] = Form(
     mapping("decisions" -> list(decisionFormMapping))
     (DecisionForm.apply _)(DecisionForm.unapply _)
+  )
+  
+  def rolesFormMapping: Mapping[PersonRole] = mapping(
+    "personId" -> idFormMapping[Person],
+    "value" -> enumFormMapping(Role),
+    "metadata" -> ignored(newMetadata[PersonRole])
+  )(PersonRole.apply _)(PersonRole.unapply _)
+  
+  def rolesForm: Form[RolesForm] = Form(
+    mapping("roles" -> list(rolesFormMapping))
+    (RolesForm.apply _)(RolesForm.unapply _)
   )
   
   def assignmentList() = SlickAction(IsChair) { implicit r =>
@@ -148,5 +160,15 @@ object Chairing extends Controller {
     Reviewing.commentForm.bindFromRequest.fold(_ => (),
       comment => r.connection insert List(comment.copy(paperId=paperId, personId=r.user.id)))
     Redirect(routes.Chairing.comment(paperId))
+  }
+
+  def roles = SlickAction(IsChair) { implicit r =>
+    val form = rolesForm fill RolesForm(Query(r.db).allPersonRoles.filterNot(_.personId == r.user.id))
+    Ok(views.html.roles(form, Query(r.db).allPersons.toSet, Navbar(Chair)))
+  }
+
+  def doRoles = SlickAction(IsChair) { implicit r =>
+    rolesForm.bindFromRequest.fold(_ => (), form => r.connection.insert(form.roles))
+    Redirect(routes.Chairing.roles)
   }
 }

@@ -1,0 +1,48 @@
+@(personRolesForm: Form[RolesForm],
+  persons: Set[Person],
+  navbar: Html
+)
+
+@import helper.FieldConstructors.empty
+@import Role._
+
+@main("Roles", navbar) {
+  @helper.form(routes.Chairing.doRoles) {
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Assigned</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        @personRolesForm.get.roles.zipWithIndex.map { case (role, index) =>
+          <tr
+            @role.value match {
+              case Chair => { class="success" }
+              case Reviewer => { class="info" }
+              case Author => {}
+            }
+          >
+            <td>@persons.find(_.id == role.personId).map(_.name)</td>
+            <td>@date(role.updatedAt)</td>
+            <td style="min-width: 90px;">
+              @select(
+                personRolesForm(s"roles[$index].value.value"),
+                Role.values.toSeq.map { b => b.toString -> (b match {
+                  case Chair => "Chair"
+                  case Reviewer => "PC Member"
+                  case Author => "Author"
+                })})
+            </td>
+            <td class="hidden">
+              <input type="text" name="roles[@index].personId.value" value="@role.personId.value">
+            </td>
+         </tr>
+        }
+      </tbody>
+    </table>
+    <div style="margin-left:5px;">@button("Save")</div>
+  }
+}

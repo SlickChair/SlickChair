@@ -13,7 +13,7 @@
 @toString(role: Role) = {
   @role match {
     case Chair => { Chair }
-    case Reviewer => { PC Member }
+    case Reviewer => { PC Member @* TODO: rename reviewer?! *@ }
     case Author => { Author }
   }
 }

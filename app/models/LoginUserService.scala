@@ -17,7 +17,12 @@ class LoginUserService(application: Application) extends UserServicePlugin(appli
   def saveHook(user: User)(implicit s: Session): Unit = {
     import models._
     import Role._
-    Connection(s) insert List(Person(user.firstname, user.lastname, "", user.email))
+    val person = Person(user.firstname, user.lastname, "", user.email)
+    val connection = Connection(s)
+    if(Query(connection.database()) hasRole person.id)
+      connection insert List(person, PersonRole(person.id, Role.Author))
+    else
+      connection insert List(person)
     ()
   }
 }

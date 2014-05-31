@@ -10,7 +10,7 @@ case class Query(db: Database) {
   import db._
   
   def roleOf(id: Id[Person]): Role =
-    roles.filter(_.personId is id).firstOption map (_.value) getOrElse Author
+    personRoles.filter(_.personId is id).first.value
   def papersOf(id: Id[Person]): List[Paper] =
     paperAuthors filter (_.personId is id) flatMap { a => papers.filter(_.id is a.paperId) } list
   def indexOf(id: Id[Paper]): Int =
@@ -24,7 +24,7 @@ case class Query(db: Database) {
   def notReviewed(personId: Id[Person], paperId: Id[Paper]): Boolean =
     (reviews filter { r => (r.personId is personId) && (r.paperId is paperId) }).firstOption.isEmpty
   def allStaff: List[Person] =
-    roles filter (r => (r.value is Reviewer) || (r.value is Chair)) flatMap { r =>
+    personRoles filter (r => (r.value is Reviewer) || (r.value is Chair)) flatMap { r =>
       persons filter (_.id is r.personId)
     } list
   def assignmentsOn(id: Id[Paper]): List[Assignment] =
@@ -39,6 +39,8 @@ case class Query(db: Database) {
     bids filter { b => (b.personId is personId) && (b.paperId is paperId) } firstOption
   def bidsOn(id: Id[Paper]): List[Bid] =
     bids filter (_.paperId is id) list
+  def hasRole(id: Id[Person]): Boolean =
+    personRoles.filter(_.personId is id).firstOption.isEmpty 
   
   def personWithEmail(email: String): Person = persons filter (_.email is email) first
   def paperWithFile(id: Id[File]): Paper = papers filter (_.fileId is id) first
@@ -46,9 +48,11 @@ case class Query(db: Database) {
   def paperWithId(id: Id[Paper]): Paper = papers filter (_.id is id) first
   
   def allPaperDecisions: List[PaperDecision] = paperDecisions list
+  def allPersonRoles: List[PersonRole] = personRoles list
   def allPaperIndices: List[PaperIndex] = paperIndices list
   def allAssignments: List[Assignment] = assignments list
   def allPapers: List[Paper] = papers filter (!_.withdrawn) list
+  def allPersons: List[Person] = persons list
   def allPapersAndWithdrawn: List[Paper] = papers list
   def allReviews: List[Review] = reviews list
   def allFiles: List[File] = files.map { f =>

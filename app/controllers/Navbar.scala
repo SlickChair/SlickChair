@@ -12,6 +12,7 @@ object Navbar {
       case Chair =>
         List(
           (routes.Chairing.submissions, "Submissions"),
+          (routes.Chairing.roles, "Roles"),
           (routes.Chairing.assignmentList, "Assignment"),
           (routes.Chairing.decision, "Decision"),
           (routes.Sql.query, "SQL"))

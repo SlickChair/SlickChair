@@ -24,6 +24,8 @@ GET     /chair/assignment       controllers.Chairing.assignmentList
 GET     /chair/decision         controllers.Chairing.decision
 POST    /chair/doDecision       controllers.Chairing.doDecision
 GET     /chair/submissions      controllers.Chairing.submissions
+GET     /chair/roles            controllers.Chairing.roles
+POST    /chair/roles            controllers.Chairing.doRoles
 
 GET     /chair/assign/:id       controllers.Chairing.assign(id: Id[Paper])
 POST    /chair/assign/:id       controllers.Chairing.doAssign(id: Id[Paper])
