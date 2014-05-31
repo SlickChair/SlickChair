@@ -52,19 +52,20 @@ case class Connection(session: Session) {
   }
 }
 
-case class Database(val time: DateTime, val session: Session, val history: Boolean = false) {
+case class Database(val time: DateTime, val session: Session, val withHistory: Boolean = false) {
   
   def asOf(time: DateTime): Database = this copy (time=time)
   def equals(database: Database): Boolean = this.basis == database.basis
   def basis(): DateTime = ???
+  def history: Database = this.copy(withHistory=true)
   
   private def timeMod[T <: Table[M] with RepoTable[M], M <: Model[M]](table: TableQuery[T]) = {
     // : Query[T, M] = {
     // TODO: Use this.time
-    if(history) {
+    if(withHistory) {
       table
     } else {
-      val dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isAfter _)
+      val dateTimeOrdering: Ordering[DateTime] = Ordering fromLessThan (_ isAfter _)
       val maxDates = table.groupBy (_.id) map { case (id, xs) => (id, xs.map(_.updatedAt).max) }
       for {
         c <- table

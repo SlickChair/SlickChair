@@ -17,12 +17,12 @@ case class Query(db: Database) {
     (paperIndices sortBy (_.updatedAt) map(_.paperId) list).indexOf(id) + 1
   def authorsOf(id: Id[Paper]): List[Person] =
     paperAuthors filter (_.paperId is id) flatMap { a => persons filter (_.id is a.personId) } list
-  def commentsOf(id: Id[Paper]): List[Comment] =
+  def commentsOn(id: Id[Paper]): List[Comment] =
     comments filter (_.paperId is id) list
-  def reviewsOf(id: Id[Paper]): List[Review] =
-    reviews filter (_.paperId is id) list
-  def notReviewed(personId: Id[Person], paperId: Id[Paper]): Boolean =
-    (reviews filter { r => (r.personId is personId) && (r.paperId is paperId) }).firstOption.isEmpty
+  def reviewsHistoryOn(id: Id[Paper]): List[Review] =
+    db.history.reviews filter (_.paperId is id) list
+  def reviewOf(personId: Id[Person], paperId: Id[Paper]): Option[Review] =
+    (reviews filter { r => (r.personId is personId) && (r.paperId is paperId) }).firstOption
   def allStaff: List[Person] =
     personRoles filter (r => (r.value is Reviewer) || (r.value is Chair)) flatMap { r =>
       persons filter (_.id is r.personId)

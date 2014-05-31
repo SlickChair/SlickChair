@@ -3,12 +3,15 @@ package controllers
 import models._
 import BidValue._
 import Role.Reviewer
+import Confidence.Confidence
+import Evaluation.Evaluation
 import Mappers.{enumFormMapping, idFormMapping}
 import play.api.data.Form
 import play.api.data.Forms.{ignored, list, mapping, nonEmptyText}
 import play.api.data.Mapping
 import play.api.mvc.{Call, Controller}
 import play.api.templates.Html
+import org.joda.time.DateTime
 
 case class BidForm(bids: List[Bid])
 
@@ -72,14 +75,10 @@ object Reviewing extends Controller {
   }
   
   def review(paperId: Id[Paper]) = SlickAction(NonConflictingReviewer(paperId)) { implicit r =>
-    if(Query(r.db).notReviewed(r.user.id, paperId))
+    if(Query(r.db).reviewOf(r.user.id, paperId).isEmpty)
       Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), reviewForm, Query(r.db).paperWithId(paperId), Navbar(Reviewer))(Submitting.summary(paperId)))
     else
       comment(paperId, routes.Reviewing.doComment(paperId), Navbar(Reviewer))
-  }
-  
-  def comment(paperId: Id[Paper], doCommentEP: Call, navbar: Html)(implicit r: SlickRequest[_]) = {
-    Ok(views.html.comment("Submission " + Query(r.db).indexOf(paperId), commentForm.fill(Comment(paperId, r.user.id, "")), reviewForm, Query(r.db).commentsOf(paperId), Query(r.db).reviewsOf(paperId), Query(r.db).paperWithId(paperId), r.user, Query(r.db).allStaff.toSet, doCommentEP, navbar)(Submitting.summary(paperId)))
   }
   
   def doReview(paperId: Id[Paper]) = SlickAction(NonConflictingReviewer(paperId)) { implicit r =>
@@ -96,22 +95,22 @@ object Reviewing extends Controller {
     )
   }
   
+  def comment(paperId: Id[Paper], doCommentEP: Call, navbar: Html)(implicit r: SlickRequest[_]) = {
+    val optionalReview: Option[Review] = Query(r.db) reviewOf (r.user.id, paperId)
+    def canEdit(review: Review): Boolean = optionalReview map (_ == review) getOrElse false
+    val comments = Query(r.db) commentsOn paperId map Left.apply
+    val reviews = Query(r.db) reviewsHistoryOn paperId map Right.apply
+    implicit val dateTimeOrdering: Ordering[DateTime] = Ordering fromLessThan (_ isAfter _)
+    val commentReviews: List[Either[Comment, Review]] = (comments ::: reviews).sortBy(
+      _ fold (_.updatedAt, _.updatedAt)).reverse
+    Ok(views.html.comment("Submission " + Query(r.db).indexOf(paperId), commentReviews, Query(r.db).allPersons.toSet, canEdit, doCommentEP, navbar)(Submitting.summary(paperId)))
+  }
+  
   def doComment(paperId: Id[Paper]) = SlickAction(NonConflictingReviewer(paperId)) { implicit r =>
     commentForm.bindFromRequest.fold(_ => (),
       comment => r.connection insert List(comment.copy(paperId=paperId, personId=r.user.id)))
     Redirect(routes.Reviewing.review(paperId))
   }
-
-  // def editComment(paperId: Id[Paper], commentId: Id[Comment], personId: Id[Person]) = SlickAction(NonConflictingReviewer(paperId)) { implicit r =>
-  //   commentForm.bindFromRequest.fold(_ => (),
-  //     comment => {
-  //       r.connection insert List(
-  //         comment.copy(paperId=paperId, personId=personId, metadata=withId(commentId))
-  //       )
-  //     }
-  //   )
-  //   Redirect(routes.Reviewing.review(paperId))
-  // }
 
   def editReview(paperId: Id[Paper], personId: Id[Person]) = SlickAction(NonConflictingReviewer(paperId)) {
       implicit r =>
