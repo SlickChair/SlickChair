@@ -63,7 +63,7 @@ object Reviewing extends Controller {
         Ok(views.html.bid(errors, Query(r.db).allPapers.toSet,  Query(r.db).allFiles.toSet, Navbar(Reviewer))),
       form => {
         val bids = form.bids map { _ copy (personId=r.user.id) }
-        r.connection.insert(bids)
+        r.connection insert bids
         Redirect(routes.Reviewing.bid)
       }
     )
@@ -89,7 +89,7 @@ object Reviewing extends Controller {
         Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), errors, paper, Navbar(Reviewer))(Submitting.summary(paperId)))
       },
       review => {
-        r.connection insert List(review.copy(paperId=paperId, personId=r.user.id))
+        r.connection insert review.copy(paperId=paperId, personId=r.user.id)
         Redirect(routes.Reviewing.review(paperId))
       }
     )
@@ -108,7 +108,7 @@ object Reviewing extends Controller {
   
   def doComment(paperId: Id[Paper]) = SlickAction(NonConflictingReviewer(paperId)) { implicit r =>
     commentForm.bindFromRequest.fold(_ => (),
-      comment => r.connection insert List(comment.copy(paperId=paperId, personId=r.user.id)))
+      comment => r.connection insert comment.copy(paperId=paperId, personId=r.user.id))
     Redirect(routes.Reviewing.review(paperId))
   }
 
@@ -116,7 +116,7 @@ object Reviewing extends Controller {
       implicit r =>
     reviewForm.bindFromRequest.fold(_ => (),
       review => {
-        r.connection insert List(review.copy(paperId=paperId, personId=personId))
+        r.connection insert review.copy(paperId=paperId, personId=personId)
       }
     )
     Redirect(routes.Reviewing.review(paperId))

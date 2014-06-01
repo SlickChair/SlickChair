@@ -57,7 +57,7 @@ object Submitting extends Controller {
 
   def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId)) { implicit r =>
     val paper: Paper = Query(r.db).paperWithId(paperId)
-    r.connection insert List(paper.copy(withdrawn=(!paper.withdrawn)))
+    r.connection insert paper.copy(withdrawn=(!paper.withdrawn))
     Redirect(routes.Submitting.info(paperId))
   }
   
@@ -133,7 +133,11 @@ object Submitting extends Controller {
           PaperAuthor(paper.id, pi._1.id, pi._2)
         }
         val pindex = PaperIndex(paper.id)
-        r.connection insert (pindex :: paper :: file.toList ::: persons ::: authors)
+        r.connection insert pindex
+        r.connection insert paper
+        r.connection insert file.toList
+        r.connection insert persons
+        r.connection insert authors
         Redirect(okEP(paper.id))
       }
     )

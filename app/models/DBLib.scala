@@ -12,7 +12,9 @@ case class Id[M](value: IdType)
 
 trait Model[M] {
   this: Product with M { def metadata: Metadata[M] } =>
-  val (id, updatedAt, updatedBy) = metadata
+  def id = metadata._1
+  def updatedAt = metadata._2
+  def updatedBy = metadata._3
   
   protected def pk(id1: Id[_], id2: Id[_]): Id[M] = Id[M](new UUID(
     id1.value.getMostSignificantBits() ^ id2.value.getMostSignificantBits(),
@@ -30,24 +32,70 @@ trait Model[M] {
 }
 
 case class Connection(session: Session) {
+  implicit val s: Session = session
+  
+  // Could this be made generic with a macro? See http://goo.gl/8sxnrg
+  private def setTime[T](model: Model[T], time: DateTime): Model[T] = {
+    model match {
+      case m: Person => m.copy(metadata=(m.id, time, ""))
+      case m: Paper => m.copy(metadata=(m.id, time, ""))
+      case m: PersonRole => m.copy(metadata=(m.id, time, ""))
+      case m: PaperIndex => m.copy(metadata=(m.id, time, ""))
+      case m: PaperAuthor => m.copy(metadata=(m.id, time, ""))
+      case m: PaperDecision => m.copy(metadata=(m.id, time, ""))
+      case m: Comment => m.copy(metadata=(m.id, time, ""))
+      case m: Review => m.copy(metadata=(m.id, time, ""))
+      case m: File => m.copy(metadata=(m.id, time, ""))
+      case m: Email => m.copy(metadata=(m.id, time, ""))
+      case m: Bid => m.copy(metadata=(m.id, time, ""))
+      case m: Assignment => m.copy(metadata=(m.id, time, ""))
+    } 
+  }
+
   def database(): Database = Database(new DateTime(), session)
-  def insert(ms: List[_]): (Database, Database) = {
-    implicit val s: Session = session
+  
+  def insert[M <: Model[M]](m: M): (Database, Database) = insert(List(m))
+  def insert[M <: Model[M]](xs: List[M]): (Database, Database) = {
     val now: DateTime = new DateTime()
-    ms foreach { _ match {
-      case m: Person => TableQuery[PersonTable] insert m.copy(metadata=(m.id, now, ""))
-      case m: Paper => TableQuery[PaperTable] insert m.copy(metadata=(m.id, now, ""))
-      case m: PersonRole => TableQuery[PersonRoleTable] insert m.copy(metadata=(m.id, now, ""))
-      case m: PaperIndex => TableQuery[PaperIndexTable] insert m.copy(metadata=(m.id, now, ""))
-      case m: PaperAuthor => TableQuery[PaperAuthorTable] insert m.copy(metadata=(m.id, now, ""))
-      case m: PaperDecision => TableQuery[PaperDecisionTable] insert m.copy(metadata=(m.id, now, ""))
-      case m: Comment => TableQuery[CommentTable] insert m.copy(metadata=(m.id, now, ""))
-      case m: Review => TableQuery[ReviewTable] insert m.copy(metadata=(m.id, now, ""))
-      case m: File => TableQuery[FileTable] insert m.copy(metadata=(m.id, now, ""))
-      case m: Email => TableQuery[EmailTable] insert m.copy(metadata=(m.id, now, ""))
-      case m: Bid => TableQuery[BidTable] insert m.copy(metadata=(m.id, now, ""))
-      case m: Assignment => TableQuery[AssignmentTable] insert m.copy(metadata=(m.id, now, ""))
-    }}
+    xs.headOption.map { _ match {
+      case _: Person =>
+        val allNew = xs.map(setTime(_, now)).toSet -- database.persons.list.map(setTime(_, now))
+        TableQuery[PersonTable] insertAll (allNew.toList.asInstanceOf[List[Person]]: _*)
+      case _: Paper =>
+        val allNew = xs.map(setTime(_, now)).toSet -- database.papers.list.map(setTime(_, now))
+        TableQuery[PaperTable] insertAll (allNew.toList.asInstanceOf[List[Paper]]: _*)
+      case _: PersonRole =>
+        val allNew = xs.map(setTime(_, now)).toSet -- database.personRoles.list.map(setTime(_, now))
+        TableQuery[PersonRoleTable] insertAll (allNew.toList.asInstanceOf[List[PersonRole]]: _*)
+      case _: PaperIndex =>
+        val allNew = xs.map(setTime(_, now)).toSet -- database.paperIndices.list.map(setTime(_, now))
+        TableQuery[PaperIndexTable] insertAll (allNew.toList.asInstanceOf[List[PaperIndex]]: _*)
+      case _: PaperAuthor =>
+        val allNew = xs.map(setTime(_, now)).toSet -- database.paperAuthors.list.map(setTime(_, now))
+        TableQuery[PaperAuthorTable] insertAll (allNew.toList.asInstanceOf[List[PaperAuthor]]: _*)
+      case _: PaperDecision =>
+        val allNew = xs.map(setTime(_, now)).toSet -- database.paperDecisions.list.map(setTime(_, now))
+        TableQuery[PaperDecisionTable] insertAll (allNew.toList.asInstanceOf[List[PaperDecision]]: _*)
+      case _: Comment =>
+        val allNew = xs.map(setTime(_, now)).toSet -- database.comments.list.map(setTime(_, now))
+        TableQuery[CommentTable] insertAll (allNew.toList.asInstanceOf[List[Comment]]: _*)
+      case _: Review =>
+        val allNew = xs.map(setTime(_, now)).toSet -- database.reviews.list.map(setTime(_, now))
+        TableQuery[ReviewTable] insertAll (allNew.toList.asInstanceOf[List[Review]]: _*)
+      case _: File =>
+        val allNew = xs.map(setTime(_, now)).toSet -- database.files.list.map(setTime(_, now))
+        TableQuery[FileTable] insertAll (allNew.toList.asInstanceOf[List[File]]: _*)
+      case _: Email =>
+        val allNew = xs.map(setTime(_, now)).toSet -- database.emails.list.map(setTime(_, now))
+        TableQuery[EmailTable] insertAll (allNew.toList.asInstanceOf[List[Email]]: _*)
+      case _: Bid =>
+        val allNew = xs.map(setTime(_, now)).toSet -- database.bids.list.map(setTime(_, now))
+        TableQuery[BidTable] insertAll (allNew.toList.asInstanceOf[List[Bid]]: _*)
+      case _: Assignment =>
+        val allNew = xs.map(setTime(_, now)).toSet -- database.assignments.list.map(setTime(_, now))
+        TableQuery[AssignmentTable] insertAll (allNew.toList.asInstanceOf[List[Assignment]]: _*)
+      }
+    }
     (Database(now minusMillis 1, session), Database(now, session))
   }
 }
@@ -73,6 +121,17 @@ case class Database(val time: DateTime, val session: Session, val withHistory: B
       } yield c
     }
   }
+
+  // import scala.reflect.runtime.universe._
+  // def tableOf[M <: Model[M]: TypeTag]: Table[M] with RepoTable[M] = {
+  //   typeOf[M] match {
+  //     case t if t =:= typeOf[Person] =>
+  //       timeMod[PersonTable, Person](TableQuery[PersonTable])
+  //     case t if t =:= typeOf[File] =>
+  //       timeMod[FileTable, File](TableQuery[FileTable])
+  //   }
+  //   ???
+  // }
   
   val persons = timeMod[PersonTable, Person](TableQuery[PersonTable])
   val personRoles = timeMod[PersonRoleTable, PersonRole](TableQuery[PersonRoleTable])

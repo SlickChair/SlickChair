@@ -19,10 +19,9 @@ class LoginUserService(application: Application) extends UserServicePlugin(appli
     import Role._
     val person = Person(user.firstname, user.lastname, "", user.email)
     val connection = Connection(s)
+      connection insert person
     if(Query(connection.database()) hasRole person.id)
-      connection insert List(person, PersonRole(person.id, Role.Author))
-    else
-      connection insert List(person)
+      connection insert PersonRole(person.id, Role.Author)
     ()
   }
 }

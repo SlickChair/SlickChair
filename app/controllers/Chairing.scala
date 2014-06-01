@@ -85,7 +85,7 @@ object Chairing extends Controller {
         Redirect(routes.Chairing.assign(paperId)),
       form => {
         val assignments = form.assignments map { _ copy (paperId=paperId) }
-        r.connection.insert(assignments)
+        r.connection insert assignments
         Redirect(routes.Chairing.assign(paperId))
       }
     )
@@ -113,7 +113,7 @@ object Chairing extends Controller {
     Ok(views.html.decision(form, paperIndexEvaluations, Navbar(Chair)))
   }
   def doDecision = SlickAction(IsChair) { implicit r =>
-    decisionForm.bindFromRequest.fold(_ => (), form => r.connection.insert(form.decisions))
+    decisionForm.bindFromRequest.fold(_ => (), form => r.connection insert form.decisions)
     Redirect(routes.Chairing.decision)
   }
   
@@ -139,7 +139,7 @@ object Chairing extends Controller {
 
   def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId)) { implicit r =>
     val paper: Paper = Query(r.db).paperWithId(paperId)
-    r.connection insert List(paper.copy(withdrawn=(!paper.withdrawn)))
+    r.connection insert paper.copy(withdrawn=(!paper.withdrawn))
     Redirect(routes.Chairing.info(paperId))
   }
   
@@ -158,7 +158,7 @@ object Chairing extends Controller {
   
   def doComment(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
     Reviewing.commentForm.bindFromRequest.fold(_ => (),
-      comment => r.connection insert List(comment.copy(paperId=paperId, personId=r.user.id)))
+      comment => r.connection insert comment.copy(paperId=paperId, personId=r.user.id))
     Redirect(routes.Chairing.comment(paperId))
   }
 
@@ -168,7 +168,7 @@ object Chairing extends Controller {
   }
 
   def doRoles = SlickAction(IsChair) { implicit r =>
-    rolesForm.bindFromRequest.fold(_ => (), form => r.connection.insert(form.roles))
+    rolesForm.bindFromRequest.fold(_ => (), form => r.connection insert form.roles)
     Redirect(routes.Chairing.roles)
   }
 }
