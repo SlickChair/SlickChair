@@ -1,7 +1,7 @@
 package models
 
 import BidValue.BidValue
-import Mappers.idSlickMapper
+import Mappers.{idSlickMapper, commaSeparatedMapper}
 import PaperType.PaperType
 import Role.Role
 import Decision.Decision
@@ -76,10 +76,10 @@ class FileTable(tag: Tag) extends Table[File](tag, "FILE") with RepoTable[File] 
 }
 
 class EmailTable(tag: Tag) extends Table[Email](tag, "EMAIL") with RepoTable[Email] {
-  def to = column[String]("TO", O.DBType("TEXT"))
+  def recipients = column[List[String]]("RECIPIENTS", O.DBType("TEXT"))
   def subject = column[String]("SUBJECT", O.DBType("TEXT"))
   def content = column[String]("CONTENT", O.DBType("TEXT"))
-  def * = (to, subject, content, (id, updatedAt, updatedBy)) <> (Email.tupled, Email.unapply)
+  def * = (recipients, subject, content, (id, updatedAt, updatedBy)) <> (Email.tupled, Email.unapply)
 }
 
 class BidTable(tag: Tag) extends Table[Bid](tag, "BID") with RepoTable[Bid] {
@@ -94,4 +94,17 @@ class AssignmentTable(tag: Tag) extends Table[Assignment](tag, "ASSIGNMENT") wit
   def personId = column[Id[Person]]("PERSONID")
   def value = column[Boolean]("VALUE")
   def * = (paperId, personId, value, (id, updatedAt, updatedBy)) <> (Assignment.tupled, Assignment.unapply)
+}
+
+class ConfigurationTable(tag: Tag) extends Table[Configuration](tag, "CONFIGURATION") with RepoTable[Configuration] {
+  def name = column[String]("NAME", O.DBType("TEXT"))
+  def chairRoles = column[Boolean]("CHAIRROLES")
+  def chairAssignment = column[Boolean]("CHAIRASSIGNMENT")
+  def chairDecision = column[Boolean]("CHAIRDECISION")
+  def pcmemberBid = column[Boolean]("PCMEMBERBID")
+  def pcmemberReview = column[Boolean]("PCMEMBERREVIEW")
+  def pcmemberComment = column[Boolean]("PCMEMBERCOMMENT")
+  def authorNewSubmission = column[Boolean]("AUTHORNEWSUBMISSION")
+  def authorEditSubmission = column[Boolean]("AUTHOREDITSUBMISSION")
+  def * = (name, chairRoles, chairAssignment, chairDecision, pcmemberBid, pcmemberReview, pcmemberComment, authorNewSubmission, authorEditSubmission, (id, updatedAt, updatedBy)) <> (Configuration.tupled, Configuration.unapply)
 }

@@ -25,11 +25,11 @@
           @paperIndexEvaluations(decision.paperId).map { case (paper, index, evaluations) =>
             <tr
               @decision.value match {
-                case Reject => { class="danger" }
-                case Temporary_reject => { class="warning" }
+                case Rejected => { class="danger" }
+                case Temporary_rejected => { class="warning" }
                 case Undecided => {}
-                case Temporary_accept => { class="warning" }
-                case Accept => { class="success" }
+                case Temporary_accepted => { class="warning" }
+                case Accepted => { class="success" }
               }
             >
               <td>@{ index + 1 }</td>

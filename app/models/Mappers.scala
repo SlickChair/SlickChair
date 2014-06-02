@@ -16,6 +16,10 @@ object Mappers {
     dt => new Timestamp(dt.getMillis), ts => new DateTime(ts.getTime))
 
   implicit def idSlickMapper[T <: Model[T]] = MappedColumnType.base[Id[T], IdType](_.value, Id[T])
+
+  implicit def commaSeparatedMapper =
+    MappedColumnType.base[List[String], String](_.mkString(","), _.split(",").toList)
+
   def idTypeFormMapping: Mapping[models.IdType] = of[UUID](new Formatter[UUID] {
     override val format = Some(("format.uuid", Nil))
     override def bind(key: String, data: Map[String, String]) = {
@@ -27,9 +31,11 @@ object Mappers {
     }
     override def unbind(key: String, value: UUID) = Map(key -> value.toString)
   })
+
   def idFormMapping[M]: Mapping[Id[M]] = mapping(
     "value" -> idTypeFormMapping
   )(Id[M] _)(Id.unapply _)
+
   implicit def idPathBindable[M](implicit longBinder: PathBindable[IdType]) = new PathBindable[Id[M]] {
     def bind(key: String, value: String): Either[String, Id[M]] =
       longBinder.bind(key, value).right map (Id[M](_))
@@ -41,6 +47,7 @@ object Mappers {
     this: Enumeration =>
     implicit val slickMapping = MappedColumnType.base[Value, Int](_.id, this.apply)
   }
+
   def enumFormMapping(enum: Enumeration): Mapping[enum.Value] = mapping("value" -> nonEmptyText)(enum.withName(_))(Some(_).map(_.toString))
 }
 

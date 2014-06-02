@@ -4,6 +4,7 @@ import Mappers.idSlickMapper
 import Role._
 import play.api.db.slick.Config.driver.simple._
 import scala.language.postfixOps
+import Decision._
 
 case class Query(db: Database) {
   implicit val session: Session = db.session
@@ -41,6 +42,10 @@ case class Query(db: Database) {
     bids filter (_.paperId is id) list
   def hasRole(id: Id[Person]): Boolean =
     personRoles.filter(_.personId is id).firstOption.isEmpty 
+  def reviewerEmails: List[String] =
+    personRoles filter (pr => (pr.value is Reviewer) || (pr.value is Chair)) flatMap { p =>
+      persons filter (p.personId is _.id)
+    } map (_.email) list
   
   def personWithEmail(email: String): Person = persons filter (_.email is email) first
   def paperWithFile(id: Id[File]): Paper = papers filter (_.fileId is id) first
@@ -58,4 +63,10 @@ case class Query(db: Database) {
   def allFiles: List[File] = files.map { f =>
     (f.name, f.size, Array[Byte](), (f.id, f.updatedAt, f.updatedBy))
   }.list map File.tupled
+  
+  def balancedAssignment: Boolean = true // TODO
+  def allReviewsCompleted: Boolean = true // TODO
+  def fullyDecided: Boolean = true // TODO
+  def acceptedEmails: List[String] = Nil // TODO} 
+  def rejectedEmails: List[String] = Nil // TODO
 }

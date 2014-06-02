@@ -31,7 +31,7 @@ object Evaluation extends Enumeration with EnumSlickMapper {
 
 object Decision extends Enumeration with EnumSlickMapper {
   type Decision = Value
-  val Reject, Temporary_reject, Undecided, Temporary_accept, Accept = Value
+  val Rejected, Temporary_rejected, Undecided, Temporary_accepted, Accepted = Value
 }
 
 case class Person(
@@ -138,10 +138,25 @@ case class Review(
 }
 
 case class Email(
-  to: String,
+  recipients: List[String],
   subject: String,
   content: String,
   metadata: Metadata[Email] = newMetadata
 ) extends Model[Email] {
+  override val id = super.id
+}
+
+case class Configuration(
+  name: String,
+  chairRoles: Boolean = false,
+  chairAssignment: Boolean = false,
+  chairDecision: Boolean = false,
+  pcmemberBid: Boolean = false,
+  pcmemberReview: Boolean = false,
+  pcmemberComment: Boolean = false,
+  authorNewSubmission: Boolean = false,
+  authorEditSubmission: Boolean = false,
+  metadata: Metadata[Configuration] = newMetadata
+) extends Model[Configuration] {
   override val id = super.id
 }

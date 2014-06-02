@@ -49,6 +49,7 @@ case class Connection(session: Session) {
       case m: Email => m.copy(metadata=(m.id, time, ""))
       case m: Bid => m.copy(metadata=(m.id, time, ""))
       case m: Assignment => m.copy(metadata=(m.id, time, ""))
+      case m: Configuration => m.copy(metadata=(m.id, time, ""))
     } 
   }
 
@@ -94,21 +95,21 @@ case class Connection(session: Session) {
       case _: Assignment =>
         val allNew = xs.map(setTime(_, now)).toSet -- database.assignments.list.map(setTime(_, now))
         TableQuery[AssignmentTable] insertAll (allNew.toList.asInstanceOf[List[Assignment]]: _*)
-      }
-    }
+      case _: Configuration =>
+        val allNew = xs.map(setTime(_, now)).toSet -- database.configurations.list.map(setTime(_, now))
+        TableQuery[ConfigurationTable] insertAll (allNew.toList.asInstanceOf[List[Configuration]]: _*)
+    }}
     (Database(now minusMillis 1, session), Database(now, session))
   }
 }
 
 case class Database(val time: DateTime, val session: Session, val withHistory: Boolean = false) {
-  
   def asOf(time: DateTime): Database = this copy (time=time)
   def equals(database: Database): Boolean = this.basis == database.basis
   def basis(): DateTime = ???
   def history: Database = this.copy(withHistory=true)
   
   private def timeMod[T <: Table[M] with RepoTable[M], M <: Model[M]](table: TableQuery[T]) = {
-    // : Query[T, M] = {
     // TODO: Use this.time
     if(withHistory) {
       table
@@ -122,17 +123,6 @@ case class Database(val time: DateTime, val session: Session, val withHistory: B
     }
   }
 
-  // import scala.reflect.runtime.universe._
-  // def tableOf[M <: Model[M]: TypeTag]: Table[M] with RepoTable[M] = {
-  //   typeOf[M] match {
-  //     case t if t =:= typeOf[Person] =>
-  //       timeMod[PersonTable, Person](TableQuery[PersonTable])
-  //     case t if t =:= typeOf[File] =>
-  //       timeMod[FileTable, File](TableQuery[FileTable])
-  //   }
-  //   ???
-  // }
-  
   val persons = timeMod[PersonTable, Person](TableQuery[PersonTable])
   val personRoles = timeMod[PersonRoleTable, PersonRole](TableQuery[PersonRoleTable])
   val papers = timeMod[PaperTable, Paper](TableQuery[PaperTable])
@@ -145,6 +135,7 @@ case class Database(val time: DateTime, val session: Session, val withHistory: B
   val emails = timeMod[EmailTable, Email](TableQuery[EmailTable])
   val bids = timeMod[BidTable, Bid](TableQuery[BidTable])
   val assignments = timeMod[AssignmentTable, Assignment](TableQuery[AssignmentTable])
+  val configurations = timeMod[ConfigurationTable, Configuration](TableQuery[ConfigurationTable])
 }
 
 trait RepoTable[M <: Model[M]] {

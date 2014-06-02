@@ -137,7 +137,7 @@ object Chairing extends Controller {
       Navbar(Chair))(Submitting.summary(paperId)))
   }
 
-  def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId)) { implicit r =>
+  def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r =>
     val paper: Paper = Query(r.db).paperWithId(paperId)
     r.connection insert paper.copy(withdrawn=(!paper.withdrawn))
     Redirect(routes.Chairing.info(paperId))
