@@ -25,11 +25,11 @@ object Sql extends Controller {
     )
   ).fill(("", Execute))
   
-  def query = SlickAction(IsChair) { implicit r =>
+  def query = SlickAction(IsChair, _.alwaysEnabled) { implicit r =>
     Ok(views.html.sql(None, queryForm, Navbar(Chair)))
   }
   
-  def doQuery = SlickAction(IsChair) { implicit r =>
+  def doQuery = SlickAction(IsChair, _.alwaysEnabled) { implicit r =>
     val filledForm = queryForm.bindFromRequest
     DB withConnection { implicit session =>
       val (query, method) = filledForm.get

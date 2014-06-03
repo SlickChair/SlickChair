@@ -1,6 +1,7 @@
 GET     /                       controllers.About.login
 GET     /about                  controllers.About.about
 GET     /assets/*file           controllers.Assets.at(path="/public", file)
+GET     /disabled               controllers.Submitting.disabled
 
 GET     /submission             controllers.Submitting.submit
 POST    /submission             controllers.Submitting.doSubmit

@@ -8,7 +8,8 @@ import play.api.data.{Form, FormError}
 import play.api.data.Forms.{ignored, list, mapping, nonEmptyText, number, text}
 import play.api.data.Mapping
 import play.api.i18n.Messages
-import play.api.mvc.{Call, Controller, MultipartFormData}
+import play.api.mvc.{Action, Call, Controller, MultipartFormData}
+import play.api.templates.Html
 
 case class SubmissionForm(
   paper: Paper,
@@ -45,41 +46,37 @@ object Submitting extends Controller {
   
   private def currentTime(): DateTime = new DateTime()
   
-  /** Displays new submissions form. */
-  def submit = SlickAction(IsAuthor) { implicit r =>
+  def submit = SlickAction(IsAuthor, _.authorNewSubmission) { implicit r =>
     Ok(views.html.submissionform("New Submission", submissionForm, routes.Submitting.doSubmit, Navbar(Author)))
   }
   
-  /** Displays the informations of a given submission. */
-  def info(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId)) { implicit r =>
+  def doSubmit = SlickAction(IsAuthor, _.authorNewSubmission, parse.multipartFormData) { implicit r =>
+    doSave(None, routes.Submitting.doSubmit, routes.Submitting.info, true)
+  }
+  
+  def info(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.alwaysEnabled) { implicit r =>
     Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paperId), Query(r.db) paperWithId paperId, routes.Submitting.edit(paperId), routes.Submitting.toggleWithdraw(paperId), Navbar(Author))(summary(paperId)))
   }
 
-  def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId)) { implicit r =>
-    val paper: Paper = Query(r.db).paperWithId(paperId)
-    r.connection insert paper.copy(withdrawn=(!paper.withdrawn))
-    Redirect(routes.Submitting.info(paperId))
-  }
-  
   def summary(paperId: Id[Paper])(implicit r: SlickRequest[_]) = {
     val paper = Query(r.db) paperWithId paperId
     views.html.submissionsummary(paper, Query(r.db) authorsOf paperId, paper.fileId.map(Query(r.db) fileWithId _))
   }
-  
-  /** Displays the form to edit the informations of a given submission. */
-  def edit(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId)) { implicit r =>
+
+  def edit(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.authorEditSubmission) { implicit r =>
     val form = submissionForm.fill(SubmissionForm(Query(r.db) paperWithId paperId, Query(r.db) authorsOf paperId))
     Ok(views.html.submissionform("Editing Submission " + Query(r.db).indexOf(paperId), form, routes.Submitting.doEdit(paperId), Navbar(Author)))
   }
-  
-  /** Handles a new submission. Creates a database entry with the form data. */
-  def doSubmit = SlickAction(IsAuthor, parse.multipartFormData) { implicit r =>
-    doSave(None, routes.Submitting.doSubmit, routes.Submitting.info, true)
-  }
     
-  /** Handles edit of a submission. Update the database entry with the form data. */
-  def doEdit(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), parse.multipartFormData) {implicit r =>
+  def doEdit(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.authorEditSubmission, parse.multipartFormData) { implicit r =>
     doSave(Some(paperId), routes.Submitting.doEdit(paperId), routes.Submitting.info, true)
+  }
+
+  def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.authorEditSubmission) { 
+    implicit r =>
+    val paper: Paper = Query(r.db).paperWithId(paperId)
+    r.connection insert paper.copy(withdrawn=(!paper.withdrawn))
+    Redirect(routes.Submitting.info(paperId))
   }
   
   private type Req = SlickRequest[MultipartFormData[play.api.libs.Files.TemporaryFile]]
@@ -141,5 +138,9 @@ object Submitting extends Controller {
         Redirect(okEP(paper.id))
       }
     )
+  }
+  
+  def disabled = Action {
+    Ok(views.html.main("Disabled", Navbar.empty)(Html("This page is disabled in the current phase of the conference.")))
   }
 }

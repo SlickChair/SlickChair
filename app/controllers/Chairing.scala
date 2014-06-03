@@ -51,11 +51,11 @@ object Chairing extends Controller {
     (RolesForm.apply _)(RolesForm.unapply _)
   )
   
-  def assignmentList() = SlickAction(IsChair) { implicit r =>
+  def assignmentList() = SlickAction(IsChair, _.alwaysEnabled) { implicit r =>
     Ok(views.html.assignmentlist(Query(r.db).allPapers, Query(r.db).allPaperIndices, Query(r.db).allAssignments, Navbar(Chair)))
   }
   
-  def assign(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r =>
+  def assign(paperId: Id[Paper]) = SlickAction(IsChair, _.chairAssignment) { implicit r =>
     val bids = Query(r.db) bidsOn paperId
     val assignments = Query(r.db) assignmentsOn paperId
     val sortedStaff = Query(r.db).allStaff
@@ -79,7 +79,7 @@ object Chairing extends Controller {
     )(Submitting.summary(paperId)))
   }
 
-  def doAssign(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r =>
+  def doAssign(paperId: Id[Paper]) = SlickAction(IsChair, _.chairAssignment) { implicit r =>
     assignmentForm.bindFromRequest.fold(
       errors => 
         Redirect(routes.Chairing.assign(paperId)),
@@ -91,7 +91,7 @@ object Chairing extends Controller {
     )
   }
   
-  def decision = SlickAction(IsChair) { implicit r =>
+  def decision = SlickAction(IsChair, _.chairDecision) { implicit r =>
     val decisions: List[PaperDecision] = Query(r.db).allPaperDecisions
     val papers: List[Paper] = Query(r.db).allPapers
     val allPaperDecisions: List[PaperDecision] = papers map { p =>
@@ -112,12 +112,13 @@ object Chairing extends Controller {
       
     Ok(views.html.decision(form, paperIndexEvaluations, Navbar(Chair)))
   }
-  def doDecision = SlickAction(IsChair) { implicit r =>
+  
+  def doDecision = SlickAction(IsChair, _.chairDecision) { implicit r =>
     decisionForm.bindFromRequest.fold(_ => (), form => r.connection insert form.decisions)
     Redirect(routes.Chairing.decision)
   }
   
-  def submissions = SlickAction(IsChair) { implicit r => 
+  def submissions = SlickAction(IsChair, _.alwaysEnabled) { implicit r => 
     val files: List[File] = Query(r.db).allFiles
     val papers: List[Paper] = Query(r.db).allPapers
     val indexOf: Id[Paper] => Int = paperId =>
@@ -128,7 +129,7 @@ object Chairing extends Controller {
     Ok(views.html.submissionlist(rows, Navbar(Chair)))
   }
 
-  def info(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
+  def info(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled) { implicit r => 
     Ok(views.html.submissioninfo(
       "Submission " + Query(r.db).indexOf(paperId),
       Query(r.db) paperWithId paperId,
@@ -137,37 +138,38 @@ object Chairing extends Controller {
       Navbar(Chair))(Submitting.summary(paperId)))
   }
 
-  def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r =>
+  def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled) { implicit r =>
     val paper: Paper = Query(r.db).paperWithId(paperId)
     r.connection insert paper.copy(withdrawn=(!paper.withdrawn))
     Redirect(routes.Chairing.info(paperId))
   }
   
-  def edit(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
+  def edit(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled) { implicit r => 
     val form = Submitting.submissionForm.fill(SubmissionForm(Query(r.db) paperWithId paperId, Query(r.db) authorsOf paperId))
     Ok(views.html.submissionform("Editing Submission " + Query(r.db).indexOf(paperId), form, routes.Chairing.doEdit(paperId), Navbar(Chair)))
   }
   
-  def doEdit(paperId: Id[Paper]) = SlickAction(IsChair, parse.multipartFormData) { implicit r => 
+  def doEdit(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled, parse.multipartFormData) { 
+    implicit r => 
     Submitting.doSave(Some(paperId), routes.Chairing.doEdit(paperId), routes.Chairing.info, false)
   }
   
-  def comment(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
+  def comment(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled) { implicit r => 
     Reviewing.comment(paperId, routes.Chairing.doComment(paperId), Navbar(Chair))
   }
   
-  def doComment(paperId: Id[Paper]) = SlickAction(IsChair) { implicit r => 
+  def doComment(paperId: Id[Paper]) = SlickAction(IsChair, _.pcmemberComment) { implicit r => 
     Reviewing.commentForm.bindFromRequest.fold(_ => (),
       comment => r.connection insert comment.copy(paperId=paperId, personId=r.user.id))
     Redirect(routes.Chairing.comment(paperId))
   }
 
-  def roles = SlickAction(IsChair) { implicit r =>
+  def roles = SlickAction(IsChair, _.chairRoles) { implicit r =>
     val form = rolesForm fill RolesForm(Query(r.db).allPersonRoles.filterNot(_.personId == r.user.id))
     Ok(views.html.roles(form, Query(r.db).allPersons.toSet, Navbar(Chair)))
   }
 
-  def doRoles = SlickAction(IsChair) { implicit r =>
+  def doRoles = SlickAction(IsChair, _.chairRoles) { implicit r =>
     rolesForm.bindFromRequest.fold(_ => (), form => r.connection insert form.roles)
     Redirect(routes.Chairing.roles)
   }

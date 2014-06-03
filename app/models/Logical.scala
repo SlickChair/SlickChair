@@ -62,9 +62,7 @@ case class Paper(
   fileId: Option[Id[File]],
   withdrawn: Boolean,
   metadata: Metadata[Paper] = newMetadata
-) extends Model[Paper] {
-  override val id = super.id
-}
+) extends Model[Paper]
 
 case class PaperIndex(
   paperId: Id[Paper],
@@ -95,9 +93,7 @@ case class File(
   size: Long,
   content: Array[Byte],
   metadata: Metadata[File] = newMetadata
-) extends Model[File] {
-  override val id = super.id
-}
+) extends Model[File]
 
 case class Bid(
   paperId: Id[Paper],
@@ -122,9 +118,7 @@ case class Comment(
   personId: Id[Person],
   content: String,
   metadata: Metadata[Comment] = newMetadata
-) extends Model[Comment] {
-  override val id = super.id
-}
+) extends Model[Comment]
 
 case class Review(
   paperId: Id[Paper],
@@ -142,9 +136,7 @@ case class Email(
   subject: String,
   content: String,
   metadata: Metadata[Email] = newMetadata
-) extends Model[Email] {
-  override val id = super.id
-}
+) extends Model[Email]
 
 case class Configuration(
   name: String,
@@ -156,7 +148,6 @@ case class Configuration(
   pcmemberComment: Boolean = false,
   authorNewSubmission: Boolean = false,
   authorEditSubmission: Boolean = false,
+  alwaysEnabled: Boolean = true,
   metadata: Metadata[Configuration] = newMetadata
-) extends Model[Configuration] {
-  override val id = super.id
-}
+) extends Model[Configuration]

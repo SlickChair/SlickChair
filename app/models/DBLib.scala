@@ -12,9 +12,7 @@ case class Id[M](value: IdType)
 
 trait Model[M] {
   this: Product with M { def metadata: Metadata[M] } =>
-  def id = metadata._1
-  def updatedAt = metadata._2
-  def updatedBy = metadata._3
+  val (id, updatedAt, updatedBy) = metadata
   
   protected def pk(id1: Id[_], id2: Id[_]): Id[M] = Id[M](new UUID(
     id1.value.getMostSignificantBits() ^ id2.value.getMostSignificantBits(),

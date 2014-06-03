@@ -5,6 +5,7 @@ import Role._
 import play.api.db.slick.Config.driver.simple._
 import scala.language.postfixOps
 import Decision._
+import org.joda.time.DateTime
 
 case class Query(db: Database) {
   implicit val session: Session = db.session
@@ -64,6 +65,11 @@ case class Query(db: Database) {
     (f.name, f.size, Array[Byte](), (f.id, f.updatedAt, f.updatedBy))
   }.list map File.tupled
   
+  def configuration: Configuration = {
+    implicit val dateTimeOrdering: Ordering[DateTime] = Ordering fromLessThan (_ isAfter _)
+    configurations.list maxBy (_.updatedAt)
+  }
+
   def balancedAssignment: Boolean = true // TODO
   def allReviewsCompleted: Boolean = true // TODO
   def fullyDecided: Boolean = true // TODO
