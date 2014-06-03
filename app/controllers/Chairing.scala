@@ -119,23 +119,11 @@ object Chairing extends Controller {
   }
   
   def submissions = SlickAction(IsChair, _.alwaysEnabled) { implicit r => 
-    val files: List[File] = Query(r.db).allFiles
-    val papers: List[Paper] = Query(r.db).allPapers
-    val indexOf: Id[Paper] => Int = paperId =>
-      Query(r.db).allPaperIndices.map(_.paperId).zipWithIndex.find(_._1 == paperId).get._2
-    val rows: List[(Paper, Int, Option[File])] = papers map { paper =>
-      (paper, indexOf(paper.id), paper.fileId.map(id => files.find(_.id == id).get))
-    }
-    Ok(views.html.submissionlist(rows, Navbar(Chair)))
+    Reviewing.submissionList(routes.Chairing.info _, Navbar(Chair))
   }
 
   def info(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled) { implicit r => 
-    Ok(views.html.submissioninfo(
-      "Submission " + Query(r.db).indexOf(paperId),
-      Query(r.db) paperWithId paperId,
-      routes.Chairing.edit(paperId),
-      routes.Chairing.toggleWithdraw(paperId),
-      Navbar(Chair))(Submitting.summary(paperId)))
+    Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paperId), Query(r.db).paperWithId(paperId), Some(routes.Chairing.edit(paperId)), Some(routes.Chairing.toggleWithdraw(paperId)), Navbar(Chair))(Submitting.summary(paperId)))
   }
 
   def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled) { implicit r =>

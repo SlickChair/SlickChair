@@ -1,11 +1,12 @@
 package models
 
-import Mappers.idSlickMapper
-import Role._
-import play.api.db.slick.Config.driver.simple._
-import scala.language.postfixOps
+import BidValue._
 import Decision._
+import Mappers.idSlickMapper
 import org.joda.time.DateTime
+import play.api.db.slick.Config.driver.simple._
+import Role._
+import scala.language.postfixOps
 
 case class Query(db: Database) {
   implicit val session: Session = db.session
@@ -47,6 +48,10 @@ case class Query(db: Database) {
     personRoles filter (pr => (pr.value is PC_Member) || (pr.value is Chair)) flatMap { p =>
       persons filter (p.personId is _.id)
     } map (_.email) list
+  def nonConflictingPapers(id: Id[Person]): List[Paper] = {
+    val userConflicts = bids filter (b => (b.personId is id) && (b.value is Conflict)) map (_.paperId)
+    papers filter (!_.withdrawn) filterNot (_.id in userConflicts) list
+  }
   
   def personWithEmail(email: String): Person = persons filter (_.email is email) first
   def paperWithFile(id: Id[File]): Paper = papers filter (_.fileId is id) first

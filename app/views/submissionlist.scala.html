@@ -1,4 +1,5 @@
 @(rows: List[(Paper, Int, Option[File])],
+  infoEP: Id[Paper] => Call,
   navbar: Html
 )
 
@@ -18,7 +19,7 @@
       @rows.map { case (paper, index, optionalFile) =>
         <tr>
           <td>@{ index + 1 }</td>
-          <td><a href="@routes.Chairing.info(paper.id)">@paper.title</a></td>
+          <td><a href="@infoEP(paper.id)">@paper.title</a></td>
           <td>
             @optionalFile match {
               case Some(file) => { @linkToFile(file) }

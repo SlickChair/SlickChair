@@ -1,7 +1,7 @@
 @(title: String,
   paper: Paper,
-  editEP: Call,
-  withdrawEP: Call,
+  optionalEditEP: Option[Call],
+  optionalWithdrawEP: Option[Call],
   navbar: Html
 )(summary: Html)
 
@@ -12,10 +12,16 @@
     <dt></dt><dd></dd>
     <dt></dt><dd>
       @if(paper.withdrawn) {
-        <a href="@withdrawEP" class="btn btn-default" role="button">Resubmit</a>
+        @optionalWithdrawEP.map { call =>
+          <a href="@call" class="btn btn-default" role="button">Resubmit</a>
+        }
       } else {
-        <a href="@editEP" class="btn btn-default" role="button">Edit</a>
-        <a href="@withdrawEP" class="btn btn-default" role="button" onclick="return confirm('Are you sure?');">Withdraw</a>
+        @optionalEditEP.map { call =>
+          <a href="@call" class="btn btn-default" role="button">Edit</a>
+        }
+        @optionalWithdrawEP.map { call =>
+          <a href="@call" class="btn btn-default" role="button" onclick="return confirm('Are you sure?');">Withdraw</a>
+        }
       }
     </dd>
   </dl>

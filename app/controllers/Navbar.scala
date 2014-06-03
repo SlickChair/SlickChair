@@ -20,7 +20,9 @@ object Navbar {
         val papers = Query(r.db) assignedTo r.user.id map { p =>
           (routes.Reviewing.review(p.id), "Submission " + Query(r.db).indexOf(p.id))
         }
-        (routes.Reviewing.bid, "Bidding") :: papers
+        (routes.Reviewing.submissions, "Submissions") ::
+        (routes.Reviewing.bid, "Bidding") ::
+        papers
       case Author =>
         val papers = Query(r.db) papersOf r.user.id map { p =>
           (routes.Submitting.info(p.id), "Submission " + Query(r.db).indexOf(p.id))

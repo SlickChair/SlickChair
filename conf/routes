@@ -10,7 +10,7 @@ GET     /submission/edit/:id    controllers.Submitting.edit(id: Id[Paper])
 POST    /submission/edit/:id    controllers.Submitting.doEdit(id: Id[Paper])
 GET     /submission/withdraw/:id  controllers.Submitting.toggleWithdraw(id: Id[Paper])
 
-GET     /review/papers          controllers.Reviewing.papers
+GET     /review/submissions     controllers.Reviewing.submissions
 GET     /review/bid             controllers.Reviewing.bid
 POST    /review/bid             controllers.Reviewing.doBid
 GET     /review/:id             controllers.Reviewing.review(id: Id[Paper])

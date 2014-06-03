@@ -34,7 +34,7 @@ object Reviewing extends Controller {
     "confidence" -> enumFormMapping(Confidence),
     "evaluation" -> enumFormMapping(Evaluation),
     "content" -> nonEmptyText,
-    "metadata" -> ignored(newMetadata[Review])
+    "metadat" -> ignored(newMetadata[Review])
   )(Review.apply _)(Review.unapply _))
   
   def commentForm: Form[Comment] = Form(mapping(
@@ -69,17 +69,32 @@ object Reviewing extends Controller {
     )
   }
 
-  def papers() = SlickAction(IsPCMember, _.alwaysEnabled) { implicit r =>
-    Ok(views.html.main("List of all submissions", Navbar(PC_Member))(Html(
-      Query(r.db).allPapers.toString.replaceAll(",", ",\n<br>"))))
+  def submissions = SlickAction(IsPCMember, _.alwaysEnabled) { implicit r =>
+    submissionList(routes.Reviewing.review _, Navbar(PC_Member))
   }
   
-  def review(paperId: Id[Paper]) = SlickAction(NonConflictingPCMember(paperId), _.pcmemberReview) {
+  def submissionList(infoEP: Id[Paper] => Call, navbar: Html)(implicit r: SlickRequest[_]) = {
+    val files: List[File] = Query(r.db).allFiles
+    val papers: List[Paper] = Query(r.db).nonConflictingPapers(r.user.id)
+    val indexOf: Id[Paper] => Int = paperId =>
+      Query(r.db).allPaperIndices.map(_.paperId).zipWithIndex.find(_._1 == paperId).get._2
+    val rows: List[(Paper, Int, Option[File])] = papers map { paper =>
+      (paper, indexOf(paper.id), paper.fileId.map(id => files.find(_.id == id).get))
+    }
+    Ok(views.html.submissionlist(rows, infoEP, navbar))
+  }
+
+  def review(paperId: Id[Paper]) = SlickAction(NonConflictingPCMember(paperId), _.alwaysEnabled) {
     implicit r =>
-    if(Query(r.db).reviewOf(r.user.id, paperId).isEmpty)
+    val configuration: Configuration = Query(r.db).configuration
+    val assigned: Boolean = Query(r.db) assignedTo (r.user.id) map (_.id) contains paperId
+    val notReviewed: Boolean = Query(r.db).reviewOf(r.user.id, paperId).isEmpty
+    if(configuration.pcmemberReview && assigned && notReviewed)
       Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), reviewForm, Query(r.db).paperWithId(paperId), Navbar(PC_Member))(Submitting.summary(paperId)))
-    else
+    else if(configuration.pcmemberComment)
       comment(paperId, routes.Reviewing.doComment(paperId), Navbar(PC_Member))
+    else
+      Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paperId), Query(r.db).paperWithId(paperId), None, None, Navbar(PC_Member))(Submitting.summary(paperId)))
   }
   
   def doReview(paperId: Id[Paper]) = SlickAction(NonConflictingPCMember(paperId), _.pcmemberReview) { 

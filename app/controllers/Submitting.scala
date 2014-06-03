@@ -55,7 +55,7 @@ object Submitting extends Controller {
   }
   
   def info(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.alwaysEnabled) { implicit r =>
-    Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paperId), Query(r.db) paperWithId paperId, routes.Submitting.edit(paperId), routes.Submitting.toggleWithdraw(paperId), Navbar(Author))(summary(paperId)))
+    Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paperId), Query(r.db).paperWithId( paperId), Some(routes.Submitting.edit(paperId)), Some(routes.Submitting.toggleWithdraw(paperId)), Navbar(Author))(summary(paperId)))
   }
 
   def summary(paperId: Id[Paper])(implicit r: SlickRequest[_]) = {

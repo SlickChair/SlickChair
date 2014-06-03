@@ -14,7 +14,7 @@
 @changePersonRole(to: Role) = {
   @to match {
     case Chair => { @routes.Chairing.submissions }
-    case PC_Member => { @routes.Reviewing.bid }
+    case PC_Member => { @routes.Reviewing.submissions }
     case Author => { @routes.Submitting.submit }
   }
 }
