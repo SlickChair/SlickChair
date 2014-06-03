@@ -12,10 +12,10 @@ object IsAuthor extends Authorization {
   def apply[A](implicit r: SlickRequest[A]) = true
 }
 
-object IsReviewer extends Authorization {
+object IsPCMember extends Authorization {
   def apply[A](implicit r: SlickRequest[A]) = {
     val role = Query(r.db) roleOf r.user.id
-    role == Reviewer || role == Chair
+    role == PC_Member || role == Chair
   }
 }
 
@@ -29,14 +29,14 @@ case class IsAuthorOf(paperId: Id[Paper]) extends Authorization {
   }
 }
 
-case class NonConflictingReviewer(paperId: Id[Paper]) extends Authorization {
+case class NonConflictingPCMember(paperId: Id[Paper]) extends Authorization {
   def apply[A](implicit r: SlickRequest[A]) =
-    IsReviewer(r) && Query(r.db).bidsOf(r.user.id, paperId).filter(_.value == Conflict).isEmpty
+    IsPCMember(r) && Query(r.db).bidsOf(r.user.id, paperId).filter(_.value == Conflict).isEmpty
 }
 
-case class AuthorOrNCReviewer(fileId: Id[File]) extends Authorization {
+case class AuthorOrNCPCMember(fileId: Id[File]) extends Authorization {
   def apply[A](implicit r: SlickRequest[A]) = {
     val paperId = Query(r.db).paperWithFile(fileId).id
-    IsAuthorOf(paperId)(r) || NonConflictingReviewer(paperId)(r)
+    IsAuthorOf(paperId)(r) || NonConflictingPCMember(paperId)(r)
   }
 }

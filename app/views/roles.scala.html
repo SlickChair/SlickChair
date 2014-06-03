@@ -22,7 +22,7 @@
           <tr
             @role.value match {
               case Chair => { class="success" }
-              case Reviewer => { class="info" }
+              case PC_Member => { class="info" }
               case Author => {}
             }
           >
@@ -34,11 +34,7 @@
             <td style="min-width: 90px;">
               @select(
                 personRolesForm(s"roles[$index].value.value"),
-                Role.values.toSeq.map { b => b.toString -> (b match {
-                  case Chair => "Chair"
-                  case Reviewer => "PC Member"
-                  case Author => "Author"
-                })})
+                Role.values.toSeq.map { b => b.toString -> b.toString.replace("_", " ") })
             </td>
             <td class="hidden">
               <input type="text" name="roles[@index].personId.value" value="@role.personId.value">

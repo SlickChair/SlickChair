@@ -2,7 +2,7 @@ package controllers
 
 import models._
 import BidValue._
-import Role.Reviewer
+import Role.PC_Member
 import Confidence.Confidence
 import Evaluation.Evaluation
 import Mappers.{enumFormMapping, idFormMapping}
@@ -44,7 +44,7 @@ object Reviewing extends Controller {
     "metadata" -> ignored(newMetadata[Comment])
   )(Comment.apply _)(Comment.unapply _))
 
-  def bid() = SlickAction(IsReviewer, _.pcmemberBid) { implicit r =>
+  def bid() = SlickAction(IsPCMember, _.pcmemberBid) { implicit r =>
     val bids: List[Bid] = Query(r.db) bidsOf r.user.id
     val papers: List[Paper] = Query(r.db).allPapers
     val allBids: List[Bid] = papers map { p =>
@@ -54,13 +54,13 @@ object Reviewing extends Controller {
       }
     }
     val form = bidForm fill BidForm(allBids)
-    Ok(views.html.bid(form, papers.toSet, Query(r.db).allFiles.toSet, Navbar(Reviewer)))
+    Ok(views.html.bid(form, papers.toSet, Query(r.db).allFiles.toSet, Navbar(PC_Member)))
   }
 
-  def doBid() = SlickAction(IsReviewer, _.pcmemberBid) { implicit r =>
+  def doBid() = SlickAction(IsPCMember, _.pcmemberBid) { implicit r =>
     bidForm.bindFromRequest.fold(
       errors => 
-        Ok(views.html.bid(errors, Query(r.db).allPapers.toSet,  Query(r.db).allFiles.toSet, Navbar(Reviewer))),
+        Ok(views.html.bid(errors, Query(r.db).allPapers.toSet,  Query(r.db).allFiles.toSet, Navbar(PC_Member))),
       form => {
         val bids = form.bids map { _ copy (personId=r.user.id) }
         r.connection insert bids
@@ -69,26 +69,26 @@ object Reviewing extends Controller {
     )
   }
 
-  def papers() = SlickAction(IsReviewer, _.alwaysEnabled) { implicit r =>
-    Ok(views.html.main("List of all submissions", Navbar(Reviewer))(Html(
+  def papers() = SlickAction(IsPCMember, _.alwaysEnabled) { implicit r =>
+    Ok(views.html.main("List of all submissions", Navbar(PC_Member))(Html(
       Query(r.db).allPapers.toString.replaceAll(",", ",\n<br>"))))
   }
   
-  def review(paperId: Id[Paper]) = SlickAction(NonConflictingReviewer(paperId), _.pcmemberReview) {
+  def review(paperId: Id[Paper]) = SlickAction(NonConflictingPCMember(paperId), _.pcmemberReview) {
     implicit r =>
     if(Query(r.db).reviewOf(r.user.id, paperId).isEmpty)
-      Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), reviewForm, Query(r.db).paperWithId(paperId), Navbar(Reviewer))(Submitting.summary(paperId)))
+      Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), reviewForm, Query(r.db).paperWithId(paperId), Navbar(PC_Member))(Submitting.summary(paperId)))
     else
-      comment(paperId, routes.Reviewing.doComment(paperId), Navbar(Reviewer))
+      comment(paperId, routes.Reviewing.doComment(paperId), Navbar(PC_Member))
   }
   
-  def doReview(paperId: Id[Paper]) = SlickAction(NonConflictingReviewer(paperId), _.pcmemberReview) { 
+  def doReview(paperId: Id[Paper]) = SlickAction(NonConflictingPCMember(paperId), _.pcmemberReview) { 
     implicit r =>
     reviewForm.bindFromRequest.fold(
       errors => {
         // review(id, errors)(r), // TODO: DRY with this, use Action.async everywhere...
         val paper: Paper = Query(r.db) paperWithId paperId
-        Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), errors, paper, Navbar(Reviewer))(Submitting.summary(paperId)))
+        Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), errors, paper, Navbar(PC_Member))(Submitting.summary(paperId)))
       },
       review => {
         r.connection insert review.copy(paperId=paperId, personId=r.user.id)
@@ -108,14 +108,14 @@ object Reviewing extends Controller {
     Ok(views.html.comment("Submission " + Query(r.db).indexOf(paperId), commentReviews, Query(r.db).allPersons.toSet, canEdit, doCommentEP, navbar)(Submitting.summary(paperId)))
   }
   
-  def doComment(paperId: Id[Paper]) = SlickAction(NonConflictingReviewer(paperId), _.pcmemberComment) { 
+  def doComment(paperId: Id[Paper]) = SlickAction(NonConflictingPCMember(paperId), _.pcmemberComment) { 
     implicit r =>
     commentForm.bindFromRequest.fold(_ => (),
       comment => r.connection insert comment.copy(paperId=paperId, personId=r.user.id))
     Redirect(routes.Reviewing.review(paperId))
   }
 
-  def editReview(paperId: Id[Paper], personId: Id[Person]) = SlickAction(NonConflictingReviewer(paperId), _.pcmemberReview) { implicit r =>
+  def editReview(paperId: Id[Paper], personId: Id[Person]) = SlickAction(NonConflictingPCMember(paperId), _.pcmemberReview) { implicit r =>
     reviewForm.bindFromRequest.fold(_ => (),
       review => {
         r.connection insert review.copy(paperId=paperId, personId=personId)

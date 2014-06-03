@@ -1,6 +1,6 @@
 package models
 
-import Role.Reviewer
+import Role.PC_Member
 import play.api.db.slick.Config.driver.simple._
 import scala.language.postfixOps
 import play.api.Play.configuration

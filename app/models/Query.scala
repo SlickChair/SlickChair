@@ -26,7 +26,7 @@ case class Query(db: Database) {
   def reviewOf(personId: Id[Person], paperId: Id[Paper]): Option[Review] =
     (reviews filter { r => (r.personId is personId) && (r.paperId is paperId) }).firstOption
   def allStaff: List[Person] =
-    personRoles filter (r => (r.value is Reviewer) || (r.value is Chair)) flatMap { r =>
+    personRoles filter (r => (r.value is PC_Member) || (r.value is Chair)) flatMap { r =>
       persons filter (_.id is r.personId)
     } list
   def assignmentsOn(id: Id[Paper]): List[Assignment] =
@@ -44,7 +44,7 @@ case class Query(db: Database) {
   def hasRole(id: Id[Person]): Boolean =
     personRoles.filter(_.personId is id).firstOption.isEmpty 
   def reviewerEmails: List[String] =
-    personRoles filter (pr => (pr.value is Reviewer) || (pr.value is Chair)) flatMap { p =>
+    personRoles filter (pr => (pr.value is PC_Member) || (pr.value is Chair)) flatMap { p =>
       persons filter (p.personId is _.id)
     } map (_.email) list
   

@@ -7,7 +7,7 @@ import play.api.mvc.{Controller, ResponseHeader, SimpleResult}
 import play.api.templates.Html
 
 object FileServing extends Controller {
-  def apply(fileId: Id[File]) = SlickAction(AuthorOrNCReviewer(fileId), _.alwaysEnabled) {
+  def apply(fileId: Id[File]) = SlickAction(AuthorOrNCPCMember(fileId), _.alwaysEnabled) {
       implicit r =>
     val file = Query(r.db) fileWithId fileId
     val headers =

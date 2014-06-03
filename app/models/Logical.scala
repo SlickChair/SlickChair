@@ -5,7 +5,7 @@ import play.api.templates.Html
 
 object Role extends Enumeration with EnumSlickMapper {
   type Role = Value
-  val Author, Reviewer, Chair = Value
+  val Author, PC_Member, Chair = Value
 }
 
 object BidValue extends Enumeration with EnumSlickMapper {

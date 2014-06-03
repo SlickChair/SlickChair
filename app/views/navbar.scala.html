@@ -1,8 +1,9 @@
 @(user: Option[Person],
   userPersonRole: Option[Role.Role],
   currentPersonRole: Role.Role,
-  menu: List[(Call, String)]
-)(implicit request: play.api.mvc.Request[Any])
+  menu: List[(Call, String)],
+  uri: String
+)
 
 @import securesocial.core.providers.utils.RoutesHelper
 @import models.Role._
@@ -10,17 +11,10 @@
 @import play.api.Play.configuration
 
 @idSize = @{ newMetadata._1.value.toString.size }
-@toString(role: Role) = {
-  @role match {
-    case Chair => { Chair }
-    case Reviewer => { PC Member @* TODO: rename reviewer?! *@ }
-    case Author => { Author }
-  }
-}
 @changePersonRole(to: Role) = {
   @to match {
     case Chair => { @routes.Chairing.submissions }
-    case Reviewer => { @routes.Reviewing.bid }
+    case PC_Member => { @routes.Reviewing.bid }
     case Author => { @routes.Submitting.submit }
   }
 }
@@ -37,7 +31,7 @@
 <div class="collapse navbar-collapse">
   <ul class="nav navbar-nav">
     @menu.map { case (url, text) =>
-      <li @if(request.uri.takeRight(idSize) equals url.toString.takeRight(idSize)) { class="active" }><a href="@url">@text</a></li>
+      <li @if(uri.takeRight(idSize) equals url.toString.takeRight(idSize)) { class="active" }><a href="@url">@text</a></li>
     }
   </ul>
   
@@ -50,13 +44,13 @@
   case (Some(Person(_, _, _, email, _)), Some(role), _) => {
     <ul class="nav navbar-nav navbar-right">
       <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">@email (@toString(currentPersonRole).toString.trim) <b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">@email (@currentPersonRole.toString.replace("_", " ")) <b class="caret"></b></a>
         <ul class="dropdown-menu">
-          @List(Chair, Reviewer, Author).dropWhile(_ != role).map { role =>
+          @List(Chair, PC_Member, Author).dropWhile(_ != role).map { role =>
             @if(role == currentPersonRole) {
               @* <li><a class="disabeled">Change role to @toString(role)</a></li> *@
             } else {
-              <li><a href="@changePersonRole(role)">Change role to @toString(role)</a></li>
+              <li><a href="@changePersonRole(role)">Change role to @role.toString.replace("_", " ")</a></li>
             }
           }
           <li class="divider"></li>
