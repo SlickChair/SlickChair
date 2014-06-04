@@ -70,10 +70,10 @@ object Reviewing extends Controller {
   }
 
   def submissions = SlickAction(IsPCMember, _.alwaysEnabled) { implicit r =>
-    submissionList(routes.Reviewing.review _, Navbar(PC_Member))
+    submissionsImpl(routes.Reviewing.review _, Navbar(PC_Member))
   }
   
-  def submissionList(infoEP: Id[Paper] => Call, navbar: Html)(implicit r: SlickRequest[_]) = {
+  def submissionsImpl(infoEP: Id[Paper] => Call, navbar: Html)(implicit r: SlickRequest[_]) = {
     val files: List[File] = Query(r.db).allFiles
     val papers: List[Paper] = Query(r.db).nonConflictingPapers(r.user.id)
     val indexOf: Id[Paper] => Int = paperId =>
@@ -90,11 +90,11 @@ object Reviewing extends Controller {
     val assigned: Boolean = Query(r.db) assignedTo (r.user.id) map (_.id) contains paperId
     val notReviewed: Boolean = Query(r.db).reviewOf(r.user.id, paperId).isEmpty
     if(configuration.pcmemberReview && assigned && notReviewed)
-      Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), reviewForm, Query(r.db).paperWithId(paperId), Navbar(PC_Member))(Submitting.summary(paperId)))
+      Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), reviewForm, Query(r.db).paperWithId(paperId), Navbar(PC_Member))(Submitting.summaryImpl(paperId)))
     else if(configuration.pcmemberComment)
-      comment(paperId, routes.Reviewing.doComment(paperId), Navbar(PC_Member))
+      doCommentImpl(paperId, routes.Reviewing.doComment(paperId), Navbar(PC_Member))
     else
-      Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paperId), Query(r.db).paperWithId(paperId), None, None, Navbar(PC_Member))(Submitting.summary(paperId)))
+      Submitting.infoImpl(paperId, None, None, Navbar(PC_Member))
   }
   
   def doReview(paperId: Id[Paper]) = SlickAction(NonConflictingPCMember(paperId), _.pcmemberReview) { 
@@ -103,7 +103,7 @@ object Reviewing extends Controller {
       errors => {
         // review(id, errors)(r), // TODO: DRY with this, use Action.async everywhere...
         val paper: Paper = Query(r.db) paperWithId paperId
-        Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), errors, paper, Navbar(PC_Member))(Submitting.summary(paperId)))
+        Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), errors, paper, Navbar(PC_Member))(Submitting.summaryImpl(paperId)))
       },
       review => {
         r.connection insert review.copy(paperId=paperId, personId=r.user.id)
@@ -112,7 +112,7 @@ object Reviewing extends Controller {
     )
   }
   
-  def comment(paperId: Id[Paper], doCommentEP: Call, navbar: Html)(implicit r: SlickRequest[_]) = {
+  def doCommentImpl(paperId: Id[Paper], doCommentEP: Call, navbar: Html)(implicit r: SlickRequest[_]) = {
     val optionalReview: Option[Review] = Query(r.db) reviewOf (r.user.id, paperId)
     def canEdit(review: Review): Boolean = optionalReview map (_ == review) getOrElse false
     val comments = Query(r.db) commentsOn paperId map Left.apply
@@ -120,7 +120,7 @@ object Reviewing extends Controller {
     implicit val dateTimeOrdering: Ordering[DateTime] = Ordering fromLessThan (_ isAfter _)
     val commentReviews: List[Either[Comment, Review]] = (comments ::: reviews).sortBy(
       _ fold (_.updatedAt, _.updatedAt)).reverse
-    Ok(views.html.comment("Submission " + Query(r.db).indexOf(paperId), commentReviews, Query(r.db).allPersons.toSet, canEdit, doCommentEP, navbar)(Submitting.summary(paperId)))
+    Ok(views.html.comment("Submission " + Query(r.db).indexOf(paperId), commentReviews, Query(r.db).allPersons.toSet, canEdit, doCommentEP, navbar)(Submitting.summaryImpl(paperId)))
   }
   
   def doComment(paperId: Id[Paper]) = SlickAction(NonConflictingPCMember(paperId), _.pcmemberComment) { 

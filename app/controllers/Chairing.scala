@@ -76,7 +76,7 @@ object Chairing extends Controller {
     }
     val form = assignmentForm fill AssignmentForm(allAssignments)
     Ok(views.html.assignment(paperId, Query(r.db).indexOf(paperId), sortedStaff, form, allBids, Query(r.db).allAssignments, Navbar(Chair)
-    )(Submitting.summary(paperId)))
+    )(Submitting.summaryImpl(paperId)))
   }
 
   def doAssign(paperId: Id[Paper]) = SlickAction(IsChair, _.chairAssignment) { implicit r =>
@@ -119,11 +119,11 @@ object Chairing extends Controller {
   }
   
   def submissions = SlickAction(IsChair, _.alwaysEnabled) { implicit r => 
-    Reviewing.submissionList(routes.Chairing.info _, Navbar(Chair))
+    Reviewing.submissionsImpl(routes.Chairing.info _, Navbar(Chair))
   }
 
   def info(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled) { implicit r => 
-    Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paperId), Query(r.db).paperWithId(paperId), Some(routes.Chairing.edit(paperId)), Some(routes.Chairing.toggleWithdraw(paperId)), Navbar(Chair))(Submitting.summary(paperId)))
+    Submitting.infoImpl(paperId, Some(routes.Chairing.edit(paperId)), Some(routes.Chairing.toggleWithdraw(paperId)), Navbar(Chair))
   }
 
   def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled) { implicit r =>
@@ -139,11 +139,11 @@ object Chairing extends Controller {
   
   def doEdit(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled, parse.multipartFormData) { 
     implicit r => 
-    Submitting.doSave(Some(paperId), routes.Chairing.doEdit(paperId), routes.Chairing.info, false)
+    Submitting.doSaveImpl(Some(paperId), routes.Chairing.doEdit(paperId), routes.Chairing.info, false)
   }
   
   def comment(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled) { implicit r => 
-    Reviewing.comment(paperId, routes.Chairing.doComment(paperId), Navbar(Chair))
+    Reviewing.doCommentImpl(paperId, routes.Chairing.doComment(paperId), Navbar(Chair))
   }
   
   def doComment(paperId: Id[Paper]) = SlickAction(IsChair, _.pcmemberComment) { implicit r => 

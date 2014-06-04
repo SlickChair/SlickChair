@@ -51,14 +51,23 @@ object Submitting extends Controller {
   }
   
   def doSubmit = SlickAction(IsAuthor, _.authorNewSubmission, parse.multipartFormData) { implicit r =>
-    doSave(None, routes.Submitting.doSubmit, routes.Submitting.info, true)
+    doSaveImpl(None, routes.Submitting.doSubmit, routes.Submitting.info, true)
   }
   
-  def info(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.alwaysEnabled) { implicit r =>
-    Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paperId), Query(r.db).paperWithId( paperId), Some(routes.Submitting.edit(paperId)), Some(routes.Submitting.toggleWithdraw(paperId)), Navbar(Author))(summary(paperId)))
+  def info(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.alwaysEnabled) { 
+    implicit r =>
+    val canEdit: Boolean = Query(r.db).configuration.authorEditSubmission
+    infoImpl(paperId,
+      if(canEdit) Some(routes.Submitting.edit(paperId)) else None,
+      if(canEdit) Some(routes.Submitting.toggleWithdraw(paperId)) else None,
+      Navbar(Author))
   }
 
-  def summary(paperId: Id[Paper])(implicit r: SlickRequest[_]) = {
+  def infoImpl(paperId: Id[Paper], optionalEditEP: Option[Call], optionalWithdrawEP: Option[Call], navbar: Html)(implicit r: SlickRequest[_]) = {
+    Ok(views.html.submissioninfo("Submission " + Query(r.db).indexOf(paperId), Query(r.db).paperWithId(paperId), optionalEditEP, optionalWithdrawEP, navbar)(summaryImpl(paperId)))
+  }
+
+  def summaryImpl(paperId: Id[Paper])(implicit r: SlickRequest[_]): Html = {
     val paper = Query(r.db) paperWithId paperId
     views.html.submissionsummary(paper, Query(r.db) authorsOf paperId, paper.fileId.map(Query(r.db) fileWithId _))
   }
@@ -69,7 +78,7 @@ object Submitting extends Controller {
   }
     
   def doEdit(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.authorEditSubmission, parse.multipartFormData) { implicit r =>
-    doSave(Some(paperId), routes.Submitting.doEdit(paperId), routes.Submitting.info, true)
+    doSaveImpl(Some(paperId), routes.Submitting.doEdit(paperId), routes.Submitting.info, true)
   }
 
   def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.authorEditSubmission) { 
@@ -80,7 +89,7 @@ object Submitting extends Controller {
   }
   
   private type Req = SlickRequest[MultipartFormData[play.api.libs.Files.TemporaryFile]]
-  def doSave(optionalPaperId: Option[Id[Paper]], errorEP: Call, okEP: Id[Paper] => Call, checkSelfAuthor: Boolean)(implicit r: Req) = {
+  def doSaveImpl(optionalPaperId: Option[Id[Paper]], errorEP: Call, okEP: Id[Paper] => Call, checkSelfAuthor: Boolean)(implicit r: Req) = {
     // TODO: if the form is not js validated we might want to save the
     // uploaded file in case of errors. Otherwise the user will have to
     // select it again.
