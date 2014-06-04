@@ -55,7 +55,8 @@ object Chairing extends Controller {
     Ok(views.html.assignmentlist(Query(r.db).allPapers, Query(r.db).allPaperIndices, Query(r.db).allAssignments, Navbar(Chair)))
   }
   
-  def assign(paperId: Id[Paper]) = SlickAction(IsChair, _.chairAssignment) { implicit r =>
+  def assign(paperId: Id[Paper]) = SlickAction(IsChair, _.chairAssignment) {
+    implicit r =>
     val bids = Query(r.db) bidsOn paperId
     val assignments = Query(r.db) assignmentsOn paperId
     val sortedStaff = Query(r.db).allStaff
@@ -79,7 +80,8 @@ object Chairing extends Controller {
     )(Submitting.summaryImpl(paperId)))
   }
 
-  def doAssign(paperId: Id[Paper]) = SlickAction(IsChair, _.chairAssignment) { implicit r =>
+  def doAssign(paperId: Id[Paper]) = SlickAction(IsChair, _.chairAssignment) {
+    implicit r =>
     assignmentForm.bindFromRequest.fold(
       errors => 
         Redirect(routes.Chairing.assign(paperId)),
@@ -142,11 +144,13 @@ object Chairing extends Controller {
     Submitting.doSaveImpl(Some(paperId), routes.Chairing.doEdit(paperId), routes.Chairing.info, false)
   }
   
-  def comment(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled) { implicit r => 
+  def comment(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled) {
+    implicit r => 
     Reviewing.doCommentImpl(paperId, routes.Chairing.doComment(paperId), Navbar(Chair))
   }
   
-  def doComment(paperId: Id[Paper]) = SlickAction(IsChair, _.pcmemberComment) { implicit r => 
+  def doComment(paperId: Id[Paper]) = SlickAction(IsChair, _.pcmemberComment) {
+    implicit r => 
     Reviewing.commentForm.bindFromRequest.fold(_ => (),
       comment => r.connection insert comment.copy(paperId=paperId, personId=r.user.id))
     Redirect(routes.Chairing.comment(paperId))

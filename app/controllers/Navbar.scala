@@ -1,35 +1,39 @@
 package controllers
 
 import models.Role.{Chair, Role, PC_Member, Author}
-import models.Query
+import models.{Query, Configuration}
 import play.api.templates.Html
+import play.api.mvc.Call
 
 object Navbar {
-  private val newSubmission = (routes.Submitting.submit, "New Submission")  
-  
   def apply(currentRole: Role)(implicit r: SlickRequest[_]): Html = {
-    val roleSpecificEntries = (currentRole match {
+    case class M(call: Call, name: String, isEnabled: Configuration => Boolean)
+    val userMenuMs: List[M] = currentRole match {
       case Chair =>
         List(
-          (routes.Chairing.submissions, "Submissions"),
-          (routes.Chairing.roles, "Roles"),
-          (routes.Chairing.assignmentList, "Assignment"),
-          (routes.Chairing.decision, "Decision"),
-          (routes.Sql.query, "SQL"))
+          M(routes.Chairing.submissions, "Submissions", _.alwaysEnabled),
+          M(routes.Chairing.roles, "Roles", _.chairRoles),
+          M(routes.Chairing.assignmentList, "Assignment", _.chairAssignment),
+          M(routes.Chairing.decision, "Decision", _.chairDecision),
+          M(routes.Sql.query, "SQL", _.chairSql))
       case PC_Member =>
         val papers = Query(r.db) assignedTo r.user.id map { p =>
-          (routes.Reviewing.review(p.id), "Submission " + Query(r.db).indexOf(p.id))
+          M(routes.Reviewing.review(p.id), "Submission " + Query(r.db).indexOf(p.id), _.alwaysEnabled)
         }
-        (routes.Reviewing.submissions, "Submissions") ::
-        (routes.Reviewing.bid, "Bidding") ::
+        M(routes.Reviewing.submissions, "Submissions", _.alwaysEnabled) ::
+        M(routes.Reviewing.bid, "Bidding", _.pcmemberBid) ::
         papers
       case Author =>
         val papers = Query(r.db) papersOf r.user.id map { p =>
-          (routes.Submitting.info(p.id), "Submission " + Query(r.db).indexOf(p.id))
+          M(routes.Submitting.info(p.id), "Submission " + Query(r.db).indexOf(p.id), _.alwaysEnabled)
         }
-        newSubmission :: papers
-    })
-    views.html.navbar(Some(r.user), Some(Query(r.db).roleOf(r.user.id)), currentRole, roleSpecificEntries, r.uri)
+        M(routes.Submitting.submit, "New Submission", _.alwaysEnabled) ::
+        papers
+    }
+    val conf = Query(r.db).configuration
+    val userMenu = userMenuMs filter (_.isEnabled(conf)) map { m => (m.call, m.name) }
+    val role = Query(r.db).roleOf(r.user.id)
+    views.html.navbar(Some(r.user), Some(role), currentRole, userMenu, r.uri)
   }
   
   val empty = views.html.navbar(None, None, Author, Nil, "")

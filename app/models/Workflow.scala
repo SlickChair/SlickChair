@@ -18,7 +18,7 @@ object Workflow {
   val conferenceUrl = configuration.getString("application.url").get
 
   val phases: List[Phase] = List(
-    Phase(Configuration("Setup", false, true, true, true, true, true, true, true)),
+    Phase(Configuration("Setup", true, true, true, true, true, true, true, true, true)),
     
     Phase(Configuration("Submission", authorNewSubmission=true, authorEditSubmission=true)),
     

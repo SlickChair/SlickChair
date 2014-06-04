@@ -46,8 +46,12 @@ object Submitting extends Controller {
   
   private def currentTime(): DateTime = new DateTime()
   
-  def submit = SlickAction(IsAuthor, _.authorNewSubmission) { implicit r =>
-    Ok(views.html.submissionform("New Submission", submissionForm, routes.Submitting.doSubmit, Navbar(Author)))
+  def submit = SlickAction(IsAuthor, _.alwaysEnabled) { implicit r =>
+    if(Query(r.db).configuration.authorNewSubmission) {
+      Ok(views.html.submissionform("New Submission", submissionForm, routes.Submitting.doSubmit, Navbar(Author)))
+    } else {
+      Ok(views.html.main("Submissions closed", Navbar(Author))(Html("This conference is not accepting new submissions.")))
+    }
   }
   
   def doSubmit = SlickAction(IsAuthor, _.authorNewSubmission, parse.multipartFormData) { implicit r =>

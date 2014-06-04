@@ -86,12 +86,12 @@ object Reviewing extends Controller {
 
   def review(paperId: Id[Paper]) = SlickAction(NonConflictingPCMember(paperId), _.alwaysEnabled) {
     implicit r =>
-    val configuration: Configuration = Query(r.db).configuration
+    val conf: Configuration = Query(r.db).configuration
     val assigned: Boolean = Query(r.db) assignedTo (r.user.id) map (_.id) contains paperId
     val notReviewed: Boolean = Query(r.db).reviewOf(r.user.id, paperId).isEmpty
-    if(configuration.pcmemberReview && assigned && notReviewed)
+    if(conf.pcmemberReview && assigned && notReviewed)
       Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), reviewForm, Query(r.db).paperWithId(paperId), Navbar(PC_Member))(Submitting.summaryImpl(paperId)))
-    else if(configuration.pcmemberComment)
+    else if(conf.pcmemberComment)
       doCommentImpl(paperId, routes.Reviewing.doComment(paperId), Navbar(PC_Member))
     else
       Submitting.infoImpl(paperId, None, None, Navbar(PC_Member))

@@ -101,11 +101,12 @@ class ConfigurationTable(tag: Tag) extends Table[Configuration](tag, "CONFIGURAT
   def chairRoles = column[Boolean]("CHAIRROLES")
   def chairAssignment = column[Boolean]("CHAIRASSIGNMENT")
   def chairDecision = column[Boolean]("CHAIRDECISION")
+  def chairSql = column[Boolean]("CHAIRSQL")
   def pcmemberBid = column[Boolean]("PCMEMBERBID")
   def pcmemberReview = column[Boolean]("PCMEMBERREVIEW")
   def pcmemberComment = column[Boolean]("PCMEMBERCOMMENT")
   def authorNewSubmission = column[Boolean]("AUTHORNEWSUBMISSION")
   def authorEditSubmission = column[Boolean]("AUTHOREDITSUBMISSION")
   def alwaysEnabled = column[Boolean]("ALWAYSENABLED")
-  def * = (name, chairRoles, chairAssignment, chairDecision, pcmemberBid, pcmemberReview, pcmemberComment, authorNewSubmission, authorEditSubmission, alwaysEnabled, (id, updatedAt, updatedBy)) <> (Configuration.tupled, Configuration.unapply)
+  def * = (name, chairRoles, chairAssignment, chairDecision, chairSql, pcmemberBid, pcmemberReview, pcmemberComment, authorNewSubmission, authorEditSubmission, alwaysEnabled, (id, updatedAt, updatedBy)) <> (Configuration.tupled, Configuration.unapply)
 }
