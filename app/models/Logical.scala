@@ -143,7 +143,7 @@ case class Configuration(
   chairRoles: Boolean = false,
   chairAssignment: Boolean = false,
   chairDecision: Boolean = false,
-  chairSql: Boolean = false,
+  chairSql: Boolean = true,
   pcmemberBid: Boolean = false,
   pcmemberReview: Boolean = false,
   pcmemberComment: Boolean = false,

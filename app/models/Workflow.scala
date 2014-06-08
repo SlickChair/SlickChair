@@ -94,7 +94,9 @@ object Workflow {
             |$conferenceShortName Program Committee
           """.trim.stripMargin
         ))
-      })
+      }),
+      
+      Phase(Configuration("Done"))
     )
   }
 }

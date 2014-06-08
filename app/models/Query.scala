@@ -71,9 +71,11 @@ case class Query(db: Database) {
   }.list map File.tupled
   
   def configuration: Configuration = {
-    implicit val dateTimeOrdering: Ordering[DateTime] = Ordering fromLessThan (_ isAfter _)
+    implicit val dateTimeOrdering: Ordering[DateTime] = Ordering fromLessThan (_ isBefore _)
     configurations.list maxBy (_.updatedAt)
   }
+
+  def allConfigurations: List[Configuration] = configurations.list
 
   def balancedAssignment: Boolean = true // TODO
   def allReviewsCompleted: Boolean = true // TODO

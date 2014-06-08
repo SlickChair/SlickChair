@@ -11,10 +11,15 @@ import play.api.data.Form
 import play.api.data.Forms.{ignored, list, mapping, boolean, text}
 import play.api.data.Mapping
 import BidValue.Maybe
+import play.api.Play.current
+import play.api.libs.concurrent.Akka
+import com.typesafe.plugin._
+import scala.concurrent.duration._
 
 case class AssignmentForm(assignments: List[Assignment])
 case class DecisionForm(decisions: List[PaperDecision])
 case class RolesForm(roles: List[PersonRole])
+case class JumpToPhaseForm(configurationName: String)
 
 object Chairing extends Controller {
   def assignmentFormMapping: Mapping[Assignment] = mapping(
@@ -57,6 +62,10 @@ object Chairing extends Controller {
     "content" -> text,
     "metadata" -> ignored(newMetadata[Email])
   )(Email.apply _)(Email.unapply _))
+
+  def jumpToPhaseForm: Form[JumpToPhaseForm] = Form(mapping(
+    "configurationName" -> text
+  )(JumpToPhaseForm.apply _)(JumpToPhaseForm.unapply _))
 
   def assignmentList() = SlickAction(IsChair, _ => true) { implicit r =>
     Ok(views.html.assignmentlist(Query(r.db).allPapers, Query(r.db).allPaperIndices, Query(r.db).allAssignments, Navbar(Chair)))
@@ -176,13 +185,43 @@ object Chairing extends Controller {
   def phases = SlickAction(IsChair, _ => true) { implicit r =>
     val currentConf = Query(r.db).configuration
     val currentPhase = Workflow.phases.find(_.configuration.name == currentConf.name)
+    
     Ok(views.html.phases(currentConf,
       currentPhase filterNot (_ transitionCondition r.db) map (_.transitionReason),
       currentPhase flatMap (_ email r.db) map (emailForm fill _) getOrElse emailForm,
+      currentPhase.map(p => jumpToPhaseForm.fill(JumpToPhaseForm(p.configuration.name))).getOrElse(jumpToPhaseForm),
       Workflow.phases.map(_.configuration), Navbar(Chair)))
   }
   
   def doPhases = SlickAction(IsChair, _ => true) { implicit r =>
-    ???
+    emailForm.bindFromRequest.fold(_ => (),
+      form => {
+        import play.api.libs.concurrent.Execution.Implicits._
+        Akka.system.scheduler.scheduleOnce(1.seconds) {
+          val mail = use[MailerPlugin].email
+          mail.setSubject(form.subject)
+          mail.setRecipient(form.to.split(","): _*)
+          mail.setFrom(current.configuration.getString("smtp.from").get)
+          mail.send(form.content)
+        }
+      }
+    )
+    val currentConf = Query(r.db).configuration
+    Workflow.phases.dropWhile(_.configuration.name != currentConf.name) match {
+      case _ :: nextPhase :: _ => r.connection insert nextPhase.configuration
+      case _ => ()
+    }
+    Redirect(routes.Chairing.phases)
+  }
+  
+  def jumpToPhase = SlickAction(IsChair, _ => true) { implicit r =>
+    jumpToPhaseForm.bindFromRequest.fold(_ => (),
+      form => {
+        Workflow.phases map (_.configuration) find (_.name == form.configurationName) map {
+          r.connection insert _
+        }
+      }
+    )
+    Redirect(routes.Chairing.phases)
   }
 }

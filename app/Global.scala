@@ -17,16 +17,13 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
       if(connection.database().persons.list.isEmpty) {
         
         val chairs = List(
-          Person("Ruzica", "Piskac", "EPFL", "ruzica.piskac@yale.edu"),
-          Person("Viktor", "Kuncak", "EPFL", "viktor.kuncak@epfl.ch"),
-          Person("Viktor", "Kuncak", "EPFL", "vkuncak@gmail.com"),
           Person("Olivier", "Blanvillain", "EPFL", "olivierblanvillain@gmail.com")
         )
         
         connection insert chairs
         connection insert chairs.map(p => PersonRole(p.id, Chair)) 
         
-        connection insert Workflow.phases.tail.tail.head.configuration
+        connection insert Workflow.phases.head.configuration
         
         // A demo paper
         val src = Source.fromFile("test/sigplanconf-template.pdf", "ISO8859-1").map(_.toByte).toArray

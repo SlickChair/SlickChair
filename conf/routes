@@ -29,6 +29,7 @@ GET     /chair/roles            controllers.Chairing.roles
 POST    /chair/roles            controllers.Chairing.doRoles
 GET     /chair/phases           controllers.Chairing.phases
 POST    /chair/phases           controllers.Chairing.doPhases
+POST    /chair/jumpToPhase      controllers.Chairing.jumpToPhase
 
 GET     /chair/assign/:id       controllers.Chairing.assign(id: Id[Paper])
 POST    /chair/assign/:id       controllers.Chairing.doAssign(id: Id[Paper])
