@@ -46,7 +46,7 @@ object Submitting extends Controller {
   
   private def currentTime(): DateTime = new DateTime()
   
-  def submit = SlickAction(IsAuthor, _.alwaysEnabled) { implicit r =>
+  def submit = SlickAction(IsAuthor, _ => true) { implicit r =>
     if(Query(r.db).configuration.authorNewSubmission) {
       Ok(views.html.submissionform("New Submission", submissionForm, routes.Submitting.doSubmit, Navbar(Author)))
     } else {
@@ -58,12 +58,13 @@ object Submitting extends Controller {
     doSaveImpl(None, routes.Submitting.doSubmit, routes.Submitting.info, true)
   }
   
-  def info(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.alwaysEnabled) { 
+  def info(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _ => true) { 
     implicit r =>
+    val paper: Paper = Query(r.db).paperWithId(paperId)
     val canEdit: Boolean = Query(r.db).configuration.authorEditSubmission
     infoImpl(paperId,
       if(canEdit) Some(routes.Submitting.edit(paperId)) else None,
-      if(canEdit) Some(routes.Submitting.toggleWithdraw(paperId)) else None,
+      if(canEdit && !paper.withdrawn) Some(routes.Submitting.withdraw(paperId)) else None,
       Navbar(Author))
   }
 
@@ -85,10 +86,9 @@ object Submitting extends Controller {
     doSaveImpl(Some(paperId), routes.Submitting.doEdit(paperId), routes.Submitting.info, true)
   }
 
-  def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.authorEditSubmission) { 
+  def withdraw(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.authorEditSubmission) { 
     implicit r =>
-    val paper: Paper = Query(r.db).paperWithId(paperId)
-    r.connection insert paper.copy(withdrawn=(!paper.withdrawn))
+    r.connection insert Query(r.db).paperWithId(paperId).copy(withdrawn=true)
     Redirect(routes.Submitting.info(paperId))
   }
   

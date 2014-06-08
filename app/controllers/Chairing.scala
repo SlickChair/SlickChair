@@ -8,7 +8,7 @@ import play.api.mvc.Controller
 import Mappers.{enumFormMapping, idFormMapping}
 import play.api.data.Mapping
 import play.api.data.Form
-import play.api.data.Forms.{ignored, list, mapping, boolean}
+import play.api.data.Forms.{ignored, list, mapping, boolean, text}
 import play.api.data.Mapping
 import BidValue.Maybe
 
@@ -50,8 +50,15 @@ object Chairing extends Controller {
     mapping("roles" -> list(rolesFormMapping))
     (RolesForm.apply _)(RolesForm.unapply _)
   )
-  
-  def assignmentList() = SlickAction(IsChair, _.alwaysEnabled) { implicit r =>
+
+  def emailForm: Form[Email] = Form(mapping(
+    "to" -> text,
+    "subject" -> text,
+    "content" -> text,
+    "metadata" -> ignored(newMetadata[Email])
+  )(Email.apply _)(Email.unapply _))
+
+  def assignmentList() = SlickAction(IsChair, _ => true) { implicit r =>
     Ok(views.html.assignmentlist(Query(r.db).allPapers, Query(r.db).allPaperIndices, Query(r.db).allAssignments, Navbar(Chair)))
   }
   
@@ -120,31 +127,31 @@ object Chairing extends Controller {
     Redirect(routes.Chairing.decision)
   }
   
-  def submissions = SlickAction(IsChair, _.alwaysEnabled) { implicit r => 
+  def submissions = SlickAction(IsChair, _ => true) { implicit r => 
     Reviewing.submissionsImpl(routes.Chairing.info _, Navbar(Chair))
   }
 
-  def info(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled) { implicit r => 
+  def info(paperId: Id[Paper]) = SlickAction(IsChair, _ => true) { implicit r => 
     Submitting.infoImpl(paperId, Some(routes.Chairing.edit(paperId)), Some(routes.Chairing.toggleWithdraw(paperId)), Navbar(Chair))
   }
 
-  def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled) { implicit r =>
+  def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsChair, _ => true) { implicit r =>
     val paper: Paper = Query(r.db).paperWithId(paperId)
     r.connection insert paper.copy(withdrawn=(!paper.withdrawn))
     Redirect(routes.Chairing.info(paperId))
   }
   
-  def edit(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled) { implicit r => 
+  def edit(paperId: Id[Paper]) = SlickAction(IsChair, _ => true) { implicit r => 
     val form = Submitting.submissionForm.fill(SubmissionForm(Query(r.db) paperWithId paperId, Query(r.db) authorsOf paperId))
     Ok(views.html.submissionform("Editing Submission " + Query(r.db).indexOf(paperId), form, routes.Chairing.doEdit(paperId), Navbar(Chair)))
   }
   
-  def doEdit(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled, parse.multipartFormData) { 
+  def doEdit(paperId: Id[Paper]) = SlickAction(IsChair, _ => true, parse.multipartFormData) { 
     implicit r => 
     Submitting.doSaveImpl(Some(paperId), routes.Chairing.doEdit(paperId), routes.Chairing.info, false)
   }
   
-  def comment(paperId: Id[Paper]) = SlickAction(IsChair, _.alwaysEnabled) {
+  def comment(paperId: Id[Paper]) = SlickAction(IsChair, _ => true) {
     implicit r => 
     Reviewing.doCommentImpl(paperId, routes.Chairing.doComment(paperId), Navbar(Chair))
   }
@@ -164,5 +171,18 @@ object Chairing extends Controller {
   def doRoles = SlickAction(IsChair, _.chairRoles) { implicit r =>
     rolesForm.bindFromRequest.fold(_ => (), form => r.connection insert form.roles)
     Redirect(routes.Chairing.roles)
+  }
+  
+  def phases = SlickAction(IsChair, _ => true) { implicit r =>
+    val currentConf = Query(r.db).configuration
+    val currentPhase = Workflow.phases.find(_.configuration.name == currentConf.name)
+    Ok(views.html.phases(currentConf,
+      currentPhase filterNot (_ transitionCondition r.db) map (_.transitionReason),
+      currentPhase flatMap (_ email r.db) map (emailForm fill _) getOrElse emailForm,
+      Workflow.phases.map(_.configuration), Navbar(Chair)))
+  }
+  
+  def doPhases = SlickAction(IsChair, _ => true) { implicit r =>
+    ???
   }
 }

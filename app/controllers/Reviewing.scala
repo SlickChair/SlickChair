@@ -69,7 +69,7 @@ object Reviewing extends Controller {
     )
   }
 
-  def submissions = SlickAction(IsPCMember, _.alwaysEnabled) { implicit r =>
+  def submissions = SlickAction(IsPCMember, _ => true) { implicit r =>
     submissionsImpl(routes.Reviewing.review _, Navbar(PC_Member))
   }
   
@@ -84,7 +84,7 @@ object Reviewing extends Controller {
     Ok(views.html.submissionlist(rows, infoEP, navbar))
   }
 
-  def review(paperId: Id[Paper]) = SlickAction(NonConflictingPCMember(paperId), _.alwaysEnabled) {
+  def review(paperId: Id[Paper]) = SlickAction(NonConflictingPCMember(paperId), _ => true) {
     implicit r =>
     val conf: Configuration = Query(r.db).configuration
     val assigned: Boolean = Query(r.db) assignedTo (r.user.id) map (_.id) contains paperId

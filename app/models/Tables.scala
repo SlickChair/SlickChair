@@ -1,7 +1,7 @@
 package models
 
 import BidValue.BidValue
-import Mappers.{idSlickMapper, commaSeparatedMapper}
+import Mappers.idSlickMapper
 import PaperType.PaperType
 import Role.Role
 import Decision.Decision
@@ -76,7 +76,7 @@ class FileTable(tag: Tag) extends Table[File](tag, "FILE") with RepoTable[File] 
 }
 
 class EmailTable(tag: Tag) extends Table[Email](tag, "EMAIL") with RepoTable[Email] {
-  def recipients = column[List[String]]("RECIPIENTS", O.DBType("TEXT"))
+  def recipients = column[String]("RECIPIENTS", O.DBType("TEXT"))
   def subject = column[String]("SUBJECT", O.DBType("TEXT"))
   def content = column[String]("CONTENT", O.DBType("TEXT"))
   def * = (recipients, subject, content, (id, updatedAt, updatedBy)) <> (Email.tupled, Email.unapply)
@@ -107,6 +107,5 @@ class ConfigurationTable(tag: Tag) extends Table[Configuration](tag, "CONFIGURAT
   def pcmemberComment = column[Boolean]("PCMEMBERCOMMENT")
   def authorNewSubmission = column[Boolean]("AUTHORNEWSUBMISSION")
   def authorEditSubmission = column[Boolean]("AUTHOREDITSUBMISSION")
-  def alwaysEnabled = column[Boolean]("ALWAYSENABLED")
-  def * = (name, chairRoles, chairAssignment, chairDecision, chairSql, pcmemberBid, pcmemberReview, pcmemberComment, authorNewSubmission, authorEditSubmission, alwaysEnabled, (id, updatedAt, updatedBy)) <> (Configuration.tupled, Configuration.unapply)
+  def * = (name, chairRoles, chairAssignment, chairDecision, chairSql, pcmemberBid, pcmemberReview, pcmemberComment, authorNewSubmission, authorEditSubmission, (id, updatedAt, updatedBy)) <> (Configuration.tupled, Configuration.unapply)
 }

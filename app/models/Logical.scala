@@ -132,7 +132,7 @@ case class Review(
 }
 
 case class Email(
-  recipients: List[String],
+  to: String,
   subject: String,
   content: String,
   metadata: Metadata[Email] = newMetadata
@@ -149,6 +149,5 @@ case class Configuration(
   pcmemberComment: Boolean = false,
   authorNewSubmission: Boolean = false,
   authorEditSubmission: Boolean = false,
-  alwaysEnabled: Boolean = true,
   metadata: Metadata[Configuration] = newMetadata
 ) extends Model[Configuration]

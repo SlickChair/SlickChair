@@ -1,0 +1,79 @@
+@(currentConf: Configuration,
+  optionalTransitionGuard: Option[String],
+  emailForm: Form[Email],
+  confs: List[Configuration],
+  navbar: Html
+)
+
+@import helper.FieldConstructors.horizontalForm
+
+@toli(conf: Configuration, status: String) = {
+  <li class="phase-@status" title="@{
+    conf match {
+      case Configuration(_, chairRoles, chairAssignment, chairDecision, chairSql, pcmemberBid, pcmemberReview, pcmemberComment, authorNewSubmission, authorEditSubmission, _) =>
+        List(
+          (chairRoles, "chairRoles"),
+          (chairAssignment, "chairAssignment"),
+          (chairDecision, "chairDecision"),
+          (chairSql, "chairSql"),
+          (pcmemberBid, "pcmemberBid"),
+          (pcmemberReview, "pcmemberReview"),
+          (pcmemberComment, "pcmemberComment"),
+          (authorNewSubmission, "authorNewSubmission"),
+          (authorEditSubmission, "authorEditSubmission")
+        ).filter(_._1).map(_._2).mkString("\n")
+    }
+  }">@conf.name
+  @* No, the closing li is not mandatory, http://www.w3.org/TR/REC-html40/index/elements.html *@
+}
+
+@edit = {
+  <span class="edit">
+    <a href="#" class="glyphicon glyphicon-pencil toggle-edit" toggle="0" title="Edit review"></a>
+  </span>
+}
+
+@main("Phases", navbar) {
+  <ol class="phase" data-phase-steps="@confs.length">
+    @confs.takeWhile(_.name != currentConf.name).map(toli(_, "done"))
+    @confs.dropWhile(_.name != currentConf.name) match {
+      case x :: xs => {
+        @toli(x, "wip")
+        @edit
+        @xs.map(toli(_, "todo"))
+      }
+      case Nil => { @edit }
+    }
+  </ol>
+  <br>
+  <br>
+  <div class="toggle0 hidden">
+    @form(routes.Chairing.doPhases) {
+      @select( // jumpToPhase
+        emailForm("subject"),
+        confs map (c => c.name -> c.name),
+        '_label -> "Phase:")
+      @dummy() {
+        <button type="submit" class="btn btn-default" onclick="return confirm('Are you sure?');">Jump to phase</button>
+      }
+    }
+    <hr>
+  </div>
+  
+  @optionalTransitionGuard.map { guard =>
+    <div class="alert alert-danger">
+      You cannot move the next phases: @guard
+    </div>
+  }
+  
+  @form(routes.Chairing.doPhases) {
+    @textarea(emailForm("to"), 'placeholder -> "Comma separated emails:", '_label -> "To:", 'rows -> 2)
+    @inputText(emailForm("subject"), '_label -> "Subject:")
+    @textarea(emailForm("content"), '_label -> "Body:", 'rows -> 10)
+    @dummy() {
+      <button type="submit" class="btn btn-default" onclick="return confirm('Are you sure?');"
+        @optionalTransitionGuard.map { _ => disabled }
+      >Send & move to next phase</button>
+    }
+  }
+}

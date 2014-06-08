@@ -338,3 +338,71 @@ tr.danger > td {
 .table-hover > tbody > tr.info:hover > th {
   background-color: #c4e3f3;
 }
+
+// Source: http://blog.sathomas.me/post/tracking-progress-in-pure-css
+ol.phase {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+ol.phase li {
+  display: inline-block;
+  text-align: center;
+  line-height: 3em;
+}
+ol.phase[data-phase-steps="2"] li { width: 49%; }
+ol.phase[data-phase-steps="3"] li { width: 33%; }
+ol.phase[data-phase-steps="4"] li { width: 24%; }
+ol.phase[data-phase-steps="5"] li { width: 19%; }
+ol.phase[data-phase-steps="6"] li { width: 16%; }
+ol.phase[data-phase-steps="7"] li { width: 14%; }
+ol.phase[data-phase-steps="8"] li { width: 12%; }
+ol.phase[data-phase-steps="9"] li { width: 11%; }
+
+ol.phase li.phase-done {
+    color: silver;
+    border-bottom: 4px solid silver;
+}
+ol.phase li.phase-wip {
+    color: black; 
+    border-bottom: 4px solid silver;
+}
+ol.phase li.phase-todo {
+    color: silver;
+    border-bottom: 4px solid silver;
+}
+
+ol.phase li:before {
+    position: relative;
+    bottom: -2.5em;
+    float: left;
+    left: 50%;
+    line-height: 1em;
+}
+ol.phase li.phase-done:before {
+    content: "\2713";
+    color: white;
+    background-color: silver;
+    height: 1.2em;
+    width: 1.2em;
+    line-height: 1.25em;
+    border: none;
+    border-radius: 1.2em;
+}
+ol.phase li.phase-wip:before {
+    content: "\2022";
+    color: white;
+    background-color: black;
+    height: 1.2em;
+    width: 1.2em;
+    line-height: 1.25em;
+    border: none;
+    border-radius: 1.2em;
+}
+ol.phase li.phase-todo:before {
+    content: "\039F";
+    color: silver;
+    background-color: white;
+    font-size: 1.5em;
+    bottom: -1.6em;
+}

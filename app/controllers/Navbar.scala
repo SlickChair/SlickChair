@@ -11,23 +11,24 @@ object Navbar {
     val userMenuMs: List[M] = currentRole match {
       case Chair =>
         List(
-          M(routes.Chairing.submissions, "Submissions", _.alwaysEnabled),
+          M(routes.Chairing.submissions, "Submissions", _ => true),
           M(routes.Chairing.roles, "Roles", _.chairRoles),
           M(routes.Chairing.assignmentList, "Assignment", _.chairAssignment),
           M(routes.Chairing.decision, "Decision", _.chairDecision),
+          M(routes.Chairing.phases, "Phases", _ => true),
           M(routes.Sql.query, "SQL", _.chairSql))
       case PC_Member =>
         val papers = Query(r.db) assignedTo r.user.id map { p =>
-          M(routes.Reviewing.review(p.id), "Submission " + Query(r.db).indexOf(p.id), _.alwaysEnabled)
+          M(routes.Reviewing.review(p.id), "Submission " + Query(r.db).indexOf(p.id), _ => true)
         }
-        M(routes.Reviewing.submissions, "Submissions", _.alwaysEnabled) ::
+        M(routes.Reviewing.submissions, "Submissions", _ => true) ::
         M(routes.Reviewing.bid, "Bidding", _.pcmemberBid) ::
         papers
       case Author =>
         val papers = Query(r.db) papersOf r.user.id map { p =>
-          M(routes.Submitting.info(p.id), "Submission " + Query(r.db).indexOf(p.id), _.alwaysEnabled)
+          M(routes.Submitting.info(p.id), "Submission " + Query(r.db).indexOf(p.id), _ => true)
         }
-        M(routes.Submitting.submit, "New Submission", _.alwaysEnabled) ::
+        M(routes.Submitting.submit, "New Submission", _ => true) ::
         papers
     }
     val conf = Query(r.db).configuration

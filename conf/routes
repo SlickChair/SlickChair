@@ -8,7 +8,7 @@ POST    /submission             controllers.Submitting.doSubmit
 GET     /submission/info/:id    controllers.Submitting.info(id: Id[Paper])
 GET     /submission/edit/:id    controllers.Submitting.edit(id: Id[Paper])
 POST    /submission/edit/:id    controllers.Submitting.doEdit(id: Id[Paper])
-GET     /submission/withdraw/:id  controllers.Submitting.toggleWithdraw(id: Id[Paper])
+GET     /submission/withdraw/:id  controllers.Submitting.withdraw(id: Id[Paper])
 
 GET     /review/submissions     controllers.Reviewing.submissions
 GET     /review/bid             controllers.Reviewing.bid
@@ -27,6 +27,8 @@ POST    /chair/doDecision       controllers.Chairing.doDecision
 GET     /chair/submissions      controllers.Chairing.submissions
 GET     /chair/roles            controllers.Chairing.roles
 POST    /chair/roles            controllers.Chairing.doRoles
+GET     /chair/phases           controllers.Chairing.phases
+POST    /chair/phases           controllers.Chairing.doPhases
 
 GET     /chair/assign/:id       controllers.Chairing.assign(id: Id[Paper])
 POST    /chair/assign/:id       controllers.Chairing.doAssign(id: Id[Paper])

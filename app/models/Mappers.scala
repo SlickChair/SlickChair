@@ -17,9 +17,6 @@ object Mappers {
 
   implicit def idSlickMapper[T <: Model[T]] = MappedColumnType.base[Id[T], IdType](_.value, Id[T])
 
-  implicit def commaSeparatedMapper =
-    MappedColumnType.base[List[String], String](_.mkString(","), _.split(",").toList)
-
   def idTypeFormMapping: Mapping[models.IdType] = of[UUID](new Formatter[UUID] {
     override val format = Some(("format.uuid", Nil))
     override def bind(key: String, data: Map[String, String]) = {

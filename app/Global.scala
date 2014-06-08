@@ -26,7 +26,7 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
         connection insert chairs
         connection insert chairs.map(p => PersonRole(p.id, Chair)) 
         
-        connection insert Workflow.phases.head.configuration
+        connection insert Workflow.phases.tail.tail.head.configuration
         
         // A demo paper
         val src = Source.fromFile("test/sigplanconf-template.pdf", "ISO8859-1").map(_.toByte).toArray
