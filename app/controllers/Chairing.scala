@@ -101,7 +101,7 @@ object Chairing extends Controller {
     assignmentForm.bindFromRequest.fold(_ => (),
       form => { r.connection insert (form.assignments map { _ copy (paperId=paperId) }) }
     )
-    Redirect(routes.Chairing.assign(paperId))
+    Redirect(routes.Chairing.assign(paperId)) flashing Msg.chair.assinged
   }
   
   def decision = SlickAction(IsChair, _.chairDecision) { implicit r =>
@@ -128,7 +128,7 @@ object Chairing extends Controller {
   
   def doDecision = SlickAction(IsChair, _.chairDecision) { implicit r =>
     decisionForm.bindFromRequest.fold(_ => (), form => r.connection insert form.decisions)
-    Redirect(routes.Chairing.decision)
+    Redirect(routes.Chairing.decision) flashing Msg.chair.decided
   }
   
   def submissions = SlickAction(IsChair, _ => true) { implicit r => 
@@ -142,7 +142,7 @@ object Chairing extends Controller {
   def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsChair, _ => true) { implicit r =>
     val paper: Paper = Query(r.db).paperWithId(paperId)
     r.connection insert paper.copy(withdrawn=(!paper.withdrawn))
-    Redirect(routes.Chairing.info(paperId))
+    Redirect(routes.Chairing.info(paperId)) flashing Msg.author.withdrawn
   }
   
   def edit(paperId: Id[Paper]) = SlickAction(IsChair, _ => true) { implicit r => 
@@ -157,14 +157,14 @@ object Chairing extends Controller {
   
   def comment(paperId: Id[Paper]) = SlickAction(IsChair, _ => true) {
     implicit r => 
-    Reviewing.doCommentImpl(paperId, routes.Chairing.doComment(paperId), Navbar(Chair))
+    Reviewing.commentImpl(paperId, routes.Chairing.doComment(paperId), Navbar(Chair))
   }
   
   def doComment(paperId: Id[Paper]) = SlickAction(IsChair, _.pcmemberComment) {
     implicit r => 
     Reviewing.commentForm.bindFromRequest.fold(_ => (),
       comment => r.connection insert comment.copy(paperId=paperId, personId=r.user.id))
-    Redirect(routes.Chairing.comment(paperId))
+    Redirect(routes.Chairing.comment(paperId)) flashing Msg.pcmember.commented
   }
 
   def roles = SlickAction(IsChair, _.chairRoles) { implicit r =>
@@ -174,13 +174,12 @@ object Chairing extends Controller {
 
   def doRoles = SlickAction(IsChair, _.chairRoles) { implicit r =>
     rolesForm.bindFromRequest.fold(_ => (), form => r.connection insert form.roles)
-    Redirect(routes.Chairing.roles)
+    Redirect(routes.Chairing.roles) flashing Msg.chair.role
   }
   
   def phases = SlickAction(IsChair, _ => true) { implicit r =>
     val currentConf = Query(r.db).configuration
     val currentPhase = Workflow.phases.find(_.configuration.name == currentConf.name)
-    
     Ok(views.html.phases(currentConf,
       currentPhase filterNot (_ transitionCondition r.db) map (_.transitionReason),
       currentPhase flatMap (_ email r.db) map (emailForm fill _) getOrElse emailForm,
@@ -206,7 +205,7 @@ object Chairing extends Controller {
       case _ :: nextPhase :: _ => r.connection insert nextPhase.configuration
       case _ => ()
     }
-    Redirect(routes.Chairing.phases)
+    Redirect(routes.Chairing.phases) flashing Msg.chair.phase
   }
   
   def jumpToPhase = SlickAction(IsChair, _ => true) { implicit r =>
@@ -217,6 +216,6 @@ object Chairing extends Controller {
         }
       }
     )
-    Redirect(routes.Chairing.phases)
+    Redirect(routes.Chairing.phases) flashing Msg.chair.phaseJump
   }
 }

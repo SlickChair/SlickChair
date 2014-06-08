@@ -90,7 +90,7 @@ object Submitting extends Controller {
   def withdraw(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.authorEditSubmission) { 
     implicit r =>
     r.connection insert Query(r.db).paperWithId(paperId).copy(withdrawn=true)
-    Redirect(routes.Submitting.info(paperId)).flashing(Msg.author.withdrawn)
+    Redirect(routes.Submitting.info(paperId)) flashing Msg.author.withdrawn
   }
   
   private type Req = SlickRequest[MultipartFormData[play.api.libs.Files.TemporaryFile]]
@@ -124,9 +124,7 @@ object Submitting extends Controller {
           }
         }
         
-        emptyFieldErr ++ sameEmailErr ++ (
-          if(checkSelfAuthor) notAuthorErr else Seq()
-        )
+        emptyFieldErr ++ sameEmailErr ++ (if(checkSelfAuthor) notAuthorErr else Seq())
       }
     )
 
