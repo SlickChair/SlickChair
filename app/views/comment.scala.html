@@ -4,7 +4,7 @@
   canEdit: Review => Boolean,
   doCommentEP: Call,
   navbar: Html
-)(summary: Html)(implicit request: RequestHeader)
+)(summary: Html)(implicit flash: Flash)
 
 @import helper.FieldConstructors.empty
 @import Confidence._ 

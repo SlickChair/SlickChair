@@ -1,7 +1,7 @@
 @(personRolesForm: Form[RolesForm],
   persons: Set[Person],
   navbar: Html
-)(implicit request: RequestHeader)
+)(implicit flash: Flash)
 
 @import helper.FieldConstructors.empty
 @import Role._

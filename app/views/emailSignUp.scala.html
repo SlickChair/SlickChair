@@ -1,6 +1,6 @@
 @(signUpForm:Form[securesocial.controllers.Registration.RegistrationInfo],
   token: String
-)(implicit request: RequestHeader, lang: Lang)
+)(implicit flash: Flash)
 
 @import securesocial.core.providers.UsernamePasswordProvider
 @import securesocial.core.IdentityProvider

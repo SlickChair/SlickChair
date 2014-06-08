@@ -2,7 +2,7 @@
   papers: Set[Paper],
   files: Set[File],
   navbar: Html
-)(implicit request: RequestHeader)
+)(implicit flash: Flash)
 
 @import FileServing.linkToFile
 @import BidValue._

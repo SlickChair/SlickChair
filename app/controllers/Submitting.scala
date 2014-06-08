@@ -77,19 +77,20 @@ object Submitting extends Controller {
     views.html.submissionsummary(paper, Query(r.db) authorsOf paperId, paper.fileId.map(Query(r.db) fileWithId _))
   }
 
-  def edit(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.authorEditSubmission) { implicit r =>
+  def edit(paperId: Id[Paper]) = SlickAction(IsAuthorOfNotWithdrawn(paperId), _.authorEditSubmission) { 
+    implicit r =>
     val form = submissionForm.fill(SubmissionForm(Query(r.db) paperWithId paperId, Query(r.db) authorsOf paperId))
     Ok(views.html.submissionform("Editing Submission " + Query(r.db).indexOf(paperId), form, routes.Submitting.doEdit(paperId), Navbar(Author)))
   }
     
-  def doEdit(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.authorEditSubmission, parse.multipartFormData) { implicit r =>
+  def doEdit(paperId: Id[Paper]) = SlickAction(IsAuthorOfNotWithdrawn(paperId), _.authorEditSubmission, parse.multipartFormData) { implicit r =>
     doSaveImpl(Some(paperId), routes.Submitting.doEdit(paperId), routes.Submitting.info, true)
   }
 
   def withdraw(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.authorEditSubmission) { 
     implicit r =>
     r.connection insert Query(r.db).paperWithId(paperId).copy(withdrawn=true)
-    Redirect(routes.Submitting.info(paperId))
+    Redirect(routes.Submitting.info(paperId)).flashing(Msg.author.withdrawn)
   }
   
   private type Req = SlickRequest[MultipartFormData[play.api.libs.Files.TemporaryFile]]
@@ -130,7 +131,9 @@ object Submitting extends Controller {
     )
 
     bindedForm.copy(errors = bindedForm.errors ++ customErrors).fold(
-      errors => Ok(views.html.submissionform("Submission: Errors found", errors, errorEP, Navbar(Author))),
+      errors => Ok(views.html.submissionform("Submission: Errors found", errors, errorEP, Navbar(Author))(
+        Msg.flash(if(optionalPaperId.isEmpty) Msg.author.submitError else Msg.author.editError)
+      )),
       form => {
         val file: Option[File] = r.body.file("data") map { f =>
           val blob = scalax.io.Resource.fromFile(f.ref.file).byteArray

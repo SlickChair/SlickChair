@@ -1,6 +1,6 @@
 @(title: String,
   navbar: Html
-)(content: Html)(implicit request: RequestHeader)
+)(content: Html)(implicit flash: Flash)
 
 @minified = @{ if (play.Play.isProd()) ".min" else "" }
 @xButton = { <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> }
@@ -36,8 +36,8 @@
       <div class="page-header">
         <h1>@title<small></small></h1>
       </div>
-      @request.flash.get("success").map { msg => <div class="alert alert-success">@xButton@msg</div> }
-      @request.flash.get("error").map { msg => <div class="alert alert-error">@xButton@msg</div> }
+      @flash.get("success").map { msg => <div class="alert alert-success">@xButton@msg</div> }
+      @flash.get("error").map { msg => <div class="alert alert-error">@xButton@msg</div> }
       @content
       <br><br>
     </div>

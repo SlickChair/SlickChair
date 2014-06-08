@@ -29,6 +29,12 @@ case class IsAuthorOf(paperId: Id[Paper]) extends Authorization {
   }
 }
 
+case class IsAuthorOfNotWithdrawn(paperId: Id[Paper]) extends Authorization {
+  def apply[A](implicit r: SlickRequest[A]) = {
+    IsAuthorOf(paperId).apply && !Query(r.db).paperWithId(paperId).withdrawn
+  }
+}
+
 case class NonConflictingPCMember(paperId: Id[Paper]) extends Authorization {
   def apply[A](implicit r: SlickRequest[A]) =
     IsPCMember(r) && Query(r.db).bidsOf(r.user.id, paperId).filter(_.value == Conflict).isEmpty

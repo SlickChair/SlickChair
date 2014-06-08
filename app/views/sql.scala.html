@@ -1,7 +1,7 @@
 @(result: Option[String],
   queryForm: Form[(String, SqlMethod.Value)],
   navbar: Html
-)(implicit request: RequestHeader)
+)(implicit flash: Flash)
 
 @import helper.FieldConstructors.horizontalForm
 

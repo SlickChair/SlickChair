@@ -17,7 +17,7 @@ class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(ap
         case None =>
           loginWrapperForm
       }
-    )
+    )(request.flash)
   }
 
   // override def getStartSignUpPage[A](implicit request: Request[A], form: Form[String]): Html = {
@@ -25,7 +25,7 @@ class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(ap
   // }
   
   override def getSignUpPage[A](implicit request: Request[A], form: Form[RegistrationInfo], token: String): Html = {
-    views.html.emailSignUp(form, token)
+    views.html.emailSignUp(form, token)(request.flash)
   }
 
   // override def getStartResetPasswordPage[A](implicit request: Request[A], form: Form[String]): Html = {
@@ -33,7 +33,7 @@ class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(ap
   // }
 
   override def getResetPasswordPage[A](implicit request: Request[A], form: Form[(String, String)], token: String): Html = {
-    views.html.resetPasswordPage(form, token)
+    views.html.resetPasswordPage(form, token)(request.flash)
   }
 
   // override def getPasswordChangePage[A](implicit request: SecuredRequest[A], form: Form[ChangeInfo]):Html = {
@@ -42,30 +42,30 @@ class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(ap
 
   override def getNotAuthorizedPage[A](implicit request: Request[A]): Html = {
     views.html.main("Not Authorized", Navbar.empty)(
-      Html("You are not authorized to access that page."))
+      Html("You are not authorized to access that page."))(request.flash)
   }
 
-  // override def getSignUpEmail(token: String)(implicit request: RequestHeader): (Option[Txt], Option[Html]) = {
+  // override def getSignUpEmail(token: String)(implicit flash: Flash): (Option[Txt], Option[Html]) = {
   //   (None, Some(securesocial.views.html.mails.signUpEmail(token)))
   // }
 
-  // override def getAlreadyRegisteredEmail(user: Identity)(implicit request: RequestHeader): (Option[Txt], Option[Html]) = {
+  // override def getAlreadyRegisteredEmail(user: Identity)(implicit flash: Flash): (Option[Txt], Option[Html]) = {
   //   (None, Some(securesocial.views.html.mails.alreadyRegisteredEmail(user)))
   // }
 
-  // override def getWelcomeEmail(user: Identity)(implicit request: RequestHeader): (Option[Txt], Option[Html]) = {
+  // override def getWelcomeEmail(user: Identity)(implicit flash: Flash): (Option[Txt], Option[Html]) = {
   //   (None, Some(securesocial.views.html.mails.welcomeEmail(user)))
   // }
 
-  // override def getUnknownEmailNotice()(implicit request: RequestHeader): (Option[Txt], Option[Html]) = {
+  // override def getUnknownEmailNotice()(implicit flash: Flash): (Option[Txt], Option[Html]) = {
   //   (None, Some(securesocial.views.html.mails.unknownEmailNotice(request)))
   // }
 
-  // override def getSendPasswordResetEmail(user: Identity, token: String)(implicit request: RequestHeader): (Option[Txt], Option[Html]) = {
+  // override def getSendPasswordResetEmail(user: Identity, token: String)(implicit flash: Flash): (Option[Txt], Option[Html]) = {
   //   (None, Some(securesocial.views.html.mails.passwordResetEmail(user, token)))
   // }
 
-  // override def getPasswordChangedNoticeEmail(user: Identity)(implicit request: RequestHeader): (Option[Txt], Option[Html]) = {
+  // override def getPasswordChangedNoticeEmail(user: Identity)(implicit flash: Flash): (Option[Txt], Option[Html]) = {
   //   (None, Some(securesocial.views.html.mails.passwordChangedNotice(user)))
   // }
 }
