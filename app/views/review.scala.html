@@ -2,7 +2,7 @@
   reviewForm: Form[Review],
   paper: Paper,
   navbar: Html
-)(summary: Html)
+)(summary: Html)(implicit request: RequestHeader)
 
 @import helper.FieldConstructors.horizontalForm
 @import Confidence._ 

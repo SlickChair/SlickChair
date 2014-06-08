@@ -1,7 +1,7 @@
 @(rows: List[(Paper, Int, Option[File])],
   infoEP: Id[Paper] => Call,
   navbar: Html
-)
+)(implicit request: RequestHeader)
 
 @import helper.FieldConstructors.empty
 @import FileServing.linkToFile

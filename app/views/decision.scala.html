@@ -1,7 +1,7 @@
 @(decisionform: Form[DecisionForm],
   paperIndexEvaluations: Id[Paper] => Option[(Paper, Int, List[Evaluation.Evaluation])],
   navbar: Html
-)
+)(implicit request: RequestHeader)
 
 @import FileServing.linkToFile
 @import Decision._

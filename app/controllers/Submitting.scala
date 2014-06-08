@@ -130,8 +130,7 @@ object Submitting extends Controller {
     )
 
     bindedForm.copy(errors = bindedForm.errors ++ customErrors).fold(
-      errors => Ok(views.html.submissionform(
-        "Submission: Errors found", errors, errorEP, Navbar(Author))),
+      errors => Ok(views.html.submissionform("Submission: Errors found", errors, errorEP, Navbar(Author))),
       form => {
         val file: Option[File] = r.body.file("data") map { f =>
           val blob = scalax.io.Resource.fromFile(f.ref.file).byteArray
@@ -149,11 +148,12 @@ object Submitting extends Controller {
         r.connection insert persons
         r.connection insert authors
         Redirect(okEP(paper.id))
+          .flashing(if(optionalPaperId.isEmpty) Msg.author.submited else Msg.author.edited)
       }
     )
   }
   
-  def disabled = Action {
+  def disabled = SlickAction(IsAuthor, _ => true) { implicit r =>
     Ok(views.html.main("Disabled", Navbar.empty)(Html("This page is disabled in the current phase of the conference.")))
   }
 }

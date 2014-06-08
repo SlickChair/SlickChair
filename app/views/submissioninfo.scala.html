@@ -3,7 +3,7 @@
   optionalEditEP: Option[Call],
   optionalWithdrawEP: Option[Call],
   navbar: Html
-)(summary: Html)
+)(summary: Html)(implicit request: RequestHeader)
 
 @main(title + (if(paper.withdrawn) " (withdrawn)" else ""), navbar) {
   @summary

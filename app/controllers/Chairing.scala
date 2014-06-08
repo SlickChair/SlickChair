@@ -98,15 +98,10 @@ object Chairing extends Controller {
 
   def doAssign(paperId: Id[Paper]) = SlickAction(IsChair, _.chairAssignment) {
     implicit r =>
-    assignmentForm.bindFromRequest.fold(
-      errors => 
-        Redirect(routes.Chairing.assign(paperId)),
-      form => {
-        val assignments = form.assignments map { _ copy (paperId=paperId) }
-        r.connection insert assignments
-        Redirect(routes.Chairing.assign(paperId))
-      }
+    assignmentForm.bindFromRequest.fold(_ => (),
+      form => { r.connection insert (form.assignments map { _ copy (paperId=paperId) }) }
     )
+    Redirect(routes.Chairing.assign(paperId))
   }
   
   def decision = SlickAction(IsChair, _.chairDecision) { implicit r =>

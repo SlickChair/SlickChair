@@ -5,7 +5,7 @@
   bids: List[Bid],
   assignments: List[Assignment],
   navbar: Html
-)(summary: Html)
+)(summary: Html)(implicit request: RequestHeader)
 
 @import helper.FieldConstructors.empty
 @import BidValue._
