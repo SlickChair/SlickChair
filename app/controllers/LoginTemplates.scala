@@ -46,7 +46,7 @@ class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(ap
   }
 
   // override def getSignUpEmail(token: String)(implicit flash: Flash): (Option[Txt], Option[Html]) = {
-  //   (None, Some(securesocial.views.html.mails.signUpEmail(token)))
+  //   (Msg.email.signUp(token), None)
   // }
 
   // override def getAlreadyRegisteredEmail(user: Identity)(implicit flash: Flash): (Option[Txt], Option[Html]) = {
@@ -62,7 +62,7 @@ class LoginTemplates(application: Application) extends DefaultTemplatesPlugin(ap
   // }
 
   // override def getSendPasswordResetEmail(user: Identity, token: String)(implicit flash: Flash): (Option[Txt], Option[Html]) = {
-  //   (None, Some(securesocial.views.html.mails.passwordResetEmail(user, token)))
+  //   (Msg.email.passwordReset(token), None)
   // }
 
   // override def getPasswordChangedNoticeEmail(user: Identity)(implicit flash: Flash): (Option[Txt], Option[Html]) = {

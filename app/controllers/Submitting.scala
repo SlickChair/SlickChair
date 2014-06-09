@@ -148,6 +148,15 @@ object Submitting extends Controller {
         r.connection insert file.toList
         r.connection insert persons
         r.connection insert authors
+        
+        if(optionalPaperId.isEmpty) {
+          Mailer.send(Email(
+            persons map (_.email) mkString ", ",
+            Msg.subject.submitted,
+            Msg.email.submitted(routes.Submitting.info(paper.id).absoluteURL())
+          ))
+        }
+                
         Redirect(okEP(paper.id))
           .flashing(if(optionalPaperId.isEmpty) Msg.author.submited else Msg.author.edited)
       }

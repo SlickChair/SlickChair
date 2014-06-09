@@ -1,20 +1,31 @@
 package controllers
 
 import play.api.mvc.Flash
-import play.api.http.HeaderNames._
+import play.api.Play.configuration
+import play.api.Play.current
+import play.api.mvc.RequestHeader
+import securesocial.core.providers.utils.RoutesHelper
+import securesocial.core.IdentityProvider
 
 object Msg {
   private def error(message: String) = "error" -> message
   private def success(message: String) = "success" -> message
-  
+  private val conferenceFullName = configuration.getString("application.name").get
+  private val conferenceShortName = configuration.getString("application.shortName").get
+
   def flash(s: (String, String)) = Flash(Map(s))
+  
+  object login {
+    val checkEmail = success("Please check your email for further instructions.")
+    val required = error("You need to log in to access that page.")
+  }
   
   object chair {
     val assinged = success("Assignment saved.")
     val decided = success("Acceptance decision saved.")
     val role = success("User roles edited.")
     val phase = success("Conference moved to the next phase.")
-    val phaseJump = success("Conference phase changed.")
+    val phaseJump = success("Conference changed phase.")
   }
 
   object pcmember {
@@ -31,5 +42,87 @@ object Msg {
     val edited = success("Your submission was successfully edited.")
     val submited = success("Thanks for your submission!")
     val withdrawn = success("Submission withdrawn.")
+  }
+  
+  object subject {
+    val accepted = s"$conferenceShortName: Submission accepted"
+    val declined = s"$conferenceShortName: Submission declined"
+    val reviewBeg = s"$conferenceShortName: Submissions have been assigned for review"
+    val bidBeg = s"$conferenceShortName: Bidding phase begins"
+    val passwordReset = s"$conferenceShortName: Password reset instructions"
+    val signUp = s"$conferenceShortName: Sign up instructions"
+    val submitted = s"$conferenceShortName: Submission received"
+  }
+  object email {
+    def accepted(implicit r: RequestHeader) =
+      s"""Dear Author,
+        |
+        |On behalf of the $conferenceFullName, I am pleased to inform you that your submission has been accepted. Please find reviews of your submission at the following url: ${routes.About.login.absoluteURL()}.
+        |
+        |Congratulations,
+        |$conferenceShortName Program Committee
+      """.trim.stripMargin
+    def declined(implicit r: RequestHeader) =
+      s"""Dear Author,
+        |
+        |On behalf of the $conferenceFullName, I am sorry to inform you that your submission has not been accepted. We received many excellent submissions this year, and were limited in the number we could accept.
+        |
+        |You will find comments from the submission reviewers at the following url: ${routes.About.login.absoluteURL()}. If you have questions about the comments, please contact the Chair.
+        |
+        |Sincerely,
+        |$conferenceShortName Program Committee
+      """.trim.stripMargin
+    def reviewBeg(implicit r: RequestHeader) =
+      s"""Dear Program Committee Member,
+         |
+         |Submission assignments have been made and it is now time for the review process to begin. Go to ${routes.About.login.absoluteURL()} to see the list submissions you have been assigned to review.
+         |
+         |Please complete these reviews as soon as possible.
+         |
+         |Thanks for you help making $conferenceFullName a success!
+         |
+         |$conferenceShortName Program Chair
+      """.trim.stripMargin
+    def bidBeg(implicit r: RequestHeader) = 
+      s"""Dear Program Committee Member,
+         |
+         |Submissions are closed it is now time for the bidding process to begin. You can go to ${routes.About.login.absoluteURL()}}.login to have a look at the submissions and indicate which papers you are willing to review and if you have any, your conflict of interest.
+         |
+         |Please complete these bids as soon as possible.
+         |
+         |Thanks for you help making $conferenceFullName a success!
+         |
+         |$conferenceShortName Program Chair
+      """.trim.stripMargin
+    def passwordReset(token: String)(implicit r: RequestHeader) = 
+      s"""Hello
+         |
+         |Please follow this link to reset your password.
+         |
+         |${RoutesHelper.resetPassword(token).absoluteURL(IdentityProvider.sslEnabled)}
+         |
+         |Best regards,
+         |$conferenceShortName Program Committee
+      """.trim.stripMargin
+    def signUp(token: String)(implicit r: RequestHeader) =
+      s"""Hello
+         |
+         |Please follow this link to complete your registration:
+         |
+         |${RoutesHelper.signUp(token).absoluteURL(IdentityProvider.sslEnabled)}
+         |
+         |Best regards,
+         |$conferenceShortName Program Committee
+      """.trim.stripMargin
+    def submitted(infoUrl: String) =
+      s"""Dear authors,
+         |
+         |Thank you for submitting to $conferenceFullName. Follow this link to view your submission:
+         |
+         |$infoUrl
+         |
+         |Best regards,
+         |$conferenceShortName Program Committee
+       """.trim.stripMargin
   }
 }

@@ -5,7 +5,6 @@ import models._
 import play.api.Play.current
 import play.api.db.slick.{DB, SlickExecutionContext}
 import play.api.db.slick.Config.driver.simple._
-import play.api.i18n.Messages
 import play.api.mvc.{Action, BodyParser}
 import play.api.mvc.{Request, Results, SimpleResult, WrappedRequest}
 import play.api.mvc.BodyParsers.parse.anyContent
@@ -54,7 +53,7 @@ object SlickAction {
                   Results.Redirect(RoutesHelper.notAuthorized.absoluteURL(IdentityProvider.sslEnabled))
               case None =>
                 Results.Redirect(RoutesHelper.login().absoluteURL(IdentityProvider.sslEnabled))
-                  .flashing("error" -> Messages("securesocial.loginRequired"))
+                  .flashing(Msg.login.required)
                   .withSession(request.session + (SecureSocial.OriginalUrlKey -> request.uri))
                   .discardingCookies(Authenticator.discardingCookie)
             }

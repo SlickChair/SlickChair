@@ -6,13 +6,12 @@ import concurrent.duration.Duration
 import org.joda.time.DateTime
 import play.api.data.Form
 import play.api.data.Forms.{boolean, default, mapping, nonEmptyText, text}
-import play.api.i18n.Messages
 import play.api.mvc.{Action, Controller, Request}
 import securesocial.controllers.{ProviderController, Registration}
 import securesocial.core.{Identity, SecureSocial, UserService}
 import securesocial.core.providers.Token
 import securesocial.core.providers.UsernamePasswordProvider.UsernamePassword
-import securesocial.core.providers.utils.Mailer
+import models.Email
 
 case class LoginWrapperForm(
   username: String,
@@ -54,25 +53,20 @@ object LoginWrapper extends Controller with SecureSocial {
   // password, creat account and login it is not possible to use the
   // same request for the three actions. The forgot password and
   // create account code comes from controllers/Registration.scala.
-  private def thankYouCheckEmail = {
-    Redirect(Registration.onHandleStartResetPasswordGoTo).flashing(
-      Registration.Success -> Messages(Registration.ThankYouCheckEmail))
-  }
-  
   private def forgot(form: LoginWrapperForm, user: Identity)(implicit request: Request[_]) = {
     val token = createToken(form.username, isSignUp = false)
-    Mailer.sendPasswordResetEmail(user, token._1)
-    thankYouCheckEmail
+    Mailer.send(Email(user.email.get, Msg.subject.passwordReset, Msg.email.passwordReset(token._1)))
+    Redirect(Registration.onHandleStartResetPasswordGoTo) flashing Msg.login.checkEmail
   }
   
   private def signup(form: LoginWrapperForm)(implicit request: Request[_]) = {
     val token = createToken(form.username, isSignUp = true)
-    Mailer.sendSignUpEmail(form.username, token._1)
-    thankYouCheckEmail
+    Mailer.send(Email(form.username, Msg.subject.signUp, Msg.email.signUp(token._1)))
+    Redirect(Registration.onHandleStartResetPasswordGoTo) flashing Msg.login.checkEmail
   }
     
   /** Copy pasted from securesocial.controllers/Registration.scala, not usable
-    * from here because of the private modifier... */
+    * from here because of the private modifier. */
   import java.util.UUID
   import org.joda.time.DateTime
   import securesocial.core.providers.Token

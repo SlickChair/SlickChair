@@ -44,7 +44,7 @@ object Reviewing extends Controller {
     "metadata" -> ignored(newMetadata[Comment])
   )(Comment.apply _)(Comment.unapply _))
 
-  def bid() = SlickAction(IsPCMember, _.pcmemberBid) { implicit r =>
+  def bid = SlickAction(IsPCMember, _.pcmemberBid) { implicit r =>
     val bids: List[Bid] = Query(r.db) bidsOf r.user.id
     val papers: List[Paper] = Query(r.db).allPapers
     val allBids: List[Bid] = papers map { p =>
@@ -57,7 +57,7 @@ object Reviewing extends Controller {
     Ok(views.html.bid(form, papers.toSet, Query(r.db).allFiles.toSet, Navbar(PC_Member)))
   }
 
-  def doBid() = SlickAction(IsPCMember, _.pcmemberBid) { implicit r =>
+  def doBid = SlickAction(IsPCMember, _.pcmemberBid) { implicit r =>
     bidForm.bindFromRequest.fold(_ => (),
       form => {
         val bids = form.bids map { _ copy (personId=r.user.id) }

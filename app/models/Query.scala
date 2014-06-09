@@ -80,6 +80,6 @@ case class Query(db: Database) {
   def balancedAssignment: Boolean = true // TODO
   def allReviewsCompleted: Boolean = true // TODO
   def fullyDecided: Boolean = true // TODO
-  def acceptedEmails: List[String] = Nil // TODO} 
+  def acceptedEmails: List[String] = Nil // TODO
   def rejectedEmails: List[String] = Nil // TODO
 }

@@ -11,10 +11,6 @@ import play.api.data.Form
 import play.api.data.Forms.{ignored, list, mapping, boolean, text}
 import play.api.data.Mapping
 import BidValue.Maybe
-import play.api.Play.current
-import play.api.libs.concurrent.Akka
-import com.typesafe.plugin._
-import scala.concurrent.duration._
 
 case class AssignmentForm(assignments: List[Assignment])
 case class DecisionForm(decisions: List[PaperDecision])
@@ -188,18 +184,7 @@ object Chairing extends Controller {
   }
   
   def doPhases = SlickAction(IsChair, _ => true) { implicit r =>
-    emailForm.bindFromRequest.fold(_ => (),
-      form => {
-        import play.api.libs.concurrent.Execution.Implicits._
-        Akka.system.scheduler.scheduleOnce(1.seconds) {
-          val mail = use[MailerPlugin].email
-          mail.setSubject(form.subject)
-          mail.setRecipient(form.to.split(","): _*)
-          mail.setFrom(current.configuration.getString("smtp.from").get)
-          mail.send(form.content)
-        }
-      }
-    )
+    emailForm.bindFromRequest.fold(_ => (), email => Mailer.send(email))
     val currentConf = Query(r.db).configuration
     Workflow.phases.dropWhile(_.configuration.name != currentConf.name) match {
       case _ :: nextPhase :: _ => r.connection insert nextPhase.configuration

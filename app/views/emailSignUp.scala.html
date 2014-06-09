@@ -13,21 +13,21 @@
     <fieldset>
       @inputText(
         signUpForm("firstName"),
-        '_label -> Messages("securesocial.signup.firstName"))
+        '_label -> "First Name")
       @inputText(
         signUpForm("lastName"),
-        '_label -> Messages("securesocial.signup.lastName"))
+        '_label -> "Last Name")
       @inputText(
         signUpForm("password.password1"),
-        '_label -> Messages("securesocial.signup.password1"),
+        '_label -> "Password",
         'placeholder -> "Password, 8 characters minimum",
         'type -> "password")
       @inputText(
         signUpForm("password.password2"),
-        '_label -> Messages("securesocial.signup.password2"),
+        '_label -> "Password confirmation",
         '_error -> signUpForm.error("password.password1"),
         'type -> "password")
-      @button(Messages("securesocial.signup.createAccount"))
+      @button("Create Account")
     </fieldset>
   }
 }
