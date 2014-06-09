@@ -17,6 +17,7 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
       if(connection.database().persons.list.isEmpty) {
         
         val chairs = List(
+          Person("Viktor", "Kuncak", "EPFL", "vkuncak@gmail.com"),
           Person("Olivier", "Blanvillain", "EPFL", "olivierblanvillain@gmail.com")
         )
         

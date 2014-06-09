@@ -3,6 +3,7 @@ GET     /about                  controllers.About.about
 GET     /loginDispatch          controllers.About.loginDispatch
 GET     /assets/*file           controllers.Assets.at(path="/public", file)
 GET     /disabled               controllers.Submitting.disabled
+GET     /file/:id               controllers.FileServing.apply(id: Id[File])
 
 GET     /submission             controllers.Submitting.submit
 POST    /submission             controllers.Submitting.doSubmit
@@ -18,7 +19,6 @@ GET     /review/:id             controllers.Reviewing.review(id: Id[Paper])
 POST    /review/:id             controllers.Reviewing.doReview(id: Id[Paper])
 POST    /review/:id/edit/:pid   controllers.Reviewing.editReview(id: Id[Paper], pid: Id[Person])
 POST    /review/:id/comment     controllers.Reviewing.doComment(id: Id[Paper])
-# POST    /review/:paperId/edit/:commentId/:personId  controllers.Reviewing.editComment(paperId: Id[Paper], commentId: Id[Comment], personId: Id[Person])
 
 GET     /chair/sql              controllers.Sql.query
 POST    /chair/sql              controllers.Sql.doQuery
@@ -40,17 +40,6 @@ POST    /chair/edit/:id         controllers.Chairing.doEdit(id: Id[Paper])
 GET     /chair/withdraw/:id     controllers.Chairing.toggleWithdraw(id: Id[Paper])
 GET     /chair/comment/:id      controllers.Chairing.comment(id: Id[Paper])
 POST    /chair/comment/:id      controllers.Chairing.doComment(id: Id[Paper])
-
-# GET     /email                 controllers.Emailing.form
-# POST    /email                 controllers.Emailing.send
-# GET     /manage-members        controllers.MembersManaging.page
-# POST    /manage-members        controllers.MembersManaging.handle
-# GET     /auctions              controllers.Chair.auctions
-# GET     /config                controllers.Chair.config
-# GET     /decisions             controllers.Chair.decisions
-# GET     /dashboard             controllers.Chair.dashboard
-
-GET     /file/:id               controllers.FileServing.apply(id: Id[File])
 
 # SecureSocial
 GET     /login                  securesocial.controllers.LoginPage.login
