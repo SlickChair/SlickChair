@@ -95,7 +95,9 @@ object Chairing extends Controller {
       }
     }
     val form = assignmentForm fill AssignmentForm(allAssignments)
-    Ok(views.html.assignment(paperId, Query(r.db).indexOf(paperId), sortedStaff, form, allBids, Query(r.db).allAssignments, Navbar(Chair)
+    Ok(views.html.assignment(paperId, Query(r.db).indexOf(paperId), sortedStaff, form, allBids, Query(r.db).allAssignments,
+      Query(r.db).prevNextSubmission(paperId, routes.Chairing.assign),
+      Navbar(Chair)
     )(Submitting.summaryImpl(paperId)))
   }
 
@@ -104,7 +106,7 @@ object Chairing extends Controller {
     assignmentForm.bindFromRequest.fold(_ => (),
       form => { r.connection insert (form.assignments map { _ copy (paperId=paperId) }) }
     )
-    Redirect(routes.Chairing.assignmentList) flashing Msg.chair.assinged
+    Redirect(routes.Chairing.assign(paperId)) flashing Msg.chair.assinged
   }
   
   def decision = SlickAction(IsChair, _.chairCanDecideOnAcceptance) { implicit r =>

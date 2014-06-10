@@ -7,6 +7,7 @@ import org.joda.time.DateTime
 import play.api.db.slick.Config.driver.simple._
 import Role._
 import scala.language.postfixOps
+import play.api.mvc.Call
 
 case class Query(db: Database) {
   implicit val session: Session = db.session
@@ -17,7 +18,16 @@ case class Query(db: Database) {
   def papersOf(id: Id[Person]): List[Paper] =
     paperAuthors filter (_.personId is id) flatMap { a => papers.filter(_.id is a.paperId) } list
   def indexOf(id: Id[Paper]): Int =
-    (paperIndices sortBy (_.updatedAt) map(_.paperId) list).indexOf(id) + 1
+    (paperIndices sortBy (_.updatedAt) map (_.paperId) list).indexOf(id) + 1
+  def prevNextSubmission(id: Id[Paper], f: Id[Paper] => Call): (Option[Call], Option[Call]) = {
+    val indices = allPaperIndices.map(_.paperId).zipWithIndex
+    val iOf: Id[Paper] => Int = paperId => indices.find(_._1 == paperId).get._2 
+    val sortedPapers = allPapers map (_.id) sortBy iOf
+    ((None :: sortedPapers.map(Some(_)) ::: List(None)).iterator
+      sliding 3
+      find { _(1) == Some(id) }
+      map { x => (x(0) map f, x(2) map f) }).get
+  }
   def authorsOf(id: Id[Paper]): List[Person] = {
     paperAuthors filter (_.paperId is id) sortBy (_.position) take (paperWithId(id).nAuthors) flatMap { a => persons filter (_.id is a.personId) } list
   }

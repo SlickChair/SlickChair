@@ -76,8 +76,9 @@ object Reviewing extends Controller {
     val files: List[File] = Query(r.db).allFiles
     val papers: List[Paper] = Query(r.db).nonConflictingPapers(r.user.id)
     val decisions: List[PaperDecision] = Query(r.db).allPaperDecisions
+    val indices = Query(r.db).allPaperIndices.map(_.paperId).zipWithIndex
     val indexOf: Id[Paper] => Int = paperId =>
-      Query(r.db).allPaperIndices.map(_.paperId).zipWithIndex.find(_._1 == paperId).get._2
+      indices.find(_._1 == paperId).get._2
     val assigned = Query(r.db) assignedTo r.user.id map (_.id) contains _
     val rows: List[(Paper, Int, Boolean, Option[Decision], Option[File])] = papers map { paper =>
       (paper, indexOf(paper.id), assigned(paper.id), decisions.find(_.paperId == paper.id).map(_.value), paper.fileId.map(id => files.find(_.id == id).get))

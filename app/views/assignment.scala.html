@@ -4,6 +4,7 @@
   assignmentForm: Form[AssignmentForm],
   bids: List[Bid],
   assignments: List[Assignment],
+  optionalPrevNext: (Option[Call], Option[Call]),
   navbar: Html
 )(summary: Html)(implicit flash: Flash)
 
@@ -60,5 +61,19 @@
       </tbody>
     </table>
     @button("Save")
+    <span class="pull-right">
+      @optionalPrevNext._1 match {
+        case Some(call) => {
+          <a href="@call.toString" class="btn btn-default">Previous</a> }
+        case None => {
+          <a class="btn btn-default disabled">Previous</a> }
+      }
+      @optionalPrevNext._2 match {
+        case Some(call) => {
+          <a href="@call.toString" class="btn btn-default">Next</a> }
+        case None => {
+          <a class="btn btn-default disabled">Next</a> }
+      }
+    </span>
   }
 }
