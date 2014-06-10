@@ -15,7 +15,19 @@ case class Phase(
 )
 
 object Workflow {
-  val setup = Configuration("Setup", true, true, true, true, true, true, true, true, true, true, false)
+  val setup = Configuration("Setup", 
+    chairCanChangeRoles=true,
+    chairCanAssignSubmissions=true,
+    chairCanDecideOnAcceptance=true,
+    chairCanRunSqlQueries=false,
+    pcmemberCanBid=true,
+    pcmemberCanReview=true,
+    pcmemberCanComment=true,
+    authorCanMakeNewSubmissions=true,
+    authorCanEditSubmissions=true,
+    authorCanSeeReviews=true,
+    showListOfAcceptedPapers=false)
+
   def chairChangePhase(to: String) = { db: Database =>
     Email(Query(db).chairEmails mkString ", ", subject.chairChangePhase(to), email.chairChangePhase(to))
   }
@@ -52,7 +64,7 @@ object Workflow {
         { db => Email(Query(db).acceptedEmails mkString ", ", subject.accepted, email.accepted) },
         { db => Some(Email(Query(db).rejectedEmails mkString ", ", subject.declined, email.declined)) },
         transitionGuard={ db => Query(db).fullyDecided },
-        transitionWarning="All submissions need a final acceptance decision."),
+        transitionWarning="Some submissions have a temporary decision. Make sure all submissions are either Accepted or Rejected before sending notifications, or some authors will not be notified."),
       
       Phase(
         Configuration("Done",

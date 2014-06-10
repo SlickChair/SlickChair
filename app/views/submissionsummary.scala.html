@@ -15,14 +15,14 @@
   <dt>File</dt><dd>
     @optionalFile match {
       case Some(file) => {
-        @linkToFile(file), @date(file.updatedAt)
+        @linkToFile(file), uploaded @date(file.updatedAt)
       }
       case None => { - }
     }
   </dd>
   <dt>Authors</dt><dd>
   @authors.zip(1 to paper.nAuthors).map { case (author, index) =>
-    @author.name @if(index != paper.nAuthors){ , }
+    @author.name@if(index != paper.nAuthors){, }
   }
   </dd>
 </dl>

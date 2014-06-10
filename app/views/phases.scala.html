@@ -47,8 +47,8 @@
   <br>
   <br>
   <div class="btn-group btn-group-justified">
-    <a href="#" class="btn btn-default toggle-right">Move to next phase</a>
-    <a href="#" class="btn btn-default toggle-left">Jump to phase</a>
+    <a href="#" class="btn btn-default toggle-left">Move to next phase</a>
+    <a href="#" class="btn btn-default toggle-right">Jump to phase</a>
   </div>
   <br>
   
@@ -60,7 +60,7 @@
         confs map (c => c.name -> c.name),
         '_label -> "Phase:")
       @dummy() {
-        <button href="#" class="btn btn-default toggle-edit" toggle="0">Cancel</button>
+        <button href="#" class="btn btn-default toggle-right">Cancel</button>
         <button type="submit" class="btn btn-default button-danger">Jump to phase</button>
       }
     }
@@ -68,13 +68,13 @@
   
   <div class="left hidden">
     <br>
-    @optionalTransitionGuard.map { guard =>
-      <div class="alert alert-danger">
-        You cannot move the next phases: @guard
-      </div>
-    }
     
     @form(routes.Chairing.doPhases) {
+      @optionalTransitionGuard.map { guard =>
+        @dummy() {
+          <div class="alert alert-warning"><b>Warning!</b> @guard</div>
+        }
+      }
       @confs.dropWhile(_.name != currentConf.name) match {
         case _ :: nextConf :: _ => {
           @textarea(emailForm("to"), 'placeholder -> "Comma separated emails:", '_label -> "To:", 'rows -> 2)
@@ -87,8 +87,8 @@
             @textarea(emailForm2("content2"), '_label -> "Body:", 'rows -> 10)
           }
           @dummy() {
-            <button href="#" class="btn btn-default toggle-edit" toggle="1">Cancel</button>
-            <button type="submit" class="btn btn-default button-danger">Send & Move to @nextConf.name phase</button>
+            <button href="#" class="btn btn-default toggle-left">Cancel</button>
+            <button type="submit" class="btn btn-default button-danger" onclick="return confirm('Are you sure?');" @*if(optionalTransitionGuard.nonEmpty) { disabled }*@>Send & Move to @nextConf.name phase</button>
           }
         }
         case _ => {}

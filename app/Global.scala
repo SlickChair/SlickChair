@@ -17,7 +17,7 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
       if(connection.database().persons.list.isEmpty) {
         
         val chairs = List(
-          // Person("Viktor", "Kuncak", "EPFL", "vkuncak@gmail.com"),
+          Person("Viktor", "Kuncak", "EPFL", "vkuncak@gmail.com"),
           Person("Olivier", "Blanvillain", "EPFL", "olivierblanvillain@gmail.com")
         )
         
@@ -55,7 +55,7 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
           connection insert file
           connection insert paper
           connection insert paperIndex
-          connection insert List(PaperAuthor(paper.id, testPerson1.id, 1), PaperAuthor(paper.id, testPerson2.id, 2))
+          connection insert List(PaperAuthor(paper.id, testPerson1.id, 0), PaperAuthor(paper.id, testPerson2.id, 1))
         }
         
         ()

@@ -21,8 +21,8 @@
         </tr>
       </thead>
       <tbody>
-        @decisionform.get.decisions.map { decision =>
-          @paperIndexEvaluations(decision.paperId).map { case (paper, index, evaluations) =>
+        @decisionform.get.decisions.zipWithIndex.map { case (decision, index) =>
+          @paperIndexEvaluations(decision.paperId).map { case (paper, paperIndex, evaluations) =>
             <tr
               @decision.value match {
                 case Rejected => { class="danger" }
@@ -32,7 +32,7 @@
                 case Accepted => { class="success" }
               }
             >
-              <td>@{ index + 1 }</td>
+              <td>@{ paperIndex + 1 }</td>
               <td><a href="@routes.Chairing.comment(paper.id)">@paper.title</a></td>
               <td>@if(evaluations.isEmpty) {-} else {@evaluations.size}</td>
               <td>

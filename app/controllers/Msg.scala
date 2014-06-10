@@ -37,9 +37,9 @@ object Msg {
   }
 
   object author {
-    val editError = error("There was an error while trying edit your submission. Please try again.")
+    val editError = error("There was an error while trying edit this submission. Please try again.")
     val submitError = error("There was an error with your submission. Please try again.")
-    val edited = success("Your submission was successfully edited.")
+    val edited = success("This submission was successfully edited.")
     val submited = success("Thanks for your submission!")
     val withdrawn = success("Submission withdrawn.")
   }
@@ -116,7 +116,7 @@ object Msg {
          |$conferenceShortName Program Committee
       """.trim.stripMargin
     def submitted(infoUrl: String) =
-      s"""Dear authors,
+      s"""Dear Author,
          |
          |Thank you for submitting to $conferenceFullName. Follow this link to view your submission:
          |
@@ -126,7 +126,7 @@ object Msg {
          |$conferenceShortName Program Committee
        """.trim.stripMargin
      def chairChangePhase(phase: String) =
-      s"""Dear chairs,
+      s"""Dear Chair,
          |
          |The conference has advanced to the $phase phase.
        """.trim.stripMargin

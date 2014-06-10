@@ -12,6 +12,7 @@
       <tr>
         <th>Id</th>
         <th>Title</th>
+        <th>Modified</th>
         <th>Status</th>
         <th>File</th>
       </tr>
@@ -28,6 +29,7 @@
           >
             <td>@{ index + 1 }</td>
             <td><a href="@infoEP(paper.id)">@paper.title</a></td>
+            <td>@date(paper.updatedAt)</td>
             <td>
               @(paper.withdrawn, optionalDecision) match {
                 case (true, _) => { Withdrawn }

@@ -1,4 +1,4 @@
-// Gray title header.
+// Gray title header
 .content {
   background-color: #fff;
   padding-right: 20px;
@@ -22,7 +22,7 @@
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-// Old school navigation bar. 
+// Old school navigation bar
 .navbar-inverse .navbar-brand:hover {
   background-color: #333;
   background-color: rgba(255, 255, 255, 0.05);
@@ -38,7 +38,7 @@
   }
 }
 
-// Fix the gap between the checkbox/radio text on smartphone view. 
+// Fix the gap between the checkbox/radio text on smartphone view
 @media (max-width: 991px) {
   .form-horizontal .radio-inline {
     padding-top: 0px;
@@ -50,13 +50,13 @@
   }
 }
 
-// Aligns the legend with the horizontal form. 
+// Aligns the legend with the horizontal form
 @media (min-width: 991px) {
   legend {
     padding-left: 17.2%;
   }
 }
-// Legends as h3. 
+// Legends as h3
 legend {
   padding-bottom: 10px;
   margin-bottom: 20px;
@@ -65,18 +65,18 @@ legend {
   font-size: 26px;
 }
 
-// Fix the double border on file selector. 
+// Fix the double border on file selector
 #data {
   border-left: 0px;
 }
 
-// Increase the size of the plus/minus icons. 
+// Increase the size of the plus/minus icons
 .glyphicon {
   font-size: 25px;
   margin-right: 5px;
 }
 
-// Add space between authors.
+// Add space between authors
 fieldset {
   margin-bottom: 30px;
 }
@@ -89,12 +89,12 @@ fieldset {
   padding-top: 6px;
 }
 
-// Modal login buttons.
+// Login buttons
 .login > a {
   float: left;
   color: #fff;
   border-radius: 6px;
-  
+
   height: 50px;
   width: 168px;
   margin: 10px 16px 16px 0px;
@@ -116,9 +116,9 @@ fieldset {
   margin-bottom: 10px;
 }
 
-// Modal login logos.
+// Login logos
 a.facebook {
-  background: #3C5A99 url(../image/facebook.svg) no-repeat; 
+  background: #3C5A99 url(../image/facebook.svg) no-repeat;
 }
 a.google {
   background: #DC4A38 url(../image/google.svg) no-repeat;
@@ -127,12 +127,6 @@ a.email {
   background: #92D13D url(../image/email.svg) no-repeat;
   margin-right: 0px;
 }
-// This would needs modernizr.js
-// .no-svg {
-//   .facebook { background-image: url(../image/facebook.png); }
-//   .google { background-image: url(../image/google.png); }
-//   .email { background-image: url(../image/email.png); }
-// }
 .half-transparent {
   opacity: 0.5;
 }
@@ -169,61 +163,7 @@ span.glyphicon:active {
   text-shadow: black 0px 0px 1px;
 }
 
-// Green navbar
-.navbar-green {
-  background-color:#229922;
-  background-image: none;
-  color:#ffffff;
-  border-radius:0;
-  .navbar-nav > li > a {
-    color:#fff;
-    padding-left:20px;
-    padding-right:20px;
-  }
-  .navbar-nav > .active > a, .navbar-nav > .active > a:hover, .navbar-nav > .active > a:focus {
-    color: #ffffff;
-    background-color:transparent;
-  }
-  .navbar-nav > li > a:hover, .nav > li > a:focus {
-    text-decoration: none;
-    background-color: #33aa33;
-  }
-  .navbar-brand {
-    color:#eeeeee;
-  }
-  .navbar-toggle {
-    background-color:#eeeeee;
-  }
-}
-
-// Red navbar
-.navbar-red {
-  background-color:#992222;
-  background-image: none;
-  color:#ffffff;
-  border-radius:0;
-  .navbar-nav > li > a {
-    color:#fff;
-    padding-left:20px;
-    padding-right:20px;
-  }
-  .navbar-nav > .active > a, .navbar-nav > .active > a:hover, .navbar-nav > .active > a:focus {
-    color: #ffffff;
-    background-color:transparent;
-  }
-  .navbar-nav > li > a:hover, .nav > li > a:focus {
-    text-decoration: none;
-    background-color: #aa3333;
-  }
-  .navbar-brand {
-    color:#eeeeee;
-  }
-  .navbar-toggle {
-    background-color:#eeeeee;
-  }
-}
-
-// Neutral dropdown mousehover color
+// Backport Bootstrap 3.2 neutral dropdown mousehover color
 .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
   text-decoration: none;
   background-image: none;
@@ -314,10 +254,15 @@ tr.danger > td {
 }
 
 .checkbox {
-  margin-top: 0; 
-  margin-bottom: 0; 
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
+.centered-dt {
+  margin-top: 11px;
+}
+
+// Back port bootstrap 3.2 table info color
 .table > thead > tr > td.info,
 .table > tbody > tr > td.info,
 .table > tfoot > tr > td.info,
@@ -339,17 +284,20 @@ tr.danger > td {
   background-color: #c4e3f3;
 }
 
+// Phases time-line
 // Source: http://blog.sathomas.me/post/tracking-progress-in-pure-css
 ol.phase {
   margin: 0;
   padding: 0;
   list-style-type: none;
 }
+
 ol.phase li {
   display: inline-block;
   text-align: center;
   line-height: 3em;
 }
+
 ol.phase[data-phase-steps="2"] li { width: 50%; }
 ol.phase[data-phase-steps="3"] li { width: 33.33%; }
 ol.phase[data-phase-steps="4"] li { width: 25%; }
@@ -363,10 +311,12 @@ ol.phase li.phase-done {
     color: silver;
     border-bottom: 4px solid silver;
 }
+
 ol.phase li.phase-wip {
-    color: black; 
+    color: black;
     border-bottom: 4px solid silver;
 }
+
 ol.phase li.phase-todo {
     color: silver;
     border-bottom: 4px solid silver;
@@ -407,6 +357,7 @@ ol.phase li.phase-todo:before {
     bottom: -1.6em;
 }
 
+// Backport Bootstrap 3.2 alerts
 .alert-info {
   background-color: #d9edf7;
   background-image: none;
@@ -435,13 +386,11 @@ ol.phase li.phase-todo:before {
   color: #a94442;
 }
 
-.centered-dt {
-  margin-top: 11px;
-}
-
+// Github like danger button
 .button-danger:focus {
   color: #900;
 }
+
 .button-danger:hover {
   color: #fff;
   text-shadow: 0px -1px 0 rgba(0,0,0,0.3);
@@ -452,8 +401,8 @@ ol.phase li.phase-todo:before {
   background-repeat: repeat-x;
   border-color: #cd504a;
 }
+
 .button-danger {
   color: #900;
   font-weight: bold;
 }
-
