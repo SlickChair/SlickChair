@@ -78,4 +78,14 @@ $ ->
     id = e.target.getAttribute("toggle")
     $(".toggle" + id).toggleClass("hidden")
 
-  $('form').areYouSure()
+  $(".toggle-right").click (e) ->
+    e.preventDefault()
+    $(".left").addClass("hidden")
+    $(".right").toggleClass("hidden")
+
+  $(".toggle-left").click (e) ->
+    e.preventDefault()
+    $(".right").addClass("hidden")
+    $(".left").toggleClass("hidden")
+
+  # $('form').areYouSure()

@@ -22,10 +22,10 @@ object Msg {
   
   object chair {
     val assinged = success("Assignment saved.")
-    val decided = success("Acceptance decision saved.")
+    val decided = success("Decision saved.")
     val role = success("User roles edited.")
-    val phase = success("Conference moved to the next phase.")
-    val phaseJump = success("Conference changed phase.")
+    def phase(to: String) = success(s"Conference moved to the $to phase.")
+    def phaseJump(to: String) = success(s"Conference jumped to the $to phase.")
   }
 
   object pcmember {
@@ -52,6 +52,7 @@ object Msg {
     val passwordReset = s"$conferenceShortName: Password reset instructions"
     val signUp = s"$conferenceShortName: Sign up instructions"
     val submitted = s"$conferenceShortName: Submission received"
+    def chairChangePhase(phase: String) = s"$conferenceShortName: $phase phase begins"
   }
   object email {
     def accepted(implicit r: RequestHeader) =
@@ -86,7 +87,7 @@ object Msg {
     def bidBeg(implicit r: RequestHeader) = 
       s"""Dear Program Committee Member,
          |
-         |Submissions are closed it is now time for the bidding process to begin. You can go to ${routes.About.login.absoluteURL()}}.login to have a look at the submissions and indicate which papers you are willing to review and if you have any, your conflict of interest.
+         |Submissions are closed it is now time for the bidding process to begin. You can go to ${routes.About.login.absoluteURL()}.login to have a look at the submissions and indicate which papers you are willing to review and if you have any, your conflict of interest.
          |
          |Please complete these bids as soon as possible.
          |
@@ -124,5 +125,10 @@ object Msg {
          |Best regards,
          |$conferenceShortName Program Committee
        """.trim.stripMargin
-  }
+     def chairChangePhase(phase: String) =
+      s"""Dear chairs,
+         |
+         |The conference has advanced to the $phase phase.
+       """.trim.stripMargin
+   }
 }

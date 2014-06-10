@@ -47,25 +47,29 @@ object Submitting extends Controller {
   private def currentTime(): DateTime = new DateTime()
   
   def submit = SlickAction(IsAuthor, _ => true) { implicit r =>
-    if(Query(r.db).configuration.authorNewSubmission) {
+    if(Query(r.db).configuration.authorCanMakeNewSubmissions) {
       Ok(views.html.submissionform("New Submission", submissionForm, routes.Submitting.doSubmit, Navbar(Author)))
     } else {
       Ok(views.html.main("Submissions closed", Navbar(Author))(Html("This conference is not accepting new submissions.")))
     }
   }
   
-  def doSubmit = SlickAction(IsAuthor, _.authorNewSubmission, parse.multipartFormData) { implicit r =>
+  def doSubmit = SlickAction(IsAuthor, _.authorCanMakeNewSubmissions, parse.multipartFormData) { implicit r =>
     doSaveImpl(None, routes.Submitting.doSubmit, routes.Submitting.info, true)
   }
   
   def info(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _ => true) { 
     implicit r =>
     val paper: Paper = Query(r.db).paperWithId(paperId)
-    val canEdit: Boolean = Query(r.db).configuration.authorEditSubmission
-    infoImpl(paperId,
-      if(canEdit) Some(routes.Submitting.edit(paperId)) else None,
-      if(canEdit && !paper.withdrawn) Some(routes.Submitting.withdraw(paperId)) else None,
-      Navbar(Author))
+    if(Query(r.db).configuration.authorCanSeeReviews) {
+      Ok(views.html.submissionreviews("Submission " + Query(r.db).indexOf(paperId), Query(r.db).paperWithId(paperId), Query(r.db).reviewsOf(paperId), Navbar(Author))(summaryImpl(paperId)))
+    } else {
+      val canEdit: Boolean = Query(r.db).configuration.authorCanEditSubmissions
+      infoImpl(paperId,
+        if(canEdit) Some(routes.Submitting.edit(paperId)) else None,
+        if(canEdit && !paper.withdrawn) Some(routes.Submitting.withdraw(paperId)) else None,
+        Navbar(Author))
+    }
   }
 
   def infoImpl(paperId: Id[Paper], optionalEditEP: Option[Call], optionalWithdrawEP: Option[Call], navbar: Html)(implicit r: SlickRequest[_]) = {
@@ -77,17 +81,17 @@ object Submitting extends Controller {
     views.html.submissionsummary(paper, Query(r.db) authorsOf paperId, paper.fileId.map(Query(r.db) fileWithId _))
   }
 
-  def edit(paperId: Id[Paper]) = SlickAction(IsAuthorOfNotWithdrawn(paperId), _.authorEditSubmission) { 
+  def edit(paperId: Id[Paper]) = SlickAction(IsAuthorOfNotWithdrawn(paperId), _.authorCanEditSubmissions) { 
     implicit r =>
     val form = submissionForm.fill(SubmissionForm(Query(r.db) paperWithId paperId, Query(r.db) authorsOf paperId))
     Ok(views.html.submissionform("Editing Submission " + Query(r.db).indexOf(paperId), form, routes.Submitting.doEdit(paperId), Navbar(Author)))
   }
     
-  def doEdit(paperId: Id[Paper]) = SlickAction(IsAuthorOfNotWithdrawn(paperId), _.authorEditSubmission, parse.multipartFormData) { implicit r =>
+  def doEdit(paperId: Id[Paper]) = SlickAction(IsAuthorOfNotWithdrawn(paperId), _.authorCanEditSubmissions, parse.multipartFormData) { implicit r =>
     doSaveImpl(Some(paperId), routes.Submitting.doEdit(paperId), routes.Submitting.info, true)
   }
 
-  def withdraw(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.authorEditSubmission) { 
+  def withdraw(paperId: Id[Paper]) = SlickAction(IsAuthorOf(paperId), _.authorCanEditSubmissions) { 
     implicit r =>
     r.connection insert Query(r.db).paperWithId(paperId).copy(withdrawn=true)
     Redirect(routes.Submitting.info(paperId)) flashing Msg.author.withdrawn

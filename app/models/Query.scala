@@ -18,14 +18,17 @@ case class Query(db: Database) {
     paperAuthors filter (_.personId is id) flatMap { a => papers.filter(_.id is a.paperId) } list
   def indexOf(id: Id[Paper]): Int =
     (paperIndices sortBy (_.updatedAt) map(_.paperId) list).indexOf(id) + 1
-  def authorsOf(id: Id[Paper]): List[Person] =
-    paperAuthors filter (_.paperId is id) flatMap { a => persons filter (_.id is a.personId) } list
+  def authorsOf(id: Id[Paper]): List[Person] = {
+    paperAuthors filter (_.paperId is id) sortBy (_.position) take (paperWithId(id).nAuthors) flatMap { a => persons filter (_.id is a.personId) } list
+  }
   def commentsOn(id: Id[Paper]): List[Comment] =
     comments filter (_.paperId is id) list
   def reviewsHistoryOn(id: Id[Paper]): List[Review] =
     db.history.reviews filter (_.paperId is id) list
   def reviewOf(personId: Id[Person], paperId: Id[Paper]): Option[Review] =
     (reviews filter { r => (r.personId is personId) && (r.paperId is paperId) }).firstOption
+  def reviewsOf(paperId: Id[Paper]): List[Review] =
+    reviews filter (_.paperId is paperId) list
   def allStaff: List[Person] =
     personRoles filter (r => (r.value is PC_Member) || (r.value is Chair)) flatMap { r =>
       persons filter (_.id is r.personId)
@@ -44,13 +47,17 @@ case class Query(db: Database) {
     bids filter (_.paperId is id) list
   def hasRole(id: Id[Person]): Boolean =
     personRoles.filter(_.personId is id).firstOption.isEmpty 
-  def reviewerEmails: List[String] =
-    personRoles filter (pr => (pr.value is PC_Member) || (pr.value is Chair)) flatMap { p =>
-      persons filter (p.personId is _.id)
-    } map (_.email) list
   def nonConflictingPapers(id: Id[Person]): List[Paper] = {
     val userConflicts = bids filter (b => (b.personId is id) && (b.value is Conflict)) map (_.paperId)
-    papers filter (!_.withdrawn) filterNot (_.id in userConflicts) list
+    papers filterNot (_.id in userConflicts) list
+  }
+  def acceptedSubmissions: List[(Paper, List[Person])] = {
+    val acceptedPapers = paperDecisions filter (_.value is Accepted) flatMap { d =>
+      papers filter (d.paperId is _.id)
+    }
+    acceptedPapers.list map { p =>
+      (p, authorsOf(p.id))
+    }
   }
   
   def personWithEmail(email: String): Person = persons filter (_.email is email) first
@@ -77,9 +84,26 @@ case class Query(db: Database) {
 
   def allConfigurations: List[Configuration] = configurations.list
 
-  def balancedAssignment: Boolean = true // TODO
-  def allReviewsCompleted: Boolean = true // TODO
-  def fullyDecided: Boolean = true // TODO
-  def acceptedEmails: List[String] = Nil // TODO
-  def rejectedEmails: List[String] = Nil // TODO
+  def fullyDecided: Boolean = paperDecisions.filter { d =>
+    (d.value is Temporary_rejected) || (d.value is Undecided) || (d.value is Temporary_accepted)
+  }.list.isEmpty
+  def reviewerEmails: List[String] =
+    personRoles filter (pr => (pr.value is PC_Member) || (pr.value is Chair)) flatMap { p =>
+      persons filter (p.personId is _.id)
+    } map (_.email) list
+  def chairEmails: List[String] =
+    personRoles filter (pr => (pr.value is Chair)) flatMap { p =>
+      persons filter (p.personId is _.id)
+    } map (_.email) list
+    
+  def acceptedEmails: List[String] = statusEmails(Accepted)
+  def rejectedEmails: List[String] = statusEmails(Rejected)
+  private def statusEmails(status: Decision): List[String] = {
+    val withStatusPaper = paperDecisions filter (_.value is Accepted) flatMap { d =>
+      papers filter (d.paperId is _.id)
+    }
+    withStatusPaper.list flatMap { p =>
+      authorsOf(p.id) map (_.email)
+    } distinct
+  }
 }

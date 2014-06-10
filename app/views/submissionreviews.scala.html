@@ -1,0 +1,30 @@
+@(title: String,
+  paper: Paper,
+  reviews: List[Review],
+  navbar: Html
+)(summary: Html)(implicit flash: Flash)
+
+@import eu.henkelmann.actuarius.ActuariusTransformer
+
+@main(title, navbar) {
+  @summary
+  
+  <br>
+  <dl class="dl-horizontal">
+    <legend>Reviews</legend>
+    @reviews.zipWithIndex.map { case (Review(_, _, confidence, evaluation, content, _), index) =>
+      <dt class="centered-dt">Review @{ index + 1 }</dt>
+      <dd>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            Evaluation: @evaluation.toString.replace("_", " ")&emsp;
+            Confidence: @confidence.toString.replace("_", " ")
+          </div>
+          <div class="panel-body">
+            @Html(new ActuariusTransformer()(content))
+          </div>
+        </div>
+      </dd>
+    }
+  </dl>
+}

@@ -1,6 +1,7 @@
 package controllers
 
 import models._
+import Decision.Decision
 import BidValue._
 import Role.PC_Member
 import Confidence.Confidence
@@ -44,7 +45,7 @@ object Reviewing extends Controller {
     "metadata" -> ignored(newMetadata[Comment])
   )(Comment.apply _)(Comment.unapply _))
 
-  def bid = SlickAction(IsPCMember, _.pcmemberBid) { implicit r =>
+  def bid = SlickAction(IsPCMember, _.pcmemberCanBid) { implicit r =>
     val bids: List[Bid] = Query(r.db) bidsOf r.user.id
     val papers: List[Paper] = Query(r.db).allPapers
     val allBids: List[Bid] = papers map { p =>
@@ -57,7 +58,7 @@ object Reviewing extends Controller {
     Ok(views.html.bid(form, papers.toSet, Query(r.db).allFiles.toSet, Navbar(PC_Member)))
   }
 
-  def doBid = SlickAction(IsPCMember, _.pcmemberBid) { implicit r =>
+  def doBid = SlickAction(IsPCMember, _.pcmemberCanBid) { implicit r =>
     bidForm.bindFromRequest.fold(_ => (),
       form => {
         val bids = form.bids map { _ copy (personId=r.user.id) }
@@ -74,11 +75,13 @@ object Reviewing extends Controller {
   def submissionsImpl(infoEP: Id[Paper] => Call, navbar: Html)(implicit r: SlickRequest[_]) = {
     val files: List[File] = Query(r.db).allFiles
     val papers: List[Paper] = Query(r.db).nonConflictingPapers(r.user.id)
+    val decisions: List[PaperDecision] = Query(r.db).allPaperDecisions
     val indexOf: Id[Paper] => Int = paperId =>
       Query(r.db).allPaperIndices.map(_.paperId).zipWithIndex.find(_._1 == paperId).get._2
-    val rows: List[(Paper, Int, Option[File])] = papers map { paper =>
-      (paper, indexOf(paper.id), paper.fileId.map(id => files.find(_.id == id).get))
-    }
+    val assigned = Query(r.db) assignedTo r.user.id map (_.id) contains _
+    val rows: List[(Paper, Int, Boolean, Option[Decision], Option[File])] = papers map { paper =>
+      (paper, indexOf(paper.id), assigned(paper.id), decisions.find(_.paperId == paper.id).map(_.value), paper.fileId.map(id => files.find(_.id == id).get))
+    } sortBy (_._2)
     Ok(views.html.submissionlist(rows, infoEP, navbar))
   }
 
@@ -87,15 +90,15 @@ object Reviewing extends Controller {
     val conf: Configuration = Query(r.db).configuration
     val assigned: Boolean = Query(r.db) assignedTo (r.user.id) map (_.id) contains paperId
     val notReviewed: Boolean = Query(r.db).reviewOf(r.user.id, paperId).isEmpty
-    if(conf.pcmemberReview && assigned && notReviewed)
+    if(conf.pcmemberCanReview && assigned && notReviewed)
       Ok(views.html.review("Submission " + Query(r.db).indexOf(paperId), reviewForm, Query(r.db).paperWithId(paperId), Navbar(PC_Member))(Submitting.summaryImpl(paperId)))
-    else if(conf.pcmemberComment)
+    else if(conf.pcmemberCanComment)
       commentImpl(paperId, routes.Reviewing.doComment(paperId), Navbar(PC_Member))
     else
       Submitting.infoImpl(paperId, None, None, Navbar(PC_Member))
   }
   
-  def doReview(paperId: Id[Paper]) = SlickAction(NonConflictingPCMember(paperId), _.pcmemberReview) { 
+  def doReview(paperId: Id[Paper]) = SlickAction(NonConflictingPCMember(paperId), _.pcmemberCanReview) { 
     implicit r =>
     reviewForm.bindFromRequest.fold(
       errors => {
@@ -120,14 +123,14 @@ object Reviewing extends Controller {
     Ok(views.html.comment("Submission " + Query(r.db).indexOf(paperId), commentReviews, Query(r.db).allPersons.toSet, canEdit, doCommentEP, navbar)(Submitting.summaryImpl(paperId)))
   }
   
-  def doComment(paperId: Id[Paper]) = SlickAction(NonConflictingPCMember(paperId), _.pcmemberComment) { 
+  def doComment(paperId: Id[Paper]) = SlickAction(NonConflictingPCMember(paperId), _.pcmemberCanComment) { 
     implicit r =>
     commentForm.bindFromRequest.fold(_ => (),
       comment => r.connection insert comment.copy(paperId=paperId, personId=r.user.id))
     Redirect(routes.Reviewing.review(paperId)) flashing Msg.pcmember.commented
   }
 
-  def editReview(paperId: Id[Paper], personId: Id[Person]) = SlickAction(NonConflictingPCMember(paperId), _.pcmemberReview) { implicit r =>
+  def editReview(paperId: Id[Paper], personId: Id[Person]) = SlickAction(NonConflictingPCMember(paperId), _.pcmemberCanReview) { implicit r =>
     reviewForm.bindFromRequest.fold(_ => (),
       review => {
         r.connection insert review.copy(paperId=paperId, personId=personId)

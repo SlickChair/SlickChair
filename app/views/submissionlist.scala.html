@@ -1,4 +1,4 @@
-@(rows: List[(Paper, Int, Option[File])],
+@(rows: List[(Paper, Int, Boolean, Option[Decision.Decision], Option[File])],
   infoEP: Id[Paper] => Call,
   navbar: Html
 )(implicit flash: Flash)
@@ -6,28 +6,54 @@
 @import helper.FieldConstructors.empty
 @import FileServing.linkToFile
 
-@main("All Submissions", navbar) {
+@printRows(rows: List[(Paper, Int, Boolean, Option[Decision.Decision], Option[File])]) = {
   <table class="table table-condensed">
     <thead>
       <tr>
         <th>Id</th>
         <th>Title</th>
+        <th>Status</th>
         <th>File</th>
       </tr>
     </thead>
     <tbody>
-      @rows.map { case (paper, index, optionalFile) =>
-        <tr>
-          <td>@{ index + 1 }</td>
-          <td><a href="@infoEP(paper.id)">@paper.title</a></td>
-          <td>
-            @optionalFile match {
-              case Some(file) => { @linkToFile(file) }
-              case None => { - }
+      @rows.map { case (paper, index, assigned, optionalDecision, optionalFile) =>
+          <tr
+            @(paper.withdrawn, optionalDecision) match {
+              case (true, _) => { class="active" }
+              case (_, Some(Decision.Accepted)) => { class="success" }
+              case (_, Some(Decision.Rejected)) => { class="danger" }
+              case _ => {}
             }
-          </td>
-        </tr>
+          >
+            <td>@{ index + 1 }</td>
+            <td><a href="@infoEP(paper.id)">@paper.title</a></td>
+            <td>
+              @(paper.withdrawn, optionalDecision) match {
+                case (true, _) => { Withdrawn }
+                case (_, Some(Decision.Accepted)) => { Accepted }
+                case (_, Some(Decision.Rejected)) => { Rejected }
+                case _ => { - }
+              }
+            </td>
+            <td>
+              @optionalFile match {
+                case Some(file) => { @linkToFile(file) }
+                case None => { - }
+              }
+            </td>
+          </tr>
       }
     </tbody>
   </table>
+  
+}
+
+@main("All Submissions", navbar) {
+  @printRows(rows)
+  @if(rows.filter(_._3).nonEmpty) {
+    <br>
+    <h3>Assinged for review:</h3>
+    @printRows(rows.filter(_._3))
+  }
 }

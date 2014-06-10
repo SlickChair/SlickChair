@@ -1,6 +1,7 @@
 @(currentConf: Configuration,
   optionalTransitionGuard: Option[String],
   emailForm: Form[Email],
+  emailForm2: Form[Email],
   jumpToPhaseForm: Form[JumpToPhaseForm],
   confs: List[Configuration],
   navbar: Html
@@ -11,20 +12,22 @@
 @toli(conf: Configuration, status: String) = {
   <li class="phase-@status" title="@{
     conf match {
-      case Configuration(_, chairRoles, chairAssignment, chairDecision, chairSql, pcmemberBid, pcmemberReview, pcmemberComment, authorNewSubmission, authorEditSubmission, _) =>
+      case Configuration(_, chairCanChangeRoles, chairCanAssignSubmissions, chairCanDecideOnAcceptance, chairCanRunSqlQueries, pcmemberCanBid, pcmemberCanReview, pcmemberCanComment, authorCanMakeNewSubmissions, authorCanEditSubmissions, authorCanSeeReviews, showListOfAcceptedPapers, _) =>
         List(
-          (chairRoles, "chairRoles"),
-          (chairAssignment, "chairAssignment"),
-          (chairDecision, "chairDecision"),
-          (chairSql, "chairSql"),
-          (pcmemberBid, "pcmemberBid"),
-          (pcmemberReview, "pcmemberReview"),
-          (pcmemberComment, "pcmemberComment"),
-          (authorNewSubmission, "authorNewSubmission"),
-          (authorEditSubmission, "authorEditSubmission")
+          (chairCanChangeRoles, "Chair can change roles"),
+          (chairCanAssignSubmissions, "Chair can assign submissions"),
+          (chairCanDecideOnAcceptance, "Chair can decide on acceptance"),
+          (chairCanRunSqlQueries, "Chair can run sql queries"),
+          (pcmemberCanBid, "PC Member can bid"),
+          (pcmemberCanReview, "PC Member can review"),
+          (pcmemberCanComment, "PC Member can comment"),
+          (authorCanMakeNewSubmissions, "Author can make new submissions"),
+          (authorCanEditSubmissions, "Author can edit submissions"),
+          (authorCanSeeReviews, "Author can see reviews"),
+          (showListOfAcceptedPapers, "Show list of accepted paper")
         ).filter(_._1).map(_._2).mkString("\n")
     }
-  }">@conf.name
+  } ">@conf.name
   @* No, the closing li is not mandatory, http://www.w3.org/TR/REC-html40/index/elements.html *@
 }
 
@@ -40,12 +43,17 @@
       case Nil => {}
     }
   </ol>
-  <span class="phase-edit edit">
-    <a href="#" class="glyphicon glyphicon-pencil toggle-edit" toggle="0" title="Jump to phase"></a>
-  </span>
+  
   <br>
   <br>
-  <div class="toggle0 hidden">
+  <div class="btn-group btn-group-justified">
+    <a href="#" class="btn btn-default toggle-right">Move to next phase</a>
+    <a href="#" class="btn btn-default toggle-left">Jump to phase</a>
+  </div>
+  <br>
+  
+  <div class="right hidden">
+    <br>
     @form(routes.Chairing.jumpToPhase) {
       @select(
         jumpToPhaseForm("configurationName"),
@@ -53,34 +61,38 @@
         '_label -> "Phase:")
       @dummy() {
         <button href="#" class="btn btn-default toggle-edit" toggle="0">Cancel</button>
-        <button type="submit" class="btn btn-default">Jump to phase</button>
+        <button type="submit" class="btn btn-default button-danger">Jump to phase</button>
       }
     }
-    <hr>
   </div>
   
-  @optionalTransitionGuard.map { guard =>
-    <div class="alert alert-danger">
-      You cannot move the next phases: @guard
-    </div>
-  }
-  
-  @form(routes.Chairing.doPhases) {
-    @if(emailForm.value.isEmpty) {
-      @if(confs.last.name != currentConf.name) {
-        <button type="submit" class="btn btn-default" onclick="return confirm('Are you sure?');"
-          @optionalTransitionGuard.map { _ => disabled }
-        >Move to next phase</button>
-      }
-    } else {
-      @textarea(emailForm("to"), 'placeholder -> "Comma separated emails:", '_label -> "To:", 'rows -> 2)
-      @inputText(emailForm("subject"), '_label -> "Subject:")
-      @textarea(emailForm("content"), '_label -> "Body:", 'rows -> 10)
-      @dummy() {
-        <button type="submit" class="btn btn-default" onclick="return confirm('Are you sure?');"
-          @optionalTransitionGuard.map { _ => disabled }
-        >Send & move to next phase</button>
+  <div class="left hidden">
+    <br>
+    @optionalTransitionGuard.map { guard =>
+      <div class="alert alert-danger">
+        You cannot move the next phases: @guard
+      </div>
+    }
+    
+    @form(routes.Chairing.doPhases) {
+      @confs.dropWhile(_.name != currentConf.name) match {
+        case _ :: nextConf :: _ => {
+          @textarea(emailForm("to"), 'placeholder -> "Comma separated emails:", '_label -> "To:", 'rows -> 2)
+          @inputText(emailForm("subject"), '_label -> "Subject:")
+          @textarea(emailForm("content"), '_label -> "Body:", 'rows -> 10)
+          @if(emailForm2.value.nonEmpty) {
+            <hr>
+            @textarea(emailForm2("to2"), 'placeholder -> "Comma separated emails:", '_label -> "To:", 'rows -> 2)
+            @inputText(emailForm2("subject2"), '_label -> "Subject:")
+            @textarea(emailForm2("content2"), '_label -> "Body:", 'rows -> 10)
+          }
+          @dummy() {
+            <button href="#" class="btn btn-default toggle-edit" toggle="1">Cancel</button>
+            <button type="submit" class="btn btn-default button-danger">Send & Move to @nextConf.name phase</button>
+          }
+        }
+        case _ => {}
       }
     }
-  }
+  </div>
 }

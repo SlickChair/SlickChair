@@ -45,7 +45,11 @@
                 }
               </td>
               <td>@assignments.filter(_.personId == person.id).filter(_.value).length</td>
-              <td>@checkbox(assignmentForm(s"assignments[$index].value"))</td>
+              <td>
+                @checkbox(
+                  assignmentForm(s"assignments[$index].value"),
+                  b.value match { case Conflict => 'disabled -> ""; case _ => 'class -> "" })
+              </td>
               <td class="hidden">
                 <input type="text" name="assignments[@index].personId.value" value="@b.personId.value">
               </td>

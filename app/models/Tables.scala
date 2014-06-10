@@ -48,8 +48,8 @@ class PaperAuthorTable(tag: Tag) extends Table[PaperAuthor](tag, "PAPERAUTHOR") 
 
 class PaperDecisionTable(tag: Tag) extends Table[PaperDecision](tag, "PAPERDECISION") with RepoTable[PaperDecision] {
   def paperId = column[Id[Paper]]("PAPERID")
-  def decision = column[Decision]("DECISION")
-  def * = (paperId, decision, (id, updatedAt, updatedBy)) <> (PaperDecision.tupled, PaperDecision.unapply)
+  def value = column[Decision]("VALUE")
+  def * = (paperId, value, (id, updatedAt, updatedBy)) <> (PaperDecision.tupled, PaperDecision.unapply)
 }
 
 class CommentTable(tag: Tag) extends Table[Comment](tag, "COMMENT") with RepoTable[Comment] {
@@ -98,14 +98,16 @@ class AssignmentTable(tag: Tag) extends Table[Assignment](tag, "ASSIGNMENT") wit
 
 class ConfigurationTable(tag: Tag) extends Table[Configuration](tag, "CONFIGURATION") with RepoTable[Configuration] {
   def name = column[String]("NAME", O.DBType("TEXT"))
-  def chairRoles = column[Boolean]("CHAIRROLES")
-  def chairAssignment = column[Boolean]("CHAIRASSIGNMENT")
-  def chairDecision = column[Boolean]("CHAIRDECISION")
-  def chairSql = column[Boolean]("CHAIRSQL")
-  def pcmemberBid = column[Boolean]("PCMEMBERBID")
-  def pcmemberReview = column[Boolean]("PCMEMBERREVIEW")
-  def pcmemberComment = column[Boolean]("PCMEMBERCOMMENT")
-  def authorNewSubmission = column[Boolean]("AUTHORNEWSUBMISSION")
-  def authorEditSubmission = column[Boolean]("AUTHOREDITSUBMISSION")
-  def * = (name, chairRoles, chairAssignment, chairDecision, chairSql, pcmemberBid, pcmemberReview, pcmemberComment, authorNewSubmission, authorEditSubmission, (id, updatedAt, updatedBy)) <> (Configuration.tupled, Configuration.unapply)
+  def chairCanChangeRoles = column[Boolean]("CHAIRROLES")
+  def chairCanAssignSubmissions = column[Boolean]("CHAIRASSIGNMENT")
+  def chairCanDecideOnAcceptance = column[Boolean]("CHAIRDECISION")
+  def chairCanRunSqlQueries = column[Boolean]("CHAIRSQL")
+  def pcmemberCanBid = column[Boolean]("PCMEMBERBID")
+  def pcmemberCanReview = column[Boolean]("PCMEMBERREVIEW")
+  def pcmemberCanComment = column[Boolean]("PCMEMBERCOMMENT")
+  def authorCanMakeNewSubmissions = column[Boolean]("AUTHORNEWSUBMISSION")
+  def authorCanEditSubmissions = column[Boolean]("AUTHOREDITSUBMISSION")
+  def authorCanSeeReviews = column[Boolean]("AUTHORSEEREVIEWS")
+  def showListOfAcceptedPapers = column[Boolean]("SHOWLISTOFACCEPTEDPAPER")
+  def * = (name, chairCanChangeRoles, chairCanAssignSubmissions, chairCanDecideOnAcceptance, chairCanRunSqlQueries, pcmemberCanBid, pcmemberCanReview, pcmemberCanComment, authorCanMakeNewSubmissions, authorCanEditSubmissions, authorCanSeeReviews, showListOfAcceptedPapers, (id, updatedAt, updatedBy)) <> (Configuration.tupled, Configuration.unapply)
 }

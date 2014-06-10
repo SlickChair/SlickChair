@@ -1,0 +1,13 @@
+@(acceptedSubmissions: List[(Paper, List[Person])],
+  navbar: Html
+)(implicit flash: Flash)
+
+@main("Accepted Papers", navbar) {
+  @acceptedSubmissions.map { case (paper, authors) =>
+    <p>
+      <b>@paper.title</b><br>
+      by @Html(authors.map(_.name).mkString(", "))
+    </p>
+    @if((paper, authors) != acceptedSubmissions.last) { <hr> }
+   }
+}

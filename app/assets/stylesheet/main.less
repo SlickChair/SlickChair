@@ -350,14 +350,14 @@ ol.phase li {
   text-align: center;
   line-height: 3em;
 }
-ol.phase[data-phase-steps="2"] li { width: 49%; }
-ol.phase[data-phase-steps="3"] li { width: 33%; }
-ol.phase[data-phase-steps="4"] li { width: 24%; }
-ol.phase[data-phase-steps="5"] li { width: 19%; }
-ol.phase[data-phase-steps="6"] li { width: 16%; }
-ol.phase[data-phase-steps="7"] li { width: 14%; }
-ol.phase[data-phase-steps="8"] li { width: 12%; }
-ol.phase[data-phase-steps="9"] li { width: 11%; }
+ol.phase[data-phase-steps="2"] li { width: 50%; }
+ol.phase[data-phase-steps="3"] li { width: 33.33%; }
+ol.phase[data-phase-steps="4"] li { width: 25%; }
+ol.phase[data-phase-steps="5"] li { width: 20%; }
+ol.phase[data-phase-steps="6"] li { width: 16.66%; }
+ol.phase[data-phase-steps="7"] li { width: 14.28% }
+ol.phase[data-phase-steps="8"] li { width: 12.5%; }
+ol.phase[data-phase-steps="9"] li { width: 11.11%; }
 
 ol.phase li.phase-done {
     color: silver;
@@ -407,11 +407,6 @@ ol.phase li.phase-todo:before {
     bottom: -1.6em;
 }
 
-.phase-edit {
-  float: right;
-  margin-top: -12px;
-}
-
 .alert-info {
   background-color: #d9edf7;
   background-image: none;
@@ -438,5 +433,27 @@ ol.phase li.phase-todo:before {
   background-image: none;
   border-color: #ebccd1;
   color: #a94442;
+}
+
+.centered-dt {
+  margin-top: 11px;
+}
+
+.button-danger:focus {
+  color: #900;
+}
+.button-danger:hover {
+  color: #fff;
+  text-shadow: 0px -1px 0 rgba(0,0,0,0.3);
+  background-color: #b33630;
+  background-image: -moz-linear-gradient(#dc5f59, #b33630);
+  background-image: -webkit-linear-gradient(#dc5f59, #b33630);
+  background-image: linear-gradient(#dc5f59, #b33630);
+  background-repeat: repeat-x;
+  border-color: #cd504a;
+}
+.button-danger {
+  color: #900;
+  font-weight: bold;
 }
 

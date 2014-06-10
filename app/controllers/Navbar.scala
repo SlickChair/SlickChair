@@ -12,17 +12,18 @@ object Navbar {
       case Chair =>
         List(
           M(routes.Chairing.submissions, "Submissions", _ => true),
-          M(routes.Chairing.roles, "Roles", _.chairRoles),
-          M(routes.Chairing.assignmentList, "Assignment", _.chairAssignment),
-          M(routes.Chairing.decision, "Decision", _.chairDecision),
+          M(routes.Chairing.roles, "Roles", _.chairCanChangeRoles),
+          M(routes.Chairing.assignmentList, "Assignment", _.chairCanAssignSubmissions),
+          M(routes.Chairing.decision, "Decision", _.chairCanDecideOnAcceptance),
+          M(routes.Chairing.accepted, "Accepted Papers", _.showListOfAcceptedPapers),
           M(routes.Chairing.phases, "Phases", _ => true),
-          M(routes.Sql.query, "SQL", _.chairSql))
+          M(routes.Sql.query, "SQL", _.chairCanRunSqlQueries))
       case PC_Member =>
         val papers = Query(r.db) assignedTo r.user.id map { p =>
           M(routes.Reviewing.review(p.id), "Submission " + Query(r.db).indexOf(p.id), _ => true)
         }
         M(routes.Reviewing.submissions, "Submissions", _ => true) ::
-        M(routes.Reviewing.bid, "Bidding", _.pcmemberBid) ::
+        M(routes.Reviewing.bid, "Bidding", _.pcmemberCanBid) ::
         papers
       case Author =>
         val papers = Query(r.db) papersOf r.user.id map { p =>

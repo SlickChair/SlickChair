@@ -140,14 +140,16 @@ case class Email(
 
 case class Configuration(
   name: String,
-  chairRoles: Boolean = false,
-  chairAssignment: Boolean = false,
-  chairDecision: Boolean = false,
-  chairSql: Boolean = true,
-  pcmemberBid: Boolean = false,
-  pcmemberReview: Boolean = false,
-  pcmemberComment: Boolean = false,
-  authorNewSubmission: Boolean = false,
-  authorEditSubmission: Boolean = false,
+  chairCanChangeRoles: Boolean = false,
+  chairCanAssignSubmissions: Boolean = false,
+  chairCanDecideOnAcceptance: Boolean = false,
+  chairCanRunSqlQueries: Boolean = false,
+  pcmemberCanBid: Boolean = false,
+  pcmemberCanReview: Boolean = false,
+  pcmemberCanComment: Boolean = false,
+  authorCanMakeNewSubmissions: Boolean = false,
+  authorCanEditSubmissions: Boolean = false,
+  authorCanSeeReviews: Boolean = false,
+  showListOfAcceptedPapers: Boolean = false,
   metadata: Metadata[Configuration] = newMetadata
 ) extends Model[Configuration]
