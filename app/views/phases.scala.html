@@ -88,7 +88,7 @@
           }
           @dummy() {
             <button href="#" class="btn btn-default toggle-left">Cancel</button>
-            <button type="submit" class="btn btn-default button-danger" onclick="return confirm('Are you sure?');" @*if(optionalTransitionGuard.nonEmpty) { disabled }*@>Send & Move to @nextConf.name phase</button>
+            <button type="submit" class="btn btn-default button-danger"@*if(optionalTransitionGuard.nonEmpty) { disabled }*@>Send & Move to @nextConf.name phase</button>
           }
         }
         case _ => {}

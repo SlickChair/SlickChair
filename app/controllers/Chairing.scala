@@ -146,7 +146,10 @@ object Chairing extends Controller {
   def toggleWithdraw(paperId: Id[Paper]) = SlickAction(IsChair, _ => true) { implicit r =>
     val paper: Paper = Query(r.db).paperWithId(paperId)
     r.connection insert paper.copy(withdrawn=(!paper.withdrawn))
-    Redirect(routes.Chairing.info(paperId)) flashing Msg.author.withdrawn
+    if(paper.withdrawn)
+      Redirect(routes.Chairing.info(paperId))
+    else
+      Redirect(routes.Chairing.info(paperId)) flashing Msg.author.withdrawn
   }
   
   def edit(paperId: Id[Paper]) = SlickAction(IsChair, _ => true) { implicit r => 

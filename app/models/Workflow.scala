@@ -15,7 +15,7 @@ case class Phase(
 )
 
 object Workflow {
-  val setup = Configuration("Setup", 
+  def setup = Configuration("Setup", 
     chairCanChangeRoles=true,
     chairCanAssignSubmissions=true,
     chairCanDecideOnAcceptance=true,

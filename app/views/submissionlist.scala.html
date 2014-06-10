@@ -54,7 +54,7 @@
 @main("All Submissions", navbar) {
   @printRows(rows)
   @if(rows.filter(_._3).nonEmpty) {
-    <br>
+    <hr>
     <h3>Assinged for review:</h3>
     @printRows(rows.filter(_._3))
   }
