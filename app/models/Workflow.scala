@@ -67,11 +67,10 @@ object Workflow {
         transitionWarning="Some submissions have a temporary decision. Make sure all submissions are either Accepted or Rejected before sending notifications, or some authors will not be notified."),
       
       Phase(
-        Configuration("Done",
-          chairCanRunSqlQueries=true,
+        Configuration("Finished",
           authorCanSeeReviews=true,
           showListOfAcceptedPapers=true),
-        chairChangePhase("Done"))
+        chairChangePhase("Finished"))
     )
   }
 }

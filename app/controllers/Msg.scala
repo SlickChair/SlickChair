@@ -87,7 +87,7 @@ object Msg {
     def bidBeg(implicit r: RequestHeader) = 
       s"""Dear Program Committee Member,
          |
-         |Submissions are closed it is now time for the bidding process to begin. You can go to ${routes.About.login.absoluteURL()}.login to have a look at the submissions and indicate which papers you are willing to review and if you have any, your conflict of interest.
+         |The system is now closed for submissions. It is time to start the bidding process. Please go to ${routes.About.login.absoluteURL()} and indicate the papers you are willing to review. Please also indicate all your conflicts of interest.
          |
          |Please complete these bids as soon as possible.
          |
