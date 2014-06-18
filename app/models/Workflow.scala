@@ -25,10 +25,10 @@ object Workflow {
     pcmemberCanComment=true,
     authorCanMakeNewSubmissions=true,
     authorCanEditSubmissions=true,
-    authorCanSeeReviews=true,
+    authorCanSeeReviews=false,
     showListOfAcceptedPapers=false)
 
-  def chairChangePhase(to: String) = { db: Database =>
+  private def chairChangePhase(to: String) = { db: Database =>
     Email(Query(db).chairEmails mkString ", ", subject.chairChangePhase(to), email.chairChangePhase(to))
   }
   
@@ -39,7 +39,7 @@ object Workflow {
         Configuration("Submission",
           authorCanMakeNewSubmissions=true,
           authorCanEditSubmissions=true),
-        { db => Email(Query(db).reviewerEmails mkString ", ", subject.bidBeg, email.bidBeg) }),
+        { db => Email(Query(db).reviewerEmails mkString ", ", subject.bidBeg, email.bidBeg) }), // TODO: Emails should be sent at the begining of each phase.
       
       Phase(Configuration("Bidding",
         pcmemberCanBid=true),

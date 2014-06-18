@@ -17,9 +17,10 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
       if(connection.database().persons.list.isEmpty) {
         
         val chairs = List(
-          Person("Heather", "Miller", "EPFL", "heather.miller@epfl.ch"),
-          Person("Philipp", "Haller", "EPFL", "philipp.haller@typesafe.com"),
-          Person("Viktor", "Kuncak", "EPFL", "vkuncak@gmail.com"),
+          // Person("Heather", "Miller", "EPFL", "heather.miller@epfl.ch"),
+          // Person("Philipp", "Haller", "EPFL", "philipp.haller@typesafe.com"),
+          // Person("Viktor", "Kuncak", "EPFL", "vkuncak@gmail.com"),
+          // ("Piskac", "Ruzica", "EPFL", "ruzica.piskac@yale.edu"),
           Person("Olivier", "Blanvillain", "EPFL", "olivierblanvillain@gmail.com")
         )
         
@@ -33,23 +34,22 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
           "SpongeBob",
           "SquarePants",
           "The Sea",
-          "SpongeBobSquarePantsFakeEmail@gmail.com")
+          "SpongeBobSquarePantsFakeEmail")
         val testPerson2 = Person(
           "Squidward",
           "Tentacles",
           "The Sea",
-          "SquidwardTentaclesFakeEmail@gmail.com")
+          "SquidwardTentaclesFakeEmail")
         connection insert List(testPerson1, testPerson2)
 
         // Demo papers
         val src = Source.fromFile("test/sigplanconf-template.pdf", "ISO8859-1").map(_.toByte).toArray
         List(
-          ("Verification by Translation to Recursive Functions ", Student_paper),
-          ("CafeSat: A Modern SAT Solver for Scala ", Student_paper),
-          ("Scala Macros: Let Our Powers Combine! ", Student_paper),
-          ("A New Concurrency Model for Scala Based on a Declarative Dataflow Core ", Student_paper),
-          ("Open GADTs and Declaration-site Variance: A Problem Statement ", Student_paper),
-          ("Towards a Tight Integration of a Functional Web Client Language into Scala ", Student_paper)
+          ("Naughty Nautical Neighbors", Student_paper),
+          ("Boating School", Student_paper),
+          ("Pizza Delivery", Student_paper),
+          ("Home Sweet Pineapple", Student_paper),
+          ("Mermaid Man and Barnacle Boy", Student_paper)
         ) foreach { case (title, format) =>
           val file = File("sigplanconf.pdf", src.length, src)
           val paper = Paper(title, format, "keywords", "abstract", 2, Some(file.id), false)
@@ -65,3 +65,4 @@ object Global extends WithFilters(new GzipFilter()) with GlobalSettings {
     }
   }
 }
+

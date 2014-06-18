@@ -10,9 +10,7 @@ import scala.language.postfixOps
 import play.api.mvc.Call
 
 case class Query(db: Database) {
-  implicit val session: Session = db.session
   import db._
-  
   def roleOf(id: Id[Person]): Role =
     personRoles.filter(_.personId is id).first.value
   def papersOf(id: Id[Person]): List[Paper] =
@@ -34,7 +32,7 @@ case class Query(db: Database) {
   def commentsOn(id: Id[Paper]): List[Comment] =
     comments filter (_.paperId is id) list
   def reviewsHistoryOn(id: Id[Paper]): List[Review] =
-    db.history.reviews filter (_.paperId is id) list
+    db.copy(withHistory=true).reviews filter (_.paperId is id) list
   def reviewOf(personId: Id[Person], paperId: Id[Paper]): Option[Review] =
     (reviews filter { r => (r.personId is personId) && (r.paperId is paperId) }).firstOption
   def reviewsOf(paperId: Id[Paper]): List[Review] =
@@ -116,4 +114,5 @@ case class Query(db: Database) {
       authorsOf(p.id) map (_.email)
     } distinct
   }
+  
 }

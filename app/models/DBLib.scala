@@ -101,14 +101,16 @@ case class Connection(session: Session) {
   }
 }
 
-case class Database(val time: DateTime, val session: Session, val withHistory: Boolean = false) {
-  def asOf(time: DateTime): Database = this copy (time=time)
-  def equals(database: Database): Boolean = this.basis == database.basis
-  def basis(): DateTime = ???
-  def history: Database = this.copy(withHistory=true)
+case class Database(val date: DateTime, val session: Session, val withHistory: Boolean = false) {
+  implicit val implicitSession = session
+  // def asOf(date: DateTime): Database = this copy (date=date)
+  // def equals(database: Database): Boolean = this.basis == database.basis
+  // def basis(): DateTime = ???
+  // def history: Database = this.copy(withHistory=true)
   
-  private def timeMod[T <: Table[M] with RepoTable[M], M <: Model[M]](table: TableQuery[T]) = {
-    // TODO: Use this.time
+  // private type Table = PersonTable
+  private def table[T <: Table[M] with RepoTable[M], M <: Model[M]](table: TableQuery[T]) = {
+    // TODO: Use this.date
     if(withHistory) {
       table
     } else {
@@ -121,19 +123,19 @@ case class Database(val time: DateTime, val session: Session, val withHistory: B
     }
   }
 
-  val persons = timeMod[PersonTable, Person](TableQuery[PersonTable])
-  val personRoles = timeMod[PersonRoleTable, PersonRole](TableQuery[PersonRoleTable])
-  val papers = timeMod[PaperTable, Paper](TableQuery[PaperTable])
-  val paperIndices = timeMod[PaperIndexTable, PaperIndex](TableQuery[PaperIndexTable])
-  val paperAuthors = timeMod[PaperAuthorTable, PaperAuthor](TableQuery[PaperAuthorTable])
-  val paperDecisions = timeMod[PaperDecisionTable, PaperDecision](TableQuery[PaperDecisionTable])
-  val comments = timeMod[CommentTable, Comment](TableQuery[CommentTable])
-  val reviews = timeMod[ReviewTable, Review](TableQuery[ReviewTable])
-  val files = timeMod[FileTable, File](TableQuery[FileTable])
-  val emails = timeMod[EmailTable, Email](TableQuery[EmailTable])
-  val bids = timeMod[BidTable, Bid](TableQuery[BidTable])
-  val assignments = timeMod[AssignmentTable, Assignment](TableQuery[AssignmentTable])
-  val configurations = timeMod[ConfigurationTable, Configuration](TableQuery[ConfigurationTable])
+  val persons = table[PersonTable, Person](TableQuery[PersonTable])
+  val personRoles = table[PersonRoleTable, PersonRole](TableQuery[PersonRoleTable])
+  val papers = table[PaperTable, Paper](TableQuery[PaperTable])
+  val paperIndices = table[PaperIndexTable, PaperIndex](TableQuery[PaperIndexTable])
+  val paperAuthors = table[PaperAuthorTable, PaperAuthor](TableQuery[PaperAuthorTable])
+  val paperDecisions = table[PaperDecisionTable, PaperDecision](TableQuery[PaperDecisionTable])
+  val comments = table[CommentTable, Comment](TableQuery[CommentTable])
+  val reviews = table[ReviewTable, Review](TableQuery[ReviewTable])
+  val files = table[FileTable, File](TableQuery[FileTable])
+  val emails = table[EmailTable, Email](TableQuery[EmailTable])
+  val bids = table[BidTable, Bid](TableQuery[BidTable])
+  val assignments = table[AssignmentTable, Assignment](TableQuery[AssignmentTable])
+  val configurations = table[ConfigurationTable, Configuration](TableQuery[ConfigurationTable])
 }
 
 trait RepoTable[M <: Model[M]] {
