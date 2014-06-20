@@ -8,6 +8,7 @@ import play.api.db.slick.Config.driver.simple._
 import Role._
 import scala.language.postfixOps
 import play.api.mvc.Call
+import play.api.PlayException
 
 case class Query(db: Database) {
   import db._
@@ -87,7 +88,11 @@ case class Query(db: Database) {
   
   def configuration: Configuration = {
     implicit val dateTimeOrdering: Ordering[DateTime] = Ordering fromLessThan (_ isBefore _)
-    configurations.list maxBy (_.updatedAt)
+    configurations.list match {
+      case Nil => throw new PlayException("Configuration not found", "The database does not contain any configuration record.")
+      case xs => xs maxBy (_.updatedAt)
+    }
+    
   }
 
   def allConfigurations: List[Configuration] = configurations.list

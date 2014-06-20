@@ -69,7 +69,8 @@ object Workflow {
       Phase(
         Configuration("Finished",
           authorCanSeeReviews=true,
-          showListOfAcceptedPapers=true),
+          showListOfAcceptedPapers=true,
+          chairCanRunSqlQueries=true),
         chairChangePhase("Finished"))
     )
   }
