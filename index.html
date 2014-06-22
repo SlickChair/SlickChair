@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Slickchair by SlickChair</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Slickchair</h1>
+        <p>Conference Management System</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/SlickChair/SlickChair" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/SlickChair/SlickChair/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/SlickChair/SlickChair/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h1>
+<a name="slickchair" class="anchor" href="#slickchair"><span class="octicon octicon-link"></span></a>SlickChair</h1>
+
+<p>SlickChair is an open-source conference management system written in Scala. Built with the Play framework and the Slick database access library, SlickChair provides a highly flexible and extensible solution to manage a peer review process. Lear more about SlickChair internals on the <a href="https://github.com/OlivierBlanvillain/SlickChair-report/blob/master/report/main.pdf">project report</a>.</p>
+
+<h2>
+<a name="what-makes-it-different" class="anchor" href="#what-makes-it-different"><span class="octicon octicon-link"></span></a>What Makes It Different?</h2>
+
+<ul>
+<li><p><strong>Simple authentication.</strong> SlickChair allows to login in one click using a Facebook or Google account in addition to the traditional email and password authentication. We made thing very simple here: one user equals one email!</p></li>
+<li><p><strong>Extensible workflow.</strong> By default, the peer review process is organised in seven phases: <em>Setup, Submission, Bidding, Assignment, Review, Notification</em> and <em>Finished</em>. Workflow customisation such as adding an <em>Abstract Submission</em> phase or merging <em>Submission</em> and <em>Bidding</em> are very easy to make.</p></li>
+<li><p><strong>Full control over your data.</strong> SlickChair instances are completely autonomous, which means that you get the option to deploy yours on a local server with a private database.</p></li>
+</ul><h2>
+<a name="show-me-a-demo" class="anchor" href="#show-me-a-demo"><span class="octicon octicon-link"></span></a>Show Me A Demo!</h2>
+
+<p>Running the demo locally requires <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">JDK 6+</a> and <a href="http://www.scala-sbt.org/">sbt</a>. Then it's as simple as:</p>
+
+<pre><code>sbt run
+</code></pre>
+
+<p>Check out the <a href="https://github.com/SlickChair/SlickChair">README</a> for detailed instructions on how to deploy SlickChair on Heroku or on your own server.</p>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/SlickChair">SlickChair</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
