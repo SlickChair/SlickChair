@@ -1,6 +1,6 @@
 # SlickChair
 
-SlickChair is an open-source conference management system written in Scala. Built with the Play framework and the Slick database access library, SlickChair provides a highly flexible and extensible solution to manage a peer review process. Lear more about SlickChair internals on the [project report](https://github.com/OlivierBlanvillain/SlickChair-report/blob/master/report/main.pdf).
+SlickChair is an open-source conference management system written in Scala. Built with the Play framework and the Slick database access library, SlickChair provides a highly flexible and extensible solution to manage a peer review process. More information on the [project report](https://github.com/OlivierBlanvillain/SlickChair-report/blob/master/report/main.pdf).
 
 
 ## What Makes It Different?
@@ -17,8 +17,6 @@ SlickChair is an open-source conference management system written in Scala. Buil
 Running the demo locally requires [JDK 6+](http://www.oracle.com/technetwork/java/javase/downloads/index.html) and [sbt](http://www.scala-sbt.org/). Then it's as simple as:
 
     sbt run
-
-<!-- Check out the [README](https://github.com/SlickChair/SlickChair) for detailed instructions on how to deploy SlickChair on Heroku or on your own server. -->
 
 
 ## Deploying in production
