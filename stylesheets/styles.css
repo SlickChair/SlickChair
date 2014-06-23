@@ -651,9 +651,8 @@ dt {
 }
 
 header {
-  padding: 25px 20px 40px 20px;
+  padding: 25px 0px 20px 0px;
   margin: 0;
-  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -666,13 +665,12 @@ header {
   box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.75);
   z-index: 99;
   -webkit-font-smoothing: antialiased;
-  min-height: 76px;
 }
 header h1 {
   font: 40px/48px "Copse", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #f3f3f3;
   text-shadow: 0px 2px 0px #235796;
-  margin: 0px;
+  margin: 0px; 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -692,10 +690,11 @@ header p {
   right: 50%;
   height: 50px;
   margin-right: -326px;
-  position: fixed;
   top: 115px;
   background: #ffcc00;
   border: 1px solid #f0b500;
+  border-right-width: 0;
+  border-left-width: 0;
   -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
   -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
   -o-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
@@ -706,7 +705,6 @@ header p {
   -ms-border-radius: 0px 2px 2px 0px;
   -khtml-border-radius: 0px 2px 2px 0px;
   border-radius: 0px 2px 2px 0px;
-  padding-right: 10px;
 }
 #banner .button {
   border: 1px solid #dba500;
@@ -747,7 +745,7 @@ header p {
   background-color: #ffeca0;
 }
 #banner .fork {
-  position: fixed;
+  position: relative;
   left: 50%;
   margin-left: -325px;
   padding: 10px 12px;
@@ -859,14 +857,6 @@ footer {
   line-height: 16px;
 }
 
-@media print, screen and (min-width: 1061px) {
-  #banner .downloads {
-    position: fixed;
-    left: 50%;
-    margin-left: 122px;
-  }
-}
-
 div.wrapper {
   width: auto;
   margin: 0;
@@ -890,6 +880,14 @@ header h1, section h1, footer h1 {
 #banner {
   width: 100%;
 }
+@media print, screen and (min-width: 720px) {
+  #banner .downloads {
+    position: absolute;
+    left: 50%;
+    margin-left: 122px;
+    margin-top: -42px;
+  }
+}
 #banner .downloads {
   margin-right: 10px;
 }
@@ -901,7 +899,7 @@ section {
   border: 1px solid #e5e5e5;
   border-width: 1px 0;
   padding: 20px auto;
-  margin: 190px auto 20px;
+  margin: 24px auto 20px;
   max-width: 600px;
 }
 
@@ -918,9 +916,12 @@ footer {
   body {
     word-wrap: break-word;
   }
-
+  header > p {
+    display: none;
+  }
   header {
-    padding: 20px 20px;
+    padding-top: 20px;
+    padding-bottom: 13px;
     margin: 0;
   }
   header h1 {
@@ -931,10 +932,6 @@ footer {
     -o-text-overflow: ellipsis;
     -ms-text-overflow: ellipsis;
   }
-  header p {
-    display: none;
-  }
-
   #banner {
     top: 80px;
   }
@@ -942,12 +939,12 @@ footer {
     float: left;
     display: inline-block;
     margin-left: 0px;
-    position: fixed;
+    position: relative;
     left: 20px;
   }
 
   section {
-    margin-top: 130px;
+    margin-top: 0px;
     margin-bottom: 0px;
     width: auto;
   }
@@ -957,6 +954,9 @@ footer {
   }
 }
 @media print, screen and (max-width: 480px) {
+  header p {
+    display: none;
+  }
   header {
     position: relative;
     padding: 5px 0px;
