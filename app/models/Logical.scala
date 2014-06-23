@@ -15,8 +15,7 @@ object BidValue extends Enumeration with EnumSlickMapper {
 
 object PaperType extends Enumeration with EnumSlickMapper {
   type PaperType = Value
-  val Student_paper = Value
-  // val Full_paper, Short_paper, Tool_demo, Presentation = Value
+  val Full_paper, Short_paper, Student_paper, Tool_demo, Presentation = Value
 }
 
 object Confidence extends Enumeration with EnumSlickMapper {

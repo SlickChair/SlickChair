@@ -2,7 +2,6 @@
   navbar: Html
 )(content: Html)(implicit flash: Flash)
 
-@minified = @{ if (play.Play.isProd()) ".min" else "" }
 @xButton = { <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> }
 
 <!DOCTYPE html>
@@ -10,13 +9,13 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>@title</title>
-  <link rel="stylesheet" href="@routes.Assets.at("vendor/stylesheet/bootstrap.css")">
-  <link rel="stylesheet" href="@routes.Assets.at("vendor/stylesheet/bootstrap-theme.css")">
+  <link rel="stylesheet" href="@routes.Assets.at("vendor/stylesheet/bootstrap.min.css")">
+  <link rel="stylesheet" href="@routes.Assets.at("vendor/stylesheet/bootstrap-theme.min.css")">
   <link rel="stylesheet" href="@routes.Assets.at("stylesheet/main.css")">
   <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("image/favicon.png")">
   <style type="text/css">
     body {
-      @* Made by http://www.domainsinfo.org/, found on http://subtlepatterns.com/. *@
+      @* Pattern made by http://www.domainsinfo.org/ *@
       background-image: url('@routes.Assets.at("image/wavegrid.png")');
     }
   </style>
@@ -46,8 +45,7 @@
   </footer>
   </div>
   <script src="@routes.Assets.at("vendor/javascript/jquery.min.js")" type="text/javascript"></script>
-  <script src="@routes.Assets.at("vendor/javascript/bootstrap.js")" type="text/javascript"></script>
-  @* <script src="@routes.Assets.at("vendor/javascript/jquery.are-you-sure.js")" type="text/javascript"></script> *@
+  <script src="@routes.Assets.at("vendor/javascript/bootstrap.min.js")" type="text/javascript"></script>
   <script src="@routes.Assets.at("javascript/main.js")" type="text/javascript"></script>
 </body>
 </html>
