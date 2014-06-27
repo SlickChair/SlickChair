@@ -64,7 +64,7 @@
                       @textarea(Reviewing.reviewForm("content").copy(value=Some(content)), 'rows -> 3)
                       @inputRadioGroup(
                         Reviewing.reviewForm("evaluation.value").copy(value=Some(evaluation.toString)),
-                        Evaluation.values.toSeq.map(f => f.toString -> f.toString.replace("_", " ")))
+                        Evaluation.values.toSeq.reverse.map(f => f.toString -> f.toString.replace("_", " ")))
                       <br>
                       @inputRadioGroup(
                         Reviewing.reviewForm("confidence.value").copy(value=Some(confidence.toString)),
