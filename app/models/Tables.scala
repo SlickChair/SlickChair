@@ -12,7 +12,7 @@ import play.api.db.slick.Config.driver.simple._
 class PersonTable(tag: Tag) extends Table[Person](tag, "PERSON") with RepoTable[Person] {
   def firstname = column[String]("FIRSTNAME", O.DBType("TEXT"))
   def lastname = column[String]("LASTNAME", O.DBType("TEXT"))
-  def organization = column[String]("ORGANIZATION")
+  def organization = column[String]("ORGANIZATION", O.DBType("TEXT"))
   def email = column[String]("EMAIL", O.DBType("TEXT"))
   def * = (firstname, lastname, organization, email, (id, updatedAt, updatedBy)) <> (Person.tupled, Person.unapply)
 }
@@ -28,7 +28,7 @@ class PaperTable(tag: Tag) extends Table[Paper](tag, "PAPER") with RepoTable[Pap
   def format = column[PaperType]("FORMAT")
   def keywords = column[String]("KEYWORDS", O.DBType("TEXT"))
   def abstrct = column[String]("ABSTRCT", O.DBType("TEXT"))
-  def nAuthors = column[Int]("nAuthors")
+  def nAuthors = column[Int]("NAUTHORS")
   def fileId = column[Option[Id[File]]]("FILE")
   def withdrawn = column[Boolean]("WITHDRAWN")
   def * = (title, format, keywords, abstrct, nAuthors, fileId, withdrawn, (id, updatedAt, updatedBy)) <> (Paper.tupled, Paper.unapply)
